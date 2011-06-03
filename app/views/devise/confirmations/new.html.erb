@@ -1,12 +1,17 @@
-<h2>Resend confirmation instructions</h2>
+<% @page_specific_scripts_css = '/stylesheets/static/devise' %>
 
-<%= form_for(resource, :as => resource_name, :url => confirmation_path(resource_name), :html => { :method => :post }) do |f| %>
-  <%= devise_error_messages! %>
+<div class="modal rounded_border">
+  <h2>Resend confirmation instructions</h2>
 
-  <p><%= f.label :email %><br />
-  <%= f.email_field :email %></p>
+  <p>What is your email address?</p>
 
-  <p><%= f.submit "Resend confirmation instructions" %></p>
-<% end %>
+  <%= form_for(resource, :as => resource_name, :url => confirmation_path(resource_name)) do |f| %>
+    <%= devise_error_messages! %>
 
-<%= render :partial => "devise/shared/links" %>
+    <p><%= f.text_field :email %></p>
+
+    <p><%= f.submit "Resend confirmation instructions" %></p>
+  <% end %>
+
+  <%= render :partial => "devise/shared/links" %>
+</div>
