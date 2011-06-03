@@ -5,7 +5,7 @@ describe "auth" do
   before :each do
     @user = Factory.create(:user)
     @user.save!
-    puts @user.to_yaml    
+    puts @user.to_yaml     
 
     visit "/users/sign_in" 
     save_and_open_page

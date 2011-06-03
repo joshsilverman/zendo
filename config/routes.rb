@@ -2,7 +2,7 @@ Zendo::Application.routes.draw do
   devise_for :users
 
   resources :users
-  root :to => 'users#sign_in'
+  root :to => 'users#home'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
