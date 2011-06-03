@@ -1,5 +1,6 @@
 Factory.define :user do |f|
   f.email "dude@dudeski.com"
+#  f.email { |n| "foo#{n}@example.com" }
   f.password "whatup"
   f.password_confirmation { |u| u.password }
   f.confirmation_token nil
