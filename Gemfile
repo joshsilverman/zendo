@@ -2,7 +2,14 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.0.3'
 gem 'mysql'
+
+gem 'nokogiri'
+gem 'libxml-ruby', '1.1.3'
+
 gem 'devise'
+gem 'omniauth'
+gem 'postmark'
+gem 'postmark-rails', '0.4.0'
 
 group :development do
   gem 'guard'
