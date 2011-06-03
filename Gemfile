@@ -21,6 +21,7 @@ group :test do
   gem 'factory_girl_rails', :require => 'factory_girl'
   gem 'capybara'
   gem 'launchy'
+  gem 'database_cleaner'
 
   gem 'libnotify'
 end
