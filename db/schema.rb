@@ -20,9 +20,60 @@ ActiveRecord::Schema.define(:version => 20110602222020) do
     t.datetime "updated_at"
   end
 
+  create_table "documents", :force => true do |t|
+    t.string   "name",       :limit => 45
+    t.text     "html"
+    t.integer  "tag_id"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "documents", ["tag_id"], :name => "index_documents_on_tag_id"
+  add_index "documents", ["user_id"], :name => "index_documents_on_user_id"
+
+  create_table "lines", :force => true do |t|
+    t.string   "domid"
+    t.integer  "document_id"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "lines", ["document_id"], :name => "index_lines_on_document_id"
+
+  create_table "mems", :force => true do |t|
+    t.float    "strength"
+    t.boolean  "status"
+    t.integer  "line_id"
+    t.integer  "user_id"
+    t.datetime "review_after"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "mems", ["line_id"], :name => "index_mems_on_line_id"
+
+  create_table "reps", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "mem_id"
+    t.float    "strength"
+    t.float    "confidence"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "tags", :force => true do |t|
+    t.string   "name",       :limit => 45
+    t.boolean  "misc"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "tags", ["user_id"], :name => "index_tags_on_user_id"
+
   create_table "users", :force => true do |t|
-    t.string   "first_name"
-    t.string   "last_name"
     t.string   "email",                                 :default => "", :null => false
     t.string   "encrypted_password",     :limit => 128, :default => "", :null => false
     t.string   "reset_password_token"
@@ -33,7 +84,8 @@ ActiveRecord::Schema.define(:version => 20110602222020) do
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
-    t.string   "password_salt"
+    t.string   "first_name"
+    t.string   "last_name"
     t.string   "confirmation_token"
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
@@ -45,9 +97,10 @@ ActiveRecord::Schema.define(:version => 20110602222020) do
     t.datetime "updated_at"
   end
 
-  add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
+  add_index "users", ["first_name"], :name => "index_users_on_first_name"
+  add_index "users", ["last_name"], :name => "index_users_on_last_name"
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
   add_index "users", ["unlock_token"], :name => "index_users_on_unlock_token", :unique => true
 

@@ -1,8 +1,6 @@
 Zendo::Application.routes.draw do
-  devise_for :users
 
-  resources :users
-  root :to => 'users#home'
+  resources :authentications
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
@@ -60,4 +58,44 @@ Zendo::Application.routes.draw do
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id(.:format)))'
+  
+  #devise
+  devise_for :users, :timeout_in => 7.days,
+    :controllers => {:registrations => 'registrations'}
+
+  #tags
+  get "tag/index" # ???
+  match "/explore" => "tags#index" #** public **#
+
+  # documents
+  match "/documents/create/:tag_id" => "documents#create"
+  resources :documents, :only => [:edit, :update, :destroy]
+
+  # reviwer
+  match "/review/:id" => "documents#review" #** public **#
+  match "/review/dir/:id" => "tags#review" #** public **#
+  match "/mems/update/:id/:confidence/:importance" => "mems#update"
+  resources :lines, :only => [:update]
+  
+  # organizer
+  resources :tags, :only => [:destroy, :create, :update]
+  match "/tags/json" => "tags#json"
+
+  # home page
+  match "users/welcome" => "users#home"
+  root :to => "users#home"
+
+  # authentications
+  match '/auth/:provider/callback' => 'authentications#create'
+  match '/users/get_email' => 'users#get_email'
+  resources :authentications
+
+  # ajax sign in
+  match "users/simple_sign_in" => "users#simple_sign_in"
+
+  # catch-all route for static pages
+  Zendo::Application.routes.draw do |map|
+    map.connect ':action', :controller => "static"
+  end
+
 end
