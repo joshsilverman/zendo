@@ -1,0 +1,177 @@
+html {
+    height:100%;
+}
+
+body {
+    font-family:arial,helvetica,times;
+    font-size:13px;
+    padding:0;
+    margin:0;
+    height:100%;
+}
+
+a {
+    color:#007AC7;
+    text-decoration: underline;
+}
+a:hover {
+    cursor:pointer;
+}
+
+img {
+    border: none;
+}
+
+img.home {
+    height:63px;
+    width:100px;
+}
+
+.clr { height:10px;clear:both; }
+
+.rounded_border {
+    border: 1px solid lightGrey;
+    border-bottom-left-radius: 5px 5px;
+    border-bottom-right-radius: 5px 5px;
+    border-top-left-radius: 5px 5px;
+    border-top-right-radius: 5px 5px;
+    -moz-border-radius:5px 5px 5px 5px;
+}
+
+.wrapper {
+    width: 100%;
+}
+
+.header_container {
+    background-color: black;
+    width:100%;
+    min-width:960px;
+}
+
+.header {
+    width:960px;
+    margin: 0 auto;
+    height: 30px;
+    color:white;
+}
+
+.header a {
+    color: #009cff;
+}
+
+.footer {
+    min-width:960px;
+    padding:0;
+    text-align: center;
+    background-color: #edebdd;
+    background-image: url(/images/shared/footer_border.gif);
+    background-repeat:repeat-x;
+    min-height:148px;
+}
+
+.footer h5 {
+    padding:12px 0 8px;
+    margin: 0;
+    color:#404040;
+}
+
+.footer_column > a, .footer span {
+    color:#404040;
+    text-decoration: none;
+    line-height: 18px;
+    display:block;
+    position:relative;
+    z-index:1;
+}
+
+.footer_columns {
+    width:960px;
+    margin: 0 auto;
+    background-color: #edebdd;
+}
+
+.footer_column {
+    width:188px;
+    text-align: left;
+    float:left;
+    color:#5c5c5c;
+    padding-right: 10px;
+}
+
+.footer_column span {
+    display:block;
+    clear:both;
+}
+
+.copyright {
+    color:#383838;
+    padding:15px 0 -25px;
+    margin: 0 10px;
+    float:left;
+    clear:left;
+    position:relative;
+    top: 20px;
+}
+
+header {
+     font-size:115%;
+     margin:0 0 20px 0;
+     display:block;
+}
+
+.contents {
+     width:960px;
+     margin:10px auto;
+}
+
+.flash_container {
+    margin: 5px 0;
+    text-align: center;
+}
+
+.notice {
+    background-color:#4DD64D;
+    padding:1px;
+}
+
+.error {
+    margin: 40px auto;
+    background-color:#FF734D;
+    padding:1px;
+}
+
+/* twitter styling */
+div.twtr-doc {
+    background-color:#C9C9C9;
+}
+
+div.twtr-hd, div.twtr-ft div {
+    padding: 4px
+}
+
+.twtr-profile-img {
+    height:19px !important;
+    width:19px !important;
+}
+
+div.twtr-hd h3 {
+    display:none;
+}
+
+.twtr-widget-profile h4 {
+    position:relative;
+    left:-17px;
+    top:1px;
+}
+
+div.twtr-ft div span {
+    clear:none;
+}
+
+div.twtr-tweet-wrap {
+    padding: 2px 7px;
+}
+
+.error_explanation h2 {
+    font-size:1.1em;
+}

@@ -1,0 +1,35 @@
+/* 
+    Document   : editor_contents
+    Created on : 6 janv. 2011, 13:57:04
+    Author     : josh
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+* {
+    font-size: 12px;
+}
+
+p, ul, div, li {
+    margin:0em 0 !important;
+    padding:0em;
+}
+
+ol {
+    margin:0em 0 !important;
+    padding-left:1.35em;
+}
+
+.outline_node {
+    min-height: 1em;
+    margin-top:.9em !important;
+}
+
+ul {
+    padding-left: 15px;
+}
+
+body.instructions {
+    background-image:url(/images/editor/bg.gif);
+    background-repeat:no-repeat;
+}

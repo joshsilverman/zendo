@@ -1,0 +1,220 @@
+body {
+    background: #FAFAFA;
+}
+
+.doc_options {
+    padding: 3px;
+    border: 1px solid lightgrey;
+    border-bottom: none;
+    position:relative;
+    background:#efefef;
+}
+
+.doc_options a {
+    color:black
+}
+
+.doc_options input {
+    border: 1px solid lightGrey;
+    background-color:#fafafa;
+    border-color:#FFBB00;
+}
+
+.loading {
+    height: 600px;
+    border: none;
+    background-image:url('/images/shared/ajax-loader.gif');
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+    background-position:center;
+    background-color: #FFF;
+}
+
+.loading span, .loading button, .loading img {
+    display:none;
+}
+
+.doc_options button {
+    border: 1px solid #FFBB00;
+    background-color:#FFEA00;
+    color:#000;
+
+    border-top-left-radius: 3px 3px;
+    border-top-right-radius: 3px 3px;
+    border-bottom-left-radius: 3px 3px;
+    border-bottom-right-radius: 3px 3px;
+    -moz-border-radius:3px 3px 3px 3px;
+}
+
+.doc_options button:hover {
+    text-decoration: underline;
+    cursor:pointer;
+}
+
+#save_button {
+    margin-right:3px;
+}
+
+#review_button {
+}
+
+button.saving {
+    border: 1px solid grey;
+    background-color:lightgrey;
+    color:grey;
+}
+
+.doc_options input:hover, .doc_options input:focus {
+    background-color:#fff;
+}
+
+#editor_container, #editor {
+    width:659px;
+    float:left;
+}
+
+#right_rail {
+    padding: 5px;
+    padding-left: 10px;
+    width:284px;
+    float:left;
+    height:475px;
+    overflow-y: scroll;
+    display:table-cell;
+    vertical-align:bottom;
+    border:1px solid lightgrey;
+    background:#FAFAFA;
+    margin-top:28px;
+}
+
+.align_bottom, .align_bottom tbody, .align_bottom tr, .align_bottom td {
+    height:100%;
+    margin:0px;
+    padding:0px;
+    border:0px;
+    border-spacing:0px;
+}
+
+.card {
+    margin-top: 5px;
+    width:250px;
+    padding: 5px;
+    bottom:0px;
+    background-color:#E0DFE3;
+    color:#9d9d9d;
+    position: relative;
+
+    min-height:15px;
+    overflow:hidden;
+    display:none;
+}
+
+.card_active {
+    background-color:#E4FFAD !important;
+    color:black !important;
+    display:block;
+}
+
+.card_focus {
+    border: 2px dashed darkgrey;
+    background-color:#D2FF78 !important;
+    color:black !important;
+    width:248px;
+    display:block;
+}
+
+.card_front {
+    text-align: center;
+    padding:10px;
+
+    min-height:15px;
+    max-height:100px;
+    overflow:hidden;
+}
+
+.card_back {
+    text-align: center;
+    padding:10px;
+    border-top: #C2C2C2 2px solid;
+
+    min-height:15px;
+    max-height:100px;
+    overflow:hidden;
+}
+
+.card_active .card_back {
+    border-top: #B2F233 2px solid;
+}
+
+.card input {
+    position:absolute;
+    right:0px;
+    margin-top:-1px;
+}
+
+img.sync {
+    margin:2px;
+    height:21px;
+    width:21px;
+    float:right;
+    cursor:pointer;
+}
+
+img.sync:active {
+    -webkit-transform:rotate(45deg);
+    -moz-transform:rotate(45deg);
+}
+
+.footer {
+    display:none;
+}
+
+/* prototip formatting */
+
+.circle {
+    display: block;
+    width: 18px;
+    height: 18px;
+    background: orange;
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+    padding:10px;
+    float:left;
+}
+
+.circumscribed {
+    height:18px;
+    width:18px;
+    font-size: 18px;
+    text-align: center;
+    color:black;
+    float:left;
+}
+
+.instruction {
+    font-size: 16px;
+    float:left;
+    padding:12px 10px;
+}
+
+.tooltip a {
+    clear:both;
+    float:right;
+    padding:5px 10px;
+}
+
+/* tinymce */
+#editor_toolbargroup {
+    width:958px;
+}
+
+#editor_ifr {
+    width:658px !important;
+}
+
+/* rounded borders to editor */
+.doc_options {
+    border-top-left-radius: 5px 5px;
+    border-top-right-radius: 5px 5px;
+    -moz-border-radius:5px 5px 0 0;
+}

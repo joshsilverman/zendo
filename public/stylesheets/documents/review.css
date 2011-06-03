@@ -1,0 +1,201 @@
+ul {
+    padding-left: 15px;
+}
+
+#title {
+    padding-left: 255px;
+    
+}
+
+table, tr, td {
+    margin:0;
+    padding:0;
+    border: none;
+}
+
+.card_container {
+    width:900px;
+    height:400px;
+    margin:20px auto 0;
+    position:relative;
+}
+
+.card_container table {
+    width:100%;
+    height:100%;
+    border-spacing: 0;
+}
+
+.card_container textarea {
+    width:90%;
+    height:130px;
+    margin-top:10px;
+    border: lightgrey solid 1px;
+    font-family: "Times New Roman",Georgia,Serif;
+    font-size: 14px;
+}
+
+.card_container button {
+    border: #007AC7 solid 1px;
+    background-color: white;
+}
+
+.card_container button:hover {
+    border: #007AC7 solid 1px;
+    background-color: lightgrey;
+}
+
+td {
+    vertical-align: middle;
+    height:50%;
+    text-align: center;
+}
+
+.card_side {
+    width:470px;
+    padding: 0 15px;
+    background-color: #F5F5F5;
+}
+
+#card_front {
+    border-bottom: none;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    -moz-border-radius:5px 5px 0px 0px;
+}
+
+#card_back {
+    border-top: #5e5e55 dashed 1px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    -moz-border-radius:0px 0px 5px 5px;
+}
+
+#card_front_text {
+    text-align: left;
+    color:grey;
+}
+
+.card_front_cue {
+    color:black;
+    font-size:15px;
+    line-height: 18px;
+}
+
+#card_show {
+    width:207px;
+    height:41px;
+    background-color:transparent;
+    background-position: 0 3px;
+    background-image: url(/images/reviewer/spacebar.png);
+    background-repeat: no-repeat;
+    border:none;
+}
+
+.grade {
+    width: 200px;
+    vertical-align: bottom;
+}
+
+.grade_lower {
+    vertical-align: top;
+}
+
+.button_container {
+    height:50px;
+}
+
+.grade .button_container button {
+    height:37px;
+    width:36px;
+    text-align: center;
+    margin:6px 0 6px 35px;
+    float:left;
+    padding:10px;
+    border:none !important;
+    font-size: 15px;
+    background-image: url(/images/reviewer/key.png);
+}
+
+.grade .button_container button.chosen {
+    background-color: #F6FFA8;
+    visibility:visible !important;
+}
+
+.grade .button_container button:hover {
+    background-color: #B3E1FF;
+}
+
+.grade_hide {
+    visibility:hidden;
+}
+
+.grade_yourself {
+    text-align:left;
+    padding: 0 0 0 13px;
+}
+
+.grade .button_container label {
+    margin-top:18px;
+    display: block;
+    width:115px;
+    text-align: left;
+    float:right;
+}
+
+#edit_buttons {
+    position:absolute;
+    top:0px;
+    right:200px;
+    margin: 5px;
+}
+
+#progress_bar_container {
+    margin:15px 5px 5px;
+    text-align: center;
+    font-size:13px;
+    color:#737357;
+    position: relative;
+}
+
+.outline_node {
+    display:none;
+}
+
+.arrows_up_down {
+    position: relative;
+    top:92px;
+    left:-38px;
+}
+
+.enter {
+    float:left;
+    clear:both;
+    margin:15px 35px;
+    background-image: url(/images/reviewer/enter.png) !important;
+    width:81px !important;
+    height:38px !important;
+    border: none !important;
+    background-color: transparent !important;
+    padding: 11px 31px 0px 0px !important;
+    font-size: 12px !important;
+}
+
+#back_button, #next_button {
+    background-repeat: no-repeat;
+    width:37px;
+    height: 37px;
+    border:none;
+    background-color: transparent;
+    margin:5px 10px;
+    position: relative;
+    top:-10px;
+}
+
+#back_button {
+    background-image: url(/images/reviewer/left.png);
+}
+
+#next_button {
+    background-image: url(/images/reviewer/right.png);
+}
