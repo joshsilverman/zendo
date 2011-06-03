@@ -61,4 +61,9 @@ describe "user" do
 #      it "declined by facebook"
 #      it "declined by gmail"
   end
+
+  describe "signing in with dougie app credentials" do
+    
+    it "signs in correctly"
+  end
 end
