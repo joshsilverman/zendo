@@ -162,13 +162,29 @@ div.img_review {
     float:left;
 }
 
+.buttons .email_pass_label {
+    width:25%;
+    display:block;
+    float:left;
+}
+
 .box input[type=text], .box input[type=password] {
     border:#9e943a solid 1px;
     width:68%;
     clear:right;
 }
 
+.buttons input[type=text], .buttons input[type=password] {
+    border:#9e943a solid 1px;
+    width:55%;
+    clear:right;
+}
+
 .box div {
+    line-height:25px;
+}
+
+.buttons div {
     line-height:25px;
 }
 
