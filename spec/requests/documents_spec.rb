@@ -2,11 +2,23 @@ require "spec_helper"
 
 describe "document" do
 
-  before(:each) do
-    Capybara.current_driver = :selenium if example.metadata[:js]
+  def tiny_mce_fill_in(name, args)
+    within_frame("#{name}_ifr") do
+      editor = page.find('.mceContentBody')
+      editor.native.send_keys(args[:with]) 
+    end
   end
 
-  describe "editor" do
+  before(:each) do
+    if example.metadata[:js]
+      Capybara.current_driver = :selenium
+      Capybara.default_wait_time = 3
+    else
+      Capybara.current_driver = :rack_test
+    end
+  end
+
+  describe "editor", :js => true do
 
     before :each do
       visit "/users/sign_in"
@@ -17,7 +29,7 @@ describe "document" do
       click_button "Sign in"
     end
 
-    it "creates new document", :js => true do
+    it "creates new document" do
       visit "/explore"
       wait_until{ page.has_content?('Misc.')}
       page.find('div.title', :text => 'Misc.').click
@@ -45,10 +57,123 @@ describe "document" do
         @document.name.should == "title two"
       end
 
-      it "edits doc"
+      describe "while editing" do
 
-      it "saves doc"
+        describe "by adding one card" do
+
+          before :each do
+            @text_front = "Shannon's Method"
+            @text_back = " - sentence generation from n-gram models"
+            tiny_mce_fill_in 'editor', :with => @text_front + @text_back
+            Capybara.default_wait_time = 10
+            wait_until{ page.has_content?('Saving')}
+#            click_button 'Save'
+            wait_until{ page.has_content?('Saved')}
+          end
+
+          it "creates card in right rail" do
+            wait_until{ page.has_content?(@text_front) }
+          end
+
+          it "saves new card" do
+            @document = Document.find(@document.id)
+            html = (@document.html.include?(@text_front)) ? @document.html : false
+            @document.html.should == html
+            @document.lines.count.should == 1
+            @user.mems.count.should == 1
+          end
+        end
+
+        describe "by adding many cards" do
+
+          before :each do
+            @nodes = ['card 1 - a', 'card 2 - b', 'card 3 - c', 'card 4 - d']
+          end
+
+          it "maintains right rail in sync" do
+            @nodes.each_with_index do |node, i|
+              tiny_mce_fill_in 'editor', :with => node
+              Capybara.default_wait_time = 10
+              wait_until{ page.has_content?('Saving')}
+              wait_until{ page.has_content?(node.split('-')[0].strip) }
+              all('div.card').length.should == i + 1
+              all('div.card_active').length.should == i + 1
+              tiny_mce_fill_in 'editor', :with => :enter
+            end
+          end
+
+          it "maintains correct db records" do
+            @nodes.each do |node|
+              tiny_mce_fill_in 'editor', :with => node
+              Capybara.default_wait_time = 10
+              wait_until{ page.has_content?('Saving')}
+              wait_until{ page.has_content?(node.split('-')[0].strip) }
+              tiny_mce_fill_in 'editor', :with => :enter
+            end
+
+            @document = Document.find(@document.id)
+            @nodes.each_with_index do |node, i|
+              html = (@document.html.include?(node)) ? @document.html : false
+              @document.html.should == html
+            end
+            @document.lines.count.should == @nodes.length
+            @user.mems.count.should == @nodes.length
+          end
+        end
+
+        describe "by adding/deleting many cards" do
+
+          before :each do
+            @nodes = ['card 1 - a', 'card 2 - b', 'card 3 - c', 'card 4 - d']
+          end
+
+          it "maintains right rail in sync (add/del)" do
+            count = 0
+            @nodes.each_with_index do |node, i|
+              tiny_mce_fill_in 'editor', :with => node
+              Capybara.default_wait_time = 10
+              wait_until{ page.has_content?('Saving')}
+              wait_until{ page.has_content?(node.split('-')[0].strip) }
+              count += 1
+
+              if count % 2 == 0
+                tiny_mce_fill_in 'editor', :with => [:backspace]*11
+                tiny_mce_fill_in 'editor', :with => :enter
+                count -= 1
+                next
+              end
+
+              all('div.card').length.should == count
+              all('div.card_active').length.should == count
+              tiny_mce_fill_in 'editor', :with => :enter
+            end
+          end
+
+          it "maintains correct db records (add/del)" do
+            @nodes.each_with_index do |node, i|
+              tiny_mce_fill_in 'editor', :with => node
+              Capybara.default_wait_time = 10
+              wait_until{ page.has_content?('Saving')}
+              if i % 2 == 1
+                tiny_mce_fill_in 'editor', :with => [:backspace]*11 + [:enter]
+                next
+              end
+              tiny_mce_fill_in 'editor', :with => :enter
+            end
+
+            @document = Document.find(@document.id)
+            @nodes.each_with_index do |node, i|
+              if i % 2 == 1
+                html = (@document.html.include?(node)) ? @document.html : false
+                @document.html.should == html
+              end
+            end
+            count = (@nodes.length/2).ceil
+            @document.lines.count.should == count
+            @user.mems.count.should == count
+          end
+        end
+      end
     end
-
   end
 end

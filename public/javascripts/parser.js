@@ -14,10 +14,14 @@ var cParser = Class.create({
         if (defParts.length > 1) {
 
             //set autoActivate member if this is the first time text has been parsable
-            if (!Card.back && !Card.active) Card.autoActivate = true;
+            if (!Card.back && !Card.active) {
+                console.log("parser auto-activates card number: " + Card.cardNumber);
+                Card.autoActivate = true;
+            }
 
             Card.front = defParts[0];
             Card.back = defParts.slice(1).join(' - ').unescapeHTML();
+            if (Card.back == '') Card.back = ' - ';
         }
 
         //fill in the blank
@@ -75,11 +79,11 @@ var cParser = Class.create({
 
         /* identify doc and line */
         this._identifyDoc(Card);
-        if (this.line.tagName == 'LI') Card.front = this.line;
+        if (this.line.tagName != 'LI') return;
+        Card.front = this.line;
         var grandparent = Element.up(Element.up(this.line));
         if (grandparent && grandparent.tagName == 'LI')
             Card.front = "<ul style='text-align:left; color:#666;'><li>...<ul><li style='color:black;'>"+Card.front.innerHTML+"</li><ul></li></ul>"
-
     },
 
     _identifyDoc: function(Card) {
@@ -99,6 +103,9 @@ var cParser = Class.create({
 
         /* locate adjust line node */
         this.line = Element.select(this.docHtml, '#' + Card.domId);
+        if (!this.line) {
+            console.log('#' + Card.domId);
+        }
         if (this.line.length == 0) return;
         Card.text = this.line[0].innerHTML.split(/<(?:li|ol|ul|p)/)[0];
         this.line = Element.extend(this.line[0]);

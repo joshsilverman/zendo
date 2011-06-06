@@ -4,4 +4,4 @@
 # If you change this key, all old signed cookies will become invalid!
 # Make sure the secret is at least 30 characters and all random,
 # no regular words or you'll be exposed to dictionary attacks.
-Zendo::Application.config.secret_token = '7bd2a920d717d59149d26a65bc90f411de6fd40b65ca506567a269fa9fb9ef719290ec96fffe318544f02fc9bf98824eda3f5e9347fd985e243cf063dbe71adc'
+Zendo::Application.config.secret_token = '982ee7c2fef0e19911a8963d99819dc1c2f56bb283f898cfa7b1aff7aeb5fd40c940069826be61e4da4a5e5abb64e0aba2f4ea79628b7431adbe8d1e53e7a16e'

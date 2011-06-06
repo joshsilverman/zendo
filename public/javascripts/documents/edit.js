@@ -326,7 +326,6 @@ var cOutline = Class.create({
 
             /* new/existing card handling */
             var id = Element.readAttribute(target, 'id') || null;
-            console.log(id);
             if (!id) {
                 console.log("onchange no id");
                 doc.rightRail.createCard(target);
@@ -371,6 +370,7 @@ var cOutline = Class.create({
         else {
             node.setAttribute('active', false);
             Element.removeClassName(node, 'active');
+            console.log("call deactivate (2) on card: " + this.cardNumber);
             doc.rightRail.cards.get(domId).deactivate();
         }
 
@@ -386,7 +386,7 @@ var cOutline = Class.create({
 
 var cRightRail = Class.create({
 
-    cardCount: 0,
+    cardCount: 1,
     cards: new Hash(),
     inFocus: null,
 
@@ -444,6 +444,7 @@ var cRightRail = Class.create({
 //        console.log(style);
 
         //clear cloned node info if not first node with given id
+        console.log("create card node_id: " + node.id);
         if (!node.id) {
             cardNumber = this.cardCount++;
             Element.removeClassName(node, "active");
@@ -591,6 +592,7 @@ var cCard = Class.create({
 
     activate: function() {
         this.active = true;
+        console.log("activate function for card number: " + this.cardNumber);
         $('card_' + this.cardNumber).addClassName('card_active');
         var node = doc.outline.iDoc.getElementById("node_" + this.cardNumber);
         Element.addClassName(node, "active");
@@ -600,6 +602,7 @@ var cCard = Class.create({
 
     deactivate: function() {
         this.active = false;
+        console.log("deactivate function for card number: " + this.cardNumber);
         $('card_' + this.cardNumber).removeClassName('card_active');
         var node = doc.outline.iDoc.getElementById("node_" + this.cardNumber);
         Element.removeClassName(node, "active");
@@ -625,15 +628,9 @@ var cCard = Class.create({
         if (this.active == true) checkbox = '<input type="checkbox" class="card_activation" checked="yes" />';
         else checkbox = '<input type="checkbox" class="card_activation" />';
 
-        //is active
+        //is not active
         if (!this.active)
             this.elmntCard.innerHTML = checkbox + '<i>Click checkbox to activate</i>';
-
-        //truncated txt
-        else if (truncate && !this.active) {
-            this.elmntCard.innerHTML
-                = checkbox + this.text;
-        }
 
         //both sides set
         else if (this.back) {
@@ -652,6 +649,10 @@ var cCard = Class.create({
             //autoDeactivate
             if (this.autoActivated) {
                 this.autoActivated = false;
+                console.log("call deactivate (1) on card: " + this.cardNumber);
+                console.log(this.back);
+                console.log(this.text);
+                console.log(this);
                 this.deactivate();
                 this.elmntCard.down('input').checked = '';
                 var node = doc.outline.iDoc.getElementById('node_' + this.cardNumber);
