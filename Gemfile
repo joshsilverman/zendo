@@ -14,6 +14,7 @@ gem 'postmark-rails', '0.4.0'
 group :development do
   gem 'guard'
   gem 'guard-rspec'
+  gem 'guard-livereload'
 end
 
 group :test do
