@@ -10,7 +10,19 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110602222020) do
+ActiveRecord::Schema.define(:version => 20110606195310) do
+
+  create_table "alternatives", :force => true do |t|
+    t.integer "experiment_id"
+    t.string  "content"
+    t.string  "lookup",        :limit => 32
+    t.integer "weight",                      :default => 1
+    t.integer "participants",                :default => 0
+    t.integer "conversions",                 :default => 0
+  end
+
+  add_index "alternatives", ["experiment_id"], :name => "index_alternatives_on_experiment_id"
+  add_index "alternatives", ["lookup"], :name => "index_alternatives_on_lookup"
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -31,6 +43,15 @@ ActiveRecord::Schema.define(:version => 20110602222020) do
 
   add_index "documents", ["tag_id"], :name => "index_documents_on_tag_id"
   add_index "documents", ["user_id"], :name => "index_documents_on_user_id"
+
+  create_table "experiments", :force => true do |t|
+    t.string   "test_name"
+    t.string   "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "experiments", ["test_name"], :name => "index_experiments_on_test_name"
 
   create_table "lines", :force => true do |t|
     t.string   "domid"
@@ -74,12 +95,13 @@ ActiveRecord::Schema.define(:version => 20110602222020) do
   add_index "tags", ["user_id"], :name => "index_tags_on_user_id"
 
   create_table "users", :force => true do |t|
-    t.string   "email",                                 :default => "", :null => false
-    t.string   "encrypted_password",     :limit => 128, :default => "", :null => false
+    t.string   "email",                               :default => "", :null => false
+    t.string   "encrypted_password",   :limit => 128, :default => "", :null => false
+    t.string   "password_salt",                       :default => "", :null => false
     t.string   "reset_password_token"
-    t.datetime "reset_password_sent_at"
+    t.string   "remember_token"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                         :default => 0
+    t.integer  "sign_in_count",                       :default => 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
@@ -89,7 +111,7 @@ ActiveRecord::Schema.define(:version => 20110602222020) do
     t.string   "confirmation_token"
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
-    t.integer  "failed_attempts",                       :default => 0
+    t.integer  "failed_attempts",                     :default => 0
     t.string   "unlock_token"
     t.datetime "locked_at"
     t.string   "authentication_token"
