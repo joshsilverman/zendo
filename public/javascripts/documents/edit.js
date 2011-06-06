@@ -45,29 +45,34 @@ var cDoc = Class.create({
 
     onEditorLoaded: function() {
 
-        /* load outline/right rail objs */
-        (function() {
+        try {
             var iframe = $('editor_ifr');
             this.iDoc = iframe.contentWindow || iframe.contentDocument;
-            this.iDoc = this.iDoc.document;
-            this.outline = new cOutline(this.iDoc);
-            this.rightRail = new cRightRail();
-            this.rightRail.build();
-            this.editor = tinyMCE.getInstanceById("editor");
+        }
+        catch (e) {
+            doc.onEditorLoaded.bind(this).delay(.05);
+            return;
+        }
 
-            /* click observers */
-            Event.observe($("save_button"),"click",function(e){doc.outline.autosave(e);});
-            Event.observe($("review_button"),"click",function(e){
-                AppUtilities.Cookies.create('reloadEditor', 'true', 3);
-                window.location = "/review/" + doc.outline.documentId;
-            }.bind(this));
+        /* load outline/right rail objs */
+        this.iDoc = this.iDoc.document;
+        this.outline = new cOutline(this.iDoc);
+        this.rightRail = new cRightRail();
+        this.rightRail.build.bind(this.rightRail).defer();
+        this.editor = tinyMCE.getInstanceById("editor");
 
-            $("doc_options").removeClassName("loading");
-            $('editor_parent').show();
-            this.onResize();
-            $("document_name").focus();
-            this.tipTour = new cTipTour();
-        }).bind(this).delay(1);
+        /* click observers */
+        Event.observe($("save_button"),"click",function(e){doc.outline.autosave(e);});
+        Event.observe($("review_button"),"click",function(e){
+            AppUtilities.Cookies.create('reloadEditor', 'true', 3);
+            window.location = "/review/" + doc.outline.documentId;
+        }.bind(this));
+
+        $("doc_options").removeClassName("loading");
+        $('editor_parent').show();
+        this.onResize();
+        $("document_name").focus();
+        this.tipTour = new cTipTour();
 
         /* resize listener */
         window.onresize = this.onResize;
@@ -311,7 +316,9 @@ var cOutline = Class.create({
         }
     },
 
-    onChange: function(target) {
+    onChange: function(target, e) {
+        if (e && e.keyCode >= 37 && e.keyCode <= 40) return;
+
         if (target) {
             if (target.tagName != "P" && target.tagName != "LI" && target.tagName != "DIV")  {
                 target = Element.up(target, "p, li, div");
