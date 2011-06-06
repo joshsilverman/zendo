@@ -20,8 +20,6 @@ group :test do
   gem 'rspec-rails', :require => 'rspec'
   gem 'factory_girl_rails', :require => 'factory_girl'
   gem 'capybara'
-#  gem 'send-keys', :git => 'git://github.com/markgandolfo/send-keys.git'
-#  gem 'Capybara-send-keys', :git => 'git://github.com/lucasas/Capybara-Send-Keys.git'
   gem 'launchy'
   gem 'database_cleaner'
 
