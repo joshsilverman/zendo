@@ -423,13 +423,13 @@ var cRightRail = Class.create({
         window.clearTimeout(this.updateFocusCardTimer)
 
         /* make call */
-        this.updateFocusCardTimer =
-            (function () {
+//        this.updateFocusCardTimer =
+//            (function () {
                 if (doc.rightRail.cards.get(id)) {
                     doc.rightRail.cards.get(id).update(target, false);
                     doc.rightRail.focus(id);
                 }
-            }).delay(.25)
+//            }).delay(.25)
     },
 
     createCard: function(node) {
