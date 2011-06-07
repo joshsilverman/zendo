@@ -91,6 +91,7 @@ describe "document" do
           end
 
           it "maintains right rail in sync" do
+            tiny_mce_fill_in 'editor', :with => :backspace
             @nodes.each_with_index do |node, i|
               tiny_mce_fill_in 'editor', :with => node
               Capybara.default_wait_time = 10
@@ -103,6 +104,7 @@ describe "document" do
           end
 
           it "maintains correct db records" do
+            tiny_mce_fill_in 'editor', :with => :backspace
             @nodes.each do |node|
               tiny_mce_fill_in 'editor', :with => node
               Capybara.default_wait_time = 10
@@ -128,10 +130,12 @@ describe "document" do
           end
 
           it "maintains right rail in sync (add/del)" do
+            tiny_mce_fill_in 'editor', :with => :backspace
             count = 0
             @nodes.each_with_index do |node, i|
               tiny_mce_fill_in 'editor', :with => node
               Capybara.default_wait_time = 10
+              click_button 'Save'
               wait_until{ page.has_content?('Saving')}
               wait_until{ page.has_content?(node.split('-')[0].strip) }
               count += 1
@@ -150,22 +154,28 @@ describe "document" do
           end
 
           it "maintains correct db records (add/del)" do
+            tiny_mce_fill_in 'editor', :with => :backspace
             @nodes.each_with_index do |node, i|
               tiny_mce_fill_in 'editor', :with => node
               Capybara.default_wait_time = 10
-              wait_until{ page.has_content?('Saving')}
+              click_button 'Save'
+              wait_until{ page.has_content?('Saved')}
               if i % 2 == 1
                 tiny_mce_fill_in 'editor', :with => [:backspace]*11 + [:enter]
                 next
               end
               tiny_mce_fill_in 'editor', :with => :enter
             end
+            click_button 'Save'
+            wait_until{ page.has_content?('Saved')}
 
-            @document = Document.find(@document.id)
+
+            @document = Document.includes(:lines).find(@document.id)
             @nodes.each_with_index do |node, i|
               if i % 2 == 1
-                html = (@document.html.include?(node)) ? @document.html : false
-                @document.html.should == html
+                @document.html.include?(node).should be(false)
+              else 
+                @document.html.include?(node).should be(true)
               end
             end
             count = (@nodes.length/2).ceil
