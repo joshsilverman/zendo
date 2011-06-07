@@ -78,12 +78,12 @@ GEM
     i18n (0.6.0)
     json (1.5.1)
     json_pure (1.5.1)
+    kgio (2.4.1)
     launchy (0.4.0)
       configuration (>= 0.0.5)
       rake (>= 0.8.1)
     libnotify (0.5.5)
       ffi (= 1.0.9)
-    libxml-ruby (1.1.3)
     mail (2.2.19)
       activesupport (>= 2.3.6)
       i18n (>= 0.4.0)
@@ -189,6 +189,9 @@ GEM
     treetop (1.4.9)
       polyglot (>= 0.3.1)
     tzinfo (0.3.27)
+    unicorn (3.6.2)
+      kgio (~> 2.3)
+      rack
     warden (1.0.4)
       rack (>= 1.0)
     xpath (0.1.4)
@@ -207,7 +210,6 @@ DEPENDENCIES
   guard-rspec
   launchy
   libnotify
-  libxml-ruby (= 1.1.3)
   mysql
   nokogiri
   omniauth
@@ -215,3 +217,4 @@ DEPENDENCIES
   postmark-rails (= 0.4.0)
   rails (= 3.0.3)
   rspec-rails
+  unicorn

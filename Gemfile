@@ -4,7 +4,6 @@ gem 'rails', '3.0.3'
 gem 'mysql'
 
 gem 'nokogiri'
-gem 'libxml-ruby', '1.1.3'
 
 gem 'devise'
 gem 'omniauth'
@@ -15,6 +14,7 @@ group :development do
   gem 'guard'
   gem 'guard-rspec'
   gem 'guard-livereload'
+  gem 'unicorn'
 end
 
 group :test do
