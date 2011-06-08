@@ -589,7 +589,7 @@ var cCard = Class.create({
         this.active = Element.hasClassName(node, 'active');
 
         /* parse and render */
-        this.text = node.innerHTML.split(/<[uo]l/)[0];
+        this.text = node.innerHTML.split(/<[uoUO](?:l|L)/)[0];
 
         // @todo for now ignore contextualizing active card
         parser.parse(this, false, true);
