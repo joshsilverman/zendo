@@ -71,11 +71,12 @@ var cDoc = Class.create({
         $("doc_options").removeClassName("loading");
         $('editor_parent').show();
         this.onResize();
-        $("document_name").focus();
         this.tipTour = new cTipTour();
 
         /* resize listener */
         window.onresize = this.onResize;
+        try {$("document_name").focus();}
+        catch (e) {}
     },
 
     onResize: function() {
