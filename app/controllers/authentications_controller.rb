@@ -35,7 +35,6 @@ class AuthenticationsController < ApplicationController
       @resource.apply_omniauth(omniauth)
       @resource.skip_confirmation! unless params and params[:user] and params[:user][:email]
       if @resource.save
-        bingo! "signup_top"
         sign_in(:user, @resource)
         flash[:notice] = "Account successfully created. Welcome!"
         redirect_to "/explore"
