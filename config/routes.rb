@@ -94,12 +94,12 @@ Zendo::Application.routes.draw do
   # ajax sign in
   match "users/simple_sign_in" => "users#simple_sign_in"
 
+  #abingo dashboard
+  match '/abingo(/:action(/:id))' => 'abingo_dash', :as => :abingo
+
   # catch-all route for static pages
   Zendo::Application.routes.draw do |map|
     map.connect ':action', :controller => "static"
     #map.abingoTest "/abingo/:action/:id", :controller=> :abingo_dash
   end
-
-  #abingo dashboard
-  #match '/abingo(/:action(/:id))', :to => 'abingo_dash', :as => :abingo
 end
