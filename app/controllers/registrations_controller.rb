@@ -6,6 +6,7 @@ class RegistrationsController < Devise::RegistrationsController
 
     if resource.save
       set_flash_message :notice, :signed_up
+      bingo! "signup_top"
 
       # check if confirmation token set
       if (resource[:confirmation_token])
