@@ -41,8 +41,16 @@ Zendo::Application.configure do
   # config.threadsafe!
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
-  # the I18n.default_locale when a translation can not be found)
   config.i18n.fallbacks = true
+
+  # Send deprecation notices to registered listeners
+  config.active_support.deprecation = :notify
+  config.action_mailer.default_url_options = { :host => 'www.zen.do' }
+  
+  config.action_mailer.perform_deliveries = true 
+  
+  config.action_mailer.delivery_method = :postmark
+  config.action_mailer.postmark_settings = {:api_key => ("c48730d6-77a9-446e-93b5-dc8413a657b4")}
 
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
