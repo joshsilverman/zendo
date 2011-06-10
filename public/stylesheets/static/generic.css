@@ -7,14 +7,16 @@ body {
     position:relative;
     margin:20px auto 5px;
     padding: 0 0 10px;
-    background-image: url(/images/static/bg_solid.jpg);
+    /**/background-image: url(/images/static/bg_solid.jpg);
     border:#c2c0b3 solid 1px;
+    /*border-right:none;
+    border-bottom:none;*/
 
-    border-bottom-left-radius: 5px 5px;
-    border-bottom-right-radius: 5px 5px;
+    /*border-bottom-left-radius: 5px 5px;
+    border-bottom-right-radius: 5px 5px;*/
     border-top-left-radius: 5px 5px;
     border-top-right-radius: 5px 5px;
-    -moz-border-radius:5px 5px 5px 5px;
+    -moz-border-radius:5px 5px;/* 5px 5px;*/
 }
 
 .title {
