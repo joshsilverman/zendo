@@ -9,14 +9,19 @@ div.expand-collapse {
 }
 
 td.heading {
+    color: #196297;
+    padding:8px 0 8px 0;
+}
+
+td.heading span {
     padding-left:18px;
     background-image: url(../../images/static/col.gif);
     background-position: left center;
     background-repeat: no-repeat;
 }
 
-td.expanded {
-    background-image: url(../../images/static/exp.gif);
+span.expanded {
+    background-image: url(../../images/static/exp.gif) !important;
 }
 
 td.heading span:hover {
@@ -24,7 +29,11 @@ td.heading span:hover {
 }
 
 td.fact {
-    padding: 0 10px 10px 18px;
+    padding: 0 10px 0 18px;
+}
+
+td.fact p {
+    margin: 8px 0;
 }
 
 table.fact-wrapper {

@@ -9,14 +9,14 @@ body {
     padding: 0 0 10px;
     /**/background-image: url(/images/static/bg_solid.jpg);
     border:#c2c0b3 solid 1px;
-    /*border-right:none;
-    border-bottom:none;*/
+    border-right:none;
+    border-bottom:none;
 
-    /*border-bottom-left-radius: 5px 5px;
-    border-bottom-right-radius: 5px 5px;*/
-    border-top-left-radius: 5px 5px;
-    border-top-right-radius: 5px 5px;
-    -moz-border-radius:5px 5px;/* 5px 5px;*/
+/*    border-bottom-left-radius: 5px 5px;
+    border-bottom-right-radius: 5px 5px;
+*/    border-top-left-radius: 5px 5px;/*
+    border-top-right-radius: 5px 5px;*/
+    -moz-border-radius:5px 0 0 0;/* 5px; 5px 5px;*/
 }
 
 .title {
@@ -24,7 +24,7 @@ body {
     -moz-transform: rotate(-90deg);
     filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3); */
     color: #007AC7;
-    font-size: 40px;
+    font-size: 30px;
     /* left: -240px;
     position: absolute;
     top: 300px; */
@@ -47,6 +47,12 @@ body {
     text-transform: capitalize;
 }
 
+.about_sections h3 {
+/*    font-weight:normal;*/
+    text-transform: capitalize;
+    color:#424242;
+}
+
 .about_section {
     margin: 25px 25px 0 0 ;
     padding:0 20px 0 110px;
@@ -58,4 +64,12 @@ body {
 .important_term {
     color: #007AC7;
     font-weight: bold;
+}
+
+div.hr {
+    background-image: url(../../images/static/faq_divider.gif);
+    width: 100%;
+    height:2px;
+    background-repeat: no-repeat;
+    background-position: center bottom;
 }
