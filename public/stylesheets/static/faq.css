@@ -1,0 +1,35 @@
+table.fact-table {
+    width: 100%;
+    padding-left:102px;
+}
+
+div.expand-collapse {
+    float:right;
+    margin: -15px 80px 15px 0;
+}
+
+td.heading {
+    padding-left:18px;
+    background-image: url(../../images/static/col.gif);
+    background-position: left center;
+    background-repeat: no-repeat;
+}
+
+td.expanded {
+    background-image: url(../../images/static/exp.gif);
+}
+
+td.heading span:hover {
+    cursor:pointer;
+}
+
+td.fact {
+    padding: 0 10px 10px 18px;
+}
+
+table.fact-wrapper {
+    background-image: url(../../images/static/faq_divider.gif);
+    width: 100%;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+}
