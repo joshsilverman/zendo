@@ -4,12 +4,7 @@ development:
   database: zendo
   pool: 5
   timeout: 5000
-  socket:  /tmp/mysql.sock
-  <%=#
-#        ['/opt/local/var/run/mysql5/mysqld.sock', # darwinports
-#         '/opt/local/var/run/mysqld/mysqld.sock', # darwinports, again
-#         '/var/run/mysqld/mysqld.sock',           # ubuntu/debian
-#         '/tmp/mysql.sock'].select { |f| File.exist? f }.first %>
+  socket: /tmp/mysql.sock
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
