@@ -34,9 +34,11 @@ body {
     display:none;
 }
 
-.doc_options button {
-    border: 1px solid #FFBB00;
-    background-color:#FFEA00;
+.doc_options button, .display-options {
+    border: 1px solid #009CFF;
+    background-color:#B3DAF2;
+/*    background:#B3DAF2;
+    border:#009CFF;*/
     color:#000;
 
     border-top-left-radius: 3px 3px;
@@ -53,6 +55,8 @@ body {
 
 #save_button {
     margin-right:3px;
+    border: 1px solid #FFBB00;
+    background-color:#FFEA00;
 }
 
 #review_button {
@@ -217,4 +221,97 @@ img.sync:active {
     border-top-left-radius: 5px 5px;
     border-top-right-radius: 5px 5px;
     -moz-border-radius:5px 5px 0 0;
+}
+
+/* sharing menu */
+
+#share_menu {
+    background:white;
+    width:400px;
+
+    border: 1px solid #009CFF;
+    background:#B3DAF2;
+
+    border-top-left-radius: 5px 5px;
+    border-top-right-radius: 5px 5px;
+    border-bottom-left-radius: 5px 5px;
+    border-bottom-right-radius: 5px 5px;
+    -moz-border-radius:5px 5px 5px 5px;
+}
+
+#share_menu .title {
+    padding: 3px;
+    border-bottom: 1px solid #009CFF;
+    text-align: center;
+}
+
+#share_menu .content {
+    background:white;
+    padding: 3px;
+
+    border-bottom-left-radius: 5px 5px;
+    border-bottom-right-radius: 5px 5px;
+    -moz-border-radius:0 0 5px 5px;
+}
+
+#share_menu .content div {
+    padding: 5px;
+}
+
+.user-tokens .token {
+    background-color: #EDDDF0;
+    border: solid 1px #999;
+    padding: 1px 2px;
+    margin: 2px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    position: relative;
+    float:left;
+}
+
+.remove {
+    text-decoration: none;
+    padding: 0 4px;
+    font-size: 10px;
+
+    position:relative;
+    top:-1px;
+
+    color:#333;
+    background:#bbb;
+
+    border-radius: 4px;
+    -moz-border-radius:4px;
+}
+
+.remove:hover {
+    color:#999;
+    background:#333;
+    cursor:pointer;
+}
+
+#share_menu form {
+    display:inline;
+}
+
+#share_menu span.option {
+    width: 84px;
+}
+
+#share_menu input[type=text] {
+    width: 180px;
+}
+
+#share_menu input[type=text], #share_menu select {
+    border: solid 1px #999;
+    padding: 1px 2px;
+    margin: 2px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    position: relative;
+}
+
+/* display option buttons */
+.display-options:hover {
+    cursor:pointer;
 }

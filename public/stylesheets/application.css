@@ -28,6 +28,10 @@ img.home {
 }
 
 .clr { height:10px;clear:both; }
+.clr-thin {
+    height:0;clear:both;
+    padding:2px;
+}
 
 .rounded_border {
     border: 1px solid lightGrey;

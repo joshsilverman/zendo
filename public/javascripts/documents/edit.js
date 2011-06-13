@@ -62,6 +62,7 @@ var cDoc = Class.create({
         this.editor = tinyMCE.getInstanceById("editor");
 
         /* click observers */
+        Event.observe($("share_button"),"click",doc.share.bind(this));
         Event.observe($("save_button"),"click",function(e){doc.outline.autosave(e);});
         Event.observe($("review_button"),"click",function(e){
             AppUtilities.Cookies.create('reloadEditor', 'true', 3);
@@ -88,7 +89,7 @@ var cDoc = Class.create({
         rightRail.show();
 
         /* calculations */
-        var bottomMargin = 20;
+        var bottomMargin = 50;
         var editorVerticalSpaceHeight = document.viewport.getDimensions()['height']
             - editorContainer.cumulativeOffset().top - bottomMargin;
         var editorWhitespace = $('editor_tbl');
@@ -105,6 +106,25 @@ var cDoc = Class.create({
         var editorWidth = 660;
         $("editor_tbl").setStyle({width: editorWidth + 'px'});
         $("editor_parent").setStyle({width: editorWidth + 'px'});
+    },
+
+    share: function() {
+        new Dialog.Box('share_menu');
+        console.log($('share_menu'));
+        $('share_menu').show();
+//        $('test123').hide();
+//        var openMenu = false;
+//        if ($("share_button").menu_open == 'true') {
+//            $("share_button").menu_open = 'false';
+//            $('doc_options').morph('height:24px;');
+//            console.log('close it');
+//        }
+//        else {
+//            $("share_button").menu_open = 'true';
+//            openMenu = true;
+//            $('doc_options').morph('height:150px;');
+//            console.log('open it');
+//        }
     }
 });
 
@@ -420,6 +440,8 @@ var cRightRail = Class.create({
     /* wrapper function for focus/update to limit the number of calls! */
     updateFocusCardWrapper: function(id, target) {
 
+        //@todo this wrapper function has been depracated ; chane calls to update and focus
+
         /* clear timer */
         window.clearTimeout(this.updateFocusCardTimer)
 
@@ -443,13 +465,6 @@ var cRightRail = Class.create({
             && node.tagName.toUpperCase() != 'DIV') return null;
 
         Element.addClassName(node, "outline_node");
-
-//        /* filter styles */
-//        var style = Element.readAttribute(node, 'style');
-//        console.log(style);
-//        style = style.replace(/font[^;]+;/, "");
-//        Element.writeAttribute(node, 'style', style);
-//        console.log(style);
 
         //clear cloned node info if not first node with given id
         console.log("create card node_id: " + node.id);

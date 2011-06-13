@@ -1,9 +1,10 @@
-<% @page_specific_scripts_js = ["parser", "vendors/prototip/prototip", "vendors/lightview/js/lightview.js"] %>
+<% @page_specific_scripts_js = ["parser", "vendors/prototip/prototip", "vendors/lightview/js/lightview.js", "vendors/modal.js"] %>
 <% @page_specific_scripts_css = ["prototip/prototip", "/javascripts/vendors/lightview/css/lightview"] %>
 
 <div id="doc_options" class="doc_options loading">
-  <span>/<%= link_to @tag.name, '/#%i' % @tag.id %>/<input id="document_name" value="<%=@document.name%>"></input></span>
+  <span>Class: <%= select 'tag', 'id', current_user.tags.collect {|t| [ t.name, t.id ] } %> Title: <input id="document_name" value="<%=@document.name%>"></input></span>
   <button id="review_button" style="float:right">Review</button>
+  <button id="share_button" style="float:right;">Share</button>
   <button id="save_button" style="float:right;" class="saving">Saved</button>
 </div>
 
@@ -83,5 +84,43 @@ tinyMCE.init({
   <div id="tip_review">
       <div class="circle"><div class="circumscribed">4</div></div><div class="instruction">Review here</div>
       <a onClick="doc.tipTour.restartTour();" href="javascript:void(0)">Restart</a>
+  </div>
+</div>
+
+<button id="panel_button" class="display-options" style="float:right; margin-top:6px; background: #bbb; border-color:#999; color:#333;">Side Panel</button>
+<button id="full_window_button" class="display-options" style="float:right; margin-top:6px;">Full Window</button>
+
+<div id="share_menu" style="display:none;">
+  <div class="title">
+    Sharing
+  </div>
+  <div class="content">
+    <div>
+      <span class="option">Public/Private:</span>
+      <%= select 'document', 'name', [['public',true],['private',false]] %>
+    </div>
+    <div class="user-tokens">
+      <span class="option" style="float:left; padding: 2px 2px 2px 0; margin: 2px 2px 2px 0;">Sharing with:</span>
+      <span class="token">
+        josh.silverman@gmail.com
+        <span class="remove" >X</span>
+      </span>
+      <span class="token">
+        bill.derusha@gmail.com
+        <span class="remove" >X</span>
+      </span>
+      <span class="token">
+        jason.urton@gmail.com
+        <span class="remove" >X</span>
+      </span>
+    </div>
+    <div class="clr-thin"></div>
+    <div>
+      <span class="option">Add a person:</span>
+      <%= form_tag "temp", :method => "post" do %>
+        <%= text_field_tag :name %>
+        <%= submit_tag "Share" %>
+      <% end %>
+    </div>
   </div>
 </div>
