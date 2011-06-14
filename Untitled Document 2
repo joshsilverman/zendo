@@ -1,0 +1,19 @@
+<% @page_specific_scripts_js = ["parser", "accordion"] %>
+
+<div id="tags_json" style="display: block;"><%= @tags_json %></div>
+
+<div id="documents">
+  <!--<div class="icon_container rounded_border">
+    <div class="title">Title here</div>
+    <div class="folder">
+      <img alt="" src="/images/organizer/folder-full-icon.png" />
+    </div>
+    <div class="folder_options">
+      <img alt="" src="/images/organizer/add-icon.png" />
+      <img alt="" src="/images/organizer/play-icon.png" />
+      <img alt="" src="/images/organizer/process-icon.png" />
+    </div>
+  </div>-->
+</div>
+<div class="clr"></div>
+
