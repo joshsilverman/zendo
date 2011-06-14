@@ -27,15 +27,13 @@ margin: 0 0 0 0;
 .expand{
     background-image: url('../../images/organizer/expand.png');
     background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: right;
+    background-position: 100%;
 }
 
 .collapse{
-    background-image: url('../../images/organizer/expand.png');
+    background-image: url('../../images/organizer/collapse.png');
     background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: right;
+    background-position: 100%;
 }
 
 .accordion_toggle_active {
