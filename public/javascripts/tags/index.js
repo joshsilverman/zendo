@@ -81,7 +81,7 @@ var cDoc = Class.create({
             var created = this.theDate;
             this.convertDate(new Date(singleDoc['updated_at']));
             var updated = this.theDate;
-            html += '<div id="metainfo"><h4 class="details_label">Title: </h4>\
+            html += '<div id="metainfo" doc_id="'+checkedList[0]+'"><h4 class="details_label">Title: </h4>\
                     <em>'+singleDoc['name']+'</em><br/>\
                     <h4 class="details_label">Created On: </h4>\
                     <em>'+created+'</em><br/>\
@@ -206,7 +206,14 @@ var cDoc = Class.create({
         //listen for folder click
         $$('.accordion_toggle').each(function(element){
             element.observe('click', function(event){
-                new Effect.toggle(event.target.next(0),'Blind', {duration:1});
+                new Effect.toggle(event.target.next(0),'Blind', {duration:.5});
+                if(event.target.className =='accordion_toggle collapse'){
+                    event.target.removeClassName('collapse');
+                    event.target.addClassName('expand');
+                } else {
+                    event.target.removeClassName('expand');
+                    event.target.addClassName('collapse');
+                }
             })
         }.bind(this));
     },
