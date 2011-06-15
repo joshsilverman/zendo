@@ -167,12 +167,37 @@ overflow: hidden;
    float:right;
    margin: 0 0 10px 0;
    }
+
 .button:hover {
    border-top-color: #28597a;
    background: #28597a;
    color: #ccc;
    }
+   
 .button:active {
    border-top-color: #1b435e;
    background: #1b435e;
    }
+
+#detail_name{
+   font-size:  large;
+   font-weight: 600;
+   float: left;
+}
+
+.edit_icon{
+    float:left;
+    margin-left: 5px;
+    padding-right:20px;
+    width: inherit;
+    background: url(../../images/organizer/edit-icon-bw-15x15.png);
+    background-repeat: no-repeat;
+    background-position: right top;
+}
+
+.edit_icon:hover{
+    background: url(../../images/organizer/edit-icon-15x15.png);
+    background-repeat: no-repeat;
+    background-position: right top;
+    cursor: pointer;
+}

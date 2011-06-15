@@ -81,9 +81,8 @@ var cDoc = Class.create({
             var created = this.theDate;
             this.convertDate(new Date(singleDoc['updated_at']));
             var updated = this.theDate;
-            html += '<div id="metainfo" doc_id="'+checkedList[0]+'"><h4 class="details_label">Title: </h4>\
-                    <em>'+singleDoc['name']+'</em><br/>\
-                    <h4 class="details_label">Created On: </h4>\
+            html += '<div id="metainfo" doc_id="'+checkedList[0]+'"><div id="sdt" class="single_doc_title"><div class="edit_icon"><span id="detail_name"><em>'+singleDoc['name']+'</em></span></div></div>\
+                    <div style="clear: both;"></div><h4 class="details_label">Created On: </h4>\
                     <em>'+created+'</em><br/>\
                     <h4 class="details_label">Last Updated: </h4>\
                     <em>'+updated+'</em></div>';
@@ -102,7 +101,29 @@ var cDoc = Class.create({
             html+= '</div>';
         }
         $('details').update(html);
+
+        //listener for doc name change
+        $$('.single_doc_title').each(function(elem){
+            elem.observe('click', function(event) {
+                var title = event.target.innerHTML;
+                event.target.innerHTML = '<input id="edt" class="edit_doc_title" value="'+title+'" />';
+                $('edt').focus();
+                $$('.edit_doc_title').each(function(elem){
+                    elem.observe('keypress', function(e) {
+                        if (e.keyCode == 13) e.target.blur();
+                    }.bind(this));
+
+                    elem.observe('blur', function(){
+                        var newTitle = $('edt').value;
+                        $('sdt').innerHTML = '<div class="edit_icon"><span id="detail_name"><em>'+newTitle+'</em></span></div>';
+                        //add save call
+                    }.bind(this));
+                }.bind(this));
+            }.bind(this));
+        }.bind(this));
     },
+
+    
 
     sameHeight: function(){
         var h = $('documents').getHeight();
