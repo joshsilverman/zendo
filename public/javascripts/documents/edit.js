@@ -37,6 +37,9 @@ var cDoc = Class.create({
         /* utilities */
         this.utilities = new cUtilities();
 
+        /* load class selecter widget */
+        new cClassSelector();
+
         /* disable feedback */
         if (document.viewport.getWidth() < 1000) {
             AppUtilities.vendorScripts.unset("script_userecho")
@@ -123,7 +126,7 @@ var cOutline = Class.create({
 
     initialize: function(iDoc) {
         this.iDoc = iDoc;
-        this.documentId = $('document_id').innerHTML;
+        this.documentId = $('doc_id').innerHTML;
         this.lineIds = $H($('line_ids').innerHTML.evalJSON());
         
         this.autosaver = new PeriodicalExecuter(this.autosave.bind(this), 4);

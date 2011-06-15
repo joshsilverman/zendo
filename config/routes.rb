@@ -69,9 +69,10 @@ Zendo::Application.routes.draw do
 
   # documents
   match "/documents/create/:tag_id" => "documents#create"
+  match "/documents/update_tag"
   resources :documents, :only => [:edit, :update, :destroy]
 
-  # reviwer
+  # reviewer
   match "/review/:id" => "documents#review" #** public **#
   match "/review/dir/:id" => "tags#review" #** public **#
   match "/mems/update/:id/:confidence/:importance" => "mems#update"

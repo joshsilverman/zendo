@@ -1,8 +1,26 @@
-<% @page_specific_scripts_js = ["parser", "vendors/prototip/prototip", "vendors/lightview/js/lightview.js"] %>
+<% @page_specific_scripts_js = ["parser", "vendors/prototip/prototip", "class_selector"] #"vendors/lightview/js/lightview.js"] %>
 <% @page_specific_scripts_css = ["prototip/prototip", "/javascripts/vendors/lightview/css/lightview"] %>
 
 <div id="doc_options" class="doc_options loading">
-  <span>/<%= link_to @tag.name, '/#%i' % @tag.id %>/<input id="document_name" value="<%=@document.name%>"></input></span>
+  
+  <span>
+    <% if @read_only %>
+      <div style="padding:3px 0 0 3px; float:left;">
+        <em><%=@document.name%></em>
+        (<em><%= @tag.name %></em>)
+        <input id="document_name" value="<%=@document.name%>" style="display:none;"></input>
+      </div>
+    <% else %>
+      Class:
+
+      <%= select 'tag', 'id', current_user.tags.collect {|t| [ t.name, t.id, {:_selected => (@document.tag_id == t.id)}] } %>
+      <%= image_tag "shared/fb-loader.gif", :alt => 'loading', :style => "margin-right:5px;visibility:hidden;", :id => "doc_loading" %>
+      
+      Title: <input id="document_name" value="<%=@document.name%>"></input>
+    <% end %>
+  </span>
+
+
   <button id="review_button" style="float:right">Review</button>
   <button id="save_button" style="float:right;" class="saving">Saved</button>
 </div>
@@ -23,7 +41,7 @@
 </div>
 
 <!-- document vars -->
-<div id="document_id" style="display:none;"><%=@document.id%></div>
+<div id="doc_id" style="display:none;"><%=@document.id%></div>
 <div id="line_ids" style="display:none;"><%=@line_ids%></div>
 <div id="new_doc" style="display:none;"><%=@new_doc%></div>
 <div id="doc_count" style="display:none;"><%=@doc_count%></div>
