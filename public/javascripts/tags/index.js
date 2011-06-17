@@ -258,10 +258,27 @@ var cDoc = Class.create({
         self.document.location.href = '/review/' + docId
     },
 
-
     destroyFolder: function(event){
-        //Fill out
-        alert("This will destory EVERYTHING!");
+        if (!confirm('Are you sure you want to delete this directory and all of it\'s contents? This cannot be undone.')) return;
+        /* request */
+        var tagId = event.target.getAttribute('id');
+        tagId = tagId.substring(7);
+        console.log(tagId);
+        new Ajax.Request('/tags/' + tagId, {
+            method: 'delete',
+            onSuccess: function(transport) {
+
+                /* inject json and rerender document */
+                $('tags_json').update(transport.responseText);
+                this.prepareData();
+                console.log('prepped');
+                this.render();
+                console.log('render');
+            }.bind(this),
+            onFailure: function(transport) {
+                alert('There was an error removing the directory.');
+            }
+        });
     },
 
     renameFolder: function(event){
