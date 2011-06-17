@@ -1,9 +1,12 @@
-<% @page_specific_scripts_js = ["parser"] %>
+<% @page_specific_scripts_js = ["parser", "class_selector"] %>
 
 <div id="tags_json" style="display: none;"><%= @tags_json %></div>
+<div id="detail_tags" style="display: none;">
+<%= current_user.tags.collect {|t| [ t.name, t.id] }.to_json()%>
+</div>
 
 <div class="new_guide_button">
-   <a href="/documents/create/0" class="button">Generate New Study Guide</a>
+   <a href="/documents/create/0" class="button">Create A New Document</a>
 </div>
 <div style="clear:both;"></div>
 <div id="details" class="rounded_border">

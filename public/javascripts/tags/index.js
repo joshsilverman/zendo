@@ -73,19 +73,31 @@ var cDoc = Class.create({
                checkedList.push($(ele).getAttribute('doc_id'));
            }
         });
-        if(checkedList[0] == null){
+        if(checkedList[0] == null && this.activeItemId==''){
             html += '<em>Click a checkbox to view document details...</em>';
-        } else if(checkedList[1] == null){
-            var singleDoc = this.docs.get(checkedList[0]);
+        } else if((checkedList[0] == null && this.activeItemId!='')||(checkedList[1] == null && this.activeItemId!='')){
+            var singleDoc = this.docs.get(this.activeItemId);
             this.convertDate(new Date(singleDoc['created_at']));
             var created = this.theDate;
             this.convertDate(new Date(singleDoc['updated_at']));
             var updated = this.theDate;
-            html += '<div id="metainfo" doc_id="'+checkedList[0]+'"><div id="sdt" class="single_doc_title"><div class="edit_icon"><span id="detail_name"><em>'+singleDoc['name']+'</em></span></div></div>\
+            var selector ='<select id="tag_id">';
+            this.tags.each(function(t){
+                var s = ''
+                if(t['id']==singleDoc['tag_id']) {s = 'selected = "selected"';}
+                selector +='<option value="'+t['id']+'" '+s+'>'+t['name']+'</option>';
+            });
+            selector += '</select>';
+            
+            html += '<div id="metainfo" doc_id="'+this.activeItemId+'">\
+                    '+selector+'<img alt="loading" id="doc_loading" src="../../images/shared/fb-loader.gif" style="margin-right:5px;visibility:hidden;">\
+                    <div id="sdt" class="single_doc_title"><div class="edit_icon"><span id="detail_name"><em>'+singleDoc['name']+'</em></span></div></div>\
                     <div style="clear: both;"></div><h4 class="details_label">Created On: </h4>\
                     <em>'+created+'</em><br/>\
                     <h4 class="details_label">Last Updated: </h4>\
                     <em>'+updated+'</em></div>';
+        } else if(checkedList[1] == null && this.activeItemId == ''){
+            html += 'You have selected <strong>'+this.docs.get(checkedList[0])['name']+'</strong>... Use the checkboxes to take actions on multiple documents';
         } else {
             html+='<div id="metainfo"><h4 class="details_label">Multiple Documents:</h4>';
             var multiDoc = [];
@@ -102,11 +114,14 @@ var cDoc = Class.create({
         }
         $('details').update(html);
 
+        /* load class selecter widget */
+        new cClassSelector(true);
+
         //listener for doc name change
         $$('.single_doc_title').each(function(elem){
             elem.observe('click', function(event) {
-                var title = event.target.innerHTML;
-                event.target.innerHTML = '<input id="edt" class="edit_doc_title" value="'+title+'" />';
+                var title = $('sdt').down(2).innerHTML;
+                $('sdt').innerHTML = '<input id="edt" class="edit_doc_title" value="'+title+'" />';
                 $('edt').focus();
                 $$('.edit_doc_title').each(function(elem){
                     elem.observe('keypress', function(e) {
@@ -214,6 +229,7 @@ var cDoc = Class.create({
                 event.stop();
             }
             }
+            this._buildDetails();
             }.bind(this));
         }.bind(this));
 
@@ -236,6 +252,14 @@ var cDoc = Class.create({
                     event.target.addClassName('collapse');
                 }
             })
+        }.bind(this));
+
+        document.observe("document:moved", function() {
+            alert('launched');
+           // this._buildFolders();
+           // this._buildDocs();
+            this.render();
+            alert('finished');
         }.bind(this));
     },
 
