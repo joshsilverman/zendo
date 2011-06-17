@@ -14,8 +14,9 @@ Vertical Accordions
 .accordion_toggle {
 display: block;
 height: 30px;
-width: 94%;
-padding: 0 10px 0 25px;
+width: 93%;
+float:left;
+padding: 0 10px 0 30px;
 line-height: 32px;
 color: #ffffff;
 font-weight: bold;
@@ -23,21 +24,22 @@ text-decoration: none;
 outline: none;
 font-size: 18px;
 color: #000000;
-border-bottom: #9a9a9a 1px solid;
+/*border-bottom: #9a9a9a 1px solid;*/
 cursor: pointer;
-margin: 0 0 0 0;
+margin: 0 0 5px 5px;
+background-color: #e1efd6;
 }
 
 .expand{
     background-image: url('../../images/organizer/expand.png');
     background-repeat: no-repeat;
-    background-position: left center;
+    background-position: 8px 7px;
 }
 
 .collapse{
     background-image: url('../../images/organizer/collapse.png');
     background-repeat: no-repeat;
-    background-position: left center;
+    background-position: 8px 13px;
 }
 
 .accordion_toggle_active {
@@ -67,23 +69,30 @@ overflow: hidden;
 
 #documents {
     border: #444444 1px solid;
-    width:69%;
+    width:70%;
     float:right;
-    padding:10px;
+    padding:5px;
     margin-left: 5px;
     background-color: white;
+    min-height: 375px;
 }
 
 #details{
     float:left;
     border: #444444 1px solid;
-    width: 25%;
+    width: 100%;
     padding:10px;
     background-color: white;
+    min-height: 275px;
+}
+
+#left_container{
+    float:left;
+    width:25%;
 }
 
 .doc_item{
-    margin:3px 0;
+    margin:3px 0 3px 20px;
     padding:1px;
     line-height: 21px;
 }
@@ -124,7 +133,7 @@ overflow: hidden;
 
 .doc_actions{
     display:none;
-    width:100px;
+    width:70px;
     float:right;
     padding:3px;
     z-index: 99999;
@@ -133,17 +142,18 @@ overflow: hidden;
     margin-top:22px;
     margin-right:-1px;
     background-color: #fff;
+    position: relative;
 }
 
 .doc_actions ul{
-    list-style-image: none;
-    margin: 0;
+    list-style-type: none;
+    margin: 0 0 0 -17px;
 }
 
 .rounded_border{
-    -webkit-border-radius: 15px;
-    -moz-border-radius: 15px;
-    border-radius: 15px;
+    -webkit-border-radius: 7px;
+    -moz-border-radius: 7px;
+    border-radius: 7px;
 }
 
 .remove_doc {
@@ -153,7 +163,7 @@ overflow: hidden;
 }
 
 .button {
-   width: 250px;
+   width: 100%;
    height: 40px;
    border-top: 1px solid #96d1f8;
    background: #65a9d7;
@@ -174,8 +184,8 @@ overflow: hidden;
    vertical-align: middle;
    text-align: center;
    line-height: 40px;
-   float:right;
-   margin: 0 0 10px 0;
+   float:left;
+   margin-bottom: 10px;
    }
 
 .button:hover {
@@ -210,4 +220,15 @@ overflow: hidden;
     background-repeat: no-repeat;
     background-position: right top;
     cursor: pointer;
+}
+
+.remove_folder_icon{
+    margin-top:8px;
+    float:right;
+}
+
+.edit_folder_icon{
+    margin-top:8px;
+    margin-right:7px;
+    float:right;
 }

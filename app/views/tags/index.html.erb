@@ -5,15 +5,17 @@
 <%= current_user.tags.collect {|t| [ t.name, t.id] }.to_json()%>
 </div>
 
+<div id="left_container">
 <div class="new_guide_button">
    <a href="/documents/create/0" class="button">Create A New Document</a>
 </div>
-<div style="clear:both;"></div>
+
 <div id="details" class="rounded_border">
     <div id="metainfo">
       <h4 class="details_label">Title: </h4><em>Cells</em><br/>
       <h4 class="details_label">Last Updated: </h4><em>5/29/2011</em>
     </div>
+</div>
 </div>
 
 <div id="documents" class="rounded_border">
