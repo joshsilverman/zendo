@@ -258,6 +258,7 @@ var cDoc = Class.create({
         self.document.location.href = '/review/' + docId
     },
 
+
     destroyFolder: function(event){
         //Fill out
         alert("This will destory EVERYTHING!");
@@ -385,8 +386,8 @@ var cDoc = Class.create({
             element.observe('mouseleave', function(event){
                 event.target.writeAttribute("src", "../../images/organizer/edit-icon-bw-15x15.png" );
             });
-
         }.bind(this));
+
 
         //listen for doc folder change
         document.observe("document:moved", function() {

@@ -96,7 +96,8 @@ Zendo::Application.routes.draw do
   match "users/simple_sign_in" => "users#simple_sign_in"
 
   #abingo dashboard
-#  match '/abingo(/:action(/:id))' => 'abingo_dash', :as => :abingo
+
+  # match '/abingo(/:action(/:id))' => 'abingo_dash', :as => :abingo
 
   # catch-all route for static pages
   Zendo::Application.routes.draw do |map|
