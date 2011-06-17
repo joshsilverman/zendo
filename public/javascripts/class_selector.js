@@ -17,6 +17,9 @@ var cClassSelector = Class.create({
         $$('#tag_id option').each(function(option) {
             if (option._selected == 'true') option.selected = true;
         });
+
+        new Dialog.Box('new_folder_option');
+        console.log($('new_folder_option'));
     },
 
     changeClass: function(event) {
