@@ -7,10 +7,11 @@ var cDoc = Class.create({
     docs: null,
     html: null,
     theDate: null,
+    activeTags: null,
     activeItemId: '',
+    h: null,
 
     initialize: function() {
-
         this.prepareData();
     },
 
@@ -29,6 +30,13 @@ var cDoc = Class.create({
             }.bind(this));
         }.bind(this));
 
+        if(this.activeTags==null){
+            this.activeTags = new Hash();
+            var activeT = this.activeTags;
+            this.tags.each(function(tag){
+                activeT.set(tag['id'], 'open');
+            });
+        }
         /* resize listener */
         window.onresize = AppUtilities.resizeContents;
     },
@@ -40,27 +48,48 @@ var cDoc = Class.create({
     _buildFolders: function(){
         var html = '';
         this.tags.each(function(tag) {
-          html += '<h2 tag_id="'+tag['id']+'" class="accordion_toggle collapse">'+tag['name']+'</h2>\
-              <div id="accordion_content_'+tag['id']+'" class="accordion_content" tag_id="'+tag['id']+'" ></div>';
+          var icon = 'expand';
+          var style = 'style= "display:none;"';
+          if(this.activeTags.get(tag['id'])=='open'){
+              icon = 'collapse';
+              style='style="display:block;"';
+          }
+          html += '<div class="accordion_toggle rounded_border '+icon+'" tag_id="'+tag['id']+'" >'+tag['name']+'\
+              <img id="delete_'+tag['id']+'" class="remove_folder_icon" src="../../images/organizer/remove-icon-bw-15x15.png" style="display:none;"/>\
+              <img id="edit_'+tag['id']+'" class="edit_folder_icon" src="../../images/organizer/edit-icon-bw-15x15.png" style="display:none;"/></div><div style="clear:both;"></div>\
+              <div id="accordion_content_'+tag['id']+'" class="accordion_content" tag_id="'+tag['id']+'" '+style+'></div>';
         }.bind(this));
         $('documents').update(html);
+
     },
 
     _buildDocs: function(){
         var html = '';
         this.tags.each(function(tag) {
+          var active = this.activeItemId;
           tag['documents'].each(function(doc){
               //this.docs.set(doc['id'], doc);
+              if(doc['id']==active){
+                  html+= '<div class="doc_item active" doc_id="'+doc['id']+'">\
+                    <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
+                    <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+'</span>\
+                    <div class="doc_actions" style="display: block;">\
+                    <ul><li><a href="/documents/'+doc['id']+'/edit">edit</a></li>\
+                    <li><a href="/review/'+doc['id']+'">review</a></li>\
+                    <li><span class="remove_doc" doc_id="'+doc['id']+'">delete</span></li></ul>\
+                    </div>\
+                    </div>';
+              } else {
               html += '<div class="doc_item inactive" doc_id="'+doc['id']+'">\
                     <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
                     <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+'</span>\
                     <div class="doc_actions">\
                     <ul><li><a href="/documents/'+doc['id']+'/edit">edit</a></li>\
                     <li><a href="/review/'+doc['id']+'">review</a></li>\
-                    <li><span class="remove_doc" doc_id="'+doc['id']+'">delete</span></li>\
-                    </ul>\
+                    <li><span class="remove_doc" doc_id="'+doc['id']+'">delete</span></li></ul>\
                     </div>\
                     </div>';
+              }
           });
           var elemId = 'accordion_content_'+tag['id'];
           $(elemId).update(html);
@@ -78,7 +107,7 @@ var cDoc = Class.create({
            }
         });
         if(checkedList[0] == null && this.activeItemId==''){
-            html += '<em>Click a checkbox to view document details...</em>';
+            html += '<em>Select a document to view details...</em>';
         } else if((checkedList[0] == null && this.activeItemId!='')||(checkedList[1] == null && this.activeItemId!='')){
             var singleDoc = this.docs.get(this.activeItemId);
             this.convertDate(new Date(singleDoc['created_at']));
@@ -133,22 +162,40 @@ var cDoc = Class.create({
                     }.bind(this));
 
                     elem.observe('blur', function(){
+                        console.log('blur start');
                         var newTitle = $('edt').value;
-                        $('sdt').innerHTML = '<div class="edit_icon"><span id="detail_name"><em>'+newTitle+'</em></span></div>';
-                        //add save call
+                        var parameters = {};
+                        parameters['doc_id'] = $('metainfo').getAttribute('doc_id');
+                        parameters['name'] = newTitle;
+                        console.log('params set');
+                        new Ajax.Request('/documents/update_document_name', {
+                            method: 'post',
+                            parameters: parameters,
+                            onFailure: function() {
+                                console.log('FAIL');
+                            },
+                            onSuccess: function() {
+                                console.log('SUCCESS');
+                                new Ajax.Request('/tags/get_tags_json', {
+                                   onSuccess: function(transport) {
+                                       console.log('SUCCESS 2');
+                                       $('tags_json').update(transport.responseText);
+                                       this.prepareData();
+                                       this.render();
+                                       console.log('finished');
+                                   }.bind(this)
+                                });
+                            }.bind(this)
+                        });
                     }.bind(this));
                 }.bind(this));
             }.bind(this));
         }.bind(this));
     },
 
-    
-
     sameHeight: function(){
-        var h = $('documents').getHeight();
-        h += 50;
-        $('documents').setStyle({height: h + 'px'});
-        $('details').setStyle({height: h + 'px'});
+        this.h = $('documents').getHeight();
+        $('details').setStyle({height: (this.h - 83)+'px'});
     },
 
     convertDate: function(d){
@@ -181,12 +228,44 @@ var cDoc = Class.create({
         this.theDate = (m_names[curr_month] +" "+ curr_date + "<sup>" + sup + "</sup> " + " " + curr_year);
     },
 
+    destroyDocument: function(event) {
+
+        /* confirm */
+        if (!confirm('Are you sure you want to delete this document? This cannot be undone.')) return;
+
+        /* request params */
+        var documentId = event.target.getAttribute('doc_id');
+
+        /* request */
+        new Ajax.Request('/documents/' + documentId, {
+            method: 'delete',
+            onSuccess: function(transport) {
+                /* inject json and rerender document */
+                $('tags_json').update(Object.toJSON(transport.responseJSON));
+                doc = new cDoc;
+                doc.onChange();
+            }.bind(this),
+            onFailure: function(transport) {
+                alert('There was an error removing the directory.');
+            }
+        });
+    },
+
+    reviewDocument: function(docId){
+        /* new document */
+        self.document.location.href = '/review/' + docId
+    },
+
+    destroyFolder: function(){
+        //Fill out
+        alert("This will destory EVERYTHING!");
+    },
+
     render: function(){
         this._buildFolders();
         this._buildDocs();
         this._buildDetails();
         this.sameHeight();
-
         //Add Listeners
 
         //click doc name link
@@ -244,20 +323,65 @@ var cDoc = Class.create({
                 }.bind(this));
         }.bind(this));
 
-        //listen for folder click
+        //listen for folder actions
         $$('.accordion_toggle').each(function(element){
+            var activeT = this.activeTags;
             element.observe('click', function(event){
-                new Effect.toggle(event.target.next(0),'Blind', {duration:.5});
-                if(event.target.className =='accordion_toggle collapse'){
-                    event.target.removeClassName('collapse');
-                    event.target.addClassName('expand');
-                } else {
-                    event.target.removeClassName('expand');
-                    event.target.addClassName('collapse');
+                if(event.target.className =='accordion_toggle rounded_border collapse' || event.target.className =='accordion_toggle rounded_border expand'){
+                    new Effect.toggle(event.target.next(1),'Blind', {duration:.5});
+                    var id = event.target.getAttribute('tag_id');
+                    if(event.target.className =='accordion_toggle rounded_border collapse'){
+                        event.target.removeClassName('collapse');
+                        event.target.addClassName('expand');
+                        activeT.set(id, 'closed');
+                    } else {
+                        event.target.removeClassName('expand');
+                        event.target.addClassName('collapse');
+                        activeT.set(id, 'open');
+                    }
                 }
-            })
+            });
+            element.observe('mouseenter', function(event){
+                event.target.down(0).setStyle({display:'inline'});
+                event.target.down(0).next(0).setStyle({display:'inline'});
+            });
+
+            element.observe('mouseleave', function(event){
+                event.target.down(0).setStyle({display:'none'});
+                event.target.down(0).next(0).setStyle({display:'none'});
+            });
+
+            this.activeTags = activeT;
         }.bind(this));
 
+        //listen for delete-icon actions
+        $$('.remove_folder_icon').each(function(element){
+            element.observe('click', function(event){
+                this.destroyFolder();
+            });
+            element.observe('mouseenter', function(event){
+                event.target.writeAttribute("src", "../../images/organizer/remove-icon-15x15.png" );
+            });
+            element.observe('mouseleave', function(event){
+                event.target.writeAttribute("src", "../../images/organizer/remove-icon-bw-15x15.png" );
+            });
+
+        });
+
+        $$('.edit_folder_icon').each(function(element){
+            element.observe('click', function(event){
+                this.destroyFolder();
+            });
+            element.observe('mouseenter', function(event){
+                event.target.writeAttribute("src", "../../images/organizer/edit-icon-15x15.png" );
+            });
+            element.observe('mouseleave', function(event){
+                event.target.writeAttribute("src", "../../images/organizer/edit-icon-bw-15x15.png" );
+            });
+
+        });
+
+        //listen for doc folder change
         document.observe("document:moved", function() {
            // this._buildFolders();
            // this._buildDocs();
@@ -270,39 +394,6 @@ var cDoc = Class.create({
                }.bind(this)
             });
         }.bind(this));
-    },
-
-    destroyDocument: function(event) {
-
-        /* confirm */
-        if (!confirm('Are you sure you want to delete this document? This cannot be undone.')) return;
-
-        /* request params */
-        var documentId = event.target.getAttribute('doc_id');
-
-        /* request */
-        new Ajax.Request('/documents/' + documentId, {
-            method: 'delete',
-            onSuccess: function(transport) {
-
-                /* inject json and rerender document */
-                $('tags_json').update(Object.toJSON(transport.responseJSON));
-                doc = new cDoc;
-                doc.onChange();
-            }.bind(this),
-            onFailure: function(transport) {
-                alert('There was an error removing the directory.');
-            }
-        });
-    },
-
-    reviewDocument: function(docId){
-        /* new document */
-        self.document.location.href = '/review/' + docId
-    },
-
-    destroyFolder: function(){
-        //Fill out
     }
 
 });
