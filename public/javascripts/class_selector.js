@@ -18,8 +18,8 @@ var cClassSelector = Class.create({
             if (option._selected == 'true') option.selected = true;
         });
 
-        new Dialog.Box('new_folder_option');
-        $('new_folder_option').show();
+        new Dialog.Box('new_folder_menu');
+        $('new_folder_menu').show();
     },
 
     changeClass: function(event) {
