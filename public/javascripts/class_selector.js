@@ -23,7 +23,6 @@ var cClassSelector = Class.create({
 
         /* create new dialog box for new folder */
         new Dialog.Box('new_folder_menu');
-        $('new_folder_menu').show();
         $('create_tag_submit').observe('click', function() {
             this.createAndAssignTag();
         }.bind(this));

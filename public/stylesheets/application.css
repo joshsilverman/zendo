@@ -28,6 +28,10 @@ img.home {
 }
 
 .clr { height:10px;clear:both; }
+.clr-thin {
+    height:0;clear:both;
+    padding:2px;
+}
 
 .rounded_border {
     border: 1px solid lightGrey;
@@ -110,7 +114,7 @@ img.home {
     float:left;
     clear:left;
     position:relative;
-    top: -10px;
+    top: 20px;
 }
 
 header {
@@ -174,4 +178,25 @@ div.twtr-tweet-wrap {
 
 .error_explanation h2 {
     font-size:1.1em;
+}
+
+/* button styling */
+
+.doc_options button, .display-options, #review_options button {
+    border: 1px solid #009CFF;
+    background-color:#B3DAF2;
+/*    background:#B3DAF2;
+    border:#009CFF;*/
+    color:#000;
+
+    border-top-left-radius: 3px 3px;
+    border-top-right-radius: 3px 3px;
+    border-bottom-left-radius: 3px 3px;
+    border-bottom-right-radius: 3px 3px;
+    -moz-border-radius:3px 3px 3px 3px;
+}
+
+.doc_options button:hover, #review_options button:hover {
+    text-decoration: underline;
+    cursor:pointer;
 }
