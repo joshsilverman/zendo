@@ -138,10 +138,10 @@ overflow: hidden;
     padding:3px;
     z-index: 99999;
     border:solid 1px #007AC7;
-    border-top:solid 1px white;
+    border-top:solid 1px #f2f9ff;
     margin-top:22px;
     margin-right:-1px;
-    background-color: #fff;
+    background-color: #f2f9ff;
     position: relative;
 }
 
@@ -157,7 +157,7 @@ overflow: hidden;
 }
 
 .remove_doc {
-    color: #009CFF;
+    color: #007AC7;
     text-decoration: underline;
     cursor: pointer;
 }

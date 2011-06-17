@@ -13,6 +13,8 @@ var cDoc = Class.create({
 
     initialize: function() {
         this.prepareData();
+        window.onresize = AppUtilities.resizeContents;
+        AppUtilities.resizeContents();
     },
 
     prepareData: function() {
@@ -38,7 +40,7 @@ var cDoc = Class.create({
             });
         }
         /* resize listener */
-        window.onresize = AppUtilities.resizeContents;
+        AppUtilities.resizeContents();
     },
 
     onChange: function(){
@@ -193,7 +195,7 @@ var cDoc = Class.create({
         }.bind(this));
     },
 
-    sameHeight: function(){
+    resizeDetails: function(){
         this.h = $('documents').getHeight();
         $('details').setStyle({height: (this.h - 83)+'px'});
     },
@@ -256,7 +258,12 @@ var cDoc = Class.create({
         self.document.location.href = '/review/' + docId
     },
 
-    destroyFolder: function(){
+    destroyFolder: function(event){
+        //Fill out
+        alert("This will destory EVERYTHING!");
+    },
+
+    renameFolder: function(event){
         //Fill out
         alert("This will destory EVERYTHING!");
     },
@@ -265,7 +272,7 @@ var cDoc = Class.create({
         this._buildFolders();
         this._buildDocs();
         this._buildDetails();
-        this.sameHeight();
+        this.resizeDetails();
         //Add Listeners
 
         //click doc name link
@@ -357,8 +364,8 @@ var cDoc = Class.create({
         //listen for delete-icon actions
         $$('.remove_folder_icon').each(function(element){
             element.observe('click', function(event){
-                this.destroyFolder();
-            });
+                this.destroyFolder(event);
+            }.bind(this));
             element.observe('mouseenter', function(event){
                 event.target.writeAttribute("src", "../../images/organizer/remove-icon-15x15.png" );
             });
@@ -366,12 +373,12 @@ var cDoc = Class.create({
                 event.target.writeAttribute("src", "../../images/organizer/remove-icon-bw-15x15.png" );
             });
 
-        });
+        }.bind(this));
 
         $$('.edit_folder_icon').each(function(element){
             element.observe('click', function(event){
-                this.destroyFolder();
-            });
+                this.renameFolder(event);
+            }.bind(this));
             element.observe('mouseenter', function(event){
                 event.target.writeAttribute("src", "../../images/organizer/edit-icon-15x15.png" );
             });
@@ -379,7 +386,7 @@ var cDoc = Class.create({
                 event.target.writeAttribute("src", "../../images/organizer/edit-icon-bw-15x15.png" );
             });
 
-        });
+        }.bind(this));
 
         //listen for doc folder change
         document.observe("document:moved", function() {
