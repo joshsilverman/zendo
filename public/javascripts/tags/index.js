@@ -9,8 +9,12 @@ var cDoc = Class.create({
     theDate: null,
     activeItemId: '',
 
-
     initialize: function() {
+
+        this.prepareData();
+    },
+
+    prepareData: function() {
         /* organize and set json member */
         this.tags = [];
         $('tags_json').innerHTML.evalJSON().collect(function(tag) {
@@ -255,11 +259,16 @@ var cDoc = Class.create({
         }.bind(this));
 
         document.observe("document:moved", function() {
-            alert('launched');
            // this._buildFolders();
            // this._buildDocs();
-            this.render();
-            alert('finished');
+            new Ajax.Request('/tags/get_tags_json', {
+               onSuccess: function(transport) {
+                   console.log('render');
+                   $('tags_json').update(transport.responseText);
+                   this.prepareData();
+                   this.render();
+               }.bind(this)
+            });
         }.bind(this));
     },
 
