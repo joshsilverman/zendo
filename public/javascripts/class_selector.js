@@ -6,10 +6,9 @@ var cClassSelector = Class.create({
         /* collect class options */
         var selector = $$('#tag_id')[0];
         if (selector) {
-            console.log(selector);
+
+            selector.stopObserving();
             selector.observe('change', function(element) {
-                console.log(selector);
-                console.log(element.target);
                 this.changeClass(element);
             }.bind(this));
         }
