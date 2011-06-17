@@ -103,3 +103,26 @@ tinyMCE.init({
       <a onClick="doc.tipTour.restartTour();" href="javascript:void(0)">Restart</a>
   </div>
 </div>
+
+<div id="new_folder_menu" style="display:none;">
+  <div class="title">
+    Sharing
+  </div>
+  <div class="content">
+    <% unless @read_only %>
+      <div>
+        <span class="option">Public/Private:</span>
+        <%= select 'document', 'name', [['public',true],['private',false]] %>
+      </div>
+    <% end %>
+
+    <div class="clr-thin"></div>
+    <div>
+      <span class="option">Add a person:</span>
+      <%= form_tag "temp", :method => "post" do %>
+        <%= text_field_tag :name %>
+        <%= submit_tag "Share" %>
+      <% end %>
+    </div>
+  </div>
+</div>
