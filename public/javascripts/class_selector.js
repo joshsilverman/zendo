@@ -7,7 +7,6 @@ var cClassSelector = Class.create({
         var selector = $$('#tag_id')[0];
         if (selector) {
 
-            selector.stopObserving();
             selector.observe('change', function(element) {
                 this.changeClass(element);
             }.bind(this));
@@ -48,6 +47,7 @@ var cClassSelector = Class.create({
             onFailure: function() {},
             onSuccess: function() {
                 document.fire("document:moved");
+                document.stopObserving("document:moved");
             },
             onComplete: function() {
                 $("doc_loading").setStyle({'visibility': 'hidden'});
