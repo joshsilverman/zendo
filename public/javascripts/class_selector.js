@@ -1,12 +1,16 @@
 var cClassSelector = Class.create({
 
     initialize: function() {
+
+        /* append new folder */
+        this._appendNewFolderOption();
+
         /* collect class options */
         var selector = $$('#tag_id')[0];
         if (selector) {
             console.log(selector);
-            selector.observe('change', function(element) {
-                this.changeClass(element);
+            selector.observe('change', function(event) {
+                this.changeClass(event);
             }.bind(this));
         }
 
@@ -15,17 +19,22 @@ var cClassSelector = Class.create({
         });
     },
 
-    changeClass: function(element) {
+    changeClass: function(event) {
 
-        var parameters = {};
-        parameters['doc_id'] = $('doc_id').innerHTML;
-        var selected = element.target.select("option[selected]");
-        if (selected.length > 0) parameters['tag_id'] = selected[0].value;
-        else {
-            console.log("error");
+        /* selected option item */
+        var selected = event.target.select("option[selected]");
+        if (selected.length > 0) selected = selected[0];
+        else return;
+
+        if (selected.id == 'new_folder_option') {
+            console.log('new folder');
             return;
         }
 
+        var parameters = {};
+        parameters['doc_id'] = $('doc_id').innerHTML;
+        parameters['tag_id'] = selected.value;
+        
         /* sample listener for moved callback */
         //document.observe("document:moved", function() {});
 
@@ -45,5 +54,9 @@ var cClassSelector = Class.create({
                 $('tag_id').disabled = false;
             }
         });
+    },
+
+    _appendNewFolderOption: function() {
+        $('tag_id').insert({bottom: new Element('option', {id: 'new_folder_option', style: 'color:green;'}).insert("new folder")});
     }
 });
