@@ -45,16 +45,18 @@ class TagsController < ApplicationController
 
     #params
     name = params[:name]
+    doc_id = (params[:doc_id]) ? params[:doc_id] : nil
 
     #create
     Tag.transaction do
-      tag = current_user.tags.create(:name => params[:name])
+      @tag = current_user.tags.create(:name => params[:name])
 
-      if tag.nil?
+      if @tag.nil?
         render :nothing => true, :status => 400
         return
       else
-        render :json => Tag.tags_json(current_user)
+        current_user.documents.find(doc_id).update_attribute(:tag_id, @tag.id) unless doc_id.nil?
+        render :text => @tag.id
       end
     end
 
@@ -70,11 +72,11 @@ class TagsController < ApplicationController
 
     #create
     Tag.transaction do
-      tag = current_user.tags.where('misc IS NULL AND id = ?', params[:id]).first
-      if tag.nil?
+      @tag = current_user.tags.where('misc IS NULL AND id = ?', params[:id]).first
+      if @tag.nil?
         render :nothing => true, :status => 403
       else
-        tag.update_attribute(:name, params[:name])
+        @tag.update_attribute(:name, params[:name])
         render :json => Tag.tags_json(current_user)
       end
     end

@@ -207,7 +207,7 @@ img.sync:active {
 
 /* sharing menu */
 
-#share_menu {
+.modal {
     background:white;
     width:400px;
 
@@ -221,13 +221,13 @@ img.sync:active {
     -moz-border-radius:5px 5px 5px 5px;
 }
 
-#share_menu .title {
+.modal .title {
     padding: 3px;
     border-bottom: 1px solid #009CFF;
     text-align: center;
 }
 
-#share_menu .content {
+.modal .content {
     background:white;
     padding: 3px;
 
@@ -236,7 +236,7 @@ img.sync:active {
     -moz-border-radius:0 0 5px 5px;
 }
 
-#share_menu .content div {
+.modal .content div {
     padding: 5px;
 }
 
@@ -312,3 +312,8 @@ img.sync:active {
     text-decoration: underline;
 }
 
+/* styling for specific modals */
+
+#new_folder_menu {
+    width:330px;
+}

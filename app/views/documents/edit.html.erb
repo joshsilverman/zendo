@@ -106,23 +106,16 @@ tinyMCE.init({
 
 <div id="new_folder_menu" class="modal" style="display:none;">
   <div class="title">
-    Sharing
+    New Class
   </div>
   <div class="content">
-    <% unless @read_only %>
-      <div>
-        <span class="option">Public/Private:</span>
-        <%= select 'document', 'name', [['public',true],['private',false]] %>
-      </div>
-    <% end %>
 
     <div class="clr-thin"></div>
     <div>
-      <span class="option">Add a person:</span>
-      <%= form_tag "temp", :method => "post" do %>
-        <%= text_field_tag :name %>
-        <%= submit_tag "Share" %>
-      <% end %>
+      <span class="option">Title:</span>
+        <input id="tag_name" name="tag[name]" size="30" type="text"></input>
+        <%= submit_tag "Create", :id => "create_tag_submit" %>
+        <%= image_tag "shared/fb-loader.gif", :alt => 'loading', :style => "margin-right:5px;visibility:hidden;", :id => "new_tag_loading" %>
     </div>
   </div>
 </div>

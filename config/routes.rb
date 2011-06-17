@@ -66,6 +66,8 @@ Zendo::Application.routes.draw do
   #tags
   get "tag/index" # ???
   match "/explore" => "tags#index" #** public **#
+  match "/tags/create" => "tags#create"
+  match "/tags/create_and_assign" => "tags#create"
 
   # documents
   match "/documents/create/:tag_id" => "documents#create"
