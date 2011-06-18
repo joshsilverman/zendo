@@ -133,7 +133,7 @@ overflow: hidden;
 
 .doc_actions{
     display:none;
-    width:70px;
+    width:65px;
     float:right;
     padding:3px;
     z-index: 99999;
@@ -147,7 +147,18 @@ overflow: hidden;
 
 .doc_actions ul{
     list-style-type: none;
-    margin: 0 0 0 -17px;
+    margin: 0 0 0 -20px;
+    padding-right: 3px;
+}
+
+.doc_actions ul li{
+    margin: 0 0 0 -16px;
+    text-align: left;
+}
+
+.doc_action_img{
+    margin-right:5px;
+    float:left;
 }
 
 .rounded_border{
@@ -231,4 +242,12 @@ overflow: hidden;
     margin-top:8px;
     margin-right:7px;
     float:right;
+}
+
+#create_folder{
+    color: #007AC7;
+    text-decoration: underline;
+    cursor: pointer;
+    display:block;
+    text-align: center;
 }

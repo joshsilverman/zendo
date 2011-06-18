@@ -75,10 +75,10 @@ var cDoc = Class.create({
                   html+= '<div class="doc_item active" doc_id="'+doc['id']+'">\
                     <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
                     <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+'</span>\
-                    <div class="doc_actions" style="display: block;">\
-                    <ul><li><a href="/documents/'+doc['id']+'/edit">edit</a></li>\
-                    <li><a href="/review/'+doc['id']+'">review</a></li>\
-                    <li><span class="remove_doc" doc_id="'+doc['id']+'">delete</span></li></ul>\
+                    <div class="doc_actions" style="display:block;">\
+                    <ul><li><a href="/documents/'+doc['id']+'/edit"><img class="doc_action_img" src="../../images/organizer/edit-icon-15x15.png">edit</a></li>\
+                    <li><a href="/review/'+doc['id']+'"><img class="doc_action_img" src="../../images/organizer/review-icon.png">review</a></li>\
+                    <li><span class="remove_doc" doc_id="'+doc['id']+'"><img class="doc_action_img" doc_id="'+doc['id']+'" src="../../images/organizer/remove-icon-15x15.png">delete</span></li></ul>\
                     </div>\
                     </div>';
               } else {
@@ -86,9 +86,9 @@ var cDoc = Class.create({
                     <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
                     <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+'</span>\
                     <div class="doc_actions">\
-                    <ul><li><a href="/documents/'+doc['id']+'/edit">edit</a></li>\
-                    <li><a href="/review/'+doc['id']+'">review</a></li>\
-                    <li><span class="remove_doc" doc_id="'+doc['id']+'">delete</span></li></ul>\
+                    <ul><li><a href="/documents/'+doc['id']+'/edit"><img class="doc_action_img" src="../../images/organizer/edit-icon-15x15.png">edit</a></li>\
+                    <li><a href="/review/'+doc['id']+'"><img class="doc_action_img" src="../../images/organizer/review-icon.png">review</a></li>\
+                    <li><span class="remove_doc" doc_id="'+doc['id']+'"><img class="doc_action_img" doc_id="'+doc['id']+'" src="../../images/organizer/remove-icon-15x15.png">delete</span></li></ul>\
                     </div>\
                     </div>';
               }
@@ -109,7 +109,9 @@ var cDoc = Class.create({
            }
         });
         if(checkedList[0] == null && this.activeItemId==''){
-            html += '<em>Select a document to view details...</em>';
+            html += '<span id="create_folder">Create New Folder</span>\
+                    <span style="text-align:center; display:block; margin:10px 0">- OR -</span>\
+                    <em style="text-align:center; display:block;" >Select a document to view details...</em>';
         } else if((checkedList[0] == null && this.activeItemId!='')||(checkedList[1] == null && this.activeItemId!='')){
             var singleDoc = this.docs.get(this.activeItemId);
             this.convertDate(new Date(singleDoc['created_at']));
@@ -281,9 +283,65 @@ var cDoc = Class.create({
         });
     },
 
+    createFolder: function(event) {
+
+        /* stop bubble */
+        event.stop();
+
+        /* request params */
+        var tagName = prompt('What would you like to name the new directory?');
+        if (!tagName) return;
+
+        /* request */
+        new Ajax.Request('/tags', {
+            method: 'post',
+            parameters: {'name': tagName},
+            onSuccess: function(transport) {
+
+                /* inject json and rerender document */
+                $('tags_json').update(transport.responseText);
+                this.prepareData();
+                console.log('prepped');
+                this.render();
+                console.log('render');
+            }.bind(this),
+            onFailure: function(transport) {
+                alert('There was an error saving the new directory.');
+            }
+        });
+    },
+
     renameFolder: function(event){
-        //Fill out
-        alert("This will destory EVERYTHING!");
+
+        /* request params */
+        var tagName = prompt('What would you like to rename this directory?');
+        if (!tagName) return;
+
+        
+        var parameters = {};
+        var tag_id = event.target.getAttribute('id');
+        parameters['tag_id'] = tag_id.substring(5);
+        parameters['name'] = tagName;
+        console.log('params set');
+        new Ajax.Request('/tags/update_tags_name', {
+            method: 'post',
+            parameters: parameters,
+            onFailure: function() {
+                console.log('FAIL');
+            },
+            onSuccess: function() {
+                console.log('SUCCESS');
+                new Ajax.Request('/tags/get_tags_json', {
+                   onSuccess: function(transport) {
+                       console.log('SUCCESS 2');
+                       $('tags_json').update(transport.responseText);
+                       this.prepareData();
+                       this.render();
+                       console.log('finished');
+                   }.bind(this)
+                });
+            }.bind(this)
+        });
     },
 
     render: function(){
@@ -404,6 +462,10 @@ var cDoc = Class.create({
                 event.target.writeAttribute("src", "../../images/organizer/edit-icon-bw-15x15.png" );
             });
         }.bind(this));
+
+        $('create_folder').observe('click', function(event){
+                this.createFolder(event);
+            }.bind(this));
 
 
         //listen for doc folder change
