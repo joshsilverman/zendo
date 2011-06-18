@@ -84,6 +84,7 @@ overflow: hidden;
     padding:10px;
     background-color: white;
     min-height: 275px;
+    margin-top: 5px;
 }
 
 #left_container{
@@ -142,7 +143,6 @@ overflow: hidden;
     margin-top:22px;
     margin-right:-1px;
     background-color: #f2f9ff;
-    position: relative;
 }
 
 .doc_actions ul{
@@ -216,6 +216,11 @@ overflow: hidden;
    float: left;
 }
 
+.selector{
+    width:90%;
+    margin-bottom: 5px;
+}
+
 .edit_icon{
     float:left;
     margin-left: 5px;
@@ -250,4 +255,31 @@ overflow: hidden;
     cursor: pointer;
     display:block;
     text-align: center;
+}
+
+.elbow{
+    display:block;
+    float:left;
+    margin-right:3px;
+}
+
+.single_doc_title{
+    display:block;
+    height:20px;
+    width:75%;
+    float:left;
+    margin:2px 0 10px 3px;
+    padding:2px 2px 0 2px;
+    border:solid 1px #cfcfcf;
+    overflow:hidden;
+}
+
+.single_doc_title:hover{
+    background-color: #fefde2;
+    cursor: pointer;
+}
+
+.edit_doc_title{
+    margin:-2px 0 0 -2px;
+    width:100%;
 }

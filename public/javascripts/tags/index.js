@@ -118,7 +118,7 @@ var cDoc = Class.create({
             var created = this.theDate;
             this.convertDate(new Date(singleDoc['updated_at']));
             var updated = this.theDate;
-            var selector ='<select id="tag_id">';
+            var selector ='<select id="tag_id" class="selector">';
             this.tags.each(function(t){
                 var s = ''
                 if(t['id']==singleDoc['tag_id']) {s = 'selected = "selected"';}
@@ -128,7 +128,7 @@ var cDoc = Class.create({
             
             html += '<div id="metainfo" doc_id="'+this.activeItemId+'">\
                     '+selector+'<img alt="loading" id="doc_loading" src="../../images/shared/fb-loader.gif" style="margin-right:5px;visibility:hidden;">\
-                    <div id="sdt" class="single_doc_title"><div class="edit_icon"><span id="detail_name"><em>'+singleDoc['name']+'</em></span></div></div>\
+                    <img class="elbow" src="../../images/organizer/elbow-icon.png"/><div id="sdt" class="single_doc_title"><span id="detail_name">'+singleDoc['name']+'</span></div>\
                     <div style="clear: both;"></div><h4 class="details_label">Created On: </h4>\
                     <em>'+created+'</em><br/>\
                     <h4 class="details_label">Last Updated: </h4>\
@@ -150,6 +150,14 @@ var cDoc = Class.create({
             html+= '</div>';
         }
         $('details').update(html);
+        
+        if(checkedList[0] == null && this.activeItemId==''){
+           $('create_folder').observe('click', function(event){
+                this.createFolder(event);
+            }.bind(this)); 
+        }
+        
+        this.resizeDetails();
 
         /* load class selecter widget */
         new cClassSelector(true);
@@ -157,7 +165,8 @@ var cDoc = Class.create({
         //listener for doc name change
         $$('.single_doc_title').each(function(elem){
             elem.observe('click', function(event) {
-                var title = $('sdt').down(2).innerHTML;
+                event.target.stopObserving();
+                var title = $('sdt').down(0).innerHTML;
                 $('sdt').innerHTML = '<input id="edt" class="edit_doc_title" value="'+title+'" />';
                 $('edt').focus();
                 $$('.edit_doc_title').each(function(elem){
@@ -168,6 +177,7 @@ var cDoc = Class.create({
                     elem.observe('blur', function(){
                         console.log('blur start');
                         var newTitle = $('edt').value;
+                        if(!(newTitle==title)){
                         var parameters = {};
                         parameters['doc_id'] = $('metainfo').getAttribute('doc_id');
                         parameters['name'] = newTitle;
@@ -191,6 +201,7 @@ var cDoc = Class.create({
                                 });
                             }.bind(this)
                         });
+                        } else {this._buildDetails();}
                     }.bind(this));
                 }.bind(this));
             }.bind(this));
@@ -199,7 +210,7 @@ var cDoc = Class.create({
 
     resizeDetails: function(){
         this.h = $('documents').getHeight();
-        $('details').setStyle({height: (this.h - 83)+'px'});
+        $('details').setStyle({height: (this.h - 88)+'px'});
     },
 
     convertDate: function(d){
@@ -411,7 +422,7 @@ var cDoc = Class.create({
             var activeT = this.activeTags;
             element.observe('click', function(event){
                 if(event.target.className =='accordion_toggle rounded_border collapse' || event.target.className =='accordion_toggle rounded_border expand'){
-                    new Effect.toggle(event.target.next(1),'Blind', {duration:.5});
+                    new Effect.toggle(event.target.next(1),'Blind', {duration:.5, afterFinish: function(){doc.resizeDetails();}});
                     var id = event.target.getAttribute('tag_id');
                     if(event.target.className =='accordion_toggle rounded_border collapse'){
                         event.target.removeClassName('collapse');
@@ -423,7 +434,7 @@ var cDoc = Class.create({
                         activeT.set(id, 'open');
                     }
                 }
-            });
+            }.bind(this));
             element.observe('mouseenter', function(event){
                 event.target.down(0).setStyle({display:'inline'});
                 event.target.down(0).next(0).setStyle({display:'inline'});
@@ -463,11 +474,6 @@ var cDoc = Class.create({
             });
         }.bind(this));
 
-        $('create_folder').observe('click', function(event){
-                this.createFolder(event);
-            }.bind(this));
-
-
         //listen for doc folder change
         document.observe("document:moved", function() {
            // this._buildFolders();
@@ -480,6 +486,19 @@ var cDoc = Class.create({
                    this.render();
                }.bind(this)
             });
+        }.bind(this));
+
+        document.observe('click', function(event){
+            console.log(event.target);
+           if(event.target.hasClassName('wrapper')||event.target.hasClassName('contents')){
+                var elem = $('documents').select('[doc_id="'+this.activeItemId+'"]')[0];
+                console.log(elem);
+                elem.down(2).setStyle({display:'none'});
+                this.activeItemId = '';
+                elem.removeClassName('active');
+                elem.addClassName('inactive');
+                event.stop();
+           }
         }.bind(this));
     }
 
