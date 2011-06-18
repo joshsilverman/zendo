@@ -68,10 +68,12 @@ Zendo::Application.routes.draw do
   match "/explore" => "tags#index" #** public **#
   match "/tags/create" => "tags#create"
   match "/tags/create_and_assign" => "tags#create"
+  match "/tags/update_tags_name"
 
   # documents
   match "/documents/create/:tag_id" => "documents#create"
   match "/documents/update_tag"
+  match "/documents/update_document_name"
   resources :documents, :only => [:edit, :update, :destroy]
 
   # reviewer
@@ -82,7 +84,7 @@ Zendo::Application.routes.draw do
   
   # organizer
   resources :tags, :only => [:destroy, :create, :update]
-  match "/tags/json" => "tags#json"
+  match "/tags/get_tags_json" => "tags#get_tags_json"
 
   # home page
   match "users/welcome" => "users#home"
@@ -96,9 +98,13 @@ Zendo::Application.routes.draw do
   # ajax sign in
   match "users/simple_sign_in" => "users#simple_sign_in"
 
+  #abingo dashboard
+
+  # match '/abingo(/:action(/:id))' => 'abingo_dash', :as => :abingo
+
   # catch-all route for static pages
   Zendo::Application.routes.draw do |map|
     map.connect ':action', :controller => "static"
+    #map.abingoTest "/abingo/:action/:id", :controller=> :abingo_dash
   end
-
 end

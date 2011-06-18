@@ -37,7 +37,7 @@ class TagsController < ApplicationController
     end
   end
 
-  def json
+  def get_tags_json
     render :text => Tag.tags_json(current_user)
   end
 
@@ -139,6 +139,15 @@ class TagsController < ApplicationController
 
     render '/documents/review'
 
+  end
+
+  def update_tags_name
+    if @tag = current_user.tags.find(params[:tag_id])
+        @tag.update_attribute(:name, params[:name])
+    else
+      render :nothing => true, :status => 403
+    end
+    render :nothing => true
   end
 
 end

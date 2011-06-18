@@ -115,4 +115,13 @@ class DocumentsController < ApplicationController
     end
     render :nothing => true
   end
+
+  def update_document_name
+    if @document = current_user.documents.find(params[:doc_id])
+        @document.update_attribute(:name, params[:name])
+    else
+      render :nothing => true, :status => 403
+    end
+    render :nothing => true
+  end
 end

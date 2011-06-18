@@ -15,7 +15,7 @@ class Tag < ActiveRecord::Base
     return nil if current_user.blank?
     current_user.tags.includes(:documents)\
                     .all\
-                    .to_json(:include => {:documents => {:only => [:id, :name, :updated_at]}})
+                    .to_json(:include => {:documents => {:only => [:id, :name, :updated_at, :created_at, :tag_id]}})
     rescue: []
   end
 

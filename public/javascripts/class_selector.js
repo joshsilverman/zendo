@@ -1,12 +1,14 @@
 var cClassSelector = Class.create({
-
+    docId:null,
     selected: null,
 
-    initialize: function() {
+    initialize: function(docId) {
 
         /* append new folder */
         this._appendNewFolderOption();
 
+
+        this.docId = (typeof docId == "undefined")? false : docId;
         /* collect class options */
         var selector = $$('#tag_id')[0];
         if (selector) {
@@ -39,15 +41,9 @@ var cClassSelector = Class.create({
             $('new_folder_menu').show();
             $('new_folder_option').selected = false;
             this.selected.selected = true;
-            return;
-        }
 
-        var parameters = {};
-        parameters['doc_id'] = $('doc_id').innerHTML;
+        parameters['doc_id'] = (this.docId) ? $('metainfo').getAttribute('doc_id') : $('doc_id').innerHTML;
         parameters['tag_id'] = selected.value;
-        
-        /* sample listener for moved callback */
-        //document.observe("document:moved", function() {});
 
         new Ajax.Request('/documents/update_tag', {
             method: 'post',
@@ -59,6 +55,7 @@ var cClassSelector = Class.create({
             onFailure: function() {},
             onSuccess: function() {
                 document.fire("document:moved");
+                document.stopObserving("document:moved");
             },
             onComplete: function() {
                 $("doc_loading").setStyle({'visibility': 'hidden'});

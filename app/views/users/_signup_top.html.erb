@@ -1,0 +1,64 @@
+<div class="splash-img-wrapper">
+  <div class="buttons">
+  <div class="line-bg"><span>&nbsp;&nbsp;Sign in using&nbsp;&nbsp;</span></div>
+
+    <div class="authentications">
+      <!--<a href="/auth/twitter" class="auth_provider">
+        <%#= image_tag "logos/twitter_64.png", :size => "64x64", :alt => "Twitter" %>
+      </a>-->
+      <a href="/auth/facebook" class="auth_provider">
+        <%= image_tag "logos/facebook_64.png", :size => "64x64", :alt => "Facebook" %>
+      </a>
+      <a href="/auth/open_id?openid_url=gmail.com" class="auth_provider">
+        <%= image_tag "logos/google_64.png", :size => "64x64", :alt => "Google" %>
+      </a>
+    </div>
+
+    <div class="line-bg"><span>&nbsp;&nbsp;or use&nbsp;&nbsp;</span></div>
+
+    <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+      <%= f.label :email, :class => "email_pass_label" %>
+      <%= f.text_field :email %>
+
+      <%= f.label :password, :class => "email_pass_label" %>
+      <%= f.password_field :password %>
+    <div style="float:left;">
+      <%= f.submit "Sign in" %>
+      <% if devise_mapping.rememberable? -%>
+        <%= f.check_box :remember_me %> <%= f.label :remember_me %>
+      <% end -%>
+    </div>
+    <% end %>
+    <br /><br />
+    <a href="/users/password/new" style="margin:0 auto;">Forgot your password?</a>
+
+    <div class="line-bg"><span>&nbsp;&nbsp;don't have an account?&nbsp;&nbsp;</span></div>
+    <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
+        <%#= link_to "", '/', :class => "register_button"%>
+        <div><a href="#sign_up_inline" class="lightview" title=' ::  :: width: 540, height: 425'>Sign Up</a></div>
+      <% end %>
+  </div>
+    <div class="splash"><img id="img_notes" src="/images/home/notes.png" /></div>
+    <div class="splash img_flashcards"><img id="img_flashcards" src="/images/home/flashcards.png" /></div>
+    <div class="splash img_review"><img id="img_review" src="/images/home/review.png" /></div>
+  </div>
+
+</div>
+
+<div class="box_container">
+  <div class="box">
+    We are students and <span class="box_title">our Mission</span> is to become more efficient learners. We want to spend less time studying and know our material much better. And, we want to commit the most essential information we come across to long-term memory.
+  </div>
+
+  <div class="box">
+    Zen.do is in <span class="box_title">Beta</span> and we hope to find out from our users what works, what does't and where we should go next. Please send us your comments and suggestions!
+  </div>
+
+  <div class="box last-box">
+    Want to know more?  <span class ="box_title">Take a Tour</span> of the site and learn how to use Zen.do by clicking the video demo button below!
+    <div style="margin-left:15%">
+      <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
+        <%#= link_to "", '/', :class => "register_button"%>
+        <div class="rounded_border video_button" style="margin:0 auto; text-align: center"><a href='http://www.youtube.com/v/hGpyPI2qdIg' class='lightview' rel='set[myset][flash]' title="Become a more efficient learner in under 3 minutes. :: :: width: 540, height: 360">Video Demo</a></div>
+      <% end %>
+    </div>
