@@ -490,7 +490,7 @@ var cDoc = Class.create({
 
         document.observe('click', function(event){
             console.log(event.target);
-           if(event.target.hasClassName('wrapper')||event.target.hasClassName('contents')){
+           if((event.target.hasClassName('wrapper')||event.target.hasClassName('contents')) && this.activeItemId!=''){
                 var elem = $('documents').select('[doc_id="'+this.activeItemId+'"]')[0];
                 console.log(elem);
                 elem.down(2).setStyle({display:'none'});
@@ -498,6 +498,7 @@ var cDoc = Class.create({
                 elem.removeClassName('active');
                 elem.addClassName('inactive');
                 event.stop();
+                this.resizeDetails();
            }
         }.bind(this));
     }
