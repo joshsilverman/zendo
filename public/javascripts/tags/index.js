@@ -2,6 +2,8 @@
 
 var cDoc = Class.create({
 
+    classSelector: null,
+
     /* parsed tag info */
     tags: null,
     docs: null,
@@ -15,6 +17,9 @@ var cDoc = Class.create({
         this.prepareData();
         window.onresize = AppUtilities.resizeContents;
         AppUtilities.resizeContents();
+
+        /* load class selecter widget - must be done here also in case nothing is selected */
+        this.classSelector = new cClassSelector(true);
     },
 
     prepareData: function() {
@@ -153,14 +158,14 @@ var cDoc = Class.create({
         
         if(checkedList[0] == null && this.activeItemId==''){
            $('create_folder').observe('click', function(event){
-                this.createFolder(event);
+               $('new_folder_menu').show();
             }.bind(this)); 
         }
-        
+
         this.resizeDetails();
 
         /* load class selecter widget */
-        new cClassSelector(true);
+        this.classSelector = new cClassSelector(true);
 
         //listener for doc name change
         $$('.single_doc_title').each(function(elem){
@@ -290,34 +295,6 @@ var cDoc = Class.create({
             }.bind(this),
             onFailure: function(transport) {
                 alert('There was an error removing the directory.');
-            }
-        });
-    },
-
-    createFolder: function(event) {
-
-        /* stop bubble */
-        event.stop();
-
-        /* request params */
-        var tagName = prompt('What would you like to name the new directory?');
-        if (!tagName) return;
-
-        /* request */
-        new Ajax.Request('/tags', {
-            method: 'post',
-            parameters: {'name': tagName},
-            onSuccess: function(transport) {
-
-                /* inject json and rerender document */
-                $('tags_json').update(transport.responseText);
-                this.prepareData();
-                console.log('prepped');
-                this.render();
-                console.log('render');
-            }.bind(this),
-            onFailure: function(transport) {
-                alert('There was an error saving the new directory.');
             }
         });
     },
@@ -489,8 +466,7 @@ var cDoc = Class.create({
         }.bind(this));
 
         document.observe('click', function(event){
-            console.log(event.target);
-           if((event.target.hasClassName('wrapper')||event.target.hasClassName('contents')) && this.activeItemId!=''){
+            if((event.target.hasClassName('wrapper')||event.target.hasClassName('contents')) && this.activeItemId!=''){
                 var elem = $('documents').select('[doc_id="'+this.activeItemId+'"]')[0];
                 console.log(elem);
                 elem.down(2).setStyle({display:'none'});
@@ -499,7 +475,7 @@ var cDoc = Class.create({
                 elem.addClassName('inactive');
                 event.stop();
                 this.resizeDetails();
-           }
+            }
         }.bind(this));
     }
 

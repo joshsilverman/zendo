@@ -24,8 +24,10 @@ var cClassSelector = Class.create({
         }.bind(this));
 
         /* create new dialog box for new folder */
+        console.log('create dialog');
         new Dialog.Box('new_folder_menu');
         $('create_tag_submit').observe('click', function() {
+            console.log('yo!');
             this.createAndAssignTag();
         }.bind(this));
     },
@@ -41,7 +43,9 @@ var cClassSelector = Class.create({
             $('new_folder_menu').show();
             $('new_folder_option').selected = false;
             this.selected.selected = true;
+        }
 
+        var parameters = {};
         parameters['doc_id'] = (this.docId) ? $('metainfo').getAttribute('doc_id') : $('doc_id').innerHTML;
         parameters['tag_id'] = selected.value;
 
@@ -65,7 +69,8 @@ var cClassSelector = Class.create({
     },
 
     _appendNewFolderOption: function() {
-        $('tag_id').insert({bottom: new Element('option', {id: 'new_folder_option', style: 'color:green;'}).insert("new folder")});
+        if ($('tag_id'))
+            $('tag_id').insert({bottom: new Element('option', {id: 'new_folder_option', style: 'color:green;'}).insert("new folder")});
     },
 
     /* create tag and assign document to it if id provided */
@@ -78,7 +83,7 @@ var cClassSelector = Class.create({
             method: 'post',
             parameters: params,
             onCreate: function() {
-                $('tag_id').disabled = true;
+                if ($('tag_id')) $('tag_id').disabled = true;
                 $("new_tag_loading").setStyle({'visibility': 'visible'});
             },
             onFailure: function() {
@@ -97,9 +102,11 @@ var cClassSelector = Class.create({
                 $('tag_name').value = ""
             },
             onComplete: function() {
-                $('tag_id').disabled = false;
+                if ($('tag_id')) $('tag_id').disabled = false;
                 $('new_folder_menu').hide();
             }
         });
+
+        console.log('done!');
     }
 });
