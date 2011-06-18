@@ -16,7 +16,7 @@
       <%= select 'tag', 'id', current_user.tags.collect {|t| [ t.name, t.id, {:_selected => (@document.tag_id == t.id)}] } %>
       <%= image_tag "shared/fb-loader.gif", :alt => 'loading', :style => "margin-right:5px;visibility:hidden;", :id => "doc_loading" %>
       
-      Title: <input id="document_name" value="<%=@document.name%>"></input>
+      Title: <input id="document_name" value="<%=@document.name%>"  maxlength="40"></input>
     <% end %>
   </span>
 
@@ -113,7 +113,7 @@ tinyMCE.init({
     <div class="clr-thin"></div>
     <div>
       <span class="option">Title:</span>
-        <input id="tag_name" name="tag[name]" size="30" type="text"></input>
+        <input id="tag_name" name="tag[name]" size="30" type="text" maxlength="40"></input>
         <%= submit_tag "Create", :id => "create_tag_submit" %>
         <%= image_tag "shared/fb-loader.gif", :alt => 'loading', :style => "margin-right:5px;visibility:hidden;", :id => "new_tag_loading" %>
     </div>
