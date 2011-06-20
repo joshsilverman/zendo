@@ -11,7 +11,7 @@
         <input id="document_name" value="<%=@document.name%>" style="display:none;"></input>
       </div>
     <% else %>
-      Class:
+      Folder:
 
       <%= select 'tag', 'id', current_user.tags.collect {|t| [ t.name, t.id, {:_selected => (@document.tag_id == t.id)}] } %>
       <%= image_tag "shared/fb-loader.gif", :alt => 'loading', :style => "margin-right:5px;visibility:hidden;", :id => "doc_loading" %>
