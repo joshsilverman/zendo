@@ -29,6 +29,34 @@ describe "document" do
       click_button "Sign in"
     end
 
+    describe "options" do
+
+      before :each do
+        Capybara.default_wait_time = 3
+        @tag = @user.tags.create!(:name => "my tag")
+        @document = @user.documents.create!(:name => "title one", :tag_id => @tag.id)
+        visit "/documents/#{@document.id}/edit"
+        wait_until{ page.has_content?(@tag.name) }
+        wait_until{ page.find('#document_name').visible? }
+      end
+
+      it "class selector loads new class when new option selected" do
+        page.select 'Misc.', :from => 'tag_id'
+        wait_until{ page.find('#doc_loading').visible? }
+        wait_until{ not page.find('#doc_loading').visible? }
+      end
+
+      it "class selector changes class in db when new option selected" do
+        page.select 'Misc.', :from => 'tag_id'
+        wait_until{ page.find('#doc_loading').visible? }
+        wait_until{ not page.find('#doc_loading').visible? }
+        @document = Document.find(@document.id)
+        @misc_tag = Tag.where(:user_id => @user.id, :name => "Misc.").first
+        @document.tag_id.should == @misc_tag.id
+      end
+
+    end
+
     it "creates new document" do
       visit "/explore"
       wait_until{ page.has_content?('Misc.')}

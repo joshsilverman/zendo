@@ -1,65 +1,78 @@
-<% @page_specific_scripts_js = ["parser"] %>
+<% @page_specific_scripts_js = ["parser", "class_selector", "vendors/modal.js"] %>
 
 <div id="tags_json" style="display: none;"><%= @tags_json %></div>
-<div id="lines_json" style="display: none;"><%= @lines_json %></div>
-
-<div id="dashboard" class="rounded_border dashboard">
-
-  <div class="recent_docs">
-    <h4>Recent Docs</h4>
-    <% if @recent_docs.length > 0 %>
-      <% @recent_docs.each do |doc| %>
-        <div document_id="<%= doc.id%>" style="margin:5px 0;">
-          <a href="/documents/<%= doc.id%>/edit">
-            <div class="folder" style="float:left;">
-            <img class="folder" alt="" height="25" src="/images/organizer/doc-icon.png" />
-            </div>
-            <div class="title recent_doc_title"><%= doc.name%></div>
-            <div style="clear: both;"></div>
-          </a>
-        </div>
-        <div id="document_<%= doc.id%>" style="display:none;"><%= doc.html.html_safe%></div>
-      <%end%>
-    <%else%>
-        <i>No documents</i>
-    <%end%>
-  </div>
-
-  <div class="quickstudy">
-    <h4>Quick Study</h4>
-    <em><span id="card_side" style="margin:0 auto;">Front</span></em>
-    <div class="quickstudy_card_wrapper">
-      <table class="quickstudy_card">
-        <tr><td valign="center">
-          <span id="card_front" style="display: block; padding:5px;">Loading...</span>
-        </td></tr>
-      </table>
-    </div>
-    <a id="flip_button">Flip Card</a>
-  </div>
-  <div class="clear"></div>
+<div id="detail_tags" style="display: none;">
+<%= current_user.tags.collect {|t| [ t.name, t.id] }.to_json()%>
 </div>
 
-<div id="organizer_header">
-  <span id="directory_name">My Notes/</span>
-  <span id="sort_options">Sort:
-    <span id="sort_by_name">by title</span>
-    &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;
-    <span id="sort_by_updated_at">by last edited</span>
-  </span>
+<div id="left_container">
+<div class="new_guide_button">
+   <a href="/documents/create/0" class="button">Create A New Document</a>
 </div>
 
-<div id="icons">
-  <!--<div class="icon_container rounded_border">
-    <div class="title">Title here</div>
-    <div class="folder">
-      <img alt="" src="/images/organizer/folder-full-icon.png" />
+<div id="details" class="rounded_border">
+    <div id="metainfo">
+      <h4 class="details_label">Title: </h4><em>Cells</em><br/>
+      <h4 class="details_label">Last Updated: </h4><em>5/29/2011</em>
     </div>
-    <div class="folder_options">
-      <img alt="" src="/images/organizer/add-icon.png" />
-      <img alt="" src="/images/organizer/play-icon.png" />
-      <img alt="" src="/images/organizer/process-icon.png" />
+</div>
+</div>
+
+<div id="documents" class="rounded_border">
+  <h2 tag_id="1234" class="accordion_toggle">Misc.</h2>
+  <div id="accordion_content_1234" class="accordion_content" tag_id="1234" >
+    <div class="doc_item inactive" doc_id="1020">
+      <input type="checkbox" class="chbox" doc_id="1020"/>
+      <span class="doc_title" doc_id="1020">Random</span>
+      <div class="doc_actions">
+        <ul>
+          <li><a href="/documents/1020/edit">edit</a></li>
+          <li><a href="/review/1020">review</a></li>
+          <li><span class="remove_doc" doc_id="1020">delete</span></li>
+        </ul>
+      </div>
     </div>
-  </div>-->
+
+    <div class="doc_item inactive" doc_id="1021">
+      <input type="checkbox" class="chbox" doc_id="1021"/>
+      <span class="doc_title" doc_id="1021">Untitles</span>
+      <div class="doc_actions">
+        <ul>
+          <li><a href="/documents/1021/edit">edit</a></li>
+          <li><a href="/review/1021">review</a></li>
+          <li><span class="remove_doc" doc_id="1021">delete</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <h2 tag_id="4321" class="accordion_toggle">Bio 101</h2>
+  <div id="accordion_content_1234" class="accordion_content" tag_id="4321" >
+    <div class="doc_item inactive" doc_id="1022">
+      <input type="checkbox" class="chbox" doc_id="1022"/>
+      <span class="doc_title" doc_id="1022">Cells</span>
+      <div class="doc_actions">
+        <ul>
+          <li><a href="/documents/1022/edit">edit</a></li>
+          <li><a href="/review/1022">review</a></li>
+          <li><span class="remove_doc" doc_id="1022">delete</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="doc_item inactive" doc_id="1023">
+      <input type="checkbox" class="chbox" doc_id="1023"/>
+      <span class="doc_title" doc_id="1023">Darwin and Evolution</span>
+      <div class="doc_actions">
+        <ul>
+          <li><a href="/documents/1023/edit">edit</a></li>
+          <li><a href="/review/1023">review</a></li>
+          <li><span class="remove_doc" doc_id="1023">delete</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="clr"></div>
+
+<%= render "shared/modal_new_tag" %>

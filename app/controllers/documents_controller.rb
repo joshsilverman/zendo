@@ -101,4 +101,27 @@ class DocumentsController < ApplicationController
                  .to_json :include => :mems
  
   end
+
+  def update_tag
+    if @document = current_user.documents.find(params[:doc_id])
+      puts params;
+      if current_user.tags.find(params[:tag_id])
+        @document.update_attribute(:tag_id, params[:tag_id])
+      else
+        render :nothing => true, :status => 403
+      end
+    else
+      render :nothing => true, :status => 403
+    end
+    render :nothing => true
+  end
+
+  def update_document_name
+    if @document = current_user.documents.find(params[:doc_id])
+        @document.update_attribute(:name, params[:name])
+    else
+      render :nothing => true, :status => 403
+    end
+    render :nothing => true
+  end
 end

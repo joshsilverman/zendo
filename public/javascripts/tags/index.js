@@ -2,470 +2,250 @@
 
 var cDoc = Class.create({
 
+    classSelector: null,
+
     /* parsed tag info */
     tags: null,
-
-    /* views */
-    directoryView: null,
-    documentsViews: null,
-
-    /* holds tagId of current documentsView or and empty string */
-    currentView: null,
+    docs: null,
+    html: null,
+    theDate: null,
+    activeTags: null,
+    activeItemId: '',
+    h: null,
 
     initialize: function() {
+        this.prepareData();
+        window.onresize = AppUtilities.resizeContents;
+        AppUtilities.resizeContents();
 
-        /* check for reload cookie */
-        var reload = AppUtilities.Cookies.read('reloadOrganizer') == 'true';
-        if (reload) {
-            //self.document.location.reload(true);
-            new Ajax.Request('/tags/json', {
-                asynchronous: false,
-                onSuccess: function(transport) {$('tags_json').innerHTML = transport.responseText;}});
-        }
+        /* load class selecter widget - must be done here also in case nothing is selected */
+        this.classSelector = new cClassSelector(true);
+    },
 
+    prepareData: function() {
         /* organize and set json member */
         this.tags = [];
         $('tags_json').innerHTML.evalJSON().collect(function(tag) {
-            this.tags.push([tag['tag']['id'], tag['tag']]);
+            this.tags.push(tag['tag']);
         }.bind(this));
 
-        /* build directory view */
-        this.directoryView = new cDirectoryView(this.tags);
-
-        /* build quick study */
-        this.buildQuickstudy();
-
-        /* reset documentsViews */
-        this.documentsViews = new Hash;
-
-        /* listen for hash change */
-        //@todo find cross-browser solution
-        window.onhashchange = this.onChange.bind(this);
-
-        /* resize listener */
-        window.onresize = AppUtilities.resizeContents;
-    },
-
-    onChange: function() {
-
-        /* rerender? browser navigation used? */
-        var hashValue = self.document.location.hash.substring(1);
-        var rerender = hashValue != this.currentView;
-        
-        /* rerender */
-        if (rerender) {
-            if (hashValue == '') this.directoryView.render();
-            else this.directoryView.openDirectory(hashValue);
-        }
-        /* fire resize */
-        AppUtilities.resizeContents();
-        AppUtilities.resizeContents.delay(.01);
-    },
-
-    buildQuickstudy: function(){
-        var cards_data = $('lines_json').innerHTML.evalJSON();
-        if (cards_data.length > 0) {
-            if (cards_data == null || cards_data == "" || cards_data.length == 0) return;
-            var card = new cCard(cards_data[Math.floor(Math.random()*cards_data.length)]["line"]);
-            card.cue();
-        }
-        else {
-            $('card_front').update("No cards to review...");
-        }
-    }
-});
-
-var cDirectoryView = Class.create({
-
-    tags: null,
-    html: null,
-
-    sortBy: 'updated_at',
-    reverse: false,
-
-    initialize: function(tags) {
-        /* set tags */
-        this.tags = tags;
-
-        /* sort (builds html) and render */
-
-        //if rebuilding view, reset active
-        var updatedAt = $('sort_by_updated_at');
-        if (updatedAt) updatedAt.removeClassName('active');
-
-        //sort
-        this.sort('updated_at');
-    },
-
-    _buildHtml: function() {
-
-        /* new file */
-        this.html = '<div class="icon_container rounded_border new_directory_container">\
-          <div class="title new_directory">&nbsp;</div>\
-          <div class="folder ">\
-            <img class="new_directory" alt="" src="/images/organizer/folder-add-icon.png" />\
-          </div>\
-        </div>';
-
-        /* tags */
-        var tag;
-        this.tags.each(function(tagArray) {
-
-          tag = tagArray[1]
-          this.html += '<div tag_id="'+tag['id']+'" class="icon_container rounded_border">\
-              <div tag_id="'+tag['id']+'" class="title">'+tag['name']+'</div>\
-              <div class="folder" tag_id="'+tag['id']+'" >\
-                <img tag_id="'+tag['id']+'" class="folder" alt="" src="/images/organizer/folder-full-icon.png" />\
-              </div>\
-              <div class="folder_options">\
-                <img class="rounded_border new_document" alt="" src="/images/organizer/add-icon.png" />\
-                <a href="/review/dir/'+tag['id']+'"><img class="rounded_border" alt="" src="/images/organizer/play-icon.png" /></a>\
-                <img class="rounded_border destroy_directory" alt="" src="/images/organizer/remove-icon.png" />\
-              </div>\
-            </div>';
-        }.bind(this));
-    },
-
-    render: function() {
-        /* render icons and title */
-        $('directory_name').update('My Notes /');
-        $('icons').update(this.html)
-
-        /* remove old sort listeners/classes; add new classes */
-        $('sort_options').childElements().each(function(element) {
-            element.stopObserving();
-            element.removeClassName('reverse');
-            element.removeClassName('active');
-        });
-        $('sort_by_' + this.sortBy).addClassName('active');
-        if (this.reverse) $('sort_by_' + this.sortBy).addClassName('reverse');
-
-        /* add listeners */
-
-        //open directory
-        $$('div.folder, img.folder, .icon_container .title').each(function(element) {
-            element.observe('click', function(event) {
-                var tagId = event.target.getAttribute('tag_id');
-                this.openDirectory(tagId);
-                event.stop();
+        //set all documents
+        this.docs = new Hash();
+        this.tags.each(function(tag){
+            tag['documents'].each(function(doc){
+                this.docs.set(doc['id'], doc);
             }.bind(this));
         }.bind(this));
 
-        //new directory
-        $$('.new_directory, div.new_directory, .new_directory_container .folder').each(function(element) {
-            element.observe('click', this.createDirectory.bind(this));
-        }.bind(this));
-
-        //new document
-        //@todo new_document and delete_directory could be combined for a modest
-        //      performance gain
-        $$('.new_document').each(function(element) {
-            element.observe('click', this.createDocument.bind(this));
-        }.bind(this));
-
-
-        //delete directory
-        $$('.destroy_directory').each(function(element) {
-            element.observe('click', this.destroyDirectory.bind(this));
-        }.bind(this));
-
-        //sort
-        $('sort_by_updated_at').observe('click', function() {
-            this.sort('updated_at');
-            this.render();
-        }.bind(this));
-        $('sort_by_name').observe('click', function() {
-            this.sort('name');
-            this.render();
-        }.bind(this));
-        
-        /* set location hash */
-        if (window.doc) doc.currentView = "";
-        self.document.location.hash = '#';
-    },
-
-    openDirectory: function(tagId) {
-
-        /* get or create documentsView */
-        var documentsView = doc.documentsViews.get(tagId);
-        if (!documentsView) {
-            var tag;
-            doc.tags.each(function(t) {
-               if (t[0] == tagId) {
-                   tag = t[1];
-                   throw $break;
-               }
+        if(this.activeTags==null){
+            this.activeTags = new Hash();
+            var activeT = this.activeTags;
+            this.tags.each(function(tag){
+                activeT.set(tag['id'], 'open');
             });
-
-            documentsView = new cDocumentsView(tag);
-            doc.documentsViews.set(tagId, documentsView);
         }
-
-        /* render documentsView */
-        documentsView.render();
+        /* resize listener */
+        AppUtilities.resizeContents();
     },
 
-    createDirectory: function(event) {
+    onChange: function(){
+        this.render();
+    },
 
-        /* stop bubble */
-        event.stop();
+    _buildFolders: function(){
+        var html = '';
+        this.tags.each(function(tag) {
+          var icon = 'expand';
+          var style = 'style= "display:none;"';
+          if(this.activeTags.get(tag['id'])=='open'){
+              icon = 'collapse';
+              style='style="display:block;"';
+          }
+          html += '<div class="accordion_toggle rounded_border '+icon+'" tag_id="'+tag['id']+'" >'+tag['name']+'\
+              <img id="delete_'+tag['id']+'" class="remove_folder_icon" src="../../images/organizer/remove-icon-bw-15x15.png" style="display:none;"/>\
+              <img id="edit_'+tag['id']+'" class="edit_folder_icon" src="../../images/organizer/edit-icon-bw-15x15.png" style="display:none;"/></div><div style="clear:both;"></div>\
+              <div id="accordion_content_'+tag['id']+'" class="accordion_content" tag_id="'+tag['id']+'" '+style+'></div>';
+        }.bind(this));
+        $('documents').update(html);
 
-        /* request params */
-        var tagName = prompt('What would you like to name the new directory?');
-        if (!tagName) return;
+    },
 
-        /* request */
-        new Ajax.Request('/tags', {
-            method: 'post',
-            parameters: {'name': tagName},
-            onSuccess: function(transport) {
+    _buildDocs: function(){
+        var html = '';
+        this.tags.each(function(tag) {
+          var active = this.activeItemId;
+          tag['documents'].each(function(doc){
+              //this.docs.set(doc['id'], doc);
+              if(doc['id']==active){
+                  html+= '<div class="doc_item active" doc_id="'+doc['id']+'">\
+                    <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
+                    <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+'</span>\
+                    <div class="doc_actions" style="display:block;">\
+                    <ul><li><a href="/documents/'+doc['id']+'/edit"><img class="doc_action_img" src="../../images/organizer/edit-icon-15x15.png">edit</a></li>\
+                    <li><a href="/review/'+doc['id']+'"><img class="doc_action_img" src="../../images/organizer/review-icon.png">review</a></li>\
+                    <li><span class="remove_doc" doc_id="'+doc['id']+'"><img class="doc_action_img" doc_id="'+doc['id']+'" src="../../images/organizer/remove-icon-15x15.png">delete</span></li></ul>\
+                    </div>\
+                    </div>';
+              } else {
+              html += '<div class="doc_item inactive" doc_id="'+doc['id']+'">\
+                    <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
+                    <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+'</span>\
+                    <div class="doc_actions">\
+                    <ul><li><a href="/documents/'+doc['id']+'/edit"><img class="doc_action_img" src="../../images/organizer/edit-icon-15x15.png">edit</a></li>\
+                    <li><a href="/review/'+doc['id']+'"><img class="doc_action_img" src="../../images/organizer/review-icon.png">review</a></li>\
+                    <li><span class="remove_doc" doc_id="'+doc['id']+'"><img class="doc_action_img" doc_id="'+doc['id']+'" src="../../images/organizer/remove-icon-15x15.png">delete</span></li></ul>\
+                    </div>\
+                    </div>';
+              }
+          });
+          var elemId = 'accordion_content_'+tag['id'];
+          $(elemId).update(html);
+          html='';
+        }.bind(this));
+    },
 
-                /* inject json and rerender document */
-                $('tags_json').update(Object.toJSON(transport.responseJSON));
-                doc = new cDoc;
-                doc.onChange();
-            },
-            onFailure: function(transport) {
-                alert('There was an error saving the new directory.');
+    _buildDetails: function(){
+        var html = '';
+        var checkedList = [];
+        $$('.chbox').each(function(ele){
+           if( $(ele).checked )
+           {
+               checkedList.push($(ele).getAttribute('doc_id'));
+           }
+        });
+        if(checkedList[0] == null && this.activeItemId==''){
+            html += '<span id="create_folder">Create New Folder</span>\
+                    <span style="text-align:center; display:block; margin:10px 0">- OR -</span>\
+                    <em style="text-align:center; display:block;" >Select a document to view details...</em>';
+        } else if((checkedList[0] == null && this.activeItemId!='')||(checkedList[1] == null && this.activeItemId!='')){
+            var singleDoc = this.docs.get(this.activeItemId);
+            this.convertDate(new Date(singleDoc['created_at']));
+            var created = this.theDate;
+            this.convertDate(new Date(singleDoc['updated_at']));
+            var updated = this.theDate;
+            var selector ='<select id="tag_id" class="selector">';
+            this.tags.each(function(t){
+                var s = ''
+                if(t['id']==singleDoc['tag_id']) {s = 'selected = "selected"';}
+                selector +='<option value="'+t['id']+'" '+s+'>'+t['name']+'</option>';
+            });
+            selector += '</select>';
+            
+            html += '<div id="metainfo" doc_id="'+this.activeItemId+'">\
+                    '+selector+'<img alt="loading" id="doc_loading" src="../../images/shared/fb-loader.gif" style="margin-right:5px;visibility:hidden;">\
+                    <img class="elbow" src="../../images/organizer/elbow-icon.png"/><div id="sdt" class="single_doc_title"><span id="detail_name">'+singleDoc['name']+'</span></div>\
+                    <div style="clear: both;"></div><h4 class="details_label">Created On: </h4>\
+                    <em>'+created+'</em><br/>\
+                    <h4 class="details_label">Last Updated: </h4>\
+                    <em>'+updated+'</em></div>';
+        } else if(checkedList[1] == null && this.activeItemId == ''){
+            html += 'You have selected <strong>'+this.docs.get(checkedList[0])['name']+'</strong>... Use the checkboxes to take actions on multiple documents';
+        } else {
+            html+='<div id="metainfo"><h4 class="details_label">Multiple Documents:</h4>';
+            var multiDoc = [];
+            var i=0;
+            while(checkedList[i]!=null){
+                multiDoc.push(this.docs.get(checkedList[i]));
+                i+=1;
             }
-        });
-    },
 
-    destroyDirectory: function(event) {
-
-        /* confirm */
-        if (!confirm('Are you sure you want to delete this directory and all of it\'s contents? This cannot be undone.')) return;
-
-        /* request params */
-        var tagId = event.target.up('.icon_container').getAttribute('tag_id');
-
-        /* request */
-        new Ajax.Request('/tags/' + tagId, {
-            method: 'delete',
-            onSuccess: function(transport) {
-
-                /* inject json and rerender document */
-                $('tags_json').update(Object.toJSON(transport.responseJSON));
-                doc = new cDoc;
-                doc.onChange();
-            },
-            onFailure: function(transport) {
-                alert('There was an error removing the directory.');
-            }
-        });
-    },
-
-    createDocument: function(event) {
-
-        /* stop bubble */
-        event.stop();
-
-        /* set reload cookie */
-        AppUtilities.Cookies.create('reloadOrganizer', true, 1)
-
-        /* request params */
-        var tagId = event.target.up('.icon_container').getAttribute('tag_id');
-
-        /* new document */
-        self.document.location.href = '/documents/create/' + tagId
-        
-    },
-
-    sort: function(attribute) {
-
-        this.sortBy = attribute;
-
-        /* sort */
-        this.tags = this.tags.sortBy(function(tag) {return tag[1][attribute].toLowerCase();});
-
-        /* reverse? dom attributes */
-        var sortBy = $('sort_by_' + attribute);
-        var activeCurrent = sortBy.hasClassName('active');
-        if (!activeCurrent) sortBy.addClassName('active');
-        var reverseCurrent = sortBy.hasClassName('reverse');
-        this.reverse = (activeCurrent && !reverseCurrent);
-        if (this.reverse) {
-            sortBy.addClassName('reverse');
-            this.tags = this.tags.reverse();
+            multiDoc.each(function(item){
+                html += '<br/><em>'+item['name']+'</em>';
+            });
+            html+= '</div>';
         }
-        else $('sort_by_' + attribute).removeClassName('reverse');
-
-        //special handling for updated_at - it's backwards
-        if (attribute == 'updated_at') this.tags = this.tags.reverse();
-
-        /* remove classnames from inactive */
-        $('sort_options').childElements().each(function(sortBy) {
-            if (sortBy.id != 'sort_by_' + attribute) {
-                sortBy.removeClassName('reverse');
-                sortBy.removeClassName('active');
-            }
-        });
-
-        /* build html */
-        this._buildHtml();
-    }
-});
-
-var cCard = Class.create({
-
-    /* out of ten for easy url  */
-    memId: null,
-    lineId: null,
-    domId: null,
-    documentId: null,
-    text: '',
-    front: '',
-    simpleFront: '',
-    back: '',
-
-    flipped:false,
-
-    initialize: function(data) {
-
-        this.lineId = data['id'];
-        this.domId = data['domid'];
-        this.memId = data['mems'][0]['id'];
-        this.documentId = data['document_id'];
-        this.text = data['text'];
-    },
-
-    cue: function() {
-        var parser = new cParser();
-        parser.parse(this, true);
-        $('card_front').update(this.front);
-        $('flip_button').observe('click', this.toggle.bind(this));
-    },
-
-    toggle: function() {
-        if (this.flipped) {
-            $('card_front').update(this.front);
-            $('card_side').update("Front");
-            $("card_front").setStyle({"textAlign": "left"});
-            this.flipped = false;
-        }
-        else {
-            $('card_side').update("Back");
-            $('card_front').update(this.back);
-            $("card_front").setStyle({"textAlign": "center"});
-            this.flipped = true;
-        }
-    }
-});
-
-var cDocumentsView = Class.create({
-
-    html: null,
-    tag : null,
-
-    sortBy: 'updated_at',
-    reverse: false,
-
-    initialize: function(tag) {
-
-        /* tag member */
-        this.tag = tag;
-
-        /* sort (builds html) */
-        /* remove old sort listeners/classes; add new classes */
-        $('sort_options').childElements().each(function(element) {
-            element.stopObserving();
-            element.removeClassName('reverse');
-            element.removeClassName('active');
-        });
-        this.sort('updated_at');
-    },
-
-    _buildHtml: function() {
+        $('details').update(html);
         
-        /* build view html string */
+        if(checkedList[0] == null && this.activeItemId==''){
+           $('create_folder').observe('click', function(event){
+               $('new_folder_menu').show();
+            }.bind(this)); 
+        }
 
-        //return to root
-        this.html = '<div class="icon_container rounded_border to_root_container">\
-          <div class="title to_root">&nbsp;</div>\
-          <div class="folder to_root">\
-            <img class="to_root" alt="" src="/images/organizer/folder-up-icon.png" />\
-          </div>\
-        </div>';
+        this.resizeDetails();
 
-        //new document
-        this.html += '<div tag_id="'+this.tag['id']+'" class="icon_container rounded_border new_document_container">\
-          <div class="title new_document">&nbsp;</div>\
-          <div class="folder new_document">\
-            <img class="new_document" alt="" src="/images/organizer/doc-new-icon.png" />\
-          </div>\
-        </div>';
+        /* load class selecter widget */
+        this.classSelector = new cClassSelector(true);
 
-        //document links
-        this.tag.documents.each(function(document) {
-          this.html += '<div document_id="'+document['id']+'" class="icon_container rounded_border">\
-              <a href="/documents/'+document['id']+'/edit">\
-                <div class="title">'+document['name']+'</div>\
-                <div class="folder">\
-                  <img class="folder" alt="" src="/images/organizer/doc-icon.png" />\
-                </div>\
-              </a>\
-              <div class="folder_options">\
-                <a href="/documents/'+document['id']+'/edit"><img class="rounded_border" alt="" src="/images/organizer/edit-icon.png" /></a>\
-                <a href="/review/'+document['id']+'"><img class="rounded_border" alt="" src="/images/organizer/play-icon.png" /></a>\
-                <img class="rounded_border remove_document" alt="" src="/images/organizer/remove-icon.png" />\
-              </div>\
-            </div>';
+        //listener for doc name change
+        $$('.single_doc_title').each(function(elem){
+            elem.observe('click', function(event) {
+                event.target.stopObserving();
+                var title = $('sdt').down(0).innerHTML;
+                $('sdt').innerHTML = '<input id="edt" class="edit_doc_title" value="'+title+'" />';
+                $('edt').focus();
+                $$('.edit_doc_title').each(function(elem){
+                    elem.observe('keypress', function(e) {
+                        if (e.keyCode == 13) e.target.blur();
+                    }.bind(this));
+
+                    elem.observe('blur', function(){
+                        console.log('blur start');
+                        var newTitle = $('edt').value;
+                        if(!(newTitle==title)){
+                        var parameters = {};
+                        parameters['doc_id'] = $('metainfo').getAttribute('doc_id');
+                        parameters['name'] = newTitle;
+                        console.log('params set');
+                        new Ajax.Request('/documents/update_document_name', {
+                            method: 'post',
+                            parameters: parameters,
+                            onFailure: function() {
+                                console.log('FAIL');
+                            },
+                            onSuccess: function() {
+                                console.log('SUCCESS');
+                                new Ajax.Request('/tags/get_tags_json', {
+                                   onSuccess: function(transport) {
+                                       console.log('SUCCESS 2');
+                                       $('tags_json').update(transport.responseText);
+                                       this.prepareData();
+                                       this.render();
+                                       console.log('finished');
+                                   }.bind(this)
+                                });
+                            }.bind(this)
+                        });
+                        } else {this._buildDetails();}
+                    }.bind(this));
+                }.bind(this));
+            }.bind(this));
         }.bind(this));
     },
 
-    render: function() {
-        
-        /* render view and title*/
-        var dirName;
-        if (this.tag.misc) dirName = this.tag.name
-        else dirName = this.tag.name + " <span id='edit_directory_name'>[Edit Name]</span>"
-        $('directory_name').update('My Notes /' + dirName + '/');
-        $('icons').update(this.html);
+    resizeDetails: function(){
+        this.h = $('documents').getHeight();
+        $('details').setStyle({height: (this.h - 88)+'px'});
+    },
 
-        /* remove old sort listeners/classes; add new classes */
-        $('sort_options').childElements().each(function(element) {
-            element.stopObserving();
-            element.removeClassName('reverse');
-            element.removeClassName('active');
-        });
-        $('sort_by_' + this.sortBy).addClassName('active');
-        if (this.reverse) $('sort_by_' + this.sortBy).addClassName('reverse');
-        var edit_directory_name = $('edit_directory_name');
-        if (edit_directory_name) edit_directory_name.stopObserving();
+    convertDate: function(d){
+        var m_names = new Array("January", "February", "March",
+        "April", "May", "June", "July", "August", "September",
+        "October", "November", "December");
 
-        /* listeners */
+        var curr_date = d.getDate();
+        var sup = "";
+        if (curr_date == 1 || curr_date == 21 || curr_date ==31)
+           {
+           sup = "st";
+           }
+        else if (curr_date == 2 || curr_date == 22)
+           {
+           sup = "nd";
+           }
+        else if (curr_date == 3 || curr_date == 23)
+           {
+           sup = "rd";
+           }
+        else
+           {
+           sup = "th";
+           }
 
-        //to root
-        $$('.to_root').each(function(element) {
-            element.observe('click', doc.directoryView.render.bind(doc.directoryView));
-        });
+        var curr_month = d.getMonth();
+        var curr_year = d.getFullYear();
 
-        //new document
-        $$('.new_document').each(function(element) {
-            element.observe('click', doc.directoryView.createDocument);
-        });
-
-        //remove document
-        $$('.remove_document').each(function(element) {
-            element.observe('click', this.destroyDocument.bind(this));
-        }.bind(this));
-
-        //edit dir name listeners
-        if (edit_directory_name) edit_directory_name.observe('click', this.editDirName.bind(this));
-
-        /* sort listeners */
-        $('sort_by_updated_at').observe('click', function() {
-            this.sort('updated_at');
-            this.render();
-        }.bind(this));
-        $('sort_by_name').observe('click', function() {
-            this.sort('name');
-            this.render();
-        }.bind(this));
-
-        /* set location hash */
-        doc.currentView = this.tag.id;
-        self.document.location.hash = this.tag.id;
+        this.theDate = (m_names[curr_month] +" "+ curr_date + "<sup>" + sup + "</sup> " + " " + curr_year);
     },
 
     destroyDocument: function(event) {
@@ -474,20 +254,16 @@ var cDocumentsView = Class.create({
         if (!confirm('Are you sure you want to delete this document? This cannot be undone.')) return;
 
         /* request params */
-        var documentId = event.target.up('.icon_container').getAttribute('document_id');
+        var documentId = event.target.getAttribute('doc_id');
 
         /* request */
         new Ajax.Request('/documents/' + documentId, {
             method: 'delete',
             onSuccess: function(transport) {
-
                 /* inject json and rerender document */
                 $('tags_json').update(Object.toJSON(transport.responseJSON));
                 doc = new cDoc;
                 doc.onChange();
-
-                /* open appropriate directory */
-                doc.directoryView.openDirectory(this.tag.id);
             }.bind(this),
             onFailure: function(transport) {
                 alert('There was an error removing the directory.');
@@ -495,64 +271,214 @@ var cDocumentsView = Class.create({
         });
     },
 
-    editDirName: function() {
+    reviewDocument: function(docId){
+        /* new document */
+        self.document.location.href = '/review/' + docId
+    },
 
-        /* request params */
-        var tagName = prompt('What would you like to rename the directory?');
-        if (!tagName) return;
-        
+    destroyFolder: function(event){
+        if (!confirm('Are you sure you want to delete this directory and all of it\'s contents? This cannot be undone.')) return;
         /* request */
-        new Ajax.Request('/tags/' + doc.currentView, {
-            method: 'put',
-            parameters: {'name': tagName,
-                         'id': doc.currentView},
+        var tagId = event.target.getAttribute('id');
+        tagId = tagId.substring(7);
+        console.log(tagId);
+        new Ajax.Request('/tags/' + tagId, {
+            method: 'delete',
             onSuccess: function(transport) {
 
                 /* inject json and rerender document */
-                // @todo clear area for optimization at if latency becomes a problem
-                $('tags_json').update(Object.toJSON(transport.responseJSON));
-                doc = new cDoc;
-                doc.onChange();
-            },
+                $('tags_json').update(transport.responseText);
+                this.prepareData();
+                console.log('prepped');
+                this.render();
+                console.log('render');
+            }.bind(this),
             onFailure: function(transport) {
-                alert('There was an error updating the directory name.');
+                alert('There was an error removing the directory.');
             }
         });
     },
 
-    sort: function(attribute) {
+    renameFolder: function(event){
 
-        /* sortBy */
-        this.sortBy = attribute;
+        /* request params */
+        var tagName = prompt('What would you like to rename this directory?');
+        if (!tagName) return;
 
-        /* sort */
-        this.tag.documents = this.tag.documents.sortBy(function(doc) {return doc[attribute].toLowerCase();});
-
-        /* reverse? dom attributes */
-        var activeCurrent = $('sort_by_' + attribute).hasClassName('active');
-        if (!activeCurrent) $('sort_by_' + attribute).addClassName('active');
-        var reverseCurrent = $('sort_by_' + attribute).hasClassName('reverse');
-        this.reverse = (activeCurrent && !reverseCurrent)
-        if (this.reverse) {
-            $('sort_by_' + attribute).addClassName('reverse');
-            this.tag.documents = this.tag.documents.reverse();
-        }
-        else $('sort_by_' + attribute).removeClassName('reverse');
-
-        //special handling for updated_at - it's backwards
-        if (attribute == 'updated_at') this.tag.documents = this.tag.documents.reverse();
-
-        /* remove classnames from inactive */
-        $('sort_options').childElements().each(function(sortBy) {
-            if (sortBy.id != 'sort_by_' + attribute) {
-                sortBy.removeClassName('reverse');
-                sortBy.removeClassName('active');
-            }
+        
+        var parameters = {};
+        var tag_id = event.target.getAttribute('id');
+        parameters['tag_id'] = tag_id.substring(5);
+        parameters['name'] = tagName;
+        console.log('params set');
+        new Ajax.Request('/tags/update_tags_name', {
+            method: 'post',
+            parameters: parameters,
+            onFailure: function() {
+                console.log('FAIL');
+            },
+            onSuccess: function() {
+                console.log('SUCCESS');
+                new Ajax.Request('/tags/get_tags_json', {
+                   onSuccess: function(transport) {
+                       console.log('SUCCESS 2');
+                       $('tags_json').update(transport.responseText);
+                       this.prepareData();
+                       this.render();
+                       console.log('finished');
+                   }.bind(this)
+                });
+            }.bind(this)
         });
+    },
 
-        /* build html */
-        this._buildHtml();
+    render: function(){
+        this._buildFolders();
+        this._buildDocs();
+        this._buildDetails();
+        this.resizeDetails();
+        //Add Listeners
+
+        //click doc name link
+        $$('.doc_title').each(function(element) {
+            element.observe('click', function(event) {
+            var docId = event.target.getAttribute('doc_id');
+            /* review document */
+            this.reviewDocument(docId);
+            event.stop();
+            }.bind(this));
+        }.bind(this));
+
+        //remove document
+        $$('.remove_doc').each(function(element) {
+            element.observe('click', this.destroyDocument.bind(this));
+        }.bind(this));
+
+        //click doc item to reveal actions and highlight with css
+
+        $$('.doc_item').each(function(element) {
+            element.observe('click', function(event) {
+            if(event.target.getAttribute('class')=='doc_item active' || event.target.getAttribute('class')=='doc_item inactive'){
+            if(this.activeItemId==''){ //if nothing is open
+                event.target.down(2).setStyle({display:'block'});
+                this.activeItemId = event.target.getAttribute('doc_id');
+                event.target.removeClassName('inactive');
+                event.target.addClassName('active');
+                event.stop();
+            } else if(this.activeItemId==event.target.getAttribute('doc_id')) { //if you reclick an open item
+                event.target.down(2).setStyle({display:'none'});
+                this.activeItemId = '';
+                event.target.removeClassName('active');
+                event.target.addClassName('inactive');
+                event.stop();
+            } else { //if you switch open items
+                var openAction = $('documents').getElementsBySelector( 'div.doc_item[doc_id="'+this.activeItemId+'"]');
+                openAction[0].down(2).setStyle({display:'none'});
+                event.target.down(2).setStyle({display:'block'});
+                event.target.removeClassName('inactive');
+                event.target.addClassName('active');
+                openAction[0].removeClassName('active');
+                openAction[0].addClassName('inactive');
+                this.activeItemId = event.target.getAttribute('doc_id');
+                event.stop();
+            }
+            }
+            this._buildDetails();
+            }.bind(this));
+        }.bind(this));
+
+        //listen for checkboxes
+        $$('.chbox').each(function(element) {
+            element.observe('click', function(event) {
+                this._buildDetails();
+                }.bind(this));
+        }.bind(this));
+
+        //listen for folder actions
+        $$('.accordion_toggle').each(function(element){
+            var activeT = this.activeTags;
+            element.observe('click', function(event){
+                if(event.target.className =='accordion_toggle rounded_border collapse' || event.target.className =='accordion_toggle rounded_border expand'){
+                    new Effect.toggle(event.target.next(1),'Blind', {duration:.5, afterFinish: function(){doc.resizeDetails();}});
+                    var id = event.target.getAttribute('tag_id');
+                    if(event.target.className =='accordion_toggle rounded_border collapse'){
+                        event.target.removeClassName('collapse');
+                        event.target.addClassName('expand');
+                        activeT.set(id, 'closed');
+                    } else {
+                        event.target.removeClassName('expand');
+                        event.target.addClassName('collapse');
+                        activeT.set(id, 'open');
+                    }
+                }
+            }.bind(this));
+            element.observe('mouseenter', function(event){
+                event.target.down(0).setStyle({display:'inline'});
+                event.target.down(0).next(0).setStyle({display:'inline'});
+            });
+
+            element.observe('mouseleave', function(event){
+                event.target.down(0).setStyle({display:'none'});
+                event.target.down(0).next(0).setStyle({display:'none'});
+            });
+
+            this.activeTags = activeT;
+        }.bind(this));
+
+        //listen for delete-icon actions
+        $$('.remove_folder_icon').each(function(element){
+            element.observe('click', function(event){
+                this.destroyFolder(event);
+            }.bind(this));
+            element.observe('mouseenter', function(event){
+                event.target.writeAttribute("src", "../../images/organizer/remove-icon-15x15.png" );
+            });
+            element.observe('mouseleave', function(event){
+                event.target.writeAttribute("src", "../../images/organizer/remove-icon-bw-15x15.png" );
+            });
+
+        }.bind(this));
+
+        $$('.edit_folder_icon').each(function(element){
+            element.observe('click', function(event){
+                this.renameFolder(event);
+            }.bind(this));
+            element.observe('mouseenter', function(event){
+                event.target.writeAttribute("src", "../../images/organizer/edit-icon-15x15.png" );
+            });
+            element.observe('mouseleave', function(event){
+                event.target.writeAttribute("src", "../../images/organizer/edit-icon-bw-15x15.png" );
+            });
+        }.bind(this));
+
+        //listen for doc folder change
+        document.observe("document:moved", function() {
+           // this._buildFolders();
+           // this._buildDocs();
+            new Ajax.Request('/tags/get_tags_json', {
+               onSuccess: function(transport) {
+                   console.log('render');
+                   $('tags_json').update(transport.responseText);
+                   this.prepareData();
+                   this.render();
+               }.bind(this)
+            });
+        }.bind(this));
+
+        document.observe('click', function(event){
+            if((event.target.hasClassName('wrapper')||event.target.hasClassName('contents')) && this.activeItemId!=''){
+                var elem = $('documents').select('[doc_id="'+this.activeItemId+'"]')[0];
+                console.log(elem);
+                elem.down(2).setStyle({display:'none'});
+                this.activeItemId = '';
+                elem.removeClassName('active');
+                elem.addClassName('inactive');
+                event.stop();
+                this.resizeDetails();
+            }
+        }.bind(this));
     }
+
 });
 
 /* global objects */

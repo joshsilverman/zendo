@@ -37,6 +37,9 @@ var cDoc = Class.create({
         /* utilities */
         this.utilities = new cUtilities();
 
+        /* load class selecter widget */
+        new cClassSelector();
+
         /* disable feedback */
         if (document.viewport.getWidth() < 1000) {
             AppUtilities.vendorScripts.unset("script_userecho")
@@ -123,13 +126,15 @@ var cOutline = Class.create({
 
     initialize: function(iDoc) {
         this.iDoc = iDoc;
-        this.documentId = $('document_id').innerHTML;
+        this.documentId = $('doc_id').innerHTML;
         this.lineIds = $H($('line_ids').innerHTML.evalJSON());
         
         this.autosaver = new PeriodicalExecuter(this.autosave.bind(this), 4);
 
         $("document_name").observe('keypress', function(e) {
+            console.log('doc name listener');
             if (e.keyCode == 13) doc.editor.focus();
+            doc.editor.isNotDirty = false;
             this.onChange(null);
         }.bind(this));
     },
@@ -208,7 +213,7 @@ var cOutline = Class.create({
     },
 
     autosave: function() {
-        if(doc.editor.isDirty()) {
+        if(doc.editor.isDirty() || !doc.editor.isNotDirty) {
             doc.editor.isNotDirty = true;
 
             doc.outline.updateIds();
@@ -282,7 +287,7 @@ var cOutline = Class.create({
                     if (transport.status == 401) {
                         alert("Please sign in again.");
 //                        Lightview.show({
-//                            href: '/users/simple_sign_in',
+//                            href: '/doc.editor.isNotDirty = false;users/simple_sign_in',
 //                            rel: 'ajax',
 //                            options: {
 //                                autosize: true,
@@ -352,7 +357,7 @@ var cOutline = Class.create({
                 console.log('error: node has id but no card exists');
             }
         }
-        
+
         if (doc.editor) {
             doc.editor.isNotDirty = false;
             var saveButton = $('save_button');
