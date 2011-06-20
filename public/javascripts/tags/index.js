@@ -20,6 +20,8 @@ var cDoc = Class.create({
 
         /* load class selecter widget - must be done here also in case nothing is selected */
         this.classSelector = new cClassSelector(true);
+        //new Dialog.Box('rename_folder_modal');
+        //$('rename_folder_modal').show();
     },
 
     prepareData: function() {
@@ -280,32 +282,44 @@ var cDoc = Class.create({
     },
 
     destroyFolder: function(event){
-        if (!confirm('Are you sure you want to delete this directory and all of it\'s contents? This cannot be undone.')) return;
-        /* request */
-        var tagId = event.target.getAttribute('id');
-        tagId = tagId.substring(7);
-        console.log(tagId);
-        new Ajax.Request('/tags/' + tagId, {
-            method: 'delete',
-            onSuccess: function(transport) {
+        new Dialog.Box('delete_folder_modal');
+        $('delete_folder_modal').show();
+        $('submit_delete').observe('click', function(){
+            /* request */
+            var tagId = event.target.getAttribute('id');
+            tagId = tagId.substring(7);
+            console.log(tagId);
+            new Ajax.Request('/tags/' + tagId, {
+                method: 'delete',
+                onSuccess: function(transport) {
 
-                /* inject json and rerender document */
-                $('tags_json').update(transport.responseText);
-                this.prepareData();
-                console.log('prepped');
-                this.render();
-                console.log('render');
-            }.bind(this),
-            onFailure: function(transport) {
-                alert('There was an error removing the directory.');
-            }
+                    /* inject json and rerender document */
+                    $('tags_json').update(transport.responseText);
+                    this.prepareData();
+                    console.log('prepped');
+                    this.render();
+                    console.log('render');
+                }.bind(this),
+                onFailure: function(transport) {
+                    alert('There was an error removing the directory. Please try again');
+                }
+            });
+            $('delete_folder_modal').hide();
+        }.bind(this));
+        $('submit_cancel').observe('click', function(){
+            $('delete_folder_modal').hide();
         });
     },
 
     renameFolder: function(event){
 
         /* request params */
-        var tagName = prompt('What would you like to rename this directory?');
+        new Dialog.Box('rename_folder_modal');
+        $('rename_folder_modal').show();
+
+        $('submit_rename').observe('click', function(){
+        var tagName = $('rename_field').value;
+        $('rename_folder_modal').hide();
         if (!tagName) return;
 
         
@@ -319,6 +333,7 @@ var cDoc = Class.create({
             parameters: parameters,
             onFailure: function() {
                 console.log('FAIL');
+                alert('There was an error renaming the folder. Please try again');
             },
             onSuccess: function() {
                 console.log('SUCCESS');
@@ -333,6 +348,7 @@ var cDoc = Class.create({
                 });
             }.bind(this)
         });
+        }.bind(this));
     },
 
     render: function(){
@@ -456,8 +472,17 @@ var cDoc = Class.create({
 
         //listen for doc folder change
         document.observe("document:moved", function() {
-           // this._buildFolders();
-           // this._buildDocs();
+            new Ajax.Request('/tags/get_tags_json', {
+               onSuccess: function(transport) {
+                   console.log('render');
+                   $('tags_json').update(transport.responseText);
+                   this.prepareData();
+                   this.render();
+               }.bind(this)
+            });
+        }.bind(this));
+
+        document.observe("document:new_folder_created", function() {
             new Ajax.Request('/tags/get_tags_json', {
                onSuccess: function(transport) {
                    console.log('render');

@@ -106,7 +106,9 @@ var cClassSelector = Class.create({
                 $('new_folder_menu').hide();
             }
         });
-
+        document.fire("document:new_folder_created");
+        console.log('doc:nfc FIRED');
+        document.stopObserving("document:new_folder_created");
         console.log('done!');
     }
 });
