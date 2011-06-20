@@ -26,8 +26,9 @@ font-size: 18px;
 color: #000000;
 /*border-bottom: #9a9a9a 1px solid;*/
 cursor: pointer;
-margin: 0 0 5px 0;
+margin: 5px 0 0 0;
 background-color: #e1efd6;
+z-index:1;
 }
 
 .expand{
@@ -49,10 +50,9 @@ border-bottom: 1px solid #f68263;
 }
 
 .accordion_content {
-padding:5px 20px;
+padding:0 20px 0 20px;
 background-color: #ffffff;
 color: #444444;
-overflow: hidden;
 }
 
 .accordion_content h2 {
@@ -68,10 +68,10 @@ overflow: hidden;
 /* dashboard */
 
 #documents {
-    border: #444444 1px solid;
+    border: #aaa 1px solid;
     width:70%;
     float:right;
-    padding:7px;
+    padding:2px 7px 7px 7px;
     margin-left: 5px;
     background-color: white;
     min-height: 375px;
@@ -79,7 +79,7 @@ overflow: hidden;
 
 #details{
     float:left;
-    border: #444444 1px solid;
+    border: #aaa 1px solid;
     width: 100%;
     padding:10px;
     background-color: white;
@@ -93,9 +93,10 @@ overflow: hidden;
 }
 
 .doc_item{
-    margin:3px 0 3px 20px;
+    margin:5px 0 0 20px;
     padding:1px;
     line-height: 21px;
+    position: relative;
 }
 
 .doc_item:hover{
@@ -137,12 +138,15 @@ overflow: hidden;
     width:65px;
     float:right;
     padding:3px;
-    z-index: 99999;
+    z-index: 89;
     border:solid 1px #007AC7;
     border-top:solid 1px #f2f9ff;
-    margin-top:21px;
+   /*margin-top:21px;*/
     margin-right:-1px;
     background-color: #f2f9ff;
+    position:absolute;
+    top:21px;
+    left:538px;
 }
 
 .doc_actions ul{
@@ -162,9 +166,9 @@ overflow: hidden;
 }
 
 .rounded_border{
-    -webkit-border-radius: 7px;
-    -moz-border-radius: 7px;
-    border-radius: 7px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
 
 .remove_doc {
@@ -196,7 +200,7 @@ overflow: hidden;
    text-align: center;
    line-height: 40px;
    float:left;
-   margin-bottom: 10px;
+   margin-bottom: 7px;
    }
 
 .button:hover {

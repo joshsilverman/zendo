@@ -26,6 +26,7 @@ var cClassSelector = Class.create({
         /* create new dialog box for new folder */
         console.log('create dialog');
         new Dialog.Box('new_folder_menu');
+        $('create_tag_submit').stopObserving();
         $('create_tag_submit').observe('click', function() {
             console.log('yo!');
             this.createAndAssignTag();
@@ -70,7 +71,7 @@ var cClassSelector = Class.create({
 
     _appendNewFolderOption: function() {
         if ($('tag_id'))
-            $('tag_id').insert({bottom: new Element('option', {id: 'new_folder_option', style: 'color:green;'}).insert("new folder")});
+            $('tag_id').insert({bottom: new Element('option', {id: 'new_folder_option', style: 'color:green;'}).insert("New Folder")});
     },
 
     /* create tag and assign document to it if id provided */
@@ -92,23 +93,23 @@ var cClassSelector = Class.create({
             },
             onSuccess: function(transport) {
                 $("new_tag_loading").setStyle({'visibility': 'hidden'});
-                
+                console.log('SUCCESS');
                 /* update tags_json if present */
-                if ($('tags_json')) $('tags_json').update(transport.responseText);
-
+                //if ($('tags_json')) $('tags_json').update(transport.responseText);
+                console.log("resp: "+transport.responseText);
                 /* append and select new tag */
                 var newOption = new Element('option', {id: 'new_folder_option', selected:'1'}).insert($('tag_name').value);
-                $('new_folder_option').insert({before: newOption});
+                if($('new_folder_option')) $('new_folder_option').insert({before: newOption});
                 $('tag_name').value = ""
+                console.log('SUCCESS!!!');
+                document.fire("document:new_folder_created");
+                console.log('SUCCESS!!!!!!');
+                //document.stopObserving("document:new_folder_created");
             },
             onComplete: function() {
                 if ($('tag_id')) $('tag_id').disabled = false;
                 $('new_folder_menu').hide();
             }
         });
-        document.fire("document:new_folder_created");
-        console.log('doc:nfc FIRED');
-        document.stopObserving("document:new_folder_created");
-        console.log('done!');
     }
 });

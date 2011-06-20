@@ -136,7 +136,7 @@ var cDoc = Class.create({
             selector += '</select>';
             
             html += '<div id="metainfo" doc_id="'+this.activeItemId+'">\
-                    '+selector+'<img alt="loading" id="doc_loading" src="../../images/shared/fb-loader.gif" style="margin-right:5px;visibility:hidden;">\
+                    '+selector+'<img alt="loading" id="doc_loading" src="../../images/shared/fb-loader.gif" style="margin-left:7px;visibility:hidden;">\
                     <img class="elbow" src="../../images/organizer/elbow-icon.png"/><div id="sdt" class="single_doc_title"><span id="detail_name">'+singleDoc['name']+'</span></div>\
                     <div style="clear: both;"></div><h4 class="details_label">Created On: </h4>\
                     <em>'+created+'</em><br/>\
@@ -161,6 +161,7 @@ var cDoc = Class.create({
         $('details').update(html);
         
         if(checkedList[0] == null && this.activeItemId==''){
+           $('create_folder').stopObserving();
            $('create_folder').observe('click', function(event){
                $('new_folder_menu').show();
             }.bind(this)); 
@@ -178,6 +179,7 @@ var cDoc = Class.create({
                 var title = $('sdt').down(0).innerHTML;
                 $('sdt').innerHTML = '<input id="edt" class="edit_doc_title" value="'+title+'" />';
                 $('edt').focus();
+                $('edt').select();
                 $$('.edit_doc_title').each(function(elem){
                     elem.observe('keypress', function(e) {
                         if (e.keyCode == 13) e.target.blur();
@@ -286,15 +288,17 @@ var cDoc = Class.create({
         $('delete_folder_modal').show();
         $('submit_delete').observe('click', function(){
             /* request */
+            $('submit_delete').stopObserving();
             var tagId = event.target.getAttribute('id');
             tagId = tagId.substring(7);
             console.log(tagId);
             new Ajax.Request('/tags/' + tagId, {
                 method: 'delete',
                 onSuccess: function(transport) {
-
+                    console.log('success!');
                     /* inject json and rerender document */
                     $('tags_json').update(transport.responseText);
+                    console.log(transport.responseText);
                     this.prepareData();
                     console.log('prepped');
                     this.render();
@@ -302,9 +306,11 @@ var cDoc = Class.create({
                 }.bind(this),
                 onFailure: function(transport) {
                     alert('There was an error removing the directory. Please try again');
+                    console.log('Failure: ' + transport.responseText);
                 }
             });
             $('delete_folder_modal').hide();
+            console.log('hidemodal');
         }.bind(this));
         $('submit_cancel').observe('click', function(){
             $('delete_folder_modal').hide();
@@ -485,16 +491,21 @@ var cDoc = Class.create({
         document.observe("document:new_folder_created", function() {
             new Ajax.Request('/tags/get_tags_json', {
                onSuccess: function(transport) {
-                   console.log('render');
+                   console.log('render1');
                    $('tags_json').update(transport.responseText);
+                   console.log(transport.responseText);
                    this.prepareData();
+                   console.log('render3');
                    this.render();
+                   console.log('render4');
                }.bind(this)
             });
         }.bind(this));
 
         document.observe('click', function(event){
-            if((event.target.hasClassName('wrapper')||event.target.hasClassName('contents')) && this.activeItemId!=''){
+        console.log(event.target);
+            if((event.target.hasClassName('wrapper')||event.target.hasClassName('contents') ||
+                event.target.readAttribute('id')=='documents') && this.activeItemId!=''){
                 var elem = $('documents').select('[doc_id="'+this.activeItemId+'"]')[0];
                 console.log(elem);
                 elem.down(2).setStyle({display:'none'});
@@ -502,7 +513,7 @@ var cDoc = Class.create({
                 elem.removeClassName('active');
                 elem.addClassName('inactive');
                 event.stop();
-                this.resizeDetails();
+                this._buildDetails();
             }
         }.bind(this));
     }
