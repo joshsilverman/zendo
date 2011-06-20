@@ -14,7 +14,7 @@ Vertical Accordions
 .accordion_toggle {
 display: block;
 height: 30px;
-width: 93%;
+width: 93.5%;
 float:left;
 padding: 0 10px 0 30px;
 line-height: 32px;
@@ -26,7 +26,7 @@ font-size: 18px;
 color: #000000;
 /*border-bottom: #9a9a9a 1px solid;*/
 cursor: pointer;
-margin: 0 0 5px 5px;
+margin: 0 0 5px 0;
 background-color: #e1efd6;
 }
 
@@ -71,7 +71,7 @@ overflow: hidden;
     border: #444444 1px solid;
     width:70%;
     float:right;
-    padding:5px;
+    padding:7px;
     margin-left: 5px;
     background-color: white;
     min-height: 375px;
@@ -140,7 +140,7 @@ overflow: hidden;
     z-index: 99999;
     border:solid 1px #007AC7;
     border-top:solid 1px #f2f9ff;
-    margin-top:22px;
+    margin-top:21px;
     margin-right:-1px;
     background-color: #f2f9ff;
 }

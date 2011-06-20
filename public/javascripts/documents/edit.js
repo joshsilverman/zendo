@@ -52,7 +52,7 @@ var cDoc = Class.create({
             var iframe = $('editor_ifr');
             this.iDoc = iframe.contentWindow || iframe.contentDocument;
         }
-        catch (e) {
+        catch(e) {
             doc.onEditorLoaded.bind(this).delay(.05);
             return;
         }

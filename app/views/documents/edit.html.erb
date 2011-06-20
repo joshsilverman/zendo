@@ -71,7 +71,13 @@ tinyMCE.init({
 
   content_css : "/stylesheets/documents/edit_contents.css",
 
-  onpageload : function() {doc.onEditorLoaded()},
+  onpageload : function() {
+    console.log('onpageload');
+    try {
+      doc.onEditorLoaded();
+    }
+    catch (e) {arguments.callee.bind(this).delay(.05);}
+  },
 
   setup : function(ed) {
     ed.onKeyDown.add(function(ed, e) {

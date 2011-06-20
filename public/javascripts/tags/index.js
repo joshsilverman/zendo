@@ -119,9 +119,11 @@ var cDoc = Class.create({
                     <em style="text-align:center; display:block;" >Select a document to view details...</em>';
         } else if((checkedList[0] == null && this.activeItemId!='')||(checkedList[1] == null && this.activeItemId!='')){
             var singleDoc = this.docs.get(this.activeItemId);
-            this.convertDate(new Date(singleDoc['created_at']));
+            var d = singleDoc['created_at'].split('-');
+            this.convertDate(new Date(d[0], d[1], d[2].substring(0,2)));
             var created = this.theDate;
-            this.convertDate(new Date(singleDoc['updated_at']));
+            d = singleDoc['updated_at'].split('-');
+            this.convertDate(new Date(d[0], d[1], d[2].substring(0,2)));
             var updated = this.theDate;
             var selector ='<select id="tag_id" class="selector">';
             this.tags.each(function(t){
@@ -222,9 +224,10 @@ var cDoc = Class.create({
         var m_names = new Array("January", "February", "March",
         "April", "May", "June", "July", "August", "September",
         "October", "November", "December");
-
+        console.log(d);
         var curr_date = d.getDate();
         var sup = "";
+        console.log(curr_date);
         if (curr_date == 1 || curr_date == 21 || curr_date ==31)
            {
            sup = "st";
@@ -245,7 +248,7 @@ var cDoc = Class.create({
         var curr_month = d.getMonth();
         var curr_year = d.getFullYear();
 
-        this.theDate = (m_names[curr_month] +" "+ curr_date + "<sup>" + sup + "</sup> " + " " + curr_year);
+        this.theDate = (m_names[curr_month - 1] +" "+ curr_date + "<sup>" + sup + "</sup> " + " " + curr_year);
     },
 
     destroyDocument: function(event) {
