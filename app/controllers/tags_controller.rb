@@ -35,9 +35,10 @@ class TagsController < ApplicationController
         # doc not found
       end
     end
-    recent_edit = Document.recent_edit
-    recent_review = Document.recent_review
-    @recent_json = recent_edit|recent_review
+    recent_edit = Document.where("updated_at <= ? AND updated_at >= ?  AND user_id = ?", Date.today, Date.today - 7, current_user.id)
+    recent_review = Document.where("reviewed_at <= ? AND reviewed_at >= ?  AND user_id = ?", Date.today, Date.today - 14, current_user.id)
+    recent = recent_edit|recent_review
+    @recent_json = recent.to_json
   end
 
   def get_tags_json
