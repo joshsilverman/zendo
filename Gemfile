@@ -6,7 +6,8 @@ gem 'mysql2', '0.2.7'
 gem 'nokogiri'
 
 gem 'devise'
-gem 'omniauth'
+gem 'omniauth', '0.2.2'
+gem 'faraday', '0.6.1'
 gem 'postmark'
 gem 'postmark-rails', '0.4.0'
 
