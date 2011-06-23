@@ -15,6 +15,10 @@ class Document < ActiveRecord::Base
   has_many :shares
   has_and_belongs_to_many :viewers, :class_name => "User", :uniq => true
 
+  scope :recentEdit, where("updated_at between ? and ?", Date.today, (Date.today -7))
+  scope :recentReview, where("reviewed_at between ? and ?", Date.today, (Date.today - 30))
+
+
   def self.update(params, user_id)
 
     id = params[:id]
