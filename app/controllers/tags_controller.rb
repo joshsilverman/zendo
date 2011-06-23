@@ -35,6 +35,9 @@ class TagsController < ApplicationController
         # doc not found
       end
     end
+    recent_edit = Document.recent_edit
+    recent_review = Document.recent_review
+    @recent_json = recent_edit|recent_review
   end
 
   def get_tags_json

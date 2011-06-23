@@ -4,6 +4,7 @@
 <div id="detail_tags" style="display: none;">
 <%= current_user.tags.collect {|t| [ t.name, t.id] }.to_json()%>
 </div>
+<div id="recent_json" style="display: block;"><%= @recent_json %></div>
 
 <div id="left_container">
 <div class="new_guide_button">

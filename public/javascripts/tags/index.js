@@ -56,6 +56,13 @@ var cDoc = Class.create({
 
     _buildFolders: function(){
         var html = '';
+        html += '<div class="accordion_toggle rounded_border collapse" tag_id="recent" >Recent Documents</div><div style="clear:both;"></div>\
+              <div id="accordion_content_recent" class="accordion_content" tag_id="recent" style="display:block;">\
+              <div class="doc_item inactive" doc_id="'+doc['id']+'">\
+                    <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
+                    <span class="doc_title" doc_id="'+doc['id']+'">Recent Doc</span>\
+                    </div>\
+              </div>';
         this.tags.each(function(tag) {
           var icon = 'expand';
           var style = 'style= "display:none;"';
@@ -63,7 +70,7 @@ var cDoc = Class.create({
               icon = 'collapse';
               style='style="display:block;"';
           }
-          html += '<div class="accordion_toggle rounded_border '+icon+'" tag_id="'+tag['id']+'" >'+tag['name']+'\
+          html += '<div class="accordion_toggle rounded_border '+icon+'" tag_id="'+tag['id']+'" '+style+'>'+tag['name']+'\
               <img id="delete_'+tag['id']+'" class="remove_folder_icon" src="../../images/organizer/remove-icon-bw-15x15.png" style="display:none;"/>\
               <img id="edit_'+tag['id']+'" class="edit_folder_icon" src="../../images/organizer/edit-icon-bw-15x15.png" style="display:none;"/></div><div style="clear:both;"></div>\
               <div id="accordion_content_'+tag['id']+'" class="accordion_content" tag_id="'+tag['id']+'" '+style+'></div>';
