@@ -1,8 +1,8 @@
 class Document < ActiveRecord::Base
 
   validates :name, :length => {:minimum => 1,
-                               :maximum => 30,
-                               :message => "Name must be between 1-30 characters"},
+                               :maximum => 40,
+                               :message => "Name must be between 1-40 characters"},
                    :format => {:with => /[a-zA-Z0-9-&%$\#+\(\)*^@!]/,
                                :message => "Pleas use only letters numbers and (!@#\$%^&*-+)"}
 
@@ -48,7 +48,7 @@ class Document < ActiveRecord::Base
       # delete lines/mems (don't use destory_all with dependencies) - half as many queries; tracks whether deleted
       unless delete_nodes == '[]' || delete_nodes.nil? || delete_nodes == ''
         Line.delete_all(["id IN (?) AND document_id = ? AND user_id = ?", delete_nodes.split(','), document.id, user_id])
-        Mem.delete_all(["line_id IN (?) AND user_id = ?", delete_nodes.split(','), user_id]) # belongs in model but I think before_delete would delete mems infividually
+        Mem.delete_all(["line_id IN (?) AND user_id = ?", delete_nodes.split(','), user_id]) # belongs in model but I think before_delete would delete mems individually
       end
     end
 

@@ -1,5 +1,5 @@
 body {
-    background: #F5F5F5;
+    background: #FAFAFA;
 }
 
 .doc_options {
@@ -8,6 +8,7 @@ body {
     border-bottom: none;
     position:relative;
     background:#efefef;
+    height:21px;
 }
 
 .doc_options a {
@@ -34,25 +35,10 @@ body {
     display:none;
 }
 
-.doc_options button {
-    border: 1px solid #FFBB00;
-    background-color:#FFEA00;
-    color:#000;
-
-    border-top-left-radius: 3px 3px;
-    border-top-right-radius: 3px 3px;
-    border-bottom-left-radius: 3px 3px;
-    border-bottom-right-radius: 3px 3px;
-    -moz-border-radius:3px 3px 3px 3px;
-}
-
-.doc_options button:hover {
-    text-decoration: underline;
-    cursor:pointer;
-}
-
 #save_button {
     margin-right:3px;
+    border: 1px solid #FFBB00;
+    background-color:#FFEA00;
 }
 
 #review_button {
@@ -217,4 +203,16 @@ img.sync:active {
     border-top-left-radius: 5px 5px;
     border-top-right-radius: 5px 5px;
     -moz-border-radius:5px 5px 0 0;
+}
+
+/* display option buttons */
+.display-options:hover {
+    cursor:pointer;
+    text-decoration: underline;
+}
+
+/* styling for specific modals */
+
+#new_folder_menu {
+    width:330px;
 }

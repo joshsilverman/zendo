@@ -28,6 +28,10 @@ img.home {
 }
 
 .clr { height:10px;clear:both; }
+.clr-thin {
+    height:0;clear:both;
+    padding:2px;
+}
 
 .rounded_border {
     border: 1px solid lightGrey;
@@ -110,7 +114,7 @@ img.home {
     float:left;
     clear:left;
     position:relative;
-    top: 20px;
+    top: -10px;
 }
 
 header {
@@ -174,4 +178,126 @@ div.twtr-tweet-wrap {
 
 .error_explanation h2 {
     font-size:1.1em;
+}
+
+/* button styling */
+
+.doc_options button, .display-options, #review_options button {
+    border: 1px solid #009CFF;
+    background-color:#B3DAF2;
+/*    background:#B3DAF2;
+    border:#009CFF;*/
+    color:#000;
+
+    border-top-left-radius: 3px 3px;
+    border-top-right-radius: 3px 3px;
+    border-bottom-left-radius: 3px 3px;
+    border-bottom-right-radius: 3px 3px;
+    -moz-border-radius:3px 3px 3px 3px;
+}
+
+.doc_options button:hover, #review_options button:hover {
+    text-decoration: underline;
+    cursor:pointer;
+}
+
+/* modals */
+
+.modal {
+    background:white;
+    width:400px;
+
+    border: 1px solid #009CFF;
+    background:#B3DAF2;
+
+    border-top-left-radius: 5px 5px;
+    border-top-right-radius: 5px 5px;
+    border-bottom-left-radius: 5px 5px;
+    border-bottom-right-radius: 5px 5px;
+    -moz-border-radius:5px 5px 5px 5px;
+}
+
+.modal .title {
+    padding: 3px;
+    border-bottom: 1px solid #009CFF;
+    text-align: center;
+}
+
+.modal .content {
+    background:white;
+    padding: 3px;
+
+    border-bottom-left-radius: 5px 5px;
+    border-bottom-right-radius: 5px 5px;
+    -moz-border-radius:0 0 5px 5px;
+}
+
+.modal .content div {
+    padding: 5px;
+}
+
+.user-tokens .token {
+    background-color: #EDDDF0;
+    border: solid 1px #999;
+    padding: 1px 2px;
+    margin: 2px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    position: relative;
+    float:left;
+    clear:both;
+}
+
+.remove {
+    display:none;
+}
+
+.removable {
+    background-color: #DDE4F0 !important;
+}
+
+.removable .remove {
+    display:inline !important;
+}
+
+.remove {
+    text-decoration: none;
+    padding: 0 4px;
+    font-size: 10px;
+
+    position:relative;
+    top:-1px;
+
+    color:#333;
+    background:#bbb;
+
+    border-radius: 4px;
+    -moz-border-radius:4px;
+}
+
+.remove:hover {
+    color:#999;
+    background:#333;
+    cursor:pointer;
+}
+
+.modal form {
+    display:inline;
+}
+
+.modal span.option {
+    width: 84px;
+}
+
+.modal input[type=text] {
+    width: 180px;
+}
+
+.modal input[type=text], #share_menu select {
+    border: solid 1px #999;
+    padding: 1px 2px;
+    margin: 2px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    position: relative;
 }

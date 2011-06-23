@@ -1,4 +1,4 @@
-<% @page_specific_scripts_js = ["parser", "vendors/prototip/prototip", "class_selector"] #"vendors/lightview/js/lightview.js"] %>
+<% @page_specific_scripts_js = ["parser", "vendors/prototip/prototip", "class_selector", "vendors/modal.js"] #"vendors/lightview/js/lightview.js"] %>
 <% @page_specific_scripts_css = ["prototip/prototip", "/javascripts/vendors/lightview/css/lightview"] %>
 
 <div id="doc_options" class="doc_options loading">
@@ -11,12 +11,12 @@
         <input id="document_name" value="<%=@document.name%>" style="display:none;"></input>
       </div>
     <% else %>
-      Class:
+      Folder:
 
       <%= select 'tag', 'id', current_user.tags.collect {|t| [ t.name, t.id, {:_selected => (@document.tag_id == t.id)}] } %>
       <%= image_tag "shared/fb-loader.gif", :alt => 'loading', :style => "margin-right:5px;visibility:hidden;", :id => "doc_loading" %>
       
-      Title: <input id="document_name" value="<%=@document.name%>"></input>
+      Title: <input id="document_name" value="<%=@document.name%>"  maxlength="40"></input>
     <% end %>
   </span>
 
@@ -71,7 +71,13 @@ tinyMCE.init({
 
   content_css : "/stylesheets/documents/edit_contents.css",
 
-  onpageload : function() {doc.onEditorLoaded()},
+  onpageload : function() {
+    console.log('onpageload');
+    try {
+      doc.onEditorLoaded();
+    }
+    catch (e) {arguments.callee.bind(this).delay(.05);}
+  },
 
   setup : function(ed) {
     ed.onKeyDown.add(function(ed, e) {
@@ -103,3 +109,5 @@ tinyMCE.init({
       <a onClick="doc.tipTour.restartTour();" href="javascript:void(0)">Restart</a>
   </div>
 </div>
+
+<%= render "shared/modal_new_tag" %>

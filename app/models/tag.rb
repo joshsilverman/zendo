@@ -1,8 +1,8 @@
 class Tag < ActiveRecord::Base
   
   validates :name, :length => {:minimum => 1,
-                               :maximum => 30,
-                               :message => "Name must be between 1-30 characters"},
+                               :maximum => 40,
+                               :message => "Name must be between 1-40 characters"},
                    :format => {:with => /[a-zA-Z0-9-&%$\#+\(\)*^@!.]/,
                                :message => "Please use only letters numbers and (!@#\$%^&*-+)"}
   
@@ -15,7 +15,7 @@ class Tag < ActiveRecord::Base
     return nil if current_user.blank?
     current_user.tags.includes(:documents)\
                     .all\
-                    .to_json(:include => {:documents => {:only => [:id, :name, :updated_at]}})
+                    .to_json(:include => {:documents => {:only => [:id, :name, :updated_at, :created_at, :tag_id]}})
     rescue: []
   end
 
