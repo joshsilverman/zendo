@@ -13,8 +13,8 @@ class Document < ActiveRecord::Base
   belongs_to :tag
   belongs_to :user
 
-  scope :recentEdit, where("updated_at between ? and ?", Date.today, (Date.today -7))
-  scope :recentReview, where("reviewed_at between ? and ?", Date.today, (Date.today - 30))
+  #scope :recent_edit, where("updated_at < ? AND user_id = ?", Date.today, current_user.id)
+  #scope :recent_review, where("reviewed_at between ? and ?", Date.today, (Date.today - 30))
 
 
   def self.update(params, user_id)
@@ -58,6 +58,7 @@ class Document < ActiveRecord::Base
 
     document.update_attributes(:html => Line.document_html)
     document.update_attributes(:name => params[:name])
+    document.update_attributes(:edited_at => Date.today)
     return document
   end
   
