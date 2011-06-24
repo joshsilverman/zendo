@@ -9,6 +9,7 @@ var cDoc = Class.create({
     iDoc: null,
     utilities: null,
 
+    readOnly:null,
     newDoc: null,
     docCount: null,
 
@@ -65,6 +66,7 @@ var cDoc = Class.create({
         this.editor = tinyMCE.getInstanceById("editor");
 
         /* click observers */
+        Event.observe($("share_button"),"click",doc.share.bind(this));
         Event.observe($("save_button"),"click",function(e){doc.outline.autosave(e);});
         Event.observe($("review_button"),"click",function(e){
             AppUtilities.Cookies.create('reloadEditor', 'true', 3);
@@ -108,6 +110,25 @@ var cDoc = Class.create({
         var editorWidth = 660;
         $("editor_tbl").setStyle({width: editorWidth + 'px'});
         $("editor_parent").setStyle({width: editorWidth + 'px'});
+    },
+
+    share: function() {
+        new Dialog.Box('share_menu');
+        console.log($('share_menu'));
+        $('share_menu').show();
+//        $('test123').hide();
+//        var openMenu = false;
+//        if ($("share_button").menu_open == 'true') {
+//            $("share_button").menu_open = 'false';
+//            $('doc_options').morph('height:24px;');
+//            console.log('close it');
+//        }
+//        else {
+//            $("share_button").menu_open = 'true';
+//            openMenu = true;
+//            $('doc_options').morph('height:150px;');
+//            console.log('open it');
+//        }
     }
 });
 
