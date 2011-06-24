@@ -6,6 +6,7 @@ var cDoc = Class.create({
 
     /* parsed tag info */
     tags: null,
+    recent: null,
     docs: null,
     html: null,
     theDate: null,
@@ -28,13 +29,23 @@ var cDoc = Class.create({
         /* organize and set json member */
         this.tags = [];
         $('tags_json').innerHTML.evalJSON().collect(function(tag) {
-            this.tags.push(tag['tag']);
+            this.tags.push([tag['tag']['id'], tag['tag']]);
         }.bind(this));
+        console.log(this.tags);
+
+        this.recent = [];
+        console.log($('recent_json').innerHTML);
+        $('recent_json').innerHTML.evalJSON().collect(function(doc) {
+            console.log('recent iterator');
+            this.recent.push(doc['document']);
+            console.log('recent iterated');
+        }.bind(this));
+        console.log(this.recent);
 
         //set all documents
         this.docs = new Hash();
         this.tags.each(function(tag){
-            tag['documents'].each(function(doc){
+            tag[1]['documents'].each(function(doc){
                 this.docs.set(doc['id'], doc);
             }.bind(this));
         }.bind(this));
@@ -43,7 +54,7 @@ var cDoc = Class.create({
             this.activeTags = new Hash();
             var activeT = this.activeTags;
             this.tags.each(function(tag){
-                activeT.set(tag['id'], 'open');
+                activeT.set(tag[1]['id'], 'closed');
             });
         }
         /* resize listener */
@@ -57,23 +68,18 @@ var cDoc = Class.create({
     _buildFolders: function(){
         var html = '';
         html += '<div class="accordion_toggle rounded_border collapse" tag_id="recent" >Recent Documents</div><div style="clear:both;"></div>\
-              <div id="accordion_content_recent" class="accordion_content" tag_id="recent" style="display:block;">\
-              <div class="doc_item inactive" doc_id="'+doc['id']+'">\
-                    <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
-                    <span class="doc_title" doc_id="'+doc['id']+'">Recent Doc</span>\
-                    </div>\
-              </div>';
+              <div id="accordion_content_recent" class="accordion_content" tag_id="recent" style="display:block;"></div>';
         this.tags.each(function(tag) {
-          var icon = 'expand';
-          var style = 'style= "display:none;"';
-          if(this.activeTags.get(tag['id'])=='open'){
-              icon = 'collapse';
-              style='style="display:block;"';
+          var icon = 'collapse';
+          var style='style="display:block;"';
+          if(this.activeTags.get(tag[1]['id'])=='closed'){
+              icon = 'expand';
+              style = 'style= "display:none;"';
           }
-          html += '<div class="accordion_toggle rounded_border '+icon+'" tag_id="'+tag['id']+'" '+style+'>'+tag['name']+'\
-              <img id="delete_'+tag['id']+'" class="remove_folder_icon" src="../../images/organizer/remove-icon-bw-15x15.png" style="display:none;"/>\
-              <img id="edit_'+tag['id']+'" class="edit_folder_icon" src="../../images/organizer/edit-icon-bw-15x15.png" style="display:none;"/></div><div style="clear:both;"></div>\
-              <div id="accordion_content_'+tag['id']+'" class="accordion_content" tag_id="'+tag['id']+'" '+style+'></div>';
+          html += '<div class="accordion_toggle rounded_border '+icon+'" tag_id="'+tag[1]['id']+'">'+tag[1]['name']+'\
+              <img id="delete_'+tag[1]['id']+'" class="remove_folder_icon" src="../../images/organizer/remove-icon-bw-15x15.png" style="display:none;"/>\
+              <img id="edit_'+tag[1]['id']+'" class="edit_folder_icon" src="../../images/organizer/edit-icon-bw-15x15.png" style="display:none;"/></div><div style="clear:both;"></div>\
+              <div id="accordion_content_'+tag[1]['id']+'" class="accordion_content" tag_id="'+tag[1]['id']+'" '+style+'></div>';
         }.bind(this));
         $('documents').update(html);
 
@@ -81,11 +87,46 @@ var cDoc = Class.create({
 
     _buildDocs: function(){
         var html = '';
+        //Build Recent Documents
+        this.recent.each(function(doc){
+            var tName = "unknown";
+            this.tags.each(function(t){
+               if(t[0]==doc['tag_id']){
+                   tName = t[1]['name'];
+               }
+            }.bind(this));
+            if($(this.activeItemId)){
+            if(doc['id']==$(this.activeItemId).readAttribute('doc_id')){
+                  html+= '<div class="doc_item active" doc_id="'+doc['id']+'">\
+                    <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
+                    <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+'('+tName+')</span>\
+                    <div class="doc_actions" style="display:block;">\
+                    <ul><li><a href="/documents/'+doc['id']+'/edit"><img class="doc_action_img" src="../../images/organizer/edit-icon-15x15.png">edit</a></li>\
+                    <li><a href="/review/'+doc['id']+'"><img class="doc_action_img" src="../../images/organizer/review-icon.png">review</a></li>\
+                    <li><span class="remove_doc" doc_id="'+doc['id']+'"><img class="doc_action_img" doc_id="'+doc['id']+'" src="../../images/organizer/remove-icon-15x15.png">delete</span></li></ul>\
+                    </div>\
+                    </div>';
+              }} else {
+                  html += '<div class="doc_item inactive" doc_id="'+doc['id']+'">\
+                    <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
+                    <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+' </span> ('+tName+')\
+                    <div class="doc_actions">\
+                    <ul><li><a href="/documents/'+doc['id']+'/edit"><img class="doc_action_img" src="../../images/organizer/edit-icon-15x15.png">edit</a></li>\
+                    <li><a href="/review/'+doc['id']+'"><img class="doc_action_img" src="../../images/organizer/review-icon.png">review</a></li>\
+                    <li><span class="remove_doc" doc_id="'+doc['id']+'"><img class="doc_action_img" doc_id="'+doc['id']+'" src="../../images/organizer/remove-icon-15x15.png">delete</span></li></ul>\
+                    </div>\
+                    </div>';
+              }
+        }.bind(this));
+        $('accordion_content_recent').update(html);
+
+        //Builds All Documents
+        html = ''
         this.tags.each(function(tag) {
-          var active = this.activeItemId;
-          tag['documents'].each(function(doc){
+          tag[1]['documents'].each(function(doc){
               //this.docs.set(doc['id'], doc);
-              if(doc['id']==active){
+              if($(this.activeItemId)){
+              if(doc['id']==$(this.activeItemId).readAttribute('doc_id')){
                   html+= '<div class="doc_item active" doc_id="'+doc['id']+'">\
                     <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
                     <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+'</span>\
@@ -95,7 +136,7 @@ var cDoc = Class.create({
                     <li><span class="remove_doc" doc_id="'+doc['id']+'"><img class="doc_action_img" doc_id="'+doc['id']+'" src="../../images/organizer/remove-icon-15x15.png">delete</span></li></ul>\
                     </div>\
                     </div>';
-              } else {
+              }} else {
               html += '<div class="doc_item inactive" doc_id="'+doc['id']+'">\
                     <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
                     <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+'</span>\
@@ -106,8 +147,8 @@ var cDoc = Class.create({
                     </div>\
                     </div>';
               }
-          });
-          var elemId = 'accordion_content_'+tag['id'];
+          }.bind(this));
+          var elemId = 'accordion_content_'+tag[1]['id'];
           $(elemId).update(html);
           html='';
         }.bind(this));
@@ -127,7 +168,8 @@ var cDoc = Class.create({
                     <span style="text-align:center; display:block; margin:10px 0">- OR -</span>\
                     <em style="text-align:center; display:block;" >Select a document to view details...</em>';
         } else if((checkedList[0] == null && this.activeItemId!='')||(checkedList[1] == null && this.activeItemId!='')){
-            var singleDoc = this.docs.get(this.activeItemId);
+            console.log("dID" +$(this.activeItemId).readAttribute('doc_id'));
+            var singleDoc = this.docs.get($(this.activeItemId).readAttribute('doc_id'));
             var d = singleDoc['created_at'].split('-');
             this.convertDate(new Date(d[0], d[1], d[2].substring(0,2)));
             var created = this.theDate;
@@ -137,12 +179,12 @@ var cDoc = Class.create({
             var selector ='<select id="tag_id" class="selector">';
             this.tags.each(function(t){
                 var s = ''
-                if(t['id']==singleDoc['tag_id']) {s = 'selected = "selected"';}
-                selector +='<option value="'+t['id']+'" '+s+'>'+t['name']+'</option>';
+                if(t[0]==singleDoc['tag_id']) {s = 'selected = "selected"';}
+                selector +='<option value="'+t[0]+'" '+s+'>'+t[1]['name']+'</option>';
             });
             selector += '</select>';
             
-            html += '<div id="metainfo" doc_id="'+this.activeItemId+'">\
+            html += '<div id="metainfo" doc_id="'+$(this.activeItemId).readAttribute('doc_id')+'">\
                     '+selector+'<img alt="loading" id="doc_loading" src="../../images/shared/fb-loader.gif" style="margin-left:7px;visibility:hidden;">\
                     <img class="elbow" src="../../images/organizer/elbow-icon.png"/><div id="sdt" class="single_doc_title"><span id="detail_name">'+singleDoc['name']+'</span></div>\
                     <div style="clear: both;"></div><h4 class="details_label">Created On: </h4>\
@@ -195,6 +237,7 @@ var cDoc = Class.create({
                     elem.observe('blur', function(){
                         console.log('blur start');
                         var newTitle = $('edt').value;
+                         $('sdt').innerHTML = '<span id="detail_name" >'+newTitle +'</span>';
                         if(!(newTitle==title)){
                         var parameters = {};
                         parameters['doc_id'] = $('metainfo').getAttribute('doc_id');
@@ -210,11 +253,24 @@ var cDoc = Class.create({
                                 console.log('SUCCESS');
                                 new Ajax.Request('/tags/get_tags_json', {
                                    onSuccess: function(transport) {
-                                       console.log('SUCCESS 2');
+                                       console.log('tags json success1');
                                        $('tags_json').update(transport.responseText);
+                                       console.log('tags json success2');
+                                   }.bind(this)
+                                });
+                                console.log('tags json POST');
+                                new Ajax.Request('/tags/get_recent_json', {
+                                   onSuccess: function(transport) {
+                                       console.log('recent json success2');
+                                       $('recent_json').update(transport.responseText);
+                                       console.log('You made it!');
+                                       //this.prepareData();
+                                       //this.render();
+                                       //this._buildDetails();
+                                   }.bind(this),
+                                   onComplete: function(){
                                        this.prepareData();
                                        this.render();
-                                       console.log('finished');
                                    }.bind(this)
                                 });
                             }.bind(this)
@@ -276,8 +332,14 @@ var cDoc = Class.create({
             onSuccess: function(transport) {
                 /* inject json and rerender document */
                 $('tags_json').update(Object.toJSON(transport.responseJSON));
-                doc = new cDoc;
-                doc.onChange();
+                new Ajax.Request('/tags/get_recent_json', {
+                   onSuccess: function(transport) {
+                       console.log('recent json success');
+                       $('recent_json').update(transport.responseText);
+                   }.bind(this)
+                });
+                this.prepareData();
+                this.render();
             }.bind(this),
             onFailure: function(transport) {
                 alert('There was an error removing the directory.');
@@ -301,15 +363,22 @@ var cDoc = Class.create({
             console.log(tagId);
             new Ajax.Request('/tags/' + tagId, {
                 method: 'delete',
-                onSuccess: function(transport) {
-                    console.log('success!');
-                    /* inject json and rerender document */
-                    $('tags_json').update(transport.responseText);
-                    console.log(transport.responseText);
+                onSuccess: function() {
+                    console.log('SUCCESS');
+                    new Ajax.Request('/tags/get_tags_json', {
+                       onSuccess: function(transport) {
+                           console.log('tags json success');
+                           $('tags_json').update(transport.responseText);
+                       }.bind(this)
+                    });
+                    new Ajax.Request('/tags/get_recent_json', {
+                       onSuccess: function(transport) {
+                           console.log('recent json success');
+                           $('recent_json').update(transport.responseText);
+                       }.bind(this)
+                    });
                     this.prepareData();
-                    console.log('prepped');
                     this.render();
-                    console.log('render');
                 }.bind(this),
                 onFailure: function(transport) {
                     alert('There was an error removing the directory. Please try again');
@@ -352,11 +421,17 @@ var cDoc = Class.create({
                 console.log('SUCCESS');
                 new Ajax.Request('/tags/get_tags_json', {
                    onSuccess: function(transport) {
-                       console.log('SUCCESS 2');
+                       console.log('tags json success1');
                        $('tags_json').update(transport.responseText);
+                   }.bind(this)
+                });
+                new Ajax.Request('/tags/get_recent_json', {
+                   onSuccess: function(transport) {
+                       console.log('recent json success2');
+                       $('recent_json').innerHTML = transport.responseText;
+                       console.log('You made it!');
                        this.prepareData();
                        this.render();
-                       console.log('finished');
                    }.bind(this)
                 });
             }.bind(this)
@@ -374,10 +449,10 @@ var cDoc = Class.create({
         //click doc name link
         $$('.doc_title').each(function(element) {
             element.observe('click', function(event) {
-            var docId = event.target.getAttribute('doc_id');
-            /* review document */
-            this.reviewDocument(docId);
-            event.stop();
+                var docId = event.target.getAttribute('doc_id');
+                /* review document */
+                this.reviewDocument(docId);
+                event.stop();
             }.bind(this));
         }.bind(this));
 
@@ -387,31 +462,32 @@ var cDoc = Class.create({
         }.bind(this));
 
         //click doc item to reveal actions and highlight with css
-
+console.log('PRELISTENER');
         $$('.doc_item').each(function(element) {
+            console.log('LISTENERS SET');
+            element.identify();
             element.observe('click', function(event) {
             if(event.target.getAttribute('class')=='doc_item active' || event.target.getAttribute('class')=='doc_item inactive'){
             if(this.activeItemId==''){ //if nothing is open
                 event.target.down(2).setStyle({display:'block'});
-                this.activeItemId = event.target.getAttribute('doc_id');
+                this.activeItemId = event.target.id;
                 event.target.removeClassName('inactive');
                 event.target.addClassName('active');
                 event.stop();
-            } else if(this.activeItemId==event.target.getAttribute('doc_id')) { //if you reclick an open item
+            } else if(this.activeItemId==event.target.id) { //if you reclick an open item
                 event.target.down(2).setStyle({display:'none'});
                 this.activeItemId = '';
                 event.target.removeClassName('active');
                 event.target.addClassName('inactive');
                 event.stop();
             } else { //if you switch open items
-                var openAction = $('documents').getElementsBySelector( 'div.doc_item[doc_id="'+this.activeItemId+'"]');
-                openAction[0].down(2).setStyle({display:'none'});
+                $(this.activeItemId).down(2).setStyle({display:'none'});
                 event.target.down(2).setStyle({display:'block'});
                 event.target.removeClassName('inactive');
                 event.target.addClassName('active');
-                openAction[0].removeClassName('active');
-                openAction[0].addClassName('inactive');
-                this.activeItemId = event.target.getAttribute('doc_id');
+                $(this.activeItemId).removeClassName('active');
+                $(this.activeItemId).addClassName('inactive');
+                this.activeItemId = event.target.id;
                 event.stop();
             }
             }
@@ -445,13 +521,17 @@ var cDoc = Class.create({
                 }
             }.bind(this));
             element.observe('mouseenter', function(event){
-                event.target.down(0).setStyle({display:'inline'});
-                event.target.down(0).next(0).setStyle({display:'inline'});
+                if(event.target.getAttribute('tag_id') != 'recent'){
+                    event.target.down(0).setStyle({display:'inline'});
+                    event.target.down(0).next(0).setStyle({display:'inline'});
+                }
             });
 
             element.observe('mouseleave', function(event){
-                event.target.down(0).setStyle({display:'none'});
-                event.target.down(0).next(0).setStyle({display:'none'});
+                if(event.target.getAttribute('tag_id') != 'recent'){
+                    event.target.down(0).setStyle({display:'none'});
+                    event.target.down(0).next(0).setStyle({display:'none'});
+                }
             });
 
             this.activeTags = activeT;
@@ -513,7 +593,7 @@ var cDoc = Class.create({
         console.log(event.target);
             if((event.target.hasClassName('wrapper')||event.target.hasClassName('contents') ||
                 event.target.readAttribute('id')=='documents') && this.activeItemId!=''){
-                var elem = $('documents').select('[doc_id="'+this.activeItemId+'"]')[0];
+                var elem = $(this.activeItemId);
                 console.log(elem);
                 elem.down(2).setStyle({display:'none'});
                 this.activeItemId = '';

@@ -19,4 +19,14 @@ class Tag < ActiveRecord::Base
     rescue: []
   end
 
+  def self.recent_json(current_user = nil)
+    return nil if current_user.blank?
+    recent_edit = Document.select(['name', 'id', 'tag_id', 'edited_at', 'reviewed_at']).where("edited_at <= ? AND edited_at >= ?  AND user_id = ?", Date.today, Date.today - 7, current_user.id).limit(10)
+    recent_review = Document.select(['name', 'id', 'tag_id', 'edited_at', 'reviewed_at']).where("reviewed_at <= ? AND reviewed_at >= ?  AND user_id = ?", Date.today, Date.today - 14, current_user.id).limit(10)
+    recent = recent_edit|recent_review
+    recent.to_json()
+    rescue: ['error']
+    #recent_review.inspect includes(:name, :id, :tag_id, :edited_at, :reviewed_at).
+  end
+
 end
