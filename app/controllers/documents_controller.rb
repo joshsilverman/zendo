@@ -41,6 +41,9 @@ class DocumentsController < ApplicationController
       return
     end
 
+    # set as read-only
+    @read_only = params[:read_only]
+
     @tag = current_user.tags.find_by_id(@document.tag_id)
     @line_ids = Hash[*@document.lines.map {|line| [line.id, line.domid]}.flatten].to_json
 
