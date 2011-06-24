@@ -22,7 +22,12 @@
 
 
   <button id="review_button" style="float:right">Review</button>
-  <button id="save_button" style="float:right;" class="saving">Saved</button>
+  <% if @read_only %>
+    <button id="share_button" style="float:right;">Make a copy</button>
+    <button id="save_button" style="float:right; display:none;" class="saving">Saved</button>
+  <% else %>
+    <button id="save_button" style="float:right;" class="saving">Saved</button>
+  <% end %>
 </div>
 
 <div id="editor_container">
