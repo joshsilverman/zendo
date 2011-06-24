@@ -1,6 +1,6 @@
 <% @page_specific_scripts_js = ["parser", "class_selector", "vendors/modal.js"] %>
 
-<div id="tags_json" style="display: none;"><%= @tags_json %></div>
+<div id="tags_json" style="display: block;"><%= @tags_json %></div>
 <div id="detail_tags" style="display: none;">
 <%= current_user.tags.collect {|t| [ t.name, t.id] }.to_json()%>
 </div>

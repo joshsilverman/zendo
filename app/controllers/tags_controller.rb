@@ -12,37 +12,15 @@ class TagsController < ApplicationController
                   :user_id => current_user.id)
     end
     @tags_json = Tag.tags_json(current_user)
-
-    line_list = Line.includes(:mems)\
-      .where("lines.user_id = ? AND mems.status = 1",  current_user.id)\
-      .order("mems.updated_at DESC").limit(100)
-    recent_docs_ids = []
-    line_list.each do |l|
-      if recent_docs_ids.size < 3
-        unless recent_docs_ids.include?(l.document_id)
-          recent_docs_ids << l.document_id
-        end
-      end
-    end
-    line_list = line_list.select{|l| recent_docs_ids.include?(l.document_id)}
-
-    @lines_json = line_list.to_json :include => :mems
-    @recent_docs = []
-    recent_docs_ids.each do |r|
-      begin
-        @recent_docs << Document.find(r)
-      rescue
-        # doc not found
-      end
-    end
-    recent_edit = Document.where("updated_at <= ? AND updated_at >= ?  AND user_id = ?", Date.today, Date.today - 7, current_user.id)
-    recent_review = Document.where("reviewed_at <= ? AND reviewed_at >= ?  AND user_id = ?", Date.today, Date.today - 14, current_user.id)
-    recent = recent_edit|recent_review
-    @recent_json = recent.to_json
+    @recent_json = Tag.recent_json(current_user)
   end
 
   def get_tags_json
     render :text => Tag.tags_json(current_user)
+  end
+
+  def get_recent_json
+    render :text => Tag.recent_json(current_user)
   end
 
   def create

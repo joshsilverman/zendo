@@ -21,6 +21,7 @@ class DocumentsController < ApplicationController
     end
 
     @document = current_user.documents.create(:name => 'untitled', :tag_id => @tag.id)
+    #@document.update_attribute(:edited_at, Date.today)
     redirect_to :action => 'edit', :id => @document.id
     
   end
