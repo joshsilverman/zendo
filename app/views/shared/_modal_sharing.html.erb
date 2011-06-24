@@ -1,0 +1,45 @@
+<div id="share_menu" class="modal" style="display:none;">
+  <div class="title">
+    Sharing
+  </div>
+  <div class="content">
+    <% unless @read_only %>
+      <div>
+        <span class="option">Public/Private:</span>
+        <%= select 'document', 'name', [['public',true],['private',false]] %>
+      </div>
+    <% end %>
+
+    <div class="user-tokens">
+      <span class="option" style="float:left; padding: 2px 2px 2px 0; margin: 2px 2px 2px 0;">Sharing with:</span>
+      <span class="token">
+        josh.silverman@gmail.com
+        <span class="remove" >X</span>
+      </span>
+      <span class="token">
+        more.silverman@gmail.com
+        <span class="remove" >X</span>
+      </span>
+      <span class="token">
+        bill.derusha@gmail.com
+        <span class="remove" >X</span>
+      </span>
+      <span class="token">
+        jason.urton@gmail.com
+        <span class="remove" >X</span>
+      </span>
+      <span class="token removable">
+        dudeski@gmail.com
+        <span class="remove" >X</span>
+      </span>
+    </div>
+    <div class="clr-thin"></div>
+    <div>
+      <span class="option">Add a person:</span>
+      <%= form_tag "temp", :method => "post" do %>
+        <%= text_field_tag :name %>
+        <%= submit_tag "Share" %>
+      <% end %>
+    </div>
+  </div>
+</div>
