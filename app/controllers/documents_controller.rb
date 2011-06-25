@@ -29,29 +29,32 @@ class DocumentsController < ApplicationController
 
     # check id posted
     id = params[:id]
+    @read_only = params[:read_only]
+
     if id.nil?
       redirect_to '/', :notice => "Error accessing that document."
       return
     end
 
     # check document exists
-    @document = current_user.documents.find_by_id(id)
+    @document = get_document(params[:id])
     if @document.nil?
-      redirect_to '/', :notice => "Error accessing that document."
+      redirect_to '/explore', :notice => "Error accessing that document."
       return
     end
 
-    # set as read-only
-    @read_only = params[:read_only]
-
-    @tag = current_user.tags.find_by_id(@document.tag_id)
+    @tag = Tag.find_by_id(@document.tag_id)
     @line_ids = Hash[*@document.lines.map {|line| [line.id, line.domid]}.flatten].to_json
 
     # new document?
     @new_doc = (@document.html.blank?) ? true : false
 
     #doc count
-    @doc_count = current_user.documents.size
+    if @read_only
+      @doc_count = 100;
+    else
+      @doc_count = current_user.documents.size
+    end
   end
   
   def update
@@ -79,30 +82,33 @@ class DocumentsController < ApplicationController
       return
     end
     
-    #Document.delete({ :id => params[:id], :user_id => current_user.id }) #@todo check user id
-    
     document = current_user.documents.find_by_id(id)
     document.delete unless document.blank?
-    
     render :json => Tag.tags_json(current_user)
-    
   end
 
   def review
 
-    @document = current_user.documents.find_by_id(params[:id])
+    @document = get_document(params[:id])
     if @document.nil?
       redirect_to '/', :notice => "Error accessing that document."
       return
     end
 
     # get lines
-    @lines_json = Line.includes(:mems)\
-                 .where(" lines.document_id = ?
-                          AND mems.status = true",
-                        params[:id])\
-                 .to_json :include => :mems
+    owner_lines = Line.includes(:mems).where(" lines.document_id = ?
+                        AND mems.status = true", #AND mems.user_id = ?
+                        params[:id])
+                 
  
+    if @document.id == current_user.id
+      @lines_json = owner_lines.to_json :include => :mems
+    else
+      # on demand mem creation
+      owner_line_ids = owner_lines.collect {|line| line.id}
+      puts owner_line_ids
+    end
+
   end
 
   def update_tag
@@ -126,5 +132,22 @@ class DocumentsController < ApplicationController
       render :nothing => true, :status => 403
     end
     render :nothing => true
+  end
+
+  def update_privacy
+    if @document = current_user.documents.find(params[:id])
+        @document.update_attribute(:public, params[:bool])
+    else
+      render :nothing => true, :status => 403
+    end
+    render :nothing => true
+  end
+
+  private
+
+  def get_document(id)
+    document = Document.find_by_id(id)
+    accessible = document.public || document.user_id == current_user.id if document
+    return document if accessible
   end
 end

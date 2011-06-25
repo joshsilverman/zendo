@@ -73,6 +73,7 @@ Zendo::Application.routes.draw do
   # documents
   match "/documents/create/:tag_id" => "documents#create"
   match "/documents/update_tag"
+  match "/documents/update_privacy"
   match "/documents/update_document_name"
   match "/documents/:id" => "documents#edit", :read_only => true
   resources :documents, :only => [:edit, :update, :destroy]

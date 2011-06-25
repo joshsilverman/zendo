@@ -22,11 +22,11 @@
 
 
   <button id="review_button" style="float:right">Review</button>
-  <button id="share_button" style="float:right;">Share</button>
   <% if @read_only %>
-    <button id="share_button" style="float:right;">Make a copy</button>
+    <%#*<button id="copy_button" style="float:right;">Make a copy</button>%>
     <button id="save_button" style="float:right; display:none;" class="saving">Saved</button>
   <% else %>
+    <button id="share_button" style="float:right;">Share</button>
     <button id="save_button" style="float:right;" class="saving">Saved</button>
   <% end %>
 </div>
@@ -35,7 +35,7 @@
   <textarea id="editor" name="editor" style="display:none"><%=@document.html%></textarea>
 </div>
 
-<div id="right_rail" class="" style="display:none">
+<div id="right_rail" style="display:none">
   <table class="align_bottom" valign="bottom"><tr><td id="cards" valign="bottom">
     <!--<div class="card card_active rounded_border"><input type="checkbox" class="card_activation" />truncated test</div>
     <div class="card_focus card rounded_border">
@@ -51,6 +51,7 @@
 <div id="line_ids" style="display:none;"><%=@line_ids%></div>
 <div id="new_doc" style="display:none;"><%=@new_doc%></div>
 <div id="doc_count" style="display:none;"><%=@doc_count%></div>
+<div id="read_only" style="display:none;"><%= @read_only %></div>
 
 <%= javascript_include_tag ["vendors/tiny_mce/tiny_mce"], :cache => false %>
 <script type="text/javascript">
@@ -59,6 +60,7 @@ tinyMCE.init({
   theme : "advanced",
   skin:"thebigreason",
   plugins : "spellchecker,insertdatetime,print,lists,inlinepopups",
+  readonly: document.getElementById('read_only').innerHTML == 'true',
 
   // Theme options - button# indicated the row# only
   theme_advanced_buttons1 : "print,spellchecker,undo,redo,fontselect,fontsizeselect,forecolor,backcolor,|,bold,italic,underline,|,justifyleft,justifycenter,justifyright,|,bullist,numlist,outdent,indent,|,charmap",
