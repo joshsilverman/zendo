@@ -18,6 +18,7 @@ var cDoc = Class.create({
         /* set new document attr */
         this.newDoc = $('new_doc').innerHTML == "true";
         this.docCount = $('doc_count').innerHTML;
+        this.readOnly = $('read_only').innerHTML == 'true'
         if (this.newDoc) {
             /* set attr and remove node (in case there are edits followed by reload) */
             $('new_doc').innerHTML = "false";
@@ -66,7 +67,6 @@ var cDoc = Class.create({
         this.editor = tinyMCE.getInstanceById("editor");
 
         /* click observers */
-        Event.observe($("share_button"),"click",doc.share.bind(this));
         Event.observe($("save_button"),"click",function(e){doc.outline.autosave(e);});
         Event.observe($("review_button"),"click",function(e){
             AppUtilities.Cookies.create('reloadEditor', 'true', 3);
@@ -82,6 +82,9 @@ var cDoc = Class.create({
         window.onresize = this.onResize;
         try {$("document_name").focus();}
         catch (e) {}
+
+        /* make shareable */
+        this.makeShareable();
     },
 
     onResize: function() {
@@ -93,7 +96,7 @@ var cDoc = Class.create({
         rightRail.show();
 
         /* calculations */
-        var bottomMargin = 20;
+        var bottomMargin = 50;
         var editorVerticalSpaceHeight = document.viewport.getDimensions()['height']
             - editorContainer.cumulativeOffset().top - bottomMargin;
         var editorWhitespace = $('editor_tbl');
@@ -102,9 +105,19 @@ var cDoc = Class.create({
         if (editorVerticalSpaceHeight < 200) editorVerticalSpaceHeight = 200;
 
         /* set heights */
+        var editorIfrHeight = editorVerticalSpaceHeight - 20;
+        var rightRailHeight = editorVerticalSpaceHeight;// + 20;
+        console.log("bo");
+        if (doc.readOnly) {
+            console.log("yo");
+            editorIfrHeight += 28;
+            rightRailHeight += 28;
+            rightRail.setStyle({marginTop: '0px'});
+        }
         editorWhitespace.setStyle({height: editorVerticalSpaceHeight + 10 + 'px'});
-        rightRail.setStyle({height: editorVerticalSpaceHeight - 30 + 'px'});
-        $("editor_ifr").setStyle({height: editorVerticalSpaceHeight - 20 + 'px'});
+        rightRail.setStyle({height: rightRailHeight - 30 + 'px'});
+        $("editor_ifr").setStyle({height: editorIfrHeight + 'px'});
+
 
         /* set widths */
         var editorWidth = 660;
@@ -129,6 +142,26 @@ var cDoc = Class.create({
 //            $('doc_options').morph('height:150px;');
 //            console.log('open it');
 //        }
+    },
+
+    makeShareable: function() {
+        $("share_button").observe("click",doc.share.bind(this));
+        if ($('document_public')) $('document_public').observe('change', function() {doc.updatePrivacy();});
+    },
+
+    updatePrivacy: function() {
+        new Ajax.Request('/documents/update_privacy', {
+            method: 'post',
+            parameters: {id: this.outline.documentId, bool: $('document_public').value},
+            onCreate: function() {
+                if ($('document_public')) $('document_public').disabled = true;
+                $("update_privacy_loading").setStyle({'visibility': 'visible'});
+            },
+            onComplete: function() {
+                if ($('document_public')) $('document_public').disabled = false;
+                $('update_privacy_loading').setStyle({'visibility': 'hidden'});
+            }
+        });
     }
 });
 
