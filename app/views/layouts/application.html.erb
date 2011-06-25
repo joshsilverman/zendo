@@ -9,7 +9,7 @@
   <% auto_js_css =  controller.controller_name + '/' + controller.action_name  %>
 
   <!--auto-include css if exists-->
-  <% auto_css_full =  RAILS_ROOT + '/public/stylesheets/' + controller.controller_name + '/' + controller.action_name + '.css'  %>
+  <% auto_css_full =  ::Rails.root.to_s + '/public/stylesheets/' + controller.controller_name + '/' + controller.action_name + '.css'  %>
   <% if  File.file?(auto_css_full) %>
     <%= stylesheet_link_tag auto_js_css %>
   <% end %>
@@ -19,7 +19,7 @@
   <%#= javascript_include_tag '/javascripts/vendors/prototype.js', :cache => false %>
   <%= javascript_include_tag ['/javascripts/vendors/scriptaculous/src/scriptaculous.js?load=effects,dragdrop,controls', 'rails', 'application', '/javascripts/vendors/scriptaculous/src/effects', '/javascripts/vendors/scriptaculous/src/dragdrop', '/javascripts/vendors/scriptaculous/src/controls'], :cache => '/cache/all' %>
   <!--auto-include js if exists-->
-  <% auto_js_full =  RAILS_ROOT + '/public/javascripts/' + controller.controller_name + '/' + controller.action_name + '.js'  %>
+  <% auto_js_full =  ::Rails.root.to_s + '/public/javascripts/' + controller.controller_name + '/' + controller.action_name + '.js'  %>
   <% if  File.file?(auto_js_full) %>
     <%= javascript_include_tag auto_js_css, :cache => false %>
   <% else %>

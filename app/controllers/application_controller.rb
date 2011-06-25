@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
   end
 
   def redirect_logger
-    @@redirect_logger ||= Logger.new("#{RAILS_ROOT}/log/redirect.log")
+    @@redirect_logger ||= Logger.new("#{::Rails.root.to_s}/log/redirect.log")
   end
 
   private
