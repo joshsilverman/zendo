@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
 
     if /^www\./.match(request.host_with_port)
       host = request.host_with_port.gsub(/^www\./, "")
-      redirect_loc = request.protocol + host + request.request_uri
+      redirect_loc = request.protocol + host + request.path
       redirect_logger.info("\n#{Time.now.to_s(:db)}\nredirect to: #{redirect_loc}\n")
 
       redirect_to redirect_loc
