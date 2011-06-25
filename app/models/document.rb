@@ -60,7 +60,7 @@ class Document < ActiveRecord::Base
 
     document.update_attributes(:html => Line.document_html)
     document.update_attributes(:name => params[:name])
-    #document.update_attribute(:edited_at => Date.today)
+    document.update_attributes(:edited_at => params[:edited_at])
     return document
   end
   

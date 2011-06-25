@@ -10,6 +10,7 @@ class LinesController < ApplicationController
       html = document.html
       html = html.gsub(/((?:<p|<li)[^>]*line_id="#{params[:line][:id]}"[^>]*>)[^>]*</) {"#{$1}#{params[:line][:text]}<"}
       document.update_attribute(:html, html)
+      document.update_attribute(:edited_at => Date.today)
 
       render :json => {:line => params[:line][:text], :html => document.html}
     else

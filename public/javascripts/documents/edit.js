@@ -298,13 +298,17 @@ var cOutline = Class.create({
             saveButton.disabled = true;
             saveButton.innerHTML = 'Saving';
             saveButton.addClassName("saving");
-
+            var d = new Date();
+            console.log(d);
+            var today = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+ d.getDate();
+            console.log('SAVE DATE: '+today);
             /* save */
             new Ajax.Request('/documents/'+this.documentId, {
                 method: 'put',
                 parameters: {'html': doc.editor.getContent(),
                              'name': $('document_name').value,
-                             'delete_nodes': this.deleteNodes.toString()},
+                             'delete_nodes': this.deleteNodes.toString(),
+                             'edited_at': today},
 
                 onCreate: function() {
 

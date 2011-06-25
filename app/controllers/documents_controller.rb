@@ -21,7 +21,7 @@ class DocumentsController < ApplicationController
     end
 
     @document = current_user.documents.create(:name => 'untitled', :tag_id => @tag.id)
-    #@document.update_attribute(:edited_at, Date.today)
+    @document.update_attribute(:edited_at, Date.today)
     redirect_to :action => 'edit', :id => @document.id
     
   end
@@ -63,6 +63,7 @@ class DocumentsController < ApplicationController
 
     # update document
     @document = Document.update(params, current_user.id)
+    logger.debug("This is the updated doc #{@document.inspect}")
 
     if @document.nil?
       render :nothing => true, :status => 400
