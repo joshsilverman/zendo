@@ -109,8 +109,8 @@ Zendo::Application.routes.draw do
 #  end
 
   # catch-all route for static pages
-  Zendo::Application.routes.draw do |map|
-    map.connect ':action', :controller => "static"
-    #map.abingoTest "/abingo/:action/:id", :controller=> :abingo_dash
-  end
+  match ':action', :controller => "static"
+
+  # @important map is deprecated!
+  # map.abingoTest "/abingo/:action/:id", :controller=> :abingo_dash
 end
