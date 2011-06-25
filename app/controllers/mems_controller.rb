@@ -2,7 +2,7 @@ class MemsController < ApplicationController
   
   def update
 
-    mem = Mem.find(params[:id])
+    mem = current_user.mems.find(params[:id])
     mem.update_reviewed(params[:confidence], params[:importance])
 
     render :nothing => true

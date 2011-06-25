@@ -105,8 +105,20 @@ class DocumentsController < ApplicationController
       @lines_json = owner_lines.to_json :include => :mems
     else
       # on demand mem creation
-      owner_line_ids = owner_lines.collect {|line| line.id}
-      puts owner_line_ids
+      user_lines = []
+      Mem.transaction do
+        owner_lines.each do |owner_line|
+          mem = Mem.find_or_initialize_by_line_id_and_user_id(owner_line.id, current_user.id);
+          mem.strength = 0.5 if mem.strength.nil?
+          mem.status = 1 if mem.status.nil?
+          mem.save
+          user_line = owner_line
+          user_line.mems = [mem]
+          user_lines << user_line
+        end
+      end
+      puts owner_lines
+      @lines_json = user_lines.to_json :include => :mems
     end
 
   end
