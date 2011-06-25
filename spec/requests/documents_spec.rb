@@ -214,4 +214,21 @@ describe "document" do
       end
     end
   end
+
+  describe "viewer" do
+
+    describe "after making public" do
+
+      it "is viewable by others"
+      it "is reviewable by others"
+      it "is not editable by others"
+    end
+
+    describe "after sharing with another" do
+
+      it "is viewable by other"
+      it "is reviewable by other"
+      it "is not editable by other"
+    end
+  end
 end
