@@ -31,16 +31,11 @@ var cDoc = Class.create({
         $('tags_json').innerHTML.evalJSON().collect(function(tag) {
             this.tags.push([tag['tag']['id'], tag['tag']]);
         }.bind(this));
-        console.log(this.tags);
 
         this.recent = [];
-        console.log($('recent_json').innerHTML);
         $('recent_json').innerHTML.evalJSON().collect(function(doc) {
-            console.log('recent iterator');
             this.recent.push(doc['document']);
-            console.log('recent iterated');
         }.bind(this));
-        console.log(this.recent);
 
         //set all documents
         this.docs = new Hash();
@@ -86,6 +81,7 @@ var cDoc = Class.create({
     },
 
     _buildDocs: function(){
+        console.log("BUILDDOCS aiID: "+this.activeItemId);
         var html = '';
         //Build Recent Documents
         this.recent.each(function(doc){
@@ -95,19 +91,20 @@ var cDoc = Class.create({
                    tName = t[1]['name'];
                }
             }.bind(this));
-            if($(this.activeItemId)){
-            if(doc['id']==$(this.activeItemId).readAttribute('doc_id')){
-                  html+= '<div class="doc_item active" doc_id="'+doc['id']+'">\
+            //if($(this.activeItemId)){
+            if((doc['id']+'_recent')==this.activeItemId){
+                  html+= '<div class="doc_item active" doc_id="'+doc['id']+'" id="'+doc['id']+'_recent">\
                     <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
-                    <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+'('+tName+')</span>\
+                    <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+' </span> ('+tName+')\
                     <div class="doc_actions" style="display:block;">\
                     <ul><li><a href="/documents/'+doc['id']+'/edit"><img class="doc_action_img" src="../../images/organizer/edit-icon-15x15.png">edit</a></li>\
                     <li><a href="/review/'+doc['id']+'"><img class="doc_action_img" src="../../images/organizer/review-icon.png">review</a></li>\
                     <li><span class="remove_doc" doc_id="'+doc['id']+'"><img class="doc_action_img" doc_id="'+doc['id']+'" src="../../images/organizer/remove-icon-15x15.png">delete</span></li></ul>\
                     </div>\
                     </div>';
-              }} else {
-                  html += '<div class="doc_item inactive" doc_id="'+doc['id']+'">\
+              //}
+                } else {
+                  html += '<div class="doc_item inactive" doc_id="'+doc['id']+'" id="'+doc['id']+'_recent">\
                     <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
                     <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+' </span> ('+tName+')\
                     <div class="doc_actions">\
@@ -125,9 +122,9 @@ var cDoc = Class.create({
         this.tags.each(function(tag) {
           tag[1]['documents'].each(function(doc){
               //this.docs.set(doc['id'], doc);
-              if($(this.activeItemId)){
-              if(doc['id']==$(this.activeItemId).readAttribute('doc_id')){
-                  html+= '<div class="doc_item active" doc_id="'+doc['id']+'">\
+              ///if($(this.activeItemId)){
+              if(doc['id']==this.activeItemId){
+                  html+= '<div id="'+doc['id']+'" class="doc_item active" doc_id="'+doc['id']+'">\
                     <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
                     <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+'</span>\
                     <div class="doc_actions" style="display:block;">\
@@ -136,8 +133,9 @@ var cDoc = Class.create({
                     <li><span class="remove_doc" doc_id="'+doc['id']+'"><img class="doc_action_img" doc_id="'+doc['id']+'" src="../../images/organizer/remove-icon-15x15.png">delete</span></li></ul>\
                     </div>\
                     </div>';
-              }} else {
-              html += '<div class="doc_item inactive" doc_id="'+doc['id']+'">\
+              //}
+                } else {
+              html += '<div id="'+doc['id']+'" class="doc_item inactive" doc_id="'+doc['id']+'">\
                     <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
                     <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+'</span>\
                     <div class="doc_actions">\
@@ -155,6 +153,7 @@ var cDoc = Class.create({
     },
 
     _buildDetails: function(){
+        console.log("BUILDDEETS aiID: "+this.activeItemId);
         var html = '';
         var checkedList = [];
         $$('.chbox').each(function(ele){
@@ -168,7 +167,6 @@ var cDoc = Class.create({
                     <span style="text-align:center; display:block; margin:10px 0">- OR -</span>\
                     <em style="text-align:center; display:block;" >Select a document to view details...</em>';
         } else if((checkedList[0] == null && this.activeItemId!='')||(checkedList[1] == null && this.activeItemId!='')){
-            console.log("dID" +$(this.activeItemId).readAttribute('doc_id'));
             var singleDoc = this.docs.get($(this.activeItemId).readAttribute('doc_id'));
             var d = singleDoc['created_at'].split('-');
             this.convertDate(new Date(d[0], d[1], d[2].substring(0,2)));
@@ -252,7 +250,7 @@ var cDoc = Class.create({
                             onSuccess: function() {
                                 console.log('SUCCESS');
                                 new Ajax.Request('/tags/get_tags_json', {
-                                   onSuccess: function(transport) {
+                                   onComplete: function(transport) {
                                        console.log('tags json success1');
                                        $('tags_json').update(transport.responseText);
                                        console.log('tags json success2');
@@ -261,16 +259,19 @@ var cDoc = Class.create({
                                 console.log('tags json POST');
                                 new Ajax.Request('/tags/get_recent_json', {
                                    onSuccess: function(transport) {
-                                       console.log('recent json success2');
+                                       console.log('recent json success1');
                                        $('recent_json').update(transport.responseText);
-                                       console.log('You made it!');
+                                       console.log('recent json success2');
                                        //this.prepareData();
                                        //this.render();
                                        //this._buildDetails();
                                    }.bind(this),
                                    onComplete: function(){
+                                       console.log('recent json complete');
                                        this.prepareData();
+                                       console.log('recent json complete1');
                                        this.render();
+                                       console.log('recent json complete2');
                                    }.bind(this)
                                 });
                             }.bind(this)
@@ -291,10 +292,8 @@ var cDoc = Class.create({
         var m_names = new Array("January", "February", "March",
         "April", "May", "June", "July", "August", "September",
         "October", "November", "December");
-        console.log(d);
         var curr_date = d.getDate();
         var sup = "";
-        console.log(curr_date);
         if (curr_date == 1 || curr_date == 21 || curr_date ==31)
            {
            sup = "st";
@@ -334,7 +333,6 @@ var cDoc = Class.create({
                 $('tags_json').update(Object.toJSON(transport.responseJSON));
                 new Ajax.Request('/tags/get_recent_json', {
                    onSuccess: function(transport) {
-                       console.log('recent json success');
                        $('recent_json').update(transport.responseText);
                    }.bind(this)
                 });
@@ -394,7 +392,7 @@ var cDoc = Class.create({
     },
 
     renameFolder: function(event){
-
+         console.log('Rename Folder Start');
         /* request params */
         new Dialog.Box('rename_folder_modal');
         $('rename_folder_modal').show();
@@ -421,17 +419,18 @@ var cDoc = Class.create({
                 console.log('SUCCESS');
                 new Ajax.Request('/tags/get_tags_json', {
                    onSuccess: function(transport) {
-                       console.log('tags json success1');
+                       console.log('tags json success');
                        $('tags_json').update(transport.responseText);
                    }.bind(this)
                 });
                 new Ajax.Request('/tags/get_recent_json', {
                    onSuccess: function(transport) {
-                       console.log('recent json success2');
+                       console.log('recent json success');
                        $('recent_json').innerHTML = transport.responseText;
-                       console.log('You made it!');
+                       console.log('set innerhtml');
                        this.prepareData();
                        this.render();
+                       console.log('Rename Folder End');
                    }.bind(this)
                 });
             }.bind(this)
@@ -445,7 +444,6 @@ var cDoc = Class.create({
         this._buildDetails();
         this.resizeDetails();
         //Add Listeners
-
         //click doc name link
         $$('.doc_title').each(function(element) {
             element.observe('click', function(event) {
@@ -462,31 +460,33 @@ var cDoc = Class.create({
         }.bind(this));
 
         //click doc item to reveal actions and highlight with css
-console.log('PRELISTENER');
+            console.log('PRELISTENER');
         $$('.doc_item').each(function(element) {
-            console.log('LISTENERS SET');
-            element.identify();
             element.observe('click', function(event) {
             if(event.target.getAttribute('class')=='doc_item active' || event.target.getAttribute('class')=='doc_item inactive'){
             if(this.activeItemId==''){ //if nothing is open
+                console.log($(this.activeItemId)+" 1");
                 event.target.down(2).setStyle({display:'block'});
                 this.activeItemId = event.target.id;
                 event.target.removeClassName('inactive');
                 event.target.addClassName('active');
                 event.stop();
             } else if(this.activeItemId==event.target.id) { //if you reclick an open item
+                console.log($(this.activeItemId).id+" 2");
                 event.target.down(2).setStyle({display:'none'});
                 this.activeItemId = '';
                 event.target.removeClassName('active');
                 event.target.addClassName('inactive');
                 event.stop();
             } else { //if you switch open items
+                console.log($(this.activeItemId)+" 3");
                 $(this.activeItemId).down(2).setStyle({display:'none'});
                 event.target.down(2).setStyle({display:'block'});
                 event.target.removeClassName('inactive');
                 event.target.addClassName('active');
                 $(this.activeItemId).removeClassName('active');
                 $(this.activeItemId).addClassName('inactive');
+                console.log(event.target.id);
                 this.activeItemId = event.target.id;
                 event.stop();
             }
@@ -567,8 +567,14 @@ console.log('PRELISTENER');
         document.observe("document:moved", function() {
             new Ajax.Request('/tags/get_tags_json', {
                onSuccess: function(transport) {
-                   console.log('render');
                    $('tags_json').update(transport.responseText);
+               }.bind(this)
+            });
+            new Ajax.Request('/tags/get_recent_json', {
+               onSuccess: function(transport) {
+                   $('recent_json').update(transport.responseText);
+               }.bind(this),
+               onComplete: function(){
                    this.prepareData();
                    this.render();
                }.bind(this)
@@ -578,19 +584,21 @@ console.log('PRELISTENER');
         document.observe("document:new_folder_created", function() {
             new Ajax.Request('/tags/get_tags_json', {
                onSuccess: function(transport) {
-                   console.log('render1');
                    $('tags_json').update(transport.responseText);
-                   console.log(transport.responseText);
+               }.bind(this)
+            });
+            new Ajax.Request('/tags/get_recent_json', {
+               onSuccess: function(transport) {
+                   $('recent_json').update(transport.responseText);
+               }.bind(this),
+               onComplete: function(){
                    this.prepareData();
-                   console.log('render3');
                    this.render();
-                   console.log('render4');
                }.bind(this)
             });
         }.bind(this));
 
         document.observe('click', function(event){
-        console.log(event.target);
             if((event.target.hasClassName('wrapper')||event.target.hasClassName('contents') ||
                 event.target.readAttribute('id')=='documents') && this.activeItemId!=''){
                 var elem = $(this.activeItemId);
