@@ -38,10 +38,8 @@
     <div class="clr-thin"></div>
     <div>
       <span class="option">Add a person:</span>
-      <%= form_tag "temp", :method => "post" do %>
-        <%= text_field_tag :name %>
-        <%= submit_tag "Share" %>
-      <% end %>
+      <%= text_field_tag :name %>
+      <%= submit_tag "Share", :id => 'share_request_button' %>
     </div>
   </div>
 </div>
