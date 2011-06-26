@@ -125,27 +125,37 @@ var cDoc = Class.create({
         $("editor_parent").setStyle({width: editorWidth + 'px'});
     },
 
+//    share: function() {
+//        new Dialog.Box('share_menu');
+//        console.log($('share_menu'));
+//        $('share_menu').show();
+////        $('test123').hide();
+////        var openMenu = false;
+////        if ($("share_button").menu_open == 'true') {
+////            $("share_button").menu_open = 'false';
+////            $('doc_options').morph('height:24px;');
+////            console.log('close it');
+////        }
+////        else {
+////            $("share_button").menu_open = 'true';
+////            openMenu = true;
+////            $('doc_options').morph('height:150px;');
+////            console.log('open it');
+////        }
+//    },
+
     share: function() {
-        new Dialog.Box('share_menu');
-        console.log($('share_menu'));
-        $('share_menu').show();
-//        $('test123').hide();
-//        var openMenu = false;
-//        if ($("share_button").menu_open == 'true') {
-//            $("share_button").menu_open = 'false';
-//            $('doc_options').morph('height:24px;');
-//            console.log('close it');
-//        }
-//        else {
-//            $("share_button").menu_open = 'true';
-//            openMenu = true;
-//            $('doc_options').morph('height:150px;');
-//            console.log('open it');
-//        }
+        new Ajax.Request('/documents/share', {
+            method: 'put',
+            parameters: {},
+            onCreate: function() {}
+        });
     },
 
     makeShareable: function() {
-        if ($('share_button')) $("share_button").observe("click",doc.share.bind(this));
+        new Dialog.Box('share_menu');
+        if ($('share_button')) $("share_button").observe("click",$('share_menu').show);
+        if ($('share_request_button')) $("share_request_button").observe("click",doc.share);
         if ($('document_public')) $('document_public').observe('change', function() {doc.updatePrivacy();});
     },
 

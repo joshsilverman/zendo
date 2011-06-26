@@ -160,6 +160,10 @@ class DocumentsController < ApplicationController
     render :nothing => true
   end
 
+  def share
+    render :nothing => true, :status => 200
+  end
+
   private
 
   def get_document(id)

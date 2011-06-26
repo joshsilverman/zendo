@@ -8,6 +8,7 @@ class User < ActiveRecord::Base
   has_many :tags
   has_many :mems
   has_many :reps
+#  has_and_belongs_to_many :documents
 
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable, :lockable and :timeoutable
