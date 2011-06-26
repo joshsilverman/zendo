@@ -61,7 +61,7 @@ Zendo::Application.routes.draw do
   
   #devise
   devise_for :users, :timeout_in => 7.days,
-    :controllers => {:registrations => 'registrations', :sessions => 'sessions'}
+    :controllers => {:registrations => 'registrations'}
 
   #tags
   get "tag/index" # ???
