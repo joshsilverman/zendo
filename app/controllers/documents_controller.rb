@@ -43,6 +43,12 @@ class DocumentsController < ApplicationController
       return
     end
 
+    # redirect if public, not owner, and trying to edit
+    if @document.public and current_user.id != @document.user_id and !@read_only
+      redirect_to "/documents/#{id}"
+      return
+    end
+
     @tag = Tag.find_by_id(@document.tag_id)
     @line_ids = Hash[*@document.lines.map {|line| [line.id, line.domid]}.flatten].to_json
 
@@ -117,7 +123,6 @@ class DocumentsController < ApplicationController
           user_lines << user_line
         end
       end
-      puts owner_lines
       @lines_json = user_lines.to_json :include => :mems
     end
 

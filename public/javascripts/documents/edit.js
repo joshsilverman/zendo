@@ -145,7 +145,7 @@ var cDoc = Class.create({
     },
 
     makeShareable: function() {
-        $("share_button").observe("click",doc.share.bind(this));
+        if ($('share_button')) $("share_button").observe("click",doc.share.bind(this));
         if ($('document_public')) $('document_public').observe('change', function() {doc.updatePrivacy();});
     },
 

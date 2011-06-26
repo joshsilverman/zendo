@@ -6,7 +6,8 @@
     <% unless @read_only %>
       <div>
         <span class="option">Public/Private:</span>
-        <%= select 'document', 'public', [['public',1],['private',0]] %>
+        <% selected = (@document.public) ? 1 : 0 %>
+        <%= select 'document', 'public', [['public',1],['private',0]], :selected => selected %>
         <%= image_tag "shared/fb-loader.gif", :alt => 'loading', :style => "margin-right:5px;visibility:hidden;", :id => "update_privacy_loading" %>
       </div>
     <% end %>
