@@ -213,20 +213,69 @@ describe "document" do
     end
   end
 
-  describe "viewer" do
+  describe "viewer", :js => true do
 
-    describe "after making public" do
-
-      it "is viewable by others"
-      it "is reviewable by others"
-      it "is not editable by others"
+    before :each do
+      visit "/users/sign_in"
+      @user = Factory.create(:user)
+      @user.save!
+      fill_in "Email", :with => @user.email
+      fill_in "Password", :with => @user.password
+      click_button "Sign in"
     end
 
-    describe "after sharing with another" do
+    describe "after making new public doc" do
 
-      it "is viewable by other"
-      it "is reviewable by other"
-      it "is not editable by other"
+      before :each do
+        Capybara.default_wait_time = 3
+        @tag = @user.tags.create!(:name => "my tag")
+        @document = @user.documents.create!(:name => "title one", :tag_id => @tag.id)
+        visit "/documents/#{@document.id}/edit"
+        wait_until{ page.has_content?(@tag.name) }
+        wait_until{ page.find('#document_name').visible? }
+
+        click_button "Share"
+        wait_until{ page.has_content?("Sharing") }
+        page.select 'public', :from => 'document_public'
+        wait_until{ page.find('#update_privacy_loading').visible? }
+        wait_until{ not page.find('#update_privacy_loading').visible? }
+      end
+
+      describe "and reauthenticating as another user" do
+      
+        before :each do
+          visit "/users/sign_out"
+          @user2 = Factory.create(:user)
+          @user2.save!
+          fill_in "Email", :with => @user2.email
+          fill_in "Password", :with => @user2.password
+          click_button "Sign in"
+        end
+        
+        it "is viewable" do
+          visit "/documents/#{@document.id}"
+          wait_until{ page.has_content?('title one') }
+        end
+
+        it "is reviewable by others"
+
+        it "is not editable by others" do
+          visit "/documents/#{@document.id}/edit"
+          wait_until{ page.has_content?("Review") }
+          page.find("#save_button").visible?.should == false
+        end
+      
+      end
+
+      it "is still editable by owner"
     end
+
+#    describe "after sharing with another" do
+#
+#      it "is viewable by other"
+#      it "is reviewable by other"
+#      it "is not editable by other"
+#      it "is still editable by owner"
+#    end
   end
 end
