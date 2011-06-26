@@ -59,9 +59,7 @@ describe "document" do
 
     it "creates new document" do
       visit "/explore"
-      wait_until{ page.has_content?('Misc.')}
-      page.find('div.title', :text => 'Misc.').click
-      page.find('div.new_document').click
+      click_link('Create A New Document')
       wait_until{ page.has_content?('Saved')}
     end
 
