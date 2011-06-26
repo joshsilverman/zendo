@@ -8,9 +8,9 @@ Factory.define :user do |f|
 end
 
 Factory.define :tag do |f|
-  f.name "New folder"
+  f.name { |n| "New folder#{n.id}" }
 end
 
 Factory.define :document do |f|
-  f.name "New doc"
+  f.name { |n| "New Doc#{n.id}" }
 end
