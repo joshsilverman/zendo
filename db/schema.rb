@@ -48,9 +48,9 @@ ActiveRecord::Schema.define(:version => 20110626050443) do
   create_table "documents_users", :id => false, :force => true do |t|
     t.integer "document_id"
     t.integer "user_id"
-    t.integer "viewer_id"
-    t.integer "vdoc_id"
   end
+
+  add_index "documents_users", ["document_id", "user_id"], :name => "index_documents_users_on_document_id_and_user_id", :unique => true
 
   create_table "experiments", :force => true do |t|
     t.string   "test_name"
