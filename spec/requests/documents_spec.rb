@@ -60,8 +60,8 @@ describe "document" do
     it "creates new document" do
       visit "/explore"
       wait_until{ page.has_content?('Misc.')}
-      page.find('div.title', :text => 'Misc.').click
-      page.find('div.new_document').click
+      page.find('div.accordion_toggle', :text => 'Misc.').click
+      click_link 'Create A New Document'
       wait_until{ page.has_content?('Saved')}
     end
 
@@ -272,12 +272,53 @@ describe "document" do
       it "is still editable by owner"
     end
 
-#    describe "after sharing with another" do
-#
-#      it "is viewable by other"
-#      it "is reviewable by other"
-#      it "is not editable by other"
+    describe "after private sharing with another" do
+
+      before :each do
+        Capybara.default_wait_time = 3
+        @tag = @user.tags.create!(:name => "my tag")
+        @document = @user.documents.create!(:name => "title zen", :tag_id => @tag.id)
+        visit "/documents/#{@document.id}/edit"
+        wait_until{ page.has_content?(@tag.name) }
+        wait_until{ page.find('#document_name').visible? }
+
+        click_button "Share"
+        wait_until{ page.has_content?("Sharing") }
+
+        @user2 = Factory.create(:user)
+        @user2.save!
+
+        fill_in "share_email_input", :with => @user2.email
+        click_button "share_request_button"
+        wait_until{ page.find('#update_share_loading').visible? }
+        wait_until{ not page.find('#update_share_loading').visible? }
+      end
+
+      describe "and authenticating as that other user" do
+
+        before :each do
+          visit "/users/sign_out"
+          fill_in "Email", :with => @user2.email
+          fill_in "Password", :with => @user2.password
+          click_button "Sign in"
+        end
+
+        it "is viewable by other" do
+          visit "/documents/#{@document.id}"
+          wait_until{ page.has_content?('title zen') }
+        end
+
+        it "is reviewable"
+
+        it "is not editable" do
+            visit "/documents/#{@document.id}/edit"
+            wait_until{ page.has_content?("Review") }
+            page.find("#save_button").visible?.should == false
+        end
+
+      end
+
 #      it "is still editable by owner"
-#    end
+    end
   end
 end
