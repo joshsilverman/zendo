@@ -31,20 +31,15 @@ class DocumentsController < ApplicationController
     id = params[:id]
     @read_only = params[:read_only]
 
-    if id.nil?
-      redirect_to '/', :notice => "Error accessing that document."
-      return
-    end
-
     # check document exists
-    @document = get_document(params[:id])
+    get_document(params[:id])
     if @document.nil?
       redirect_to '/explore', :notice => "Error accessing that document."
       return
     end
 
     # redirect if public, not owner, and trying to edit
-    if @document.public and current_user.id != @document.user_id and !@read_only
+    if not @read_only and not @w
       redirect_to "/documents/#{id}"
       return
     end
@@ -65,19 +60,14 @@ class DocumentsController < ApplicationController
   
   def update
 
-#    render :nothing => true, :status => 401
-#    return
-
     # update document
     @document = Document.update(params, current_user.id)
 
     if @document.nil?
-        render :nothing => true, :status => 400
-        return
+      render :nothing => true, :status => 400
+    else
+      render :json => Hash[*@document.lines.map {|line| [line.id, line.domid]}.flatten]
     end
-
-    # render {line.domid: line.id} hash
-    render :json => Hash[*@document.lines.map {|line| [line.id, line.domid]}.flatten]
     
   end
   
@@ -95,7 +85,7 @@ class DocumentsController < ApplicationController
 
   def review
 
-    @document = get_document(params[:id])
+    get_document(params[:id])
     if @document.nil?
       redirect_to '/', :notice => "Error accessing that document."
       return
@@ -130,7 +120,6 @@ class DocumentsController < ApplicationController
 
   def update_tag
     if @document = current_user.documents.find(params[:doc_id])
-      puts params;
       if current_user.tags.find(params[:tag_id])
         @document.update_attribute(:tag_id, params[:tag_id])
       else
@@ -168,18 +157,51 @@ class DocumentsController < ApplicationController
       begin
         @user.vdocs << @document
         @user.save
+        render :text => @user.id
+        return
       rescue
       end
     end
+    render :nothing => true, :status => 400
+  end
 
-    render :nothing => true, :status => 200
+  def unshare
+
+    @user = User.find(params['viewer_id'])
+    @document = current_user.documents.find(params['id'])
+
+    if @user and @document and @user.id != current_user.id
+      begin
+        @user.vdocs.delete(@document)
+        @user.save
+        render :nothing => true, :status => 200
+        return
+      rescue
+      end
+    end
+    render :nothing => true, :status => 400
+
   end
 
   private
 
   def get_document(id)
     document = Document.find_by_id(id)
-    accessible = document.public || document.user_id == current_user.id if document
-    return document if accessible
+    get_permission(document)
+    @document = document if @w or @r
+  end
+
+
+  def get_permission(document)
+    @w = @r = false
+    return if document.nil?
+
+    if document.user_id == current_user.id
+      @w = @r = true
+    elsif document.public
+      @r = true
+    elsif not document.viewers.find_by_id(current_user.id).nil?
+      @r = true
+    end
   end
 end
