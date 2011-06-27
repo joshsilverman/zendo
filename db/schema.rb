@@ -48,6 +48,8 @@ ActiveRecord::Schema.define(:version => 20110626050443) do
   create_table "documents_users", :id => false, :force => true do |t|
     t.integer "document_id"
     t.integer "user_id"
+    t.integer "viewer_id"
+    t.integer "vdoc_id"
   end
 
   create_table "experiments", :force => true do |t|

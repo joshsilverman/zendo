@@ -14,31 +14,21 @@
 
     <div class="user-tokens">
       <span class="option" style="float:left; padding: 2px 2px 2px 0; margin: 2px 2px 2px 0;">Sharing with:</span>
-      <span class="token">
-        josh.silverman@gmail.com
-        <span class="remove" >X</span>
-      </span>
-      <span class="token">
-        more.silverman@gmail.com
-        <span class="remove" >X</span>
-      </span>
-      <span class="token">
-        bill.derusha@gmail.com
-        <span class="remove" >X</span>
-      </span>
-      <span class="token">
-        jason.urton@gmail.com
-        <span class="remove" >X</span>
-      </span>
-      <span class="token removable">
-        dudeski@gmail.com
-        <span class="remove" >X</span>
-      </span>
+      <%# for @document.viewers.each do |viewer| %>
+        <span class="token">
+          <%= @document.viewers[0].email %>
+          <span class="remove" >X</span>
+        </span>
+      <%# end %>
+      <%#*<span class="token removable">%>
+        <%#*dudeski@gmail.com%>
+        <%#*<span class="remove" >X</span>%>
+      <%#*</span>%>
     </div>
     <div class="clr-thin"></div>
     <div>
       <span class="option">Add a person:</span>
-      <%= text_field_tag :name %>
+      <%= text_field_tag :name, '', :id => 'share_email_input' %>
       <%= submit_tag "Share", :id => 'share_request_button' %>
     </div>
   </div>
