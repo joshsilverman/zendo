@@ -44,6 +44,14 @@ var cDoc = Class.create({
         if (document.viewport.getWidth() < 1000) {
             AppUtilities.vendorScripts.unset("script_userecho")
         }
+
+        /* set listeners for helper panel*/
+        $('helper_panel_contents').hide();
+
+        $('helper_panel_tab').observe('click', function(){
+            new Effect.toggle($('helper_panel_contents'),'Blind', {duration:.5});
+        });
+
     },
 
     onEditorLoaded: function() {
@@ -80,6 +88,7 @@ var cDoc = Class.create({
         window.onresize = this.onResize;
         try {$("document_name").focus();}
         catch (e) {}
+
     },
 
     onResize: function() {
@@ -87,8 +96,10 @@ var cDoc = Class.create({
         /* set to visible */
         var editorContainer = $('editor_container');
         var rightRail = $('right_rail');
+        var helperContainer = $('helper_panel_container');
         editorContainer.show();
         rightRail.show();
+        helperContainer.show();
 
         /* calculations */
         var bottomMargin = 20;
@@ -102,6 +113,7 @@ var cDoc = Class.create({
         /* set heights */
         editorWhitespace.setStyle({height: editorVerticalSpaceHeight + 10 + 'px'});
         rightRail.setStyle({height: editorVerticalSpaceHeight - 30 + 'px'});
+        helperContainer.setStyle({height: editorVerticalSpaceHeight - 20 + 'px'});
         $("editor_ifr").setStyle({height: editorVerticalSpaceHeight - 20 + 'px'});
 
         /* set widths */
