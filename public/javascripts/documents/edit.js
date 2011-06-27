@@ -147,7 +147,7 @@ var cDoc = Class.create({
     share: function() {
         new Ajax.Request('/documents/share', {
             method: 'put',
-            parameters: {},
+            parameters: {id:doc.outline.documentId, email: $("share_email_input").value},
             onCreate: function() {}
         });
     },

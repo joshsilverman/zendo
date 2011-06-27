@@ -12,7 +12,8 @@ class Document < ActiveRecord::Base
 
   belongs_to :tag
   belongs_to :user
-  has_and_belongs_to_many :users
+  has_many :shares
+  has_and_belongs_to_many :viewers, :class_name => "User"
 
   def self.update(params, user_id)
 

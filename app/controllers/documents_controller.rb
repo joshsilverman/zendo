@@ -55,7 +55,7 @@ class DocumentsController < ApplicationController
     # new document?
     @new_doc = (@document.html.blank?) ? true : false
 
-    #doc count
+    # doc count
     if @read_only
       @doc_count = 100;
     else
@@ -161,6 +161,17 @@ class DocumentsController < ApplicationController
   end
 
   def share
+
+    @user = User.find_by_email(params['email'])
+    @document = current_user.documents.find(params['id'])
+    if @user and @document and @user.id != current_user.id
+      begin
+        @user.vdocs << @document
+        @user.save
+      rescue
+      end
+    end
+
     render :nothing => true, :status => 200
   end
 
