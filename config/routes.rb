@@ -74,6 +74,7 @@ Zendo::Application.routes.draw do
   match "/documents/create/:tag_id" => "documents#create"
   match "/documents/update_tag"
   match "/documents/share"
+  match "/documents/unshare"
   match "/documents/update_privacy"
   match "/documents/update_document_name"
   match "/documents/:id" => "documents#edit", :via => [:get], :read_only => true
