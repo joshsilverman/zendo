@@ -73,6 +73,20 @@ button.saving {
     margin-top:28px;
 }
 
+#helper_panel_container {
+    padding: 5px;
+    padding-left: 10px;
+    width:204px;
+    float:left;
+    height:475px;
+    position: absolute;
+    top:22px;
+    left:659px;
+    border:1px solid lightgrey;
+    background:#F3F3F3;
+    margin-top:28px;
+}
+
 .align_bottom, .align_bottom tbody, .align_bottom tr, .align_bottom td {
     height:100%;
     margin:0px;

@@ -53,11 +53,10 @@ ActiveRecord::Schema.define(:version => 20110626050443) do
     t.integer "user_id"
   end
 
-<<<<<<< HEAD
+
   add_index "documents_users", ["document_id", "user_id"], :name => "index_documents_users_on_document_id_and_user_id", :unique => true
 
-=======
->>>>>>> tags rspec fixed
+  
   create_table "experiments", :force => true do |t|
     t.string   "test_name"
     t.string   "status"
