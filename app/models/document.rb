@@ -13,7 +13,7 @@ class Document < ActiveRecord::Base
   belongs_to :tag
   belongs_to :user
   has_many :shares
-  has_and_belongs_to_many :viewers, :class_name => "User"
+  has_and_belongs_to_many :viewers, :class_name => "User", :uniq => true
 
   def self.update(params, user_id)
 
