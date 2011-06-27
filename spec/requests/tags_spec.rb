@@ -3,14 +3,17 @@ require "spec_helper"
 describe "tags", :js => true do
 
   before(:each) do
-    
     if example.metadata[:js]
       Capybara.current_driver = :selenium
       Capybara.default_wait_time = 3
     else
       Capybara.current_driver = :rack_test
     end
+  end
 
+  describe "nagivation", :js => true do
+
+    before(:each) do
     @user = Factory.create(:user)
     @user.save!
     visit "/users/sign_in"
@@ -18,13 +21,16 @@ describe "tags", :js => true do
     fill_in "Password", :with => @user.password
     click_button "Sign in"
 
+
+    @tag = Factory.create(:tag, :user_id => @user.id)
+    @tag.save!
   end
 
-  describe "nagivation" do
-
     it "goes to Misc folder after click Misc", :js => true do
-#      click_on "Misc."
-#      page.should have_content "My Notes /Misc./"
+      visit "/explore"
+      wait_until{ page.has_content?('Misc.')}
+      find('div.accordion_toggle', :text => 'Misc.').click
+      wait_until{ page.has_content?('Saved')}
     end
 
     describe "shared doc" do
