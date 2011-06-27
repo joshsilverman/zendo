@@ -16,9 +16,9 @@
 .thebigreasonSkin .mceExternalClose {position:absolute; top:3px; right:3px; width:7px; height:7px; background:url('img/icons.png') -820px 0}
 
 /* Layout */
-.thebigreasonSkin table.mceLayout {border:0; border-left:1px solid #CCC; border-right:1px solid #CCC}
+.thebigreasonSkin table.mceLayout {border:0; border-left:1px solid #CCC; border-right:1px solid #CCC;}
 .thebigreasonSkin table.mceLayout tr.mceFirst td {border-top:1px solid #CCC}
-.thebigreasonSkin table.mceLayout tr.mceLast td {border-bottom:1px solid #CCC;background:url('img/toolbarbg.png') center repeat-x;}
+.thebigreasonSkin table.mceLayout tr.mceLast td {border-bottom:1px solid #CCC; /*background:url('img/toolbarbg.png') center repeat-x;*/}
 .thebigreasonSkin table.mceToolbar, .thebigreasonSkin tr.mceFirst .mceToolbar tr td, .thebigreasonSkin tr.mceLast .mceToolbar tr td {border:0; margin:0; padding:0;}
 .thebigreasonSkin td.mceToolbar {padding-top:1px; vertical-align:top;background:url('img/toolbarbg.png') center repeat-x;}
 .thebigreasonSkin .mceIframeContainer {border-top:1px solid #CCC; border-bottom:1px solid #CCC}

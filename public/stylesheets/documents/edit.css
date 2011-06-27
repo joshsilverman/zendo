@@ -55,13 +55,12 @@ button.saving {
 }
 
 #editor_container, #editor {
-    width:659px;
     float:left;
+    width:659px;
 }
 
 #right_rail {
-    padding: 5px;
-    padding-left: 10px;
+    padding-left: 15px;
     width:284px;
     float:left;
     height:475px;
@@ -71,34 +70,52 @@ button.saving {
     border:1px solid lightgrey;
     background:#FAFAFA;
     margin-top:28px;
+    z-index: 20;
+    position: relative;
+    
 }
 
 #helper_panel_container {
-    width:204px;
+    width:284px;
     height:475px;
     position: absolute;
-    top:28px;
-    left:659px;
-    margin-top:28px;
-    z-index: 10;
+    left:-60px; /*659px*/
+    z-index: 25;
 }
 
 #helper_panel_contents{
     height: 100%;
-    background-color: blue;
-    width: 194px;
+    background-color: #f3f7fe;
+    width: 204px;
     float: left;
-    z-index: 50;
+    text-align: center;
+    padding-left: 65px;
+    padding-right: 5px;
 }
 
 #helper_panel_tab{
     height: 100%;
-    background-color: red;
+    background-color:  #e7f0fd;
     width:10px;
     float: left;
-    z-index: 50;
     cursor: pointer;
+
 }
+
+.in{
+    background: url('../../images/editor/expand-right.jpg') center no-repeat;
+}
+
+.out{
+    background: url('../../images/editor/expand-left.jpg') center no-repeat;
+}
+
+#card_container{
+    z-index: 20;
+    padding: 5px 10px 5px 5px;
+    float:right;
+}
+
 .align_bottom, .align_bottom tbody, .align_bottom tr, .align_bottom td {
     height:100%;
     margin:0px;
@@ -109,7 +126,7 @@ button.saving {
 
 .card {
     margin-top: 5px;
-    width:250px;
+    width:240px;
     padding: 5px;
     bottom:0px;
     background-color:#E0DFE3;
@@ -131,7 +148,7 @@ button.saving {
     border: 2px dashed darkgrey;
     background-color:#D2FF78 !important;
     color:black !important;
-    width:248px;
+    width:238px;
     display:block;
 }
 

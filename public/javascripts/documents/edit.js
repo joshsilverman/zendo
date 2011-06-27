@@ -11,12 +11,13 @@ var cDoc = Class.create({
 
     newDoc: null,
     docCount: null,
+    toggler: null,
 
     initialize: function() {
 
         /* set new document attr */
         this.newDoc = $('new_doc').innerHTML == "true";
-        this.docCount = $('doc_count').innerHTML;
+        this.docCount = 1;//$('doc_count').innerHTML;
         if (this.newDoc) {
             /* set attr and remove node (in case there are edits followed by reload) */
             $('new_doc').innerHTML = "false";
@@ -46,11 +47,27 @@ var cDoc = Class.create({
         }
 
         /* set listeners for helper panel*/
-        $('helper_panel_contents').hide();
-
+        $('helper_panel_contents').show();
+        this.toggler = false;
         $('helper_panel_tab').observe('click', function(){
-            new Effect.toggle($('helper_panel_contents'),'Blind', {duration:.5});
-        });
+            if(this.toggler){
+                new Effect.Move($('helper_panel_container'), {
+                  x: 214, y: 0, mode: 'relative',
+                  transition: Effect.Transitions.spring
+                });
+                $('helper_panel_tab').removeClassName('in');
+                $('helper_panel_tab').addClassName('out');
+                this.toggler = false;
+            } else {
+                new Effect.Move($('helper_panel_container'), {
+                  x: -214, y: 0, mode: 'relative',
+                  transition: Effect.Transitions.spring
+                });
+                $('helper_panel_tab').removeClassName('out');
+                $('helper_panel_tab').addClassName('in');
+                this.toggler = true;
+            }
+        }.bind(this));
 
     },
 
@@ -97,9 +114,12 @@ var cDoc = Class.create({
         var editorContainer = $('editor_container');
         var rightRail = $('right_rail');
         var helperContainer = $('helper_panel_container');
+        var cardContainer = $('card_container');
+        
         editorContainer.show();
         rightRail.show();
         helperContainer.show();
+        cardContainer.show();
 
         /* calculations */
         var bottomMargin = 20;
@@ -112,8 +132,9 @@ var cDoc = Class.create({
 
         /* set heights */
         editorWhitespace.setStyle({height: editorVerticalSpaceHeight + 10 + 'px'});
-        rightRail.setStyle({height: editorVerticalSpaceHeight - 30 + 'px'});
+        rightRail.setStyle({height: editorVerticalSpaceHeight - 20 + 'px'});
         helperContainer.setStyle({height: editorVerticalSpaceHeight - 20 + 'px'});
+        cardContainer.setStyle({height: editorVerticalSpaceHeight - 30 + 'px'});
         $("editor_ifr").setStyle({height: editorVerticalSpaceHeight - 20 + 'px'});
 
         /* set widths */
@@ -594,6 +615,19 @@ var cCard = Class.create({
 
         /* update */
         this.update(node);
+        console.log("card count: "+doc.rightRail.cardCount);
+        console.log(doc.newDoc);
+        if(doc.rightRail.cardCount==3 && doc.newDoc){
+            new Effect.Move($('helper_panel_container'), {
+                  x: -214, y: 0, mode: 'relative',
+                  transition: Effect.Transitions.spring,
+                  afterFinish: doc.tipTour.showReview()
+                });
+            $('helper_panel_tab').removeClassName('out');
+            $('helper_panel_tab').addClassName('in');
+            toggler = true;
+            //doc.tipTour.showReview();
+        }
     },
 
     update: function(node, truncate) {
@@ -749,6 +783,15 @@ var cTipTour = Class.create({
     
     initialize: function() {
         if (doc.newDoc && doc.docCount < 4) this.showTitle();
+        var firstFocus = true;
+        $('document_name').observe('keypress', function(e){
+            if(firstFocus && e.keyCode == 13 && doc.newDoc){
+                new Effect.Shake($('helper_panel_container'), { duration: 1, distance: 6 });
+                Tips.hideAll();
+                firstFocus = false;
+            }
+
+        });
     },
 
     showTitle: function() {
@@ -756,7 +799,7 @@ var cTipTour = Class.create({
         if (doc_name.prototip) $('document_name').prototip.show();
         else {
             new Tip(doc_name, $("tip_title"), {
-                title: 'Getting started (1 of 4)',
+                title: 'Getting started',
                 style: 'protogrey',
                 stem: 'topLeft',
                 closeButton:true,
@@ -770,40 +813,10 @@ var cTipTour = Class.create({
         doc_name.prototip.show();
     },
 
-    showEditor: function() {
-        var editorIfr = $("editor_ifr");
-        new Tip(editorIfr, $("tip_editor"), {
-            title: 'Getting started (2 of 4)',
-            style: 'protogrey',
-            closeButton:true,
-            hook: {target: 'topLeft', tip: 'topLeft'},
-            offset: {x: 20, y: 20},
-            hideOn: false,
-            showOn:false
-        });
-        Tips.hideAll();
-        editorIfr.prototip.show();
-    },
-
-    showCards: function() {
-        var rightRail = $("right_rail");
-        new Tip(rightRail, $("tip_cards"), {
-            title: 'Getting started (3 of 4)',
-            style: 'protogrey',
-            closeButton:true,
-            hook: {target: 'bottomLeft', tip: 'bottomLeft'},
-            offset: {x: 11, y: -11},
-            hideOn: false,
-            showOn:false
-        });
-        Tips.hideAll()
-        rightRail.prototip.show();
-    },
-
     showReview: function() {
         var reviewButton = $("review_button");
         new Tip(reviewButton, $("tip_review"), {
-            title: 'Getting started (4 of 4)',
+            title: 'Almost done',
             style: 'protogrey',
             closeButton:true,
             hook: {target: 'bottomLeft', tip: 'topRight'},
@@ -814,11 +827,9 @@ var cTipTour = Class.create({
         });
         Tips.hideAll();
         reviewButton.prototip.show();
-    },
-
-    restartTour: function () {
-        Tips.hideAll()
-        this.showTitle();
+        $$('.prototip').each(function(item){
+            new Effect.Fade(item, {delay: 4, duration: 3});
+        });
     }
 });
 
