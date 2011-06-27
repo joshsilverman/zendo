@@ -125,30 +125,34 @@ var cDoc = Class.create({
         $("editor_parent").setStyle({width: editorWidth + 'px'});
     },
 
-//    share: function() {
-//        new Dialog.Box('share_menu');
-//        console.log($('share_menu'));
-//        $('share_menu').show();
-////        $('test123').hide();
-////        var openMenu = false;
-////        if ($("share_button").menu_open == 'true') {
-////            $("share_button").menu_open = 'false';
-////            $('doc_options').morph('height:24px;');
-////            console.log('close it');
-////        }
-////        else {
-////            $("share_button").menu_open = 'true';
-////            openMenu = true;
-////            $('doc_options').morph('height:150px;');
-////            console.log('open it');
-////        }
-//    },
-
     share: function() {
         new Ajax.Request('/documents/share', {
             method: 'put',
             parameters: {id:doc.outline.documentId, email: $("share_email_input").value},
-            onCreate: function() {}
+            onSuccess: function(transport) {
+                var token = '<span class="token removable" viewer_id="' +
+                    transport.responseText +
+                    '">' +
+                    $("share_email_input").value +
+                    '<span class="remove" >X</span></span>'
+                $("viewers").insert({"bottom": token});
+            },
+            onCreate: function() {
+                $('share_request_button').disabled = true;
+                $("update_share_loading").setStyle({'visibility': 'visible'});
+            },
+            onComplete: function() {
+                $('share_request_button').disabled = false;
+                $('update_share_loading').setStyle({'visibility': 'hidden'});
+            }
+        });
+    },
+
+    unshare: function(token) {
+        new Ajax.Request('/documents/unshare', {
+            method: 'put',
+            parameters: {id:doc.outline.documentId, viewer_id: token.readAttribute("viewer_id")},
+            onSuccess: function() {token.remove();}
         });
     },
 
@@ -157,6 +161,12 @@ var cDoc = Class.create({
         if ($('share_button')) $("share_button").observe("click",$('share_menu').show);
         if ($('share_request_button')) $("share_request_button").observe("click",doc.share);
         if ($('document_public')) $('document_public').observe('change', function() {doc.updatePrivacy();});
+
+        document.observe("click", function(e) {
+            var removeButton = e.target;
+            var token = e.target.up('.token');
+            if (e.target.hasClassName("remove")) doc.unshare(token);
+        });
     },
 
     updatePrivacy: function() {
@@ -277,6 +287,8 @@ var cOutline = Class.create({
     },
 
     autosave: function() {
+        if (doc.readOnly) return;
+
         if(doc.editor.isDirty() || !doc.editor.isNotDirty) {
             doc.editor.isNotDirty = true;
 
