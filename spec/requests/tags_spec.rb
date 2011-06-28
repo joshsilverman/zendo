@@ -36,7 +36,8 @@ describe "tags", :js => true do
         @tag = @user.tags.create!(:name => "my tag")
         @document = @user.documents.create!(:name => "title one", :tag_id => @tag.id)
         visit "/documents/#{@document.id}/edit"
-        
+
+        wait_until{ page.has_content?('Share') }
         click_button "Share"
         fill_in "share_email_input", :with => @user2.email
         click_button "share_request_button"

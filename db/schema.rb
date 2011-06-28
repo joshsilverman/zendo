@@ -33,13 +33,15 @@ ActiveRecord::Schema.define(:version => 20110626050443) do
   end
 
   create_table "documents", :force => true do |t|
-    t.string   "name",       :limit => 45
+    t.string   "name",        :limit => 45
     t.text     "html"
     t.integer  "tag_id"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "public"
+    t.datetime "reviewed_at"
+    t.datetime "edited_at"
   end
 
   add_index "documents", ["tag_id"], :name => "index_documents_on_tag_id"
