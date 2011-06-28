@@ -27,7 +27,6 @@ describe "tags", :js => true do
   end
 
     it "goes to Misc folder after click Misc", :js => true do
-      visit "/explore"
       wait_until{ page.has_content?('Misc.')}
       find('div.accordion_toggle', :text => 'Misc.').click
       wait_until{ page.has_content?('Saved')}
