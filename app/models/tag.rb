@@ -13,9 +13,16 @@ class Tag < ActiveRecord::Base
 
   def self.tags_json(current_user = nil)
     return nil if current_user.blank?
-    current_user.tags.includes(:documents)\
-                    .all\
-                    .to_json(:include => {:documents => {:only => [:id, :name, :updated_at, :created_at, :tag_id]}})
+    tags = current_user.tags\
+                    .includes(:documents)\
+                    .all
+
+    # append info on shared documents
+    shared_docs = current_user.vdocs.select([:id, :name, :updated_at, :created_at, :tag_id]).all
+    shared_tag = Tag.new(:name => "Shared")
+    shared_tag.documents << shared_docs
+    tags << shared_tag
+    return tags.to_json(:include => {:documents => {:only => [:id, :name, :updated_at, :created_at, :tag_id]}})
     rescue: []
   end
 
