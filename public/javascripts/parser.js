@@ -9,23 +9,11 @@ var cParser = Class.create({
         if (Card.text == null) this._identifyDoc(Card);
         if (Card.text == null) Card.text = "";
 
-        var defParts = Card.text.split(/(?:\s+-+\s+|-+\s+|\s+-+)/);
-
-        if (defParts.length > 1) {
-
-            //set autoActivate member if this is the first time text has been parsable
-            if (!Card.back && !Card.active) {
-                console.log("parser auto-activates card number: " + Card.cardNumber);
-                Card.autoActivate = true;
-            }
-
-            Card.front = defParts[0];
-            Card.back = defParts.slice(1).join(' - ').unescapeHTML();
-            if (Card.back == '') Card.back = ' - ';
+        if (this._parseDash(Card)) {}
+        else if (this._parseStrong(Card)) {}
+        else if (this._parseUnderline(Card)) {
+            console.log('parsed underline');
         }
-
-        //fill in the blank
-        else if (false) {}
 
         //no match
         else {
@@ -35,7 +23,7 @@ var cParser = Class.create({
 
         /* set simpleFront on card before attempting to contextualize*/
         Card.simpleFront = Card.front;
-        
+
         /* add context to front if showContext set to true */
         if (contextualize) this._contextualize(Card);
         else if (ellipsize) this._ellipsize(Card);
@@ -110,5 +98,58 @@ var cParser = Class.create({
         Card.text = this.line[0].innerHTML.split(/<(?:li|ol|ul|p)/)[0];
         this.line = Element.extend(this.line[0]);
         Element.update(this.line, Card.front);
+    },
+
+    _parseDash: function(Card) {
+        var defParts = Card.text.split(/(?:\s+-+\s+|-+\s+|\s+-+)/);
+        if (defParts.length > 1) {
+
+            //set autoActivate member if this is the first time text has been parsable
+            if (!Card.back && !Card.active) {
+                console.log("dash parser auto-activates card number: " + Card.cardNumber);
+                Card.autoActivate = true;
+            }
+
+            Card.front = defParts[0];
+            Card.back = defParts.slice(1).join(' - ').unescapeHTML();
+            if (Card.back == '') Card.back = ' - ';
+            return true;
+        }
+    },
+
+    _parseStrong: function(Card) {
+        var defParts = Card.text.split(/<strong>(.*)<\/strong>/);
+        if (defParts.length > 1) {
+
+            //set autoActivate member if this is the first time text has been parsable
+            if (!Card.back && !Card.active) {
+                console.log("strong parser auto-activates card number: " + Card.cardNumber);
+                Card.autoActivate = true;
+            }
+
+            Card.front = defParts[1];
+            Card.back = Card.text.unescapeHTML();
+            return true;
+        }
+    },
+
+    _parseUnderline: function(Card) {
+        try {
+            var node = Element.select(doc.iDoc, '#' + Card.domId)[0];
+            Element.select(node, 'span').each(function(span) {
+                if (Element.getStyle(span, 'text-decoration') == 'underline') {
+                    Card.front = Card.text.gsub(span.innerHTML, "__________").unescapeHTML();
+                    Card.back = Card.text;
+
+                    if (!Card.back && !Card.active) {
+                        console.log("underline parser auto-activates card number: " + Card.cardNumber);
+                        Card.autoActivate = true;
+                    }
+                    return true;
+                }
+            });
+            if (Card.back) return true;
+        }
+        catch (e) {}
     }
 });
