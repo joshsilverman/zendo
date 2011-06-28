@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110623161137) do
+ActiveRecord::Schema.define(:version => 20110626050443) do
 
   create_table "alternatives", :force => true do |t|
     t.integer "experiment_id"
@@ -41,10 +41,16 @@ ActiveRecord::Schema.define(:version => 20110623161137) do
     t.datetime "updated_at"
     t.date     "reviewed_at"
     t.datetime "edited_at"
+    t.boolean  "public"
   end
 
   add_index "documents", ["tag_id"], :name => "index_documents_on_tag_id"
   add_index "documents", ["user_id"], :name => "index_documents_on_user_id"
+
+  create_table "documents_users", :id => false, :force => true do |t|
+    t.integer "document_id"
+    t.integer "user_id"
+  end
 
   create_table "experiments", :force => true do |t|
     t.string   "test_name"
