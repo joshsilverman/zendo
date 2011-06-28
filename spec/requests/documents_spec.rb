@@ -214,4 +214,15 @@ describe "document" do
       end
     end
   end
+
+  describe "toolTips", :js => true do
+
+    it "first disappears upon pressing enter in doc" do
+      click_link('Create A New Document')
+      wait_until{ page.find('#tip_title').visible? }
+      page.find('document_name').native.send_key(:enter)
+      wait_until{ not page.find('#tip_title').visible? }
+    end
+
+  end
 end
