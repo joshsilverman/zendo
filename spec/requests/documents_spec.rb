@@ -372,9 +372,9 @@ describe "document" do
     it "first disappears upon pressing enter in doc" do
       visit '/explore'
       click_link('Create A New Document')
-      wait_until{ page.find('#tip_title').visible? }
-      page.find('document_name').native.send_key(:enter)
-      wait_until{ not page.find('#tip_title').visible? }
+      wait_until{ page.find('div.prototip').visible? }
+      page.find('#document_name').native.send_key(:enter)
+      wait_until{ not page.find('div.prototip').visible? }
     end
   end
   end
