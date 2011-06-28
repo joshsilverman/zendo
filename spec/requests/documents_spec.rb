@@ -234,6 +234,15 @@ describe "document" do
         wait_until{ page.has_content?(@tag.name) }
         wait_until{ page.find('#document_name').visible? }
 
+        @nodes = ['card 1 - a', 'card 2 - b', 'card 3 - c', 'card 4 - d']
+        tiny_mce_fill_in 'editor', :with => :backspace
+        @nodes.each_with_index do |node, i|
+          tiny_mce_fill_in 'editor', :with => node
+          tiny_mce_fill_in 'editor', :with => :enter
+        end
+        click_button "Save"
+        wait_until{ page.has_content?('Saved')}
+
         click_button "Share"
         wait_until{ page.has_content?("Sharing") }
         page.select 'public', :from => 'document_public'
@@ -257,7 +266,22 @@ describe "document" do
           wait_until{ page.has_content?('title one') }
         end
 
-        it "is reviewable by others"
+        it "is reviewable by others (orig still in tact)" do
+          @owner_mem_ids = Mem.find_all_by_user_id(@user).collect { |mem| mem.id }.to_set
+
+          visit "/documents/#{@document.id}"
+          click_button "Review"
+          wait_until{ page.has_content?('0/4') }
+
+          @owner_mem_ids_post = Mem.find_all_by_user_id(@user).collect { |mem| mem.id }.to_set
+          @viewer_mem_ids = Mem.find_all_by_user_id(@user2).collect { |mem| mem.id }
+          
+          @owner_mem_ids.length.should == 4
+          @owner_mem_ids_post.length.should == 4
+          @viewer_mem_ids.length.should == 4
+
+          @owner_mem_ids.should == @owner_mem_ids_post
+        end
 
         it "is not editable by others" do
           visit "/documents/#{@document.id}/edit"
@@ -280,6 +304,15 @@ describe "document" do
         wait_until{ page.has_content?(@tag.name) }
         wait_until{ page.find('#document_name').visible? }
 
+        @nodes = ['card 1 - a', 'card 2 - b', 'card 3 - c', 'card 4 - d']
+        tiny_mce_fill_in 'editor', :with => :backspace
+        @nodes.each_with_index do |node, i|
+          tiny_mce_fill_in 'editor', :with => node
+          tiny_mce_fill_in 'editor', :with => :enter
+        end
+        click_button "Save"
+        wait_until{ page.has_content?('Saved')}
+
         click_button "Share"
         wait_until{ page.has_content?("Sharing") }
 
@@ -301,12 +334,27 @@ describe "document" do
           click_button "Sign in"
         end
 
-        it "is viewable by other" do
+        it "is reviewable by other (orig still in tact)" do
+          @owner_mem_ids = Mem.find_all_by_user_id(@user).collect { |mem| mem.id }.to_set
+
+          visit "/documents/#{@document.id}"
+          click_button "Review"
+          wait_until{ page.has_content?('0/4') }
+
+          @owner_mem_ids_post = Mem.find_all_by_user_id(@user).collect { |mem| mem.id }.to_set
+          @viewer_mem_ids = Mem.find_all_by_user_id(@user2).collect { |mem| mem.id }
+
+          @owner_mem_ids.length.should == 4
+          @owner_mem_ids_post.length.should == 4
+          @viewer_mem_ids.length.should == 4
+
+          @owner_mem_ids.should == @owner_mem_ids_post
+        end
+
+        it "is viewable" do
           visit "/documents/#{@document.id}"
           wait_until{ page.has_content?('title zen') }
         end
-
-        it "is reviewable"
 
         it "is not editable" do
             visit "/documents/#{@document.id}/edit"
