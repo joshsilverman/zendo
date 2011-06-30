@@ -19,7 +19,7 @@ describe "tags", :js => true do
       @tag1 = @user.tags.create!(:name => "my tag1")
       @document1 = @user.documents.create!(:name => "title one", :tag_id => @tag1.id)
       @tag2 = @user.tags.create!(:name => "my tag2")
-      @document2 = @user.documents.create!(:name => "title two", :tag_id => @tag2.id)
+      @document2 = @user.documents.create!(:name => "title two", :tag_id => @tag2.id, :edited_at => Date.today, :reviewed_at => Date.today, :updated_at => Date.today)
       
       visit "/users/sign_in"
       fill_in "Email", :with => @user.email
@@ -96,6 +96,19 @@ describe "tags", :js => true do
       page.evaluate_script('window.confirm = function() { return true; }')
       find('span.remove_doc',  :text => 'delete').click
       wait_until{not page.has_content?('title one')}
+    end
+
+    it "deletes doc from Recent Docs" do
+      visit "/explore"
+      wait_until{ page.has_content?('Recent Documents')}
+      wait_until{ page.has_content?('my tag2')}
+      find('div.expand', :text => 'my tag2').click
+      wait_until{ find('div.collapse', :text => 'my tag2')}
+      find('div.doc_item', :text => 'title two (my tag2)').click
+      wait_until{ page.has_content?('delete')}
+      page.evaluate_script('window.confirm = function() { return true; }')
+      find('span.remove_doc',  :text => 'delete').click
+      wait_until{not page.has_content?('title two')}
     end
   end
 end
