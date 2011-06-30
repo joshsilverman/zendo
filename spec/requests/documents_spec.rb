@@ -320,7 +320,10 @@ describe "document" do
         @user2.save!
 
         fill_in "share_email_input", :with => @user2.email
-        click_button "share_request_button"
+
+        wait_until{ page.find('li.selected') }
+        page.find('li.selected').click
+
         wait_until{ page.find('#update_share_loading').visible? }
         wait_until{ not page.find('#update_share_loading').visible? }
       end

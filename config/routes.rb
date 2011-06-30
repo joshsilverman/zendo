@@ -92,7 +92,8 @@ Zendo::Application.routes.draw do
   match "/tags/get_recent_json" => "tags#get_recent_json"
 
   # home page
-  match "users/welcome" => "users#home"
+  match "/users/welcome" => "users#home"
+  match "/users/autocomplete"
   root :to => "users#home"
 
   # authentications
@@ -101,7 +102,7 @@ Zendo::Application.routes.draw do
   resources :authentications
 
   # ajax sign in
-  match "users/simple_sign_in" => "users#simple_sign_in"
+  match "/users/simple_sign_in" => "users#simple_sign_in"
 
   #abingo dashboard
 

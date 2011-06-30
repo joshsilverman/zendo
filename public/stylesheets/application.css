@@ -302,3 +302,30 @@ div.twtr-tweet-wrap {
     -webkit-border-radius: 4px;
     position: relative;
 }
+
+/* autocompleter */
+.autocomplete {
+    background: #fff;
+    border: 1px solid #009CFF;
+    border-top: 0;
+    width:173px !important;
+    overflow:hidden;
+}
+
+.autocomplete li {
+    list-style: none;
+}
+
+.autocomplete li:hover {
+    background:#DDE4F0 !important;
+    cursor:pointer;
+}
+
+.autocomplete ul {
+    padding:0;
+    margin:0px;
+}
+
+.autocomplete li.selected {
+    background:#DDE4F0 !important;
+}

@@ -24,9 +24,9 @@
     <div class="clr-thin"></div>
     <div>
       <span class="option">Add a person:</span>
-      <%= text_field_tag :name, '', :id => 'share_email_input' %>
-      <%= submit_tag "Share", :id => 'share_request_button' %>
+      <%= text_field_tag :email, '', :id => 'share_email_input' %>
       <%= image_tag "shared/fb-loader.gif", :alt => 'loading', :style => "margin-right:5px;visibility:hidden;", :id => "update_share_loading" %>
+      <div id="share_email_choices" class="autocomplete"></div>
     </div>
   </div>
 </div>

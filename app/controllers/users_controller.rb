@@ -17,4 +17,9 @@ class UsersController < ApplicationController
     render "/users/simple_sign_in", :layout => "blank"
   end
 
+  def autocomplete
+    @users = User.where("users.email LIKE ?", params['email'] + "%" ).limit(10)
+    render :layout => false
+  end
+
 end
