@@ -27,20 +27,17 @@ var cDoc = Class.create({
 
     prepareData: function() {
         /* organize and set json member */
-        console.log('1');
         this.tags = [];
         $('tags_json').innerHTML.evalJSON().collect(function(tag) {
             this.tags.push([tag['tag']['id'], tag['tag']]);
         }.bind(this));
 
-        console.log('2');
         this.recent = [];
         $('recent_json').innerHTML.evalJSON().collect(function(doc) {
             this.recent.push(doc['document']);
         }.bind(this));
 
         //set all documents
-        console.log('3');
         this.docs = new Hash();
         this.tags.each(function(tag){
             tag[1]['documents'].each(function(doc){
@@ -48,7 +45,6 @@ var cDoc = Class.create({
             }.bind(this));
         }.bind(this));
 
-        console.log('4');
         if(this.activeTags==null){
             this.activeTags = new Hash();
             var activeT = this.activeTags;
@@ -338,11 +334,14 @@ var cDoc = Class.create({
                 new Ajax.Request('/tags/get_recent_json', {
                    onSuccess: function(transport) {
                        $('recent_json').update(transport.responseText);
+                   }.bind(this),
+
+                   onComplete: function(){
+                       this.activeItemId = '';
+                    this.prepareData();
+                    this.render();
                    }.bind(this)
                 });
-                this.activeItemId = '';
-                this.prepareData();
-                this.render();
             }.bind(this),
             onFailure: function(transport) {
                 alert('There was an error removing the directory.');
