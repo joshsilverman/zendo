@@ -170,11 +170,11 @@ var cDoc = Class.create({
                 $("viewers").insert({"bottom": token});
             },
             onCreate: function() {
-                $('share_request_button').disabled = true;
                 $("update_share_loading").setStyle({'visibility': 'visible'});
             },
             onComplete: function() {
-                $('share_request_button').disabled = false;
+                console.log("yo");
+                $("share_email_input").value = "";
                 $('update_share_loading').setStyle({'visibility': 'hidden'});
             }
         });
@@ -191,13 +191,15 @@ var cDoc = Class.create({
     makeShareable: function() {
         new Dialog.Box('share_menu');
         if ($('share_button')) $("share_button").observe("click",$('share_menu').show);
-        if ($('share_request_button')) $("share_request_button").observe("click",doc.share);
         if ($('document_public')) $('document_public').observe('change', function() {doc.updatePrivacy();});
 
         document.observe("click", function(e) {
-            var removeButton = e.target;
             var token = e.target.up('.token');
             if (e.target.hasClassName("remove")) doc.unshare(token);
+        });
+
+        new Ajax.Autocompleter("share_email_input", "share_email_choices", "/users/autocomplete", {
+            afterUpdateElement: doc.share
         });
     },
 
@@ -865,7 +867,7 @@ var cTipTour = Class.create({
         var firstFocus = true;
         $('document_name').observe('keypress', function(e){
             if(firstFocus && e.keyCode == 13 && doc.newDoc){
-                new Effect.Shake($('helper_panel_container'), { duration: 1, distance: 6 });
+                new Effect.Shake($('helper_panel_container'), {duration: 1, distance: 6});
                 Tips.hideAll();
                 firstFocus = false;
             }
