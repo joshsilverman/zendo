@@ -19,7 +19,7 @@ describe "tags", :js => true do
       @tag1 = @user.tags.create!(:name => "my tag1")
       @document1 = @user.documents.create!(:name => "title one", :tag_id => @tag1.id)
       @tag2 = @user.tags.create!(:name => "my tag2")
-      @document2 = @user.documents.create!(:name => "title two", :tag_id => @tag2.id, :edited_at => Date.today, :reviewed_at => Date.today, :updated_at => Date.today)
+      @document2 = @user.documents.create!(:name => "title two", :tag_id => @tag2.id, :edited_at => Date.yesterday)
       
       visit "/users/sign_in"
       fill_in "Email", :with => @user.email
