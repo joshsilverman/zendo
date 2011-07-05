@@ -13,10 +13,15 @@ class TagsController < ApplicationController
     end
     @tags_json = Tag.tags_json(current_user)
     @recent_json = Tag.recent_json(current_user)
+    @shared_with = []
   end
 
   def get_tags_json
     render :text => Tag.tags_json(current_user)
+  end
+
+  def get_shared_with
+    render :text => Tag.shared_with_json(params[:id])
   end
 
   def get_recent_json

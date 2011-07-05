@@ -36,4 +36,13 @@ class Tag < ActiveRecord::Base
     #recent_review.inspect includes(:name, :id, :tag_id, :edited_at, :reviewed_at).
   end
 
+  def self.shared_with_json(doc_id = nil)
+    return 'No Doc ID' if doc_id.blank?
+    document = Document.find(doc_id)
+    shared_with = document.viewers.select(['email'])
+    return shared_with.to_json()
+    rescue: ['error']
+    #recent_review.inspect includes(:name, :id, :tag_id, :edited_at, :reviewed_at).
+  end
+
 end

@@ -167,6 +167,31 @@ var cDoc = Class.create({
                     <span style="text-align:center; display:block; margin:10px 0">- OR -</span>\
                     <em style="text-align:center; display:block;" >Select a document to view details...</em>';
         } else if((checkedList[0] == null && this.activeItemId!='')||(checkedList[1] == null && this.activeItemId!='')){
+            console.log('start req');
+            new Ajax.Request('/tags/get_shared_with/'+$(this.activeItemId).readAttribute('doc_id'), {
+               onSuccess: function(transport) {
+                   $('shared_with').update(transport.responseText);
+               }.bind(this),
+
+               onComplete: function(transport) {
+                   var viewers = [];
+                   var sharedHtml = '';
+                   $('shared_with').innerHTML.evalJSON().collect(function(v) {
+                        viewers.push(v['user']);
+                    });
+                    if(viewers[0] != null){
+                        sharedHtml += '<br/><br/><h4 class="details_label">Shared with: </h4>';
+                        viewers.each(function(e){
+                            sharedHtml+= '<br/><span class="">'+e['email']+'</span>';
+                        });
+                    } else {
+                        sharedHtml += '' //Message about private document status
+                    }
+                    $('shared').update(sharedHtml);
+                    console.log('completed req');
+               }.bind(this)
+            });
+            console.log('end req');
             var singleDoc = this.docs.get($(this.activeItemId).readAttribute('doc_id'));
             var d = singleDoc['created_at'].split('-');
             this.convertDate(new Date(d[0], d[1], d[2].substring(0,2)));
@@ -188,7 +213,10 @@ var cDoc = Class.create({
                     <div style="clear: both;"></div><h4 class="details_label">Created On: </h4>\
                     <em>'+created+'</em><br/>\
                     <h4 class="details_label">Last Updated: </h4>\
-                    <em>'+updated+'</em></div>';
+                    <em>'+updated+'</em>\
+                    <div id="shared"></div></div>';
+            console.log('end viewers');
+
         } else if(checkedList[1] == null && this.activeItemId == ''){
             html += 'You have selected <strong>'+this.docs.get(checkedList[0])['name']+'</strong>... Use the checkboxes to take actions on multiple documents';
         } else {
@@ -262,9 +290,6 @@ var cDoc = Class.create({
                                        console.log('recent json success1');
                                        $('recent_json').update(transport.responseText);
                                        console.log('recent json success2');
-                                       //this.prepareData();
-                                       //this.render();
-                                       //this._buildDetails();
                                    }.bind(this),
                                    onComplete: function(){
                                        console.log('recent json complete');
