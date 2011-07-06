@@ -61,7 +61,7 @@ Zendo::Application.routes.draw do
   
   #devise
   devise_for :users, :timeout_in => 7.days,
-    :controllers => {:registrations => 'registrations'}
+    :controllers => {:registrations => 'registrations', :sessions => 'sessions'}
 
   #tags
   get "tag/index" # ???
@@ -95,6 +95,7 @@ Zendo::Application.routes.draw do
   match "/users/welcome" => "users#home"
   match "/users/autocomplete"
   root :to => "users#home"
+  root :controller => 'users', :action => 'home'
 
   # authentications
   match '/auth/:provider/callback' => 'authentications#create'
@@ -105,12 +106,11 @@ Zendo::Application.routes.draw do
   match "/users/simple_sign_in" => "users#simple_sign_in"
 
   #abingo dashboard
-
   # match '/abingo(/:action(/:id))' => 'abingo_dash', :as => :abingo
 
-#  namespace :user do
-#    root :controller => 'users', :action => 'home'
-#  end
+  namespace :user do
+    root :controller => 'tags', :action => 'explore'
+  end
 
   # catch-all route for static pages
   match ':action', :controller => "static"
