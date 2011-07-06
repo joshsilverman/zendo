@@ -39,7 +39,6 @@ ActiveRecord::Schema.define(:version => 20110626050443) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "public"
     t.datetime "reviewed_at"
     t.datetime "edited_at"
     t.boolean  "public"
@@ -53,10 +52,8 @@ ActiveRecord::Schema.define(:version => 20110626050443) do
     t.integer "user_id"
   end
 
-
   add_index "documents_users", ["document_id", "user_id"], :name => "index_documents_users_on_document_id_and_user_id", :unique => true
 
-  
   create_table "experiments", :force => true do |t|
     t.string   "test_name"
     t.string   "status"

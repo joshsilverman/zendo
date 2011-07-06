@@ -85,6 +85,13 @@ class DocumentsController < ApplicationController
     render :json => Tag.tags_json(current_user)
   end
 
+
+
+
+
+
+
+
   def review
 
     get_document(params[:id])
@@ -118,7 +125,25 @@ class DocumentsController < ApplicationController
       @lines_json = user_lines.to_json :include => :mems
     end
 
+    respond_to do |format|
+        format.html
+   	    format.json { 
+            doc_json = @document.to_json
+            json = "{\"document\":#{doc_json}, \"lines\":#{@lines_json}}"
+            render :text => json
+        }
+    end
+	
   end
+
+
+
+
+
+
+
+
+
 
   def update_tag
     if @document = current_user.documents.find(params[:doc_id])
