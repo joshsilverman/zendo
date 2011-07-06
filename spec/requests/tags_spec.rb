@@ -19,7 +19,7 @@ describe "tags", :js => true do
       @tag1 = @user.tags.create!(:name => "my tag1")
       @document1 = @user.documents.create!(:name => "title one", :tag_id => @tag1.id)
       @tag2 = @user.tags.create!(:name => "my tag2")
-      @document2 = @user.documents.create!(:name => "title two", :tag_id => @tag2.id, :edited_at => Date.yesterday)
+      @document2 = @user.documents.create!(:name => "title two", :tag_id => @tag2.id, :edited_at => Date.today - 1)
       
       visit "/users/sign_in"
       fill_in "Email", :with => @user.email
@@ -54,7 +54,8 @@ describe "tags", :js => true do
         wait_until{ page.has_content?('Share') }
         click_button "Share"
         fill_in "share_email_input", :with => @user2.email
-        click_button "share_request_button"
+        wait_until{ page.find('li.selected') }
+        page.find('li.selected').click
         wait_until{ page.find('#update_share_loading').visible? }
         wait_until{ not page.find('#update_share_loading').visible? }
 
