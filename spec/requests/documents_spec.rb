@@ -147,6 +147,22 @@ describe "document" do
             @document.lines.count.should == @nodes.length
             @user.mems.count.should == @nodes.length
           end
+
+          it "is reviewable" do
+            tiny_mce_fill_in 'editor', :with => :backspace
+            @nodes.each_with_index do |node, i|
+              tiny_mce_fill_in 'editor', :with => node
+              Capybara.default_wait_time = 10
+              wait_until{ page.has_content?('Saving')}
+              wait_until{ page.has_content?(node.split('-')[0].strip) }
+              all('div.card').length.should == i + 1
+              all('div.card_active').length.should == i + 1
+              tiny_mce_fill_in 'editor', :with => :enter
+            end
+            
+            click_button "Review"
+            wait_until{ page.has_content?('0/4') }
+          end
         end
 
         describe "by adding/deleting many cards" do
@@ -364,22 +380,19 @@ describe "document" do
             wait_until{ page.has_content?("Review") }
             page.find("#save_button").visible?.should == false
         end
-
       end
-
-#      it "is still editable by owner"
     end
 
-  describe "toolTips", :js => true do
+    describe "toolTips", :js => true do
 
-    # difficult to mimic keypress: enter
-    it "first disappears upon pressing enter in doc" #do
-#      visit '/explore'
-#      click_link('Create A New Document')
-#      wait_until{ page.find('div.prototip').visible? }
-#      page.find('#document_name').native.send_key(:enter)
-#      wait_until{ not page.find('div.prototip').visible? }
-#    end
-  end
+      # difficult to mimic keypress: enter
+      it "first disappears upon pressing enter in doc" #do
+  #      visit '/explore'
+  #      click_link('Create A New Document')
+  #      wait_until{ page.find('div.prototip').visible? }
+  #      page.find('#document_name').native.send_key(:enter)
+  #      wait_until{ not page.find('div.prototip').visible? }
+  #    end
+    end
   end
 end
