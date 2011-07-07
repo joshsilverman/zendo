@@ -105,6 +105,10 @@ Zendo::Application.routes.draw do
   # ajax sign in
   match "/users/simple_sign_in" => "users#simple_sign_in"
 
+  # search
+  match "/search" => "search#index"
+  match "/search/query/:q" => "search#query"
+
   #abingo dashboard
   # match '/abingo(/:action(/:id))' => 'abingo_dash', :as => :abingo
 
