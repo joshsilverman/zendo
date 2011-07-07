@@ -3,7 +3,6 @@ class DocumentsController < ApplicationController
   # Look for existing documents (by name for now)
   # If exists, use this document, otherwise set document html and construct Line objects
   def create
-
     #attempt to use a provided tag
     tag_id = params[:tag_id]
     if tag_id
@@ -23,11 +22,9 @@ class DocumentsController < ApplicationController
     @document = current_user.documents.create(:name => 'untitled', :tag_id => @tag.id)
     @document.update_attribute(:edited_at, Date.today)
     redirect_to :action => 'edit', :id => @document.id
-    
   end
   
   def edit
-
     # check id posted
     id = params[:id]
     @read_only = params[:read_only]
@@ -60,7 +57,6 @@ class DocumentsController < ApplicationController
   end
   
   def update
-
     # update document
     @document = Document.update(params, current_user.id)
     logger.debug("This is the updated doc #{@document.inspect}")
@@ -70,7 +66,6 @@ class DocumentsController < ApplicationController
     else
       render :json => Hash[*@document.lines.map {|line| [line.id, line.domid]}.flatten]
     end
-    
   end
   
   def destroy
@@ -86,7 +81,6 @@ class DocumentsController < ApplicationController
   end
 
   def review
-
     get_document(params[:id])
     if @document.nil?
       redirect_to '/', :notice => "Error accessing that document."
@@ -126,7 +120,6 @@ class DocumentsController < ApplicationController
             render :text => json
         }
     end
-	
   end
 
   def update_tag
@@ -161,7 +154,6 @@ class DocumentsController < ApplicationController
   end
 
   def share
-
     @user = User.find_by_email(params['email'])
     @document = current_user.documents.find(params['id'])
     if @user and @document and @user.id != current_user.id
@@ -177,7 +169,6 @@ class DocumentsController < ApplicationController
   end
 
   def unshare
-
     @user = User.find(params['viewer_id'])
     @document = current_user.documents.find(params['id'])
 
@@ -191,36 +182,6 @@ class DocumentsController < ApplicationController
       end
     end
     render :nothing => true, :status => 400
-
-  end
-
-  def lookup
-    begin
-      description_index = nil
-      wiki_article = Scraper.define do
-        array :description
-        array :image
-        i = 0
-        process "#bodyContent >p", :description=>:text do |element|          
-          description_index = i if (element.to_s =~ /^<p[^>]*>[a-zA-Z]|^<p[^>]*><b/) == 0 and not description_index
-          i += 1
-        end
-        process ".infobox img", :image=>"@src"
-
-        result  :image, :description
-      end
-
-      article = wiki_article.scrape(URI.parse("http://en.wikipedia.org/wiki/#{params['term']}"))
-      puts description_index
-      json = {:description => "", :image => ""}
-      json[:description] = article.description[description_index]  if article.description and article.description.size > 0
-      json[:image] = article.image[0] if article.image and article.image.size > 0
-
-      render :json => json
-    rescue
-      render :status => 400, :text => '-'# :nothing => true
-    end
-    render :text => wiki_article.scrape(URI.parse("http://en.wikipedia.org/wiki/Autotroph"))
   end
 
   private
@@ -230,7 +191,6 @@ class DocumentsController < ApplicationController
     get_permission(document)
     @document = document if @w or @r
   end
-
 
   def get_permission(document)
     @w = @r = false
