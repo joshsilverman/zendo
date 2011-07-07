@@ -16,6 +16,7 @@ class RegistrationsController < Devise::RegistrationsController
       # attempt sign-in if no confirmation token
       else
         sign_in(resource_name, resource)
+        redirect_to '/explore'
       end
     else
       clean_up_passwords(resource)

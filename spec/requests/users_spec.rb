@@ -14,12 +14,13 @@ describe "user", :js => true do
   describe "creating local account" do
 
     before :each do
-      visit "/users/sign_up"
       @user = Factory.create(:user)
-      fill_in "Email", :with => "asdf@asdfasf.com"
     end
 
     it "signs up with correct info" do
+      visit "/users/sign_up"
+      fill_in "Email", :with => "asdf@asdfasf.com"
+
       fill_in "Password", :with => @user.password
       fill_in "Password confirmation", :with => @user.password
       click_button "Sign up"
@@ -28,11 +29,30 @@ describe "user", :js => true do
     end
 
     it "signs up with incorrect info" do
+      visit "/users/sign_up"
+      fill_in "Email", :with => "asdf@asdfasf.com"
+
       fill_in "Password", :with => @user.password
       click_button "Sign up"
       current_path.should == "/users"
       page.should have_content("Password doesn't match confirmation")
     end
+
+#    it "signs up from homepage" do
+#      visit "/"
+#      click_link "Sign Up"
+#      wait_until{ page.has_content?("Sign up!") }
+#      
+#      page.has_content?("Sign up!")
+#
+#      fill_in "Email", :with => @user.email
+#      fill_in "Password", :with => @user.password
+#      fill_in "Password confirmation", :with => @user.password
+#
+#      click_button "Sign up"
+#      current_path.should == "/users/welcome"
+#      page.should have_content("An email has been sent to your account. Please confirm to complete your sign up process.")
+#    end
 
     it "gives proper flash message"
   end
