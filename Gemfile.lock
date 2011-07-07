@@ -182,12 +182,15 @@ GEM
       ruby-openid (>= 2.1.7)
     rubyntlm (0.1.1)
     rubyzip (0.9.4)
+    scrapi (1.2.0)
+      tidy (>= 1.1.0)
     selenium-webdriver (0.2.1)
       childprocess (>= 0.1.7)
       ffi (>= 1.0.7)
       json_pure
       rubyzip
     thor (0.14.6)
+    tidy (1.1.2)
     treetop (1.4.9)
       polyglot (>= 0.3.1)
     tzinfo (0.3.27)
@@ -222,4 +225,5 @@ DEPENDENCIES
   postmark-rails (= 0.4.0)
   rails (= 3.0.3)
   rspec-rails
+  scrapi (= 1.2.0)
   unicorn

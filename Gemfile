@@ -5,6 +5,7 @@ gem 'mysql2', '0.2.7'
 gem 'bundler', '1.0.10'
 
 gem 'nokogiri'
+gem 'scrapi', '1.2.0'
 
 gem 'devise'
 gem 'omniauth', '0.2.2'
