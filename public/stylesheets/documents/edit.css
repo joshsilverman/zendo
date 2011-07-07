@@ -64,7 +64,7 @@ button.saving {
     width:284px;
     float:left;
     height:475px;
-    overflow-y: scroll;
+    overflow-y: hidden;
     display:table-cell;
     vertical-align:bottom;
     border:1px solid lightgrey;
@@ -114,6 +114,7 @@ button.saving {
     z-index: 20;
     padding: 5px 10px 5px 5px;
     float:right;
+    overflow-y: scroll;
 }
 
 .align_bottom, .align_bottom tbody, .align_bottom tr, .align_bottom td {
