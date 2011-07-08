@@ -1,8 +1,69 @@
+<style>
+  body{
+    background-color: #fafafa;
+}
+
+  .button {
+   width: 300px;
+   height: 40px;
+   border-top: 1px solid #96d1f8;
+   background: #65a9d7;
+   background: -webkit-gradient(linear, left top, left bottom, from(#3e779d), to(#65a9d7));
+   background: -moz-linear-gradient(top, #3e779d, #65a9d7);
+   padding: 5.5px 11px;
+   -webkit-border-radius: 7px;
+   -moz-border-radius: 7px;
+   border-radius: 7px;
+   -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   box-shadow: rgba(0,0,0,1) 0 1px 0;
+   text-shadow: rgba(0,0,0,.4) 0 1px 0;
+   color: white;
+   font-size: 16px;
+   font-family: Georgia, Serif;
+   text-decoration: none;
+   vertical-align: middle;
+   text-align: center;
+   line-height: 40px;
+   float:left;
+   margin-bottom:50px;
+   margin-left: 40px;
+   }
+
+.button:hover {
+   border-top-color: #28597a;
+   background: #28597a;
+   color: #ccc;
+   }
+
+.button:active {
+   border-top-color: #1b435e;
+   background: #1b435e;
+   }
+</style>
 <div id="search_json" style="display:none;"></div>
-<div id="search" style="float: right;">
-  <input type="text" id="search_bar" name="search_bar" size="30" value="Search Public Documents"/>
-  <input type="button" id="search_button" value="Search"/>
-</div>
-<div id="loader" style="width:100px; margin:0 auto;"><img id="load_search" src="../../images/search/ajax-loader.gif" style="visibility:hidden;" /></div>
-<div id="search_results">
-</div>
+<h1>Welcome to Zendo</h1>
+  <div id="right_box" class="rounded_border" style="float:right; margin:20px; width:400px; padding:10px; min-height: 300px; background-color:white;">
+    <h2 style="margin-bottom:30px; text-align: center;">Find Something Interesting!</h2>
+    <div id="search" style="text-align:center;">
+      <input type="text" id="search_bar" name="search_bar" size="30" value="Search Public Study Guides"/>
+      <input type="button" id="search_button" value="Search"/>
+    </div>
+    <div id="loader" style="width:50px; margin:0 auto;"><img id="load_search" src="../../images/search/ajax-loader.gif" style="display:none;" /></div>
+    <div id="search_results"></div>
+    <h3>Popular Now</h3>
+    <div id="popular"><ul>
+      <% @popular.each do |doc| %>
+        <li><a href="documents/<%= doc.id%>"><%= doc.name %></a></li>
+      <% end %>
+      </ul>
+    </div>
+  </div>
+
+  <div id="left_box" class="rounded_border" style="float:left; margin:20px; width:400px; padding:10px; min-height: 300px; background-color:white;">
+    <h2 style="margin-bottom:30px; text-align: center;">Make Something Awesome!</h2>
+
+      <a href="/documents/create/0" class="button">Create A New Study Guide</a>
+
+      <a href="/explore" class="button">Organize Your Study Guides</a>
+  </div>
