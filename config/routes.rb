@@ -106,7 +106,7 @@ Zendo::Application.routes.draw do
   match "/users/simple_sign_in" => "users#simple_sign_in"
 
   # search
-  match "/search" => "search#index"
+  match "/dashboard" => "search#index"
   match "/search/query/:q" => "search#query"
 
   #abingo dashboard
