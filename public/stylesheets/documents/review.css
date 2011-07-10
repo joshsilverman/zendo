@@ -3,8 +3,17 @@ ul {
 }
 
 #title {
+    padding-top: 50px;
     padding-left: 255px;
     
+}
+
+.contents {
+    height: 10px !important;
+}
+
+.footer {
+    visibility: hidden;
 }
 
 table, tr, td {
@@ -15,7 +24,6 @@ table, tr, td {
 
 .card_container {
     width:900px;
-    height:400px;
     margin:20px auto 0;
     position:relative;
 }
@@ -69,11 +77,16 @@ td {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     -moz-border-radius:0px 0px 5px 5px;
+    height:200px;
 }
 
 #card_front_text {
     text-align: left;
     color:grey;
+}
+
+#card_back_text {
+    margin:10px 0;
 }
 
 .card_front_cue {
@@ -90,6 +103,15 @@ td {
     background-image: url(/images/reviewer/spacebar.png);
     background-repeat: no-repeat;
     border:none;
+}
+
+#card_back_text img {
+    max-height: 300px;
+    max-width: 300px;
+    margin:5px;
+    padding:5px;
+    float:left;
+    border:#ccc 1px solid
 }
 
 .grade {

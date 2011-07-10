@@ -1,12 +1,14 @@
 var cParser = Class.create({
 
-    docHTML: null,
+    docHtml: null,
     line:null,
 
     parse: function(Card, contextualize, ellipsize) {
 
+        console.log("parse");
+
         //pull card text from doc if text is blank
-        if (Card.text == null) this._identifyDoc(Card);
+        this._identifyDoc(Card);
         if (Card.text == null) Card.text = "";
 
         if (this._parseDash(Card)) {}
@@ -14,9 +16,9 @@ var cParser = Class.create({
         else if (this._parseUnderline(Card)) {
             console.log('parsed underline');
         }
-
         //no match
         else {
+            console.log('not parsable...');
             Card.front = Card.text;
             Card.back = '';
         }
@@ -81,8 +83,10 @@ var cParser = Class.create({
         this.docHtml = $('document_' + Card.documentId);
 
         //or look for ckeditor
+
         if (!this.docHtml && window['doc'] && doc.outline) {
             this.docHtml = doc.outline.iDoc.body
+            console.log(this.docHtml);
         }
         if (!this.docHtml) return;
 
@@ -118,24 +122,75 @@ var cParser = Class.create({
     },
 
     _parseStrong: function(Card) {
-        var defParts = Card.text.split(/<strong>(.*)<\/strong>/);
-        if (defParts.length > 1) {
+        console.log(this);
+        console.log(this.docHtml);
+        try {var node = Element.select(this.docHtml, '#' + Card.domId)[0];}
+        catch (e) {}
 
-            //set autoActivate member if this is the first time text has been parsable
-            if (!Card.back && !Card.active) {
-                console.log("strong parser auto-activates card number: " + Card.cardNumber);
-                Card.autoActivate = true;
+        console.log(node);
+        if (node && node.nodeName == "STRONG") {
+            console.log("parse strong");
+
+            var term = Card.text.gsub(/<[^>]*>/, '').strip().gsub(/\s/, "_");
+            term = term.underscore();
+            term = term.charAt(0).toUpperCase() + term.slice(1);
+
+            if (term.match(/Figure|Table/)) return;
+
+            
+            if (node.getAttribute('def') || node.getAttribute('def') == "") {
+                Card.front = Card.text
+                Card.back = "";
+                if (node.getAttribute('img_src')) 
+                    Card.back += "<img src='" + node.getAttribute('img_src') + "'>";
+                Card.back += node.getAttribute('def');
             }
+            else {
+                new Ajax.Request("/terms/lookup/" + term, {
+                    onCreate: function() {
+                        console.log("initiate lookup");
+                    },
+                    onSuccess: function(transport) {
+                        Card.autoActivate = true;
+                        //set autoActivate member if this is the first time text has been parsable
+                        if (!Card.back && !Card.active) {
+                            console.log("strong parser auto-activates card number: " + Card.cardNumber);
+                            Card.autoActivate = true;
+                        }
 
-            Card.front = defParts[1];
-            Card.back = Card.text.unescapeHTML();
+                        Card.front = Card.text
+                        Card.back = "<img src='" + transport.responseJSON['image'] + "'>";
+                        Card.back += transport.responseJSON['description'];
+                        node.setAttribute('def', transport.responseJSON['description']);
+                        node.setAttribute('img_src', transport.responseJSON['image']);
+                        Card.render();
+                    },
+                    onFailure: function() {
+                        node.setAttribute('def', "");
+                    }
+                });
+            }
             return true;
         }
+
+//        var defParts = Card.text.split(/<strong>(.*)<\/strong>/);
+//        if (defParts.length > 1) {
+//
+//            //set autoActivate member if this is the first time text has been parsable
+//            if (!Card.back && !Card.active) {
+//                console.log("strong parser auto-activates card number: " + Card.cardNumber);
+//                Card.autoActivate = true;
+//            }
+//
+//            Card.front = defParts[1];
+//            Card.back = Card.text.unescapeHTML();
+//            return true;
+//        }
     },
 
     _parseUnderline: function(Card) {
         try {
-            var node = Element.select(doc.iDoc, '#' + Card.domId)[0];
+            var node = Element.select(this.docHtml, '#' + Card.domId)[0];
             Element.select(node, 'span').each(function(span) {
                 if (Element.getStyle(span, 'text-decoration') == 'underline') {
                     Card.front = Card.text.gsub(span.innerHTML, "__________").unescapeHTML();

@@ -34,6 +34,8 @@ class Document < ActiveRecord::Base
       html_safe.gsub!(/<\/p/,"</li")
       html_safe.gsub!(/<div/i,"<li")
       html_safe.gsub!(/<\/div/,"</li")
+      html_safe.gsub!(/<strong/i,"<li")
+      html_safe.gsub!(/<\/strong/,"</li")
       # @browser ie adjustments
       html_safe.gsub!(/(<[^>]* line_id)( [^>]*>)/, "\\1=\"\"\\2")
       html_safe.gsub!(/(<[^>]*id=)([^\\"=]*)( [^=]*=[^>]*)?>/, "\\1\"\\2\"\\3>")
@@ -46,6 +48,8 @@ class Document < ActiveRecord::Base
       # remove all extraneous span tags usually originating from copy/paste
       html_safe.gsub!(/<\/?(?:span|a|meta|i|b|img|u|sup)[^>]*>/i, "")
       html_safe.gsub!(/\\"/, "\"")
+
+      puts html_safe
 
       doc = Nokogiri::XML(html_safe)
       Line.document_html = html
