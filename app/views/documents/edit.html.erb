@@ -97,6 +97,8 @@ tinyMCE.init({
 
   content_css : "/stylesheets/documents/edit_contents.css",
 
+  extended_valid_elements : "strong[class|def|id|img_src]",
+
   onpageload : function() {
     console.log('onpageload');
     try {
@@ -110,9 +112,12 @@ tinyMCE.init({
         doc.outline.onChange(ed.selection.getNode(), e);
     });
     ed.onBeforeExecCommand.add(function(ed) {
-        console.log("yoooo!");
         doc.outline.onChange(ed.selection.getNode());
     });
+  },
+
+  execcommand_callback : function (editor_id, elm, command, user_interface, value) {
+    (function() {doc.outline.onExeccommand(editor_id, elm, command, user_interface, value)}).delay(.1);
   }
 });
 </script>

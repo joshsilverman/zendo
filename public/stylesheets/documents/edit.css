@@ -166,6 +166,7 @@ button.saving {
     min-height:15px;
     max-height:100px;
     overflow:hidden;
+    font-weight: bold;
 }
 
 .card_back {
@@ -186,6 +187,14 @@ button.saving {
     position:absolute;
     right:0px;
     margin-top:-1px;
+}
+
+.card img {
+    max-height: 50px;
+    max-width: 50px;
+    margin:5px;
+    padding:5px;
+    border:#B2F233 1px solid
 }
 
 img.sync {

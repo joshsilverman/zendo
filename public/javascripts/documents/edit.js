@@ -137,12 +137,9 @@ var cDoc = Class.create({
         /* set heights */
         var editorIfrHeight = editorVerticalSpaceHeight - 20;
         var rightRailHeight = editorVerticalSpaceHeight - 20;// + 20;
-        console.log("bo");
-        if (doc.readOnly) {
-            console.log("yo");
+        if (doc.readOnly) {;
             editorIfrHeight += 28;
             rightRailHeight += 56;
-            console.log("rrh "+rightRailHeight);
             rightRail.setStyle({marginTop: '0px'});
             helperContainer.hide();
         }
@@ -175,7 +172,7 @@ var cDoc = Class.create({
                 $("update_share_loading").setStyle({'visibility': 'visible'});
             },
             onComplete: function() {
-                console.log("yo");
+//                console.log("yo");
                 $("share_email_input").value = "";
                 $('update_share_loading').setStyle({'visibility': 'hidden'});
             }
@@ -242,7 +239,7 @@ var cOutline = Class.create({
         this.autosaver = new PeriodicalExecuter(this.autosave.bind(this), 4);
 
         $("document_name").observe('keypress', function(e) {
-            console.log('doc name listener');
+//            console.log('doc name listener');
             if (e.keyCode == 13) doc.editor.focus();
             doc.editor.isNotDirty = false;
             this.onChange(null);
@@ -253,10 +250,10 @@ var cOutline = Class.create({
 
         /* don't run if no lineids */
         if (!this.lineIds) {
-            console.log('cannot update ids');
+//            console.log('cannot update ids');
             return;
         }
-        else console.log('update ids');
+//        else console.log('update ids');
 
         /* iterate through id, line_id hash */
         this.lineIds.each(function(idArray) {
@@ -268,7 +265,7 @@ var cOutline = Class.create({
                 /* delete if in hash but not active */
                 if (!Element.hasClassName(this.iDoc.getElementById(idArray[1]), "active")) {
                     this.deleteNodes.push(idArray[0]);
-                    console.log('deleting as it is no longer active' + idArray[0]);
+//                    console.log('deleting as it is no longer active' + idArray[0]);
                 }
             }
 
@@ -276,7 +273,7 @@ var cOutline = Class.create({
             else {
 
                 this.deleteNodes.push(idArray[0]);
-                console.log('deleting ' + idArray[0]);
+//                console.log('deleting ' + idArray[0]);
             }
         }.bind(this));
 
@@ -293,7 +290,7 @@ var cOutline = Class.create({
             if (   node.getAttribute("parent")
                 && node.getAttribute("parent") != parent.id) {
 
-                console.log('reset line id and id');
+//                console.log('reset line id and id');
                 this.deleteNodes.push(node.getAttribute("line_id"));
                 node.setAttribute("line_id", '');
                 node.setAttribute("id", '');
@@ -304,7 +301,7 @@ var cOutline = Class.create({
             if (   this.lineIds.get(node.getAttribute('line_id'))
                 != node.id) {
 
-                console.log('node not in hash; removing line_id');
+//                console.log('node not in hash; removing line_id');
                 node.setAttribute('line_id', '');
                 this.unsavedChanges.push(node.id);
             }
@@ -313,7 +310,7 @@ var cOutline = Class.create({
             if (   node.getAttribute('changed') == '1'
                 && this.unsavedChanges.indexOf(node.id) == -1) {
 
-                console.log('adding node to unsavedChanges: ' + node.id);
+//                console.log('adding node to unsavedChanges: ' + node.id);
                 this.unsavedChanges.push(node.id);
             }
 
@@ -335,9 +332,9 @@ var cOutline = Class.create({
             saveButton.innerHTML = 'Saving';
             saveButton.addClassName("saving");
             var d = new Date();
-            console.log(d);
+//            console.log(d);
             var today = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+ d.getDate();
-            console.log('SAVE DATE: '+today);
+//            console.log('SAVE DATE: '+today);
             /* save */
             new Ajax.Request('/documents/'+this.documentId, {
                 method: 'put',
@@ -434,7 +431,7 @@ var cOutline = Class.create({
             });
         }
         else {
-            console.log("don't save");
+//            console.log("don't save");
         }
     },
 
@@ -445,7 +442,7 @@ var cOutline = Class.create({
             if (target.tagName != "P" && target.tagName != "LI" && target.tagName != "DIV")  {
                 target = Element.up(target, "p, li, div");
                 if (!target) {
-                    console.log("invalid onChange target");
+//                    console.log("invalid onChange target");
                     return;
                 }
             }
@@ -456,21 +453,21 @@ var cOutline = Class.create({
             /* new/existing card handling */
             var id = Element.readAttribute(target, 'id') || null;
             if (!id) {
-                console.log("onchange no id");
+//                console.log("onchange no id");
                 doc.rightRail.createCard(target);
             }
             else if (doc.iDoc.getElementById(id) != target) {
-                console.log("not the same element");
+//                console.log("not the same element");
                 target.id = "";
                 Element.removeClassName(target, "active");
                 doc.rightRail.createCard(target);
             }
             else if(doc.rightRail.cards.get(id)) {
-                console.log("onchange id");
+//                console.log("onchange id");
                 doc.rightRail.updateFocusCardWrapper(id, target);
             }
             else {
-                console.log('error: node has id but no card exists');
+//                console.log('error: node has id but no card exists');
             }
         }
 
@@ -499,7 +496,7 @@ var cOutline = Class.create({
         else {
             node.setAttribute('active', false);
             Element.removeClassName(node, 'active');
-            console.log("call deactivate (2) on card: " + this.cardNumber);
+//            console.log("call deactivate (2) on card: " + this.cardNumber);
             doc.rightRail.cards.get(domId).deactivate();
         }
 
@@ -510,6 +507,21 @@ var cOutline = Class.create({
 
         /* refocus on editor */
         doc.editor.focus();
+    },
+
+    onExeccommand: function(editor_id, elm, command, user_interface, value) {
+
+        /* bold triggers card creation */
+        if (command == "Bold") {
+            var htmlMatch = doc.editor.selection.getContent({format : 'html'});
+            var rawMatch = doc.editor.selection.getContent({format : 'raw'}).match(/^<strong>.*<\/strong>$/);
+            if (htmlMatch && htmlMatch.length > 0) {
+                Element.select(elm, "strong").each(function(element) {
+                    if (element.innerHTML == htmlMatch.gsub(/<[^>]*>/, ''))
+                        var card = doc.rightRail.createCard(element);
+                });
+            }
+        }
     }
 });
 
@@ -524,7 +536,7 @@ var cRightRail = Class.create({
     build: function() {
 
         /* set card count */
-        Element.select(doc.outline.iDoc, 'li, p, div').each(function (node) {
+        Element.select(doc.outline.iDoc, 'li, p, div, strong').each(function (node) {
             var index = parseInt(node.id.replace('node_', ''));
             if (index >= this.cardCount) this.cardCount = index + 1;
         }.bind(this));
@@ -561,6 +573,7 @@ var cRightRail = Class.create({
         //check node is valid
         if (   node.tagName.toUpperCase() != 'LI'
             && node.tagName.toUpperCase() != 'P'
+            && node.tagName.toUpperCase() != 'STRONG'
             && node.tagName.toUpperCase() != 'DIV') return null;
 
         Element.addClassName(node, "outline_node");
@@ -573,13 +586,14 @@ var cRightRail = Class.create({
 //        console.log(style);
 
         //clear cloned node info if not first node with given id
-        console.log("create card node_id: " + node.id);
+//        console.log("create card node_id: " + node.id);
         if (!node.id) {
             cardNumber = this.cardCount++;
             Element.removeClassName(node, "active");
             Element.writeAttribute(node, 'active', false);
             Element.writeAttribute(node, 'line_id', '');
             node.id = "node_" + cardNumber;
+            console.log("add changed classname");
             Element.addClassName(node, "changed");
         }
 
@@ -598,6 +612,8 @@ var cRightRail = Class.create({
 
         var card = new cCard(node, cardNumber);
         doc.rightRail.cards.set('node_' + cardNumber, card);
+
+        return card;
     },
 
     focus: function(id) {
@@ -607,7 +623,7 @@ var cRightRail = Class.create({
 
         //check card exists
         if (!$(cardId)) {
-            console.log("error: can't focus on non-existent card");
+//            console.log("error: can't focus on non-existent card");
             return;
         }
 
@@ -632,7 +648,7 @@ var cRightRail = Class.create({
             var domIdPrev = doc.utilities.toNodeId(this.inFocus);
             var nodePrev = doc.outline.iDoc.getElementById(domIdPrev);
             if (nodePrev && this.cards.get(domIdPrev)) this.cards.get(domIdPrev).update(nodePrev, true);
-            else console.log('error: cannot unfocus previous card');
+//            else console.log('error: cannot unfocus previous card');
         }
 
         //focus
@@ -646,7 +662,7 @@ var cRightRail = Class.create({
     sync: function() {
 
         /* collect all potential nodes - li/p with text */
-        var nodes = Element.select(doc.outline.iDoc, 'li, p, div')
+        var nodes = Element.select(doc.outline.iDoc, 'li, p, div, strong')
             .findAll(function (node) {return node.innerHTML});
 
         /* try to create card - only will be created if doesn't exist */
@@ -698,8 +714,8 @@ var cCard = Class.create({
 
         /* update */
         this.update(node);
-        console.log("card count: "+doc.rightRail.cardCount);
-        console.log(doc.newDoc);
+//        console.log("card count: "+doc.rightRail.cardCount);
+//        console.log(doc.newDoc);
         if(doc.rightRail.cardCount==3 && doc.newDoc){
             new Effect.Move($('helper_panel_container'), {
                   x: -214, y: 0, mode: 'relative',
@@ -734,7 +750,7 @@ var cCard = Class.create({
 
     activate: function() {
         this.active = true;
-        console.log("activate function for card number: " + this.cardNumber);
+//        console.log("activate function for card number: " + this.cardNumber);
         $('card_' + this.cardNumber).addClassName('card_active');
         var node = doc.outline.iDoc.getElementById("node_" + this.cardNumber);
         Element.addClassName(node, "active");
@@ -744,7 +760,7 @@ var cCard = Class.create({
 
     deactivate: function() {
         this.active = false;
-        console.log("deactivate function for card number: " + this.cardNumber);
+//        console.log("deactivate function for card number: " + this.cardNumber);
         $('card_' + this.cardNumber).removeClassName('card_active');
         var node = doc.outline.iDoc.getElementById("node_" + this.cardNumber);
         Element.removeClassName(node, "active");
@@ -791,10 +807,10 @@ var cCard = Class.create({
             //autoDeactivate
             if (this.autoActivated) {
                 this.autoActivated = false;
-                console.log("call deactivate (1) on card: " + this.cardNumber);
-                console.log(this.back);
-                console.log(this.text);
-                console.log(this);
+//                console.log("call deactivate (1) on card: " + this.cardNumber);
+//                console.log(this.back);
+//                console.log(this.text);
+//                console.log(this);
                 this.deactivate();
                 this.elmntCard.down('input').checked = '';
                 var node = doc.outline.iDoc.getElementById('node_' + this.cardNumber);
@@ -804,7 +820,7 @@ var cCard = Class.create({
 
         //no card to update
         else {
-            console.log('error: cannot render - no card in dom to update')
+//            console.log('error: cannot render - no card in dom to update')
             return;
         }
 
@@ -816,7 +832,7 @@ var cCard = Class.create({
             doc.rightRail.cards.unset('node_' + this.cardNumber);
         }
         catch (err) {
-            console.log("unable to destroy node. exception thrown");
+//            console.log("unable to destroy node. exception thrown");
         }
     },
 
@@ -849,7 +865,7 @@ var cCard = Class.create({
         else if (cardIdPrev && !$(cardIdPrev)) {
 
             // @todo create previous card if does not exist
-            console.log('error: no previous card but there should be!');
+//            console.log('error: no previous card but there should be!');
 
             //temp
             $('cards').insert({bottom: cardHtml});
