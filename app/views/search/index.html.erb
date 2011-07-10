@@ -1,3 +1,5 @@
+<% @page_specific_scripts_js = ["/javascripts/vendors/lightview/js/lightview.js"] %>
+<% @page_specific_scripts_css = ["/javascripts/vendors/lightview/css/lightview"] %>
 <style>
   body{
     background-color: #fafafa;
@@ -42,8 +44,9 @@
    }
 </style>
 <div id="search_json" style="display:none;"></div>
-<h1>Welcome to Zendo</h1>
-  <div id="right_box" class="rounded_border" style="float:right; margin:20px; width:400px; padding:10px; min-height: 300px; background-color:white;">
+<h1 style="float:left;">Welcome to Zendo</h1> <div style="float:right; margin: 10px;">Not sure what to do? Take a look at the <a href='http://www.youtube.com/v/hGpyPI2qdIg' class='lightview' rel='set[myset][flash]' title="Become a more efficient learner in under 3 minutes. :: :: width: 540, height: 360">Video Demo</a></div>
+<div style="clear:both;"></div>
+<div id="right_box" class="rounded_border" style="float:right; margin:20px; width:400px; padding:10px; min-height: 300px; background-color:white;">
     <h2 style="margin-bottom:30px; text-align: center;">Find Something Interesting!</h2>
     <div id="search" style="text-align:center;">
       <input type="text" id="search_bar" name="search_bar" size="30" value="Search Public Study Guides"/>
@@ -65,5 +68,5 @@
 
       <a href="/documents/create/0" class="button">Create A New Study Guide</a>
 
-      <a href="/explore" class="button">Organize Your Study Guides</a>
+      <a href="/explore?ref=dash" class="button">Organize Your Study Guides</a>
   </div>
