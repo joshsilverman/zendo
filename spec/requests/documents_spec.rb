@@ -123,6 +123,7 @@ describe "document" do
               Capybara.default_wait_time = 10
               sleep 2
               wait_until{ page.has_content?(node.split('-')[0].strip) }
+              sleep 1
               all('div.card').length.should == i + 1
               all('div.card_active').length.should == i + 1
               tiny_mce_fill_in 'editor', :with => :enter
@@ -155,6 +156,7 @@ describe "document" do
               Capybara.default_wait_time = 10
               sleep 2
               wait_until{ page.has_content?(node.split('-')[0].strip) }
+              sleep 1
               all('div.card').length.should == i + 1
               all('div.card_active').length.should == i + 1
               tiny_mce_fill_in 'editor', :with => :enter
