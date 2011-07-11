@@ -42,13 +42,13 @@ describe "document" do
 
       it "class selector loads new class when new option selected" do
         page.select 'Misc.', :from => 'tag_id'
-        wait_until{ page.find('#doc_loading').visible? }
+        sleep 1 #wait_until{ page.find('#doc_loading').visible? }
         wait_until{ not page.find('#doc_loading').visible? }
       end
 
       it "class selector changes class in db when new option selected" do
         page.select 'Misc.', :from => 'tag_id'
-        wait_until{ page.find('#doc_loading').visible? }
+        sleep 1
         wait_until{ not page.find('#doc_loading').visible? }
         @document = Document.find(@document.id)
         @misc_tag = Tag.where(:user_id => @user.id, :name => "Misc.").first
@@ -92,7 +92,7 @@ describe "document" do
             @text_back = " - sentence generation from n-gram models"
             tiny_mce_fill_in 'editor', :with => @text_front + @text_back
             Capybara.default_wait_time = 10
-            wait_until{ page.has_content?('Saving')}
+            sleep 2
 #            click_button 'Save'
             wait_until{ page.has_content?('Saved')}
           end
@@ -121,7 +121,7 @@ describe "document" do
             @nodes.each_with_index do |node, i|
               tiny_mce_fill_in 'editor', :with => node
               Capybara.default_wait_time = 10
-              wait_until{ page.has_content?('Saving')}
+              sleep 2
               wait_until{ page.has_content?(node.split('-')[0].strip) }
               all('div.card').length.should == i + 1
               all('div.card_active').length.should == i + 1
@@ -134,7 +134,7 @@ describe "document" do
             @nodes.each do |node|
               tiny_mce_fill_in 'editor', :with => node
               Capybara.default_wait_time = 10
-              wait_until{ page.has_content?('Saving')}
+              wait_until{ page.has_content?('Saved')}
               wait_until{ page.has_content?(node.split('-')[0].strip) }
               tiny_mce_fill_in 'editor', :with => :enter
             end
@@ -153,7 +153,7 @@ describe "document" do
             @nodes.each_with_index do |node, i|
               tiny_mce_fill_in 'editor', :with => node
               Capybara.default_wait_time = 10
-              wait_until{ page.has_content?('Saving')}
+              sleep 2
               wait_until{ page.has_content?(node.split('-')[0].strip) }
               all('div.card').length.should == i + 1
               all('div.card_active').length.should == i + 1
@@ -178,7 +178,7 @@ describe "document" do
               tiny_mce_fill_in 'editor', :with => node
               Capybara.default_wait_time = 10
               click_button 'Save'
-              wait_until{ page.has_content?('Saving')}
+              sleep 2 # wait_until{ page.has_content?('Saving')}
               wait_until{ page.has_content?(node.split('-')[0].strip) }
               count += 1
 
@@ -262,7 +262,7 @@ describe "document" do
         click_button "Share"
         wait_until{ page.has_content?("Sharing") }
         page.select 'public', :from => 'document_public'
-        wait_until{ page.find('#update_privacy_loading').visible? }
+        sleep 1
         wait_until{ not page.find('#update_privacy_loading').visible? }
       end
 
@@ -340,7 +340,7 @@ describe "document" do
         wait_until{ page.find('li.selected') }
         page.find('li.selected').click
 
-        wait_until{ page.find('#update_share_loading').visible? }
+        sleep 1
         wait_until{ not page.find('#update_share_loading').visible? }
       end
 

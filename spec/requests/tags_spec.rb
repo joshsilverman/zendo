@@ -56,8 +56,7 @@ describe "tags", :js => true do
         fill_in "share_email_input", :with => @user2.email
         wait_until{ page.find('li.selected') }
         page.find('li.selected').click
-        wait_until{ page.find('#update_share_loading').visible? }
-        wait_until{ not page.find('#update_share_loading').visible? }
+        wait_until{ page.find('.removable') }
 
         @tag_count = @user2.tags.all.count
         visit "/users/sign_out"
