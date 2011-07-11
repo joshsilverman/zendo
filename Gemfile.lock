@@ -201,6 +201,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bundler (= 1.0.10)
   capybara
   database_cleaner
   devise
