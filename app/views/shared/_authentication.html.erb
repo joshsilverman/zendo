@@ -1,5 +1,5 @@
 <% if user_signed_in? %>
-    <a href="/" style="float:left;"><img src="/images/logos/zendo_slogan_small.png" /></a>
+    <a href="/" style="text-decoration:none; float:left;"><span style="color:white; font-size:20px; text-decoration: none; font-weight: bold; font-family: Helvetica, sans-serif; line-height: 30px;">StudyEgg</span><!--<img src="/images/logos/zendo_slogan_small.png" />--></a>
     <span style="float:right; margin: 8px 6px 0 0;">
             Welcome, <%= current_user.first_name %>&nbsp;|&nbsp;
             <%= link_to "Edit Account", edit_user_registration_path %>&nbsp;|&nbsp;
@@ -7,7 +7,7 @@
     </span>
 
 <% elsif ['static'].count(controller.controller_name) > 0 %>
-    <a href="/"><img src="/images/logos/zendo_slogan_small.png" /></a>
+    <a href="/" style="text-decoration:none;"><span style="color:white; font-size:20px; text-decoration: none; font-weight: bold; font-family: Helvetica, sans-serif; line-height: 30px;">StudyEgg</span><!--<img src="/images/logos/zendo_slogan_small.png" />--></a>
 <% else %>
-    <a href="/"><img src="/images/logos/zendo_beta.png" /></a>
+    <a href="/" style="text-decoration:none;"><span style="color:white; font-size:30px; text-decoration: none; font-weight: bold; font-family: Helvetica, sans-serif; line-height: 45px;">StudyEgg</span><!--<img src="/images/logos/zendo_beta.png" />--></a>
 <% end %>
