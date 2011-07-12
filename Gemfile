@@ -11,6 +11,7 @@ gem 'omniauth', '0.2.2'
 gem 'faraday', '0.6.1'
 gem 'postmark'
 gem 'postmark-rails', '0.4.0'
+gem 'kaminari'
 
 group :development do
   gem 'guard'
