@@ -53,7 +53,14 @@
       <input type="button" id="search_button" value="Search"/>
     </div>
     <div id="loader" style="width:50px; margin:0 auto;"><img id="load_search" src="../../images/search/ajax-loader.gif" style="display:none;" /></div>
-    <div id="search_results"></div>
+    <div id="search_results">
+      <% my_array_object = []
+      for num in (1..30) do
+         my_array_object.push(num)
+      end
+       %>
+      <%= Kaminari.paginate_array(my_array_object).page(1).per(10) %>
+    </div>
     <h3>Popular Now</h3>
     <div id="popular"><ul>
       <% @popular.each do |doc| %>
