@@ -27,6 +27,7 @@ describe "document" do
       fill_in "Email", :with => @user.email
       fill_in "Password", :with => @user.password
       click_button "Sign in"
+      visit "/dashboard"
     end
 
     describe "options" do
@@ -41,13 +42,15 @@ describe "document" do
       end
 
       it "class selector loads new class when new option selected" do
-        page.select 'Misc.', :from => 'tag_id'
+        sleep 1
+        page.select 'Misc', :from => 'tag_id'
         sleep 1 #wait_until{ page.find('#doc_loading').visible? }
         wait_until{ not page.find('#doc_loading').visible? }
       end
 
       it "class selector changes class in db when new option selected" do
-        page.select 'Misc.', :from => 'tag_id'
+        sleep 1
+        page.select 'Misc', :from => 'tag_id'
         sleep 1
         wait_until{ not page.find('#doc_loading').visible? }
         @document = Document.find(@document.id)
@@ -77,7 +80,7 @@ describe "document" do
         new_title = "title two"
         fill_in "document_name", :with => new_title
         Capybara.default_wait_time = 10
-        wait_until{ page.has_content?('Saving')}
+        sleep 1
         wait_until{ page.has_content?('Saved')}
         @document = Document.find(@document.id)
         @document.name.should == "title two"
@@ -124,8 +127,8 @@ describe "document" do
               sleep 2
               wait_until{ page.has_content?(node.split('-')[0].strip) }
               sleep 1
-              all('div.card').length.should == i + 1
-              all('div.card_active').length.should == i + 1
+              all('div.card').length.should == i
+              all('div.card_active').length.should == i
               tiny_mce_fill_in 'editor', :with => :enter
             end
           end
@@ -157,8 +160,8 @@ describe "document" do
               sleep 2
               wait_until{ page.has_content?(node.split('-')[0].strip) }
               sleep 1
-              all('div.card').length.should == i + 1
-              all('div.card_active').length.should == i + 1
+              all('div.card').length.should == i
+              all('div.card_active').length.should == i
               tiny_mce_fill_in 'editor', :with => :enter
             end
             

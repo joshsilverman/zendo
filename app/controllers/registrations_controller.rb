@@ -11,12 +11,12 @@ class RegistrationsController < Devise::RegistrationsController
       # check if confirmation token set
       if (resource[:confirmation_token])
         flash[:notice] = "An email has been sent to your account. Please confirm to complete your sign up process."
-        redirect_to "/users/welcome"
+        redirect_to "/dashboard"
 
       # attempt sign-in if no confirmation token
       else
         sign_in(resource_name, resource)
-        redirect_to '/explore'
+        redirect_to '/dashboard'
       end
     else
       clean_up_passwords(resource)

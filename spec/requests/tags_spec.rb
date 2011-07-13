@@ -25,6 +25,7 @@ describe "tags", :js => true do
       fill_in "Email", :with => @user.email
       fill_in "Password", :with => @user.password
       click_button "Sign in"
+      visit "/explore"
     end
 
     it "start Misc. collapsed and click expands it" do
@@ -63,6 +64,7 @@ describe "tags", :js => true do
         fill_in "Email", :with => @user2.email
         fill_in "Password", :with => @user2.password
         click_button "Sign in"
+        visit "/explore"
       end
 
       it "is displayed" do

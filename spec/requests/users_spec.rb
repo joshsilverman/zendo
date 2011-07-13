@@ -24,8 +24,8 @@ describe "user", :js => true do
       fill_in "Password", :with => @user.password
       fill_in "Password confirmation", :with => @user.password
       click_button "Sign up"
-      current_path.should == "/users/welcome"
-      page.should have_content("An email has been sent to your account. Please confirm to complete your sign up process.")
+      current_path.should == "/dashboard"
+      page.should have_content("Welcome! You have signed up successfully.")
     end
 
     it "signs up with incorrect info" do
@@ -69,7 +69,7 @@ describe "user", :js => true do
       fill_in "Email", :with => @user.email
       fill_in "Password", :with => @user.password
       click_button "Sign in"
-      current_path.should == "/explore"
+      current_path.should == "/dashboard"
     end
 
     it "uses incorrect username/password (redirect)" do
