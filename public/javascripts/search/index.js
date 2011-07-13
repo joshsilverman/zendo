@@ -1,4 +1,5 @@
 var cDoc = Class.create({
+
     next: false,
     back: false,
     p: null,
