@@ -113,7 +113,7 @@ Zendo::Application.routes.draw do
   # match '/abingo(/:action(/:id))' => 'abingo_dash', :as => :abingo
 
   namespace :user do
-    root :controller => 'tags', :action => 'explore'
+    root :controller => 'search', :action => 'index'
   end
 
   # catch-all route for static pages
