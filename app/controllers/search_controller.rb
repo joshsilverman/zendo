@@ -1,7 +1,7 @@
 class SearchController < ApplicationController
 
   def index
-    @popular = Document.select(['name', 'id']).where("public").limit(10)
+    @popular = Document.select(['name', 'id']).where("public").limit(6)
   end
 
   def query
