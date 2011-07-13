@@ -4,6 +4,16 @@
   body{
     background-color: #fafafa;
 }
+li{
+  list-style-type: none;
+  margin:0 15px 10px 0;
+}
+
+  #popular li{
+  display:block;
+  width:150px;
+  float:left;
+}
 
   .button {
    width: 300px;
@@ -42,9 +52,26 @@
    border-top-color: #1b435e;
    background: #1b435e;
    }
+
+#back_button {
+     width:50px;
+     margin-left:100px;
+     float:left;
+     cursor: pointer;
+     text-decoration: underline;
+     color:#009CFF;
+}
+#next_button {
+    width:50px;
+    margin-right: 100px;
+    float:right;
+    cursor: pointer;
+    text-decoration: underline;
+    color:#009CFF;
+}
 </style>
 <div id="search_json" style="display:none;"></div>
-<h1 style="float:left;">Welcome to Zendo</h1> <div style="float:right; margin: 10px;">Not sure what to do? Take a look at the <a href='http://www.youtube.com/v/hGpyPI2qdIg' class='lightview' rel='set[myset][flash]' title="Become a more efficient learner in under 3 minutes. :: :: width: 540, height: 360">Video Demo</a></div>
+<h1 style="float:left;">Welcome to StudyEgg</h1> <div style="float:right; margin: 10px;">Not sure what to do? Take a look at the <a href='http://www.youtube.com/v/hGpyPI2qdIg' class='lightview' rel='set[myset][flash]' title="Become a more efficient learner in under 3 minutes. :: :: width: 540, height: 360">Video Demo</a></div>
 <div style="clear:both;"></div>
 <div id="right_box" class="rounded_border" style="float:right; margin:20px; width:400px; padding:10px; min-height: 300px; background-color:white;">
     <h2 style="margin-bottom:30px; text-align: center;">Find Something Interesting!</h2>
@@ -54,12 +81,6 @@
     </div>
     <div id="loader" style="width:50px; margin:0 auto;"><img id="load_search" src="../../images/search/ajax-loader.gif" style="display:none;" /></div>
     <div id="search_results">
-      <% my_array_object = []
-      for num in (1..30) do
-         my_array_object.push(num)
-      end
-       %>
-      <%= Kaminari.paginate_array(my_array_object).page(1).per(10) %>
     </div>
     <h3>Popular Now</h3>
     <div id="popular"><ul>

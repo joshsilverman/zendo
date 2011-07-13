@@ -7,7 +7,7 @@ class UsersController < ApplicationController
   end 
 
   def home
-    redirect_to "/explore" if current_user
+    redirect_to "/dashboard" if current_user
   end
 
   def get_email
