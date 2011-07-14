@@ -110,6 +110,16 @@ var cDoc = Class.create({
 
         /* make shareable */
         this.makeShareable();
+
+        /* display quick tips of no cards */
+        if (doc.outline.lineIds.size() > 0) {
+            new Effect.Move($('helper_panel_container'), {
+              x: -214, y: 0, mode: 'relative'
+            });
+            $('helper_panel_tab').removeClassName('out');
+            $('helper_panel_tab').addClassName('in');
+            this.toggler = true;
+        }
     },
 
     onResize: function() {
@@ -610,6 +620,10 @@ var cRightRail = Class.create({
             }
         }
 
+        console.log("9 is active?");
+        console.log(Element.hasClassName(node, 'active'));
+        console.log(node);
+
         var card = new cCard(node, cardNumber);
         doc.rightRail.cards.set('node_' + cardNumber, card);
 
@@ -698,6 +712,10 @@ var cCard = Class.create({
 
     initialize: function(node, cardCount) {
 
+        console.log("10 is active?");
+        console.log(Element.hasClassName(node, 'active'));
+        console.log(node);
+
         /* set count */
         this.cardNumber = cardCount;
 
@@ -714,8 +732,6 @@ var cCard = Class.create({
 
         /* update */
         this.update(node);
-//        console.log("card count: "+doc.rightRail.cardCount);
-//        console.log(doc.newDoc);
         if(doc.rightRail.cardCount==3 && doc.newDoc){
             new Effect.Move($('helper_panel_container'), {
                   x: -214, y: 0, mode: 'relative',
@@ -724,13 +740,12 @@ var cCard = Class.create({
                 });
             $('helper_panel_tab').removeClassName('out');
             $('helper_panel_tab').addClassName('in');
-            toggler = true;
+            doc.toggler = true;
             //doc.tipTour.showReview();
         }
     },
 
     update: function(node, truncate) {
-
         //node exists?
         if (!node) {
             this.destroy();
@@ -754,6 +769,7 @@ var cCard = Class.create({
         $('card_' + this.cardNumber).addClassName('card_active');
         var node = doc.outline.iDoc.getElementById("node_" + this.cardNumber);
         Element.addClassName(node, "active");
+        Element.removeClassName(node, "deactivated");
         doc.outline.onChange();
         this.render();
     },
@@ -764,6 +780,7 @@ var cCard = Class.create({
         $('card_' + this.cardNumber).removeClassName('card_active');
         var node = doc.outline.iDoc.getElementById("node_" + this.cardNumber);
         Element.removeClassName(node, "active");
+        Element.addClassName(node, "deactivated");
         var truncate = !this.inFocus || this.inFocus.id != 'card_' + this.cardNumber;
         doc.outline.onChange();
         this.render(truncate);
@@ -771,13 +788,14 @@ var cCard = Class.create({
 
     render: function(truncate) {
 
+        var node = doc.outline.iDoc.getElementById('node_' + this.cardNumber);
+
         /* attempt autoactivate */
-        if (this.autoActivate) {
+        if (this.autoActivate && !Element.hasClassName(node, "deactivated")) {
             this.autoActivated = true;
             this.autoActivate = false;
             this.activate();
             this.elmntCard.down('input').checked = 'yes';
-            var node = doc.outline.iDoc.getElementById('node_' + this.cardNumber);
             Element.addClassName(node, "active");
         }
 

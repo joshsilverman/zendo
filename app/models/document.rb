@@ -49,8 +49,6 @@ class Document < ActiveRecord::Base
       html_safe.gsub!(/<\/?(?:span|a|meta|i|b|img|u|sup)[^>]*>/i, "")
       html_safe.gsub!(/\\"/, "\"")
 
-      puts html_safe
-
       doc = Nokogiri::XML(html_safe)
       Line.document_html = html
       Line.save_all(doc,document.id, user_id)

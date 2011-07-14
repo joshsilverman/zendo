@@ -87,6 +87,7 @@ td {
 
 #card_back_text {
     margin:10px 0;
+    text-align: left;
 }
 
 .card_front_cue {
@@ -106,8 +107,8 @@ td {
 }
 
 #card_back_text img {
-    max-height: 300px;
-    max-width: 300px;
+    max-height: 250px;
+    max-width: 250px;
     margin:5px;
     padding:5px;
     float:left;

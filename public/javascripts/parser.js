@@ -1,11 +1,12 @@
 var cParser = Class.create({
 
-    docHtml: null,
+    docHtml: null, /* clone */
+    iDoc: null,
     line:null,
 
     parse: function(Card, contextualize, ellipsize) {
 
-        console.log("parse");
+//        console.log("parse");
 
         //pull card text from doc if text is blank
         this._identifyDoc(Card);
@@ -14,11 +15,11 @@ var cParser = Class.create({
         if (this._parseDash(Card)) {}
         else if (this._parseStrong(Card)) {}
         else if (this._parseUnderline(Card)) {
-            console.log('parsed underline');
+//            console.log('parsed underline');
         }
         //no match
         else {
-            console.log('not parsable...');
+            //console.log('not parsable...');
             Card.front = Card.text;
             Card.back = '';
         }
@@ -38,8 +39,8 @@ var cParser = Class.create({
 
         /* display properties for cue */
         if (!this.line) {
-            console.log(Card);
-            console.log(this.line);
+//            console.log(Card);
+//            console.log(this.line);
             return
         }
         if (this.line.tagName == 'LI') {
@@ -80,13 +81,14 @@ var cParser = Class.create({
 
         /* set docHtml var */
         //look for document_123 tag
-        this.docHtml = $('document_' + Card.documentId);
+        this.docHtml = this.iDoc = $('document_' + Card.documentId);
 
         //or look for ckeditor
 
         if (!this.docHtml && window['doc'] && doc.outline) {
-            this.docHtml = doc.outline.iDoc.body
-            console.log(this.docHtml);
+            this.docHtml = doc.outline.iDoc.body;
+            this.iDoc = doc.iDoc;
+//            console.log(this.docHtml);
         }
         if (!this.docHtml) return;
 
@@ -96,7 +98,7 @@ var cParser = Class.create({
         /* locate adjust line node */
         this.line = Element.select(this.docHtml, '#' + Card.domId);
         if (!this.line) {
-            console.log('#' + Card.domId);
+//            console.log('#' + Card.domId);
         }
         if (this.line.length == 0) return;
         Card.text = this.line[0].innerHTML.split(/<(?:li|ol|ul|p)/)[0];
@@ -110,7 +112,7 @@ var cParser = Class.create({
 
             //set autoActivate member if this is the first time text has been parsable
             if (!Card.back && !Card.active) {
-                console.log("dash parser auto-activates card number: " + Card.cardNumber);
+//                console.log("dash parser auto-activates card number: " + Card.cardNumber);
                 Card.autoActivate = true;
             }
 
@@ -122,22 +124,17 @@ var cParser = Class.create({
     },
 
     _parseStrong: function(Card) {
-        console.log(this);
-        console.log(this.docHtml);
-        try {var node = Element.select(this.docHtml, '#' + Card.domId)[0];}
+        try {var node = Element.select(this.iDoc, '#' + Card.domId)[0];}
         catch (e) {}
 
-        console.log(node);
         if (node && node.nodeName == "STRONG") {
-            console.log("parse strong");
 
             var term = Card.text.gsub(/<[^>]*>/, '').strip().gsub(/\s/, "_");
             term = term.underscore();
             term = term.charAt(0).toUpperCase() + term.slice(1);
 
-            if (term.match(/Figure|Table/)) return;
+            if (term.match(/Figure|Table/)) return false;
 
-            
             if (node.getAttribute('def') || node.getAttribute('def') == "") {
                 Card.front = Card.text
                 Card.back = "";
@@ -148,44 +145,37 @@ var cParser = Class.create({
             else {
                 new Ajax.Request("/terms/lookup/" + term, {
                     onCreate: function() {
-                        console.log("initiate lookup");
-                    },
-                    onSuccess: function(transport) {
                         Card.autoActivate = true;
                         //set autoActivate member if this is the first time text has been parsable
                         if (!Card.back && !Card.active) {
-                            console.log("strong parser auto-activates card number: " + Card.cardNumber);
                             Card.autoActivate = true;
                         }
-
                         Card.front = Card.text
-                        Card.back = "<img src='" + transport.responseJSON['image'] + "'>";
-                        Card.back += transport.responseJSON['description'];
+                        Card.back = '<img alt="loading" src="/images/shared/fb-loader.gif" style="border:none !important;">';
+                        Card.render();
+                    },
+                    onSuccess: function(transport) {
                         node.setAttribute('def', transport.responseJSON['description']);
                         node.setAttribute('img_src', transport.responseJSON['image']);
+
+                        Card.front = Card.text
+                        Card.back = "";
+                        if (node.getAttribute('img_src'))
+                            Card.back += "<img src='" + transport.responseJSON['image'] + "'>";
+                        Card.back += transport.responseJSON['description'];
                         Card.render();
                     },
                     onFailure: function() {
-                        node.setAttribute('def', "");
+                        Card.back = '';
+                        Card.render();
+                    },
+                    onComplete: function() {
+                        if (doc.outline) doc.outline.change(node);
                     }
                 });
             }
             return true;
         }
-
-//        var defParts = Card.text.split(/<strong>(.*)<\/strong>/);
-//        if (defParts.length > 1) {
-//
-//            //set autoActivate member if this is the first time text has been parsable
-//            if (!Card.back && !Card.active) {
-//                console.log("strong parser auto-activates card number: " + Card.cardNumber);
-//                Card.autoActivate = true;
-//            }
-//
-//            Card.front = defParts[1];
-//            Card.back = Card.text.unescapeHTML();
-//            return true;
-//        }
     },
 
     _parseUnderline: function(Card) {
@@ -197,7 +187,7 @@ var cParser = Class.create({
                     Card.back = Card.text;
 
                     if (!Card.back && !Card.active) {
-                        console.log("underline parser auto-activates card number: " + Card.cardNumber);
+//                        console.log("underline parser auto-activates card number: " + Card.cardNumber);
                         Card.autoActivate = true;
                     }
                     return true;
@@ -206,5 +196,6 @@ var cParser = Class.create({
             if (Card.back) return true;
         }
         catch (e) {}
+        return false;
     }
 });

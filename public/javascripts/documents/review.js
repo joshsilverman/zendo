@@ -362,7 +362,8 @@ var cCard = Class.create({
     showAll: function() {
 
         /* show */
-        $('card_front').update("<div id='card_front_text'></div>" + this.buttons);
+        $('card_front').update("<div id='card_front_text'></div>");
+//        $('card_front').update("<div id='card_front_text'></div>" + this.buttons);
         $('card_front_text').update(this.front);
         $('card_back').update( "<div id='card_back_text'>"+this.back+"</div>");
 
@@ -374,8 +375,8 @@ var cCard = Class.create({
         doc.reviewer.displayGrade(doc.reviewer.cards[doc.reviewer.currentCardIndex].confidence);
 
         /* edit button and listener */
-        $('button_edit').observe('click', this.makeEditable.bind(this));
-        $('button_edit').show();
+//        $('button_edit').observe('click', this.makeEditable.bind(this));
+//        $('button_edit').show();
     },
 
     grade: function(grade) {
