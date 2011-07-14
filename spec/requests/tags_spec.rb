@@ -73,7 +73,7 @@ describe "tags", :js => true do
       end
 
       it "doesn't change tag count" do
-        @user2.tags.all.count.should == 1
+        @user2.tags.all.count.should == 0
       end
 
     end

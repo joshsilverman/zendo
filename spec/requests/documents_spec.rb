@@ -184,8 +184,8 @@ describe "document" do
               sleep 2
               wait_until{ page.has_content?(node.split('-')[0].strip) }
               sleep 1
-              all('div.card').length.should == i
-              all('div.card_active').length.should == i
+              all('div.card').length.should == i + 1
+              all('div.card_active').length.should == i + 1
               tiny_mce_fill_in 'editor', :with => :enter
             end
             
