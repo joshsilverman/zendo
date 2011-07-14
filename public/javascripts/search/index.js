@@ -8,7 +8,7 @@ var cDoc = Class.create({
         /* resize listener */
         window.onresize = AppUtilities.resizeContents;
         AppUtilities.resizeContents();
-
+        console.log('resize set');
         $('search_button').observe('click', function(){
             this.search(1);
         }.bind(this));

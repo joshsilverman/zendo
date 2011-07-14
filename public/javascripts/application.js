@@ -25,6 +25,7 @@ var cAppUtilities = Class.create({
         
         /* calculations */
         var footer = $$('.footer')[0];
+        console.log(footer);
         var footerY = footer.getHeight();
         var viewportY = document.viewport.getHeight();
         var footerOffsetY = footer.cumulativeOffset()[1];
@@ -38,6 +39,7 @@ var cAppUtilities = Class.create({
 
         /* set min height */
         contents.setStyle({'minHeight': newContentsY + 'px'});
+        console.log('resize finish');
     },
 
     requestCount: 0,

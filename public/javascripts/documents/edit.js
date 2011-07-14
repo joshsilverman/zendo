@@ -136,19 +136,21 @@ var cDoc = Class.create({
 
         /* set heights */
         var editorIfrHeight = editorVerticalSpaceHeight - 20;
-        var rightRailHeight = editorVerticalSpaceHeight;// + 20;
+        var rightRailHeight = editorVerticalSpaceHeight - 20;// + 20;
         console.log("bo");
         if (doc.readOnly) {
             console.log("yo");
             editorIfrHeight += 28;
-            rightRailHeight += 28;
+            rightRailHeight += 56;
+            console.log("rrh "+rightRailHeight);
             rightRail.setStyle({marginTop: '0px'});
+            helperContainer.hide();
         }
-        editorWhitespace.setStyle({height: editorVerticalSpaceHeight + 10 + 'px'});
-        rightRail.setStyle({height: editorVerticalSpaceHeight - 20 + 'px'});
-        helperContainer.setStyle({height: editorVerticalSpaceHeight - 20 + 'px'});
-        cardContainer.setStyle({height: editorVerticalSpaceHeight - 30 + 'px'});
-        $("editor_ifr").setStyle({height: editorVerticalSpaceHeight - 20 + 'px'});
+        editorWhitespace.setStyle({height: editorIfrHeight + 10 + 'px'});
+        rightRail.setStyle({height: rightRailHeight - 20 + 'px'});
+        helperContainer.setStyle({height: rightRailHeight - 20+ 'px'});
+        cardContainer.setStyle({height: rightRailHeight - 30 + 'px'});
+        $("editor_ifr").setStyle({height: editorIfrHeight - 20 + 'px'});
         
 
         /* set widths */
