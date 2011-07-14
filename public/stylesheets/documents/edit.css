@@ -75,6 +75,8 @@ button.saving {
     
 }
 
+/* helper panel */
+
 #helper_panel_container {
     width:284px;
     height:475px;
@@ -83,7 +85,7 @@ button.saving {
     z-index: 25;
 }
 
-#helper_panel_contents{
+#helper_panel_contents {
     height: 100%;
     background-color: #f3f7fe;
     width: 204px;
@@ -93,13 +95,17 @@ button.saving {
     padding-right: 5px;
 }
 
-#helper_panel_tab{
+#helper_panel_tab {
     height: 100%;
     background-color:  #e7f0fd;
     width:10px;
     float: left;
     cursor: pointer;
 
+}
+
+#helper_panel_contents p {
+    text-align: left;
 }
 
 .in{
