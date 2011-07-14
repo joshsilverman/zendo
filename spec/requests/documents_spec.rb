@@ -88,6 +88,29 @@ describe "document" do
 
       describe "while editing" do
 
+        describe "by bolding" do
+
+          it "creates card in right rail if correct" do
+            @text = "science"
+            tiny_mce_fill_in 'editor', :with => :backspace
+            tiny_mce_fill_in 'editor', :with => @text
+            Capybara.default_wait_time = 10
+            click_button "Save"
+            sleep 1
+            wait_until{ page.has_content?('Saved')}
+            page.evaluate_script("tinyMCE.activeEditor.selection.select(tinyMCE.activeEditor.dom.select('p')[0]);");
+            page.find(".mce_bold").click
+            wait_until{ page.has_content?('is a systematic enterprise')}
+            click_button "Save"
+            wait_until{ page.has_content?('Saved')}
+            @document.lines.count.should == 1
+            @user.mems.count.should == 1
+          end
+
+          it "does not create card in right rail if incorrect"
+
+        end
+
         describe "by adding one card" do
 
           before :each do

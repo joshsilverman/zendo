@@ -147,13 +147,13 @@ var cDoc = Class.create({
         /* set heights */
         var editorIfrHeight = editorVerticalSpaceHeight - 20;
         var rightRailHeight = editorVerticalSpaceHeight - 20;// + 20;
-        if (doc.readOnly) {;
+        if (doc.readOnly) {
             editorIfrHeight += 28;
-            rightRailHeight += 56;
+            rightRailHeight += 28;
             rightRail.setStyle({marginTop: '0px'});
             helperContainer.hide();
         }
-        editorWhitespace.setStyle({height: editorIfrHeight + 10 + 'px'});
+//        editorWhitespace.setStyle({height: editorIfrHeight + 10 + 'px'});
         rightRail.setStyle({height: rightRailHeight - 20 + 'px'});
         helperContainer.setStyle({height: rightRailHeight - 20+ 'px'});
         cardContainer.setStyle({height: rightRailHeight - 30 + 'px'});
@@ -182,7 +182,6 @@ var cDoc = Class.create({
                 $("update_share_loading").setStyle({'visibility': 'visible'});
             },
             onComplete: function() {
-//                console.log("yo");
                 $("share_email_input").value = "";
                 $('update_share_loading').setStyle({'visibility': 'hidden'});
             }

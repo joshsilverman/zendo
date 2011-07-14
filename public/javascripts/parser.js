@@ -135,6 +135,7 @@ var cParser = Class.create({
 
             if (term.match(/Figure|Table/)) return false;
 
+            /* @ugly this shouldn't be here... ugh */
             if (node.getAttribute('def') || node.getAttribute('def') == "") {
                 Card.front = Card.text
                 Card.back = "";
