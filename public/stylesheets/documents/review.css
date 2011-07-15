@@ -81,8 +81,7 @@ td {
 }
 
 #card_front_text {
-    text-align: left;
-    color:grey;
+    font-weight: bold;
 }
 
 #card_back_text {

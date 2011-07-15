@@ -1,12 +1,10 @@
 var cParser = Class.create({
 
-    docHtml: null, /* clone */
+    iDocClone: null, /* clone */
     iDoc: null,
     line:null,
 
-    parse: function(Card, contextualize, ellipsize) {
-
-//        console.log("parse");
+    parse: function(Card, ellipsize) {
 
         //pull card text from doc if text is blank
         this._identifyDoc(Card);
@@ -24,46 +22,11 @@ var cParser = Class.create({
             Card.back = '';
         }
 
-        /* set simpleFront on card before attempting to contextualize*/
+        /* set simpleFront */
         Card.simpleFront = Card.front;
 
-        /* add context to front if showContext set to true */
-        if (contextualize) this._contextualize(Card);
-        else if (ellipsize) this._ellipsize(Card);
-    },
-
-    _contextualize: function(Card) {
-
-        /* identify doc and line */
-        this._identifyDoc(Card);
-
-        /* display properties for cue */
-        if (!this.line) {
-//            console.log(Card);
-//            console.log(this.line);
-            return
-        }
-        if (this.line.tagName == 'LI') {
-
-            /* traverse anscestors */
-            Element.ancestors(this.line).each(function(ancestor) {
-                if (ancestor.tagName == 'LI') Element.setStyle(ancestor, {'display':'list-item'});
-                else Element.setStyle(ancestor, {'display':'block'});});
-
-            /* set line display block/list-item based on exists ancestors */
-            if (Element.ancestors(this.line).length > 2) Element.setStyle(this.line, {'display':'list-item'});
-            else {
-                Element.setStyle(this.line, {'display':'block'});
-                Element.setStyle(this.line, {'display':'block', 'textAlign': 'center'});
-            }
-
-            Card.front = this.docHtml;
-        }
-        else {
-            Element.setStyle(this.line, {'display':'block', 'textAlign': 'center'});
-            Card.front = this.line;
-        }
-        Element.addClassName(this.line, 'card_front_cue')
+        /* ellipsize */
+        if (ellipsize) this._ellipsize(Card);
     },
 
     _ellipsize: function(Card) {
@@ -80,26 +43,16 @@ var cParser = Class.create({
     _identifyDoc: function(Card) {
 
         /* set docHtml var */
-        //look for document_123 tag
-        this.docHtml = this.iDoc = $('document_' + Card.documentId);
-
-        //or look for ckeditor
-
-        if (!this.docHtml && window['doc'] && doc.outline) {
-            this.docHtml = doc.outline.iDoc.body;
-            this.iDoc = doc.iDoc;
-//            console.log(this.docHtml);
+        if ($('document_' + Card.documentId)) {
+            this.iDocClone = this.iDoc = Element.clone($('document_' + Card.documentId), true);
+            this.iDocClone.id = '';
         }
-        if (!this.docHtml) return;
+        else this.iDoc = doc.iDoc;
 
-        this.docHtml = Element.clone(this.docHtml, true)
-        this.docHtml.id = '';
+        if (!this.iDoc && !this.iDocClone) return;
 
         /* locate adjust line node */
         this.line = Element.select(this.docHtml, '#' + Card.domId);
-        if (!this.line) {
-//            console.log('#' + Card.domId);
-        }
         if (this.line.length == 0) return;
         Card.text = this.line[0].innerHTML.split(/<(?:li|ol|ul|p)/)[0];
         this.line = Element.extend(this.line[0]);
@@ -171,7 +124,10 @@ var cParser = Class.create({
                         Card.render();
                     },
                     onComplete: function() {
-                        if (doc.outline) doc.outline.change(node);
+                        if (doc.outline) {
+                            doc.editor.isNotDirty = false;
+                            doc.outline.autosave();
+                        }
                     }
                 });
             }
@@ -181,7 +137,7 @@ var cParser = Class.create({
 
     _parseUnderline: function(Card) {
         try {
-            var node = Element.select(this.docHtml, '#' + Card.domId)[0];
+            var node = Element.select(this.iDoc, '#' + Card.domId)[0];
             Element.select(node, 'span').each(function(span) {
                 if (Element.getStyle(span, 'text-decoration') == 'underline') {
                     Card.front = Card.text.gsub(span.innerHTML, "__________").unescapeHTML();
