@@ -115,6 +115,12 @@ Zendo::Application.routes.draw do
   #abingo dashboard
   # match '/abingo(/:action(/:id))' => 'abingo_dash', :as => :abingo
 
+  #static
+
+  match "/about/mission" => "static#mission"
+  match "/about/story" => "static#story"
+  match "/about/team" => "static#team"
+
   namespace :user do
     root :controller => 'search', :action => 'index'
   end

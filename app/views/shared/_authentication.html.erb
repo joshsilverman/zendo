@@ -1,13 +1,57 @@
 <% if user_signed_in? %>
-    <a href="/" style="text-decoration:none; float:left;"><span style="color:white; font-size:20px; text-decoration: none; font-weight: bold; font-family: Helvetica, sans-serif; line-height: 30px;">StudyEgg</span><!--<img src="/images/logos/zendo_slogan_small.png" />--></a>
-    <span style="float:right; margin: 8px 6px 0 0;">
-            Welcome, <%= current_user.first_name %>&nbsp;|&nbsp;
-            <%= link_to "Edit Account", edit_user_registration_path %>&nbsp;|&nbsp;
-            <%= link_to "Sign Out", destroy_user_session_path %>
-    </span>
-
+    <% if  ['static'].count(controller.controller_name) > 0 %>
+      <a href="/" style="text-decoration:none;"><img src="/images/logos/StudyEgg_blue_sameegg75.png" /></a>
+      <span style="float:right; margin: 18px 6px 0 0;">
+              Welcome, <%= current_user.first_name %>&nbsp;|&nbsp;
+              <%= link_to "Edit Account", edit_user_registration_path %>&nbsp;|&nbsp;
+              <%= link_to "Sign Out", destroy_user_session_path %>
+      </span>
+    <% else %>
+      <a href="/" style="text-decoration:none;"><img src="/images/logos/StudyEgg_blue_justegg30.png" /></a>
+      <span style="float:right; margin: 18px 6px 0 0;">
+              Welcome, <%= current_user.first_name %>&nbsp;|&nbsp;
+              <%= link_to "Edit Account", edit_user_registration_path %>&nbsp;|&nbsp;
+              <%= link_to "Sign Out", destroy_user_session_path %>
+      </span>
+    <% end %>
 <% elsif ['static'].count(controller.controller_name) > 0 %>
-    <a href="/" style="text-decoration:none;"><span style="color:white; font-size:20px; text-decoration: none; font-weight: bold; font-family: Helvetica, sans-serif; line-height: 30px;">StudyEgg</span><!--<img src="/images/logos/zendo_slogan_small.png" />--></a>
+    <a href="/" style="text-decoration:none;"><img src="/images/logos/StudyEgg_blue_sameegg75.png"/></a>
+    <div class="buttons">
+      <div style="float:right; width:529px; margin:10px 20px 0 0;">
+        <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+          <div style="float:right; width:60px; margin: 2px 0 0 10px;">
+            <%= f.submit "Sign in", :style=>"height:24px;" %>
+          </div>
+          <div style="float:right; width:214px;">
+            <%= f.label :password, :class => "email_pass_label", :style => "width:80px; margin-right:10px;" %>
+            <%= f.password_field :password, :class => "text_field_height", :style => "width:120px;"%>
+          </div>
+          <div style="float:right; width:200px; margin-right: 20px;">
+            <%= f.label :email, :class => "email_pass_label" %>
+            <%= f.text_field :email, :class => "text_field_height" %>
+          </div>
+        </div>
+        <% end %>
+      </div>
 <% else %>
-    <a href="/" style="text-decoration:none;"><span style="color:white; font-size:30px; text-decoration: none; font-weight: bold; font-family: Helvetica, sans-serif; line-height: 45px;">StudyEgg</span><!--<img src="/images/logos/zendo_beta.png" />--></a>
+    <a href="/" style="text-decoration:none;"><img src="/images/logos/StudyEgg_blue_sameegg75.png"/></a>
+    <% unless /users/.match(request.path) %>
+      <div class="buttons">
+      <div style="float:right; width:529px; margin:10px 20px 0 0;">
+        <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+          <div style="float:right; width:60px; margin: 2px 0 0 10px;">
+            <%= f.submit "Sign in", :style=>"height:24px;" %>
+          </div>
+          <div style="float:right; width:214px;">
+            <%= f.label :password, :class => "email_pass_label", :style => "width:80px; margin-right:10px;" %>
+            <%= f.password_field :password, :class => "text_field_height", :style => "width:120px;"%>
+          </div>
+          <div style="float:right; width:200px; margin-right: 20px;">
+            <%= f.label :email, :class => "email_pass_label" %>
+            <%= f.text_field :email, :class => "text_field_height" %>
+          </div>
+        </div>
+        <% end %>
+      </div>
+    <% end %>
 <% end %>
