@@ -17,22 +17,22 @@
 <% elsif ['static'].count(controller.controller_name) > 0 %>
     <a href="/" style="text-decoration:none;"><img src="/images/logos/StudyEgg_blue_sameegg75.png"/></a>
     <div class="buttons">
-    <div style="float:right; width:529px; margin:10px 20px 0 0;">
-    <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
-      <div style="float:right; width:60px; margin: 2px 0 0 10px;">
-        <%= f.submit "Sign in", :style=>"height:24px;" %>
+      <div style="float:right; width:529px; margin:10px 20px 0 0;">
+        <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+          <div style="float:right; width:60px; margin: 2px 0 0 10px;">
+            <%= f.submit "Sign in", :style=>"height:24px;" %>
+          </div>
+          <div style="float:right; width:214px;">
+            <%= f.label :password, :class => "email_pass_label", :style => "width:80px; margin-right:10px;" %>
+            <%= f.password_field :password, :class => "text_field_height", :style => "width:120px;"%>
+          </div>
+          <div style="float:right; width:200px; margin-right: 20px;">
+            <%= f.label :email, :class => "email_pass_label" %>
+            <%= f.text_field :email, :class => "text_field_height" %>
+          </div>
+        </div>
+        <% end %>
       </div>
-      <div style="float:right; width:214px;">
-        <%= f.label :password, :class => "email_pass_label", :style => "width:80px; margin-right:10px;" %>
-        <%= f.password_field :password, :class => "text_field_height", :style => "width:120px;"%>
-      </div>
-      <div style="float:right; width:180px; margin-right: 20px;">
-        <%= f.label :email, :class => "email_pass_label" %>
-        <%= f.text_field :email, :class => "text_field_height" %>
-      </div>
-    </div>
-    <% end %>
-  </div>
 <% else %>
     <a href="/" style="text-decoration:none;"><img src="/images/logos/StudyEgg_blue_sameegg75.png"/></a>
     <% unless /users/.match(request.path) %>
@@ -46,7 +46,7 @@
             <%= f.label :password, :class => "email_pass_label", :style => "width:80px; margin-right:10px;" %>
             <%= f.password_field :password, :class => "text_field_height", :style => "width:120px;"%>
           </div>
-          <div style="float:right; width:180px; margin-right: 20px;">
+          <div style="float:right; width:200px; margin-right: 20px;">
             <%= f.label :email, :class => "email_pass_label" %>
             <%= f.text_field :email, :class => "text_field_height" %>
           </div>
