@@ -60,7 +60,7 @@ class DocumentsController < ApplicationController
     # update document
     @document = Document.update(params, current_user.id)
     logger.debug("This is the updated doc #{@document.inspect}")
-
+	
     if @document.nil?
       render :nothing => true, :status => 400
     else
@@ -120,6 +120,51 @@ class DocumentsController < ApplicationController
             render :text => json
         }
     end
+  end 
+  
+  def enable_mobile
+    get_document(params[:id])
+      	
+  	if params[:bool] == "1"
+  		logger.debug("Enable mobile!")
+  		device = APN::Device.create( :token => "6d7295b5 58f294d5 5b542e46 77b28b73 34a6263a 9f98d6d3 820e8616 6f711fab" ) 
+		device.id = 1
+		device.save
+		notification = APN::Notification.new   
+		notification.device = device
+		#notification.badge = 3
+		notification.sound = false   
+		notification.alert = "You have new cards to review!"
+		notification.custom_properties = {:doc => @document.id}
+		#from document #{@document.id}
+		notification.save  
+		APN::Notification.send_notifications 
+  	else
+  		logger.debug("Disable mobile!")
+  	end
+  	
+    
+    #logger.debug(params[:id])
+    #THESE CONFIGURATIONS ARE DEFAULT, IF YOU WANT TO CHANGE UNCOMMENT LINES YOU WANT TO CHANGE   
+	#configatron.apn.passphrase  = ''   
+	#configatron.apn.port = 2195   
+	#configatron.apn.host  = 'gateway.sandbox.push.apple.com'   
+	#configatron.apn.cert = File.join(Rails.root, 'config', 'apple_push_notification_development.pem')    
+	#THE CONFIGURATIONS BELOW ARE FOR PRODUCTION PUSH SERVICES, IF YOU WANT TO CHANGE UNCOMMENT LINES YOU WANT TO CHANGE   
+	#configatron.apn.host = 'gateway.push.apple.com'   
+	#configatron.apn.cert = File.join(RAILS_ROOT, 'config', 'apple_push_notification_production.pem')  
+
+	
+	#logger.debug("The device is: #{device}")
+	#logger.debug("The device id is: #{device.id}")
+	#logger.debug("The notification device is: #{notification.device}")
+	#logger.debug("The notification device token is: #{notification.device.token}")
+	#logger.debug("The notification alert is: #{notification.alert}")
+	#logger.debug("The notification device id is: #{notification.device_id}")
+	
+	
+  
+	render :nothing => true, :status => 200
   end
 
   def update_tag

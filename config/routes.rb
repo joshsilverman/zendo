@@ -78,6 +78,7 @@ Zendo::Application.routes.draw do
   match "/documents/update_privacy"
   match "/documents/update_document_name"
   match "/documents/:id" => "documents#edit", :via => [:get], :read_only => true
+  match "/documents/enable_mobile/:id/:bool" => "documents#enable_mobile"
   resources :documents, :only => [:edit, :update, :destroy]
 
   # terms

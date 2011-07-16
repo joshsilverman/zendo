@@ -5,8 +5,7 @@ class ApplicationController < ActionController::Base
   helper :all
 
   protect_from_forgery
-  include ApplicationHelper
-
+  include ApplicationHelper  
   def check_uri
 
     if /^www\./.match(request.host_with_port)

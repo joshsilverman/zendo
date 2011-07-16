@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110724061717) do
+ActiveRecord::Schema.define(:version => 20110713164347) do
 
   create_table "alternatives", :force => true do |t|
     t.integer "experiment_id"
@@ -23,6 +23,30 @@ ActiveRecord::Schema.define(:version => 20110724061717) do
 
   add_index "alternatives", ["experiment_id"], :name => "index_alternatives_on_experiment_id"
   add_index "alternatives", ["lookup"], :name => "index_alternatives_on_lookup"
+
+  create_table "apn_devices", :force => true do |t|
+    t.string   "token",              :default => "", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "last_registered_at"
+  end
+
+  add_index "apn_devices", ["token"], :name => "index_apn_devices_on_token", :unique => true
+
+  create_table "apn_notifications", :force => true do |t|
+    t.integer  "device_id",                        :null => false
+    t.integer  "errors_nb",         :default => 0
+    t.string   "device_language"
+    t.string   "sound"
+    t.string   "alert"
+    t.integer  "badge"
+    t.text     "custom_properties"
+    t.datetime "sent_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "apn_notifications", ["device_id"], :name => "index_apn_notifications_on_device_id"
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"

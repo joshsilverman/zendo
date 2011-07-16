@@ -95,7 +95,14 @@ var cDoc = Class.create({
         Event.observe($("save_button"),"click",function(e){doc.outline.autosave(e);});
         Event.observe($("review_button"),"click",function(e){
             AppUtilities.Cookies.create('reloadEditor', 'true', 3);
-            window.location = "/review/" + doc.outline.documentId;
+            window.location = "/review/" + doc.outline.documentId;            
+            
+        }.bind(this));
+
+        Event.observe($("mobile_review"), "click", function(e){
+        	var requestUrl = "/documents/enable_mobile/" + doc.outline.documentId + "/" + (($("mobile_review").checked)?1:0);
+        	//TODO fill callback parameters
+            new Ajax.Request(requestUrl, {});
         }.bind(this));
 
         $("doc_options").removeClassName("loading");

@@ -14,6 +14,8 @@ gem 'postmark'
 gem 'postmark-rails', '0.4.0'
 gem 'kaminari'
 
+gem 'apn_on_rails', :git => 'https://github.com/natescherer/apn_on_rails.git', :branch => 'rails3'
+
 group :development do
   gem 'guard'
   gem 'guard-rspec'
