@@ -3,6 +3,10 @@ body {
     background-position: center center;
 }
 
+.about_wrapper{
+    width:960px;
+    margin: 0 auto;
+}
 .contents {
     position:relative;
     margin:20px auto 5px;
@@ -31,6 +35,44 @@ body {
     width: 600px;
     text-align:left;
     margin:10px 0 -10px; /*110px;*/
+}
+
+.header{
+    height: 80px;
+    z-index: 50;
+}
+
+.authentications {
+    text-align: center;
+    width: 64px;
+    float:right;
+    margin:0 0 0 10px;
+}
+
+.buttons {
+    margin:15px 0 0 0;
+    width: 450px;
+    height: 60px;
+    float:right;
+}
+
+.buttons input[type=text], .buttons input[type=password] {
+    border:#9e943a solid 1px;
+    width:68%;
+    clear:right;
+}
+.buttons .email_pass_label {
+    width:25%;
+    display:block;
+    float:left;
+}
+.buttons div {
+    line-height:25px;
+}
+
+.auth_provider {
+  text-decoration: none;
+  text-align: center;
 }
 
 .about_sections {
@@ -73,3 +115,49 @@ div.hr {
     background-repeat: no-repeat;
     background-position: center bottom;
 }
+
+.main{
+    width:800px;
+    float:right;
+}
+
+.sidebar{
+    width:100px;
+    float:left;
+}
+
+#menu {
+	width: 120px;
+	margin: 10px;
+	}
+
+#menu ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+#menu li a {
+	height: 32px;
+  	voice-family: "\"}\"";
+  	voice-family: inherit;
+  	height: 24px;
+	text-decoration: none;
+        -webkit-border-radius: 7px;
+        -moz-border-radius: 7px;
+        border-radius: 7px;
+        margin-bottom: 5px;
+	}
+
+#menu li a:link, #menu li a:visited {
+	color:  #1b435e;
+	display: block;
+        background-color: #eff9fd;
+	padding: 8px 0 0 10px;
+	}
+
+#menu li a:hover {
+        color:  #1b435e;
+        background-color: #caeefe;
+	padding: 8px 0 0 10px;
+	}

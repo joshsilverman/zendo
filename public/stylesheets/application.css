@@ -32,6 +32,7 @@ img.home {
     height:0;clear:both;
     padding:2px;
 }
+.clr-zero{clear:both;}
 
 .rounded_border {
     border: 1px solid lightGrey;
@@ -47,18 +48,19 @@ img.home {
 }
 
 .header_container {
-    background-color: black;
+    background-color: white;
     width:100%;
     min-width:960px;
+    border-bottom: #e9e9e9 1px solid;
 }
 
 .header {
     width:960px;
-    margin: 0 auto;
-    height: 30px;
-    color:white;
+    margin: 0 auto 0 auto;
+    height: 50px;
+    color:black;
+    font-size: 10px;
 }
-
 .header a {
     color: #009cff;
 }
@@ -125,7 +127,7 @@ header {
 
 .contents {
      width:960px;
-     margin:10px auto;
+     margin:10px auto 0 auto;
      position: relative;
 }
 
