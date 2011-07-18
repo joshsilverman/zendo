@@ -8,9 +8,9 @@
 
 <div id="title">
   <% if @document.nil? %>
-    /<%= link_to @tag.name, '/#' + @tag.id.to_s %>
+    /<%= link_to @tag.name, '/explore' %>
   <% else %>
-    /<%= link_to @document.tag.name, '/#%i' % @document.tag.id %>
+    /<%= link_to @document.tag.name, '/explore' %>
     /<%= link_to @document.name, '/documents/%i/edit' % @document.id %>
   <% end %>
 </div>
