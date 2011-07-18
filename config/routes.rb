@@ -120,6 +120,7 @@ Zendo::Application.routes.draw do
   match "/about/mission" => "static#mission"
   match "/about/story" => "static#story"
   match "/about/team" => "static#team"
+  match "/contact" => "static#contact"
 
   namespace :user do
     root :controller => 'search', :action => 'index'
