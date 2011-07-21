@@ -34,7 +34,11 @@ var cDoc = Class.create({
         doc.p=page;
         console.log(doc.p);
         if(q.length === 0) {return};
-        new Ajax.Request('/search/query/'+q+'/'+page, {
+        var parameters = {};
+        parameters['q'] = q;
+        new Ajax.Request('/search/query/'+page, {
+           method: 'post',
+           parameters: parameters,
            onComplete: function(transport) {
                console.log(transport);
                console.log(transport.responseText);
@@ -47,6 +51,8 @@ var cDoc = Class.create({
     },
 
     render: function(){
+        this.back=false;
+        this.front=true;
         console.log(doc.p);
         var html = '';
         var results = [];
@@ -64,7 +70,7 @@ var cDoc = Class.create({
             console.log(pagemax);
             html+='<ul>';
             results.each(function(doc){
-                html+='<li><a href="documents/'+doc['id']+'">'+doc['name']+'</a></li>';
+                html+='<li><a href="documents/'+doc['id']+'">'+doc['name']+' (<em>'+doc['tag_name']+'</em>)</a></li>';
             });
             html +='</ul><br/>';
             if(doc.p==1){

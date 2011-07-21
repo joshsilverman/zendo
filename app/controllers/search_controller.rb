@@ -1,12 +1,17 @@
 class SearchController < ApplicationController
 
   def index
-    @popular = Document.select(['name', 'id']).where("public").limit(6)
+    @popular = Document.joins(:tag).select(['documents.name', 'documents.id', 'tags.name AS tag_name']).where("public AND documents.name = ?", '%GMAT%').limit(3)
+    @popular += Document.joins(:tag).select(['documents.name', 'documents.id', 'tags.name AS tag_name']).where("public AND documents.name LIKE ?", '%1.1%').limit(1)
+    @popular += Document.joins(:tag).select(['documents.name', 'documents.id', 'tags.name AS tag_name']).where("public AND documents.name LIKE ?", '%1.2%').limit(1)
+    @popular += Document.joins(:tag).select(['documents.name', 'documents.id', 'tags.name AS tag_name']).where("public AND documents.name LIKE ?", '%2.1%').limit(1)
   end
 
   def query
-    len = Document.select(['name', 'id']).where("name LIKE ? AND public", '%'+params[:q]+'%').length
-    query = Document.select(['name', 'id']).where("name LIKE ? AND public", '%'+params[:q]+'%').page(params[:page]).per(5)
+    q = params[:q]
+    puts "DECODED: " + q
+    len = Document.joins(:tag).select(['documents.name', 'documents.id', 'tags.name AS tag_name']).where("(tags.name LIKE ? OR documents.name LIKE ?) AND public", '%'+q+'%', '%'+q+'%').length
+    query = Document.joins(:tag).select(['documents.name', 'documents.id', 'tags.name AS tag_name']).where("(tags.name LIKE ? OR documents.name LIKE ?) AND public", '%'+q+'%', '%'+q+'%').page(params[:page]).per(5)
     query = query.to_json()
     puts query.length
     if query.length <= 2

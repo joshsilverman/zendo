@@ -85,7 +85,7 @@ li{
     <h3 style="margin-left:40px;">Popular Now</h3>
     <ul>
       <% @popular.each do |doc| %>
-        <li><a href="documents/<%= doc.id%>"><%= doc.name %></a></li>
+        <li><a href="documents/<%= doc.id%>"><%= doc.name %> (<em><%= doc.tag_name %></em>)</a></li>
       <% end %>
       </ul>
     </div>
