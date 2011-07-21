@@ -12,18 +12,27 @@ class Tag < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :user_id
 
   def self.tags_json(current_user = nil)
+    
     return nil if current_user.blank?
     tags = current_user.tags\
                     .includes(:documents)\
                     .all
-
+   
     # append info on shared documents
-    shared_docs = current_user.vdocs.select([:id, :name, :updated_at, :created_at, :tag_id]).all
+    # shared_docs = current_user.vdocs.select(["documents.id", "documents.name", "documents.updated_at", "documents.created_at", "documents.tag_id"]).all
+    puts "before"
+    #puts current_user.userships.select("document_id")
+	puts current_user.documents
+    puts "after"
+    
+    shared_docs = current_user.userships.documents.select(["documents.id", "documents.name", "documents.updated_at", "documents.created_at", "documents.tag_id"]).all
+    puts "\n**\n"
     shared_tag = Tag.new(:name => "Shared")
     shared_tag.documents << shared_docs
     tags << shared_tag
+    logger.debug(tags.to_json(:include => {:documents => {:only => [:id, :name, :updated_at, :created_at, :tag_id]}}))
     return tags.to_json(:include => {:documents => {:only => [:id, :name, :updated_at, :created_at, :tag_id]}})
-    rescue: []
+    #rescue: []
   end
 
   def self.recent_json(current_user = nil)

@@ -4,7 +4,7 @@ class Document < ActiveRecord::Base
                                :maximum => 40,
                                :message => "Name must be between 1-40 characters"},
                    :format => {:with => /[a-zA-Z0-9-&%$\#+\(\)*^@!]/,
-                               :message => "Pleas use only letters numbers and (!@#\$%^&*-+)"}
+                               :message => "Please use only letters, numbers and (!@#\$%^&*-+)"}
 
   include DocumentsHelper
 
@@ -13,7 +13,13 @@ class Document < ActiveRecord::Base
   belongs_to :tag
   belongs_to :user
   has_many :shares
-  has_and_belongs_to_many :viewers, :class_name => "User", :uniq => true
+  #has_and_belongs_to_many :viewers, :class_name => "User", :uniq => true
+
+  
+  has_many :userships
+  has_many :users, :through => :userships, :uniq => true
+  #has_many :users, :through => :userships, :uniq => true
+
 
   #scope :recent_edit, where("updated_at < ? AND user_id = ?", Date.today, current_user.id)
   #scope :recent_review, where("reviewed_at between ? and ?", Date.today, (Date.today - 30))

@@ -1,5 +1,7 @@
 Zendo::Application.routes.draw do
 
+  get "usership/update"
+
   resources :authentications
 
   # The priority is based upon order of creation:
@@ -79,6 +81,7 @@ Zendo::Application.routes.draw do
   match "/documents/update_document_name"
   match "/documents/:id" => "documents#edit", :via => [:get], :read_only => true
   match "/documents/enable_mobile/:id/:bool" => "documents#enable_mobile"
+  match "/documents/retrieve_notifications/:id" => "documents#retrieve_notifications"
   resources :documents, :only => [:edit, :update, :destroy]
 
   # terms

@@ -4,12 +4,17 @@ class User < ActiveRecord::Base
 #  validates_length_of :last_name, :minimum => 1
 
   has_many :authentications, :dependent => :destroy
-  has_many :documents
+  #has_many :documents
   has_many :tags
   has_many :mems
   has_many :reps
   has_many :shares
-  has_and_belongs_to_many :vdocs, :class_name => "Document", :uniq => true
+  #has_and_belongs_to_many :vdocs, :class_name => "Document", :uniq => true
+  
+  has_many :userships
+  has_many :documents, :through => :userships, :uniq => true
+  #has_many :documents, :through => :userships
+  
 
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable, :lockable and :timeoutable

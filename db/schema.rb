@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110713164347) do
+ActiveRecord::Schema.define(:version => 20110720164626) do
 
   create_table "alternatives", :force => true do |t|
     t.integer "experiment_id"
@@ -60,7 +60,6 @@ ActiveRecord::Schema.define(:version => 20110713164347) do
     t.string   "name",        :limit => 45
     t.text     "html"
     t.integer  "tag_id"
-    t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.date     "reviewed_at"
@@ -69,12 +68,7 @@ ActiveRecord::Schema.define(:version => 20110713164347) do
   end
 
   add_index "documents", ["tag_id"], :name => "index_documents_on_tag_id"
-  add_index "documents", ["user_id"], :name => "index_documents_on_user_id"
 
-  create_table "documents_users", :id => false, :force => true do |t|
-    t.integer "document_id"
-    t.integer "user_id"
-  end
 
   create_table "experiments", :force => true do |t|
     t.string   "test_name"
@@ -158,5 +152,14 @@ ActiveRecord::Schema.define(:version => 20110713164347) do
   add_index "users", ["last_name"], :name => "index_users_on_last_name"
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
   add_index "users", ["unlock_token"], :name => "index_users_on_unlock_token", :unique => true
+
+  create_table "userships", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "document_id"
+    t.boolean  "push_enabled"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "owner"
+  end
 
 end

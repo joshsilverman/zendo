@@ -99,7 +99,8 @@ var cDoc = Class.create({
             
         }.bind(this));
 
-        Event.observe($("mobile_review"), "click", function(e){
+		/* observe push enable */
+        Event.observe($("mobile_review"), "click", function(e) {
         	var requestUrl = "/documents/enable_mobile/" + doc.outline.documentId + "/" + (($("mobile_review").checked)?1:0);
         	//TODO fill callback parameters
             new Ajax.Request(requestUrl, {});
