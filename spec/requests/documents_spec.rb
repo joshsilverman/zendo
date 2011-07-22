@@ -187,6 +187,7 @@ describe "document" do
               all('div.card').length.should == i + 1
               all('div.card_active').length.should == i + 1
               tiny_mce_fill_in 'editor', :with => :enter
+              sleep 1
             end
             
             click_button "Review"

@@ -5,7 +5,7 @@ describe "dashboard", :js => true do
   before(:each) do
     if example.metadata[:js]
       Capybara.current_driver = :selenium
-      Capybara.default_wait_time = 3
+      Capybara.default_wait_time = 10
     else
       Capybara.current_driver = :rack_test
     end
@@ -16,18 +16,18 @@ describe "dashboard", :js => true do
     before(:each) do
       @user = Factory.create(:user)
       @user.save!
-      @document1 = @user.documents.create!(:name => "title one", :public => true)
-      @document2 = @user.documents.create!(:name => "title two", :public => true)
-      @document3 = @user.documents.create!(:name => "title three", :public => true)
-      @document4 = @user.documents.create!(:name => "title four", :public => true)
-      @document5 = @user.documents.create!(:name => "title five", :public => true)
-      @document6 = @user.documents.create!(:name => "title six", :public => true)
-      @document7 = @user.documents.create!(:name => "title seven", :public => true)
-      @document8 = @user.documents.create!(:name => "title eight", :public => true)
-      @document9 = @user.documents.create!(:name => "title nine", :public => true)
-      @document10 = @user.documents.create!(:name => "title ten", :public => true)
-      @document11 = @user.documents.create!(:name => "title eleven", :public => true)
-      
+      @tag1 = @user.tags.create!(:name => "my tag1")
+      @document1 = @user.documents.create!(:name => "title one", :public => true, :tag_id => @tag1.id)
+      @document2 = @user.documents.create!(:name => "title two", :public => true, :tag_id => @tag1.id)
+      @document3 = @user.documents.create!(:name => "title three", :public => true, :tag_id => @tag1.id)
+      @document4 = @user.documents.create!(:name => "title four", :public => true, :tag_id => @tag1.id)
+      @document5 = @user.documents.create!(:name => "1.1 Bio", :public => true, :tag_id => @tag1.id)
+      @document6 = @user.documents.create!(:name => "2.1 Advanced Bio", :public => true, :tag_id => @tag1.id)
+      @document7 = @user.documents.create!(:name => "GMAT 1", :public => true, :tag_id => @tag1.id)
+      @document8 = @user.documents.create!(:name => "GMAT 2", :public => true, :tag_id => @tag1.id)
+      @document9 = @user.documents.create!(:name => "GMAT 3", :public => true, :tag_id => @tag1.id)
+      @document10 = @user.documents.create!(:name => "title ten", :public => true, :tag_id => @tag1.id)
+      @document11 = @user.documents.create!(:name => "title eleven", :public => true, :tag_id => @tag1.id)
       
       visit "/users/sign_in"
       fill_in "Email", :with => @user.email
@@ -37,7 +37,7 @@ describe "dashboard", :js => true do
 
     it "has working public documents as popular" do
       wait_until{ page.has_content?('Popular Now')}
-      wait_until{ page.has_content?('title one')}
+      wait_until{ page.has_content?('Bio')}
     end
 
     it "searches and finds relevant working docs" do

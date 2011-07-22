@@ -33,8 +33,8 @@ class TermsController < ApplicationController
       json[:image] = article.image[0] if article.image and article.image.size > 0
 
       render :json => json
-    rescue
-      render :status => 400, :text => '-'# :nothing => true
+#    rescue
+#      render :status => 400, :text => '-'# :nothing => true
     end
   end
 

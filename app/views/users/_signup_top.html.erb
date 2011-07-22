@@ -1,9 +1,10 @@
 <div class="splash-img-wrapper">
+
   <div id="save" style="display: none;">
-    <div class="authentications">
-      <!--<a href="/auth/twitter" class="auth_provider">
+    <!--<div class="authentications">
+      <a href="/auth/twitter" class="auth_provider">
         <%#= image_tag "logos/twitter_64.png", :size => "64x64", :alt => "Twitter" %>
-      </a>-->
+      </a>
       <a href="/auth/facebook" class="auth_provider">
         <%= image_tag "logos/facebook_64.png", :size => "32x32", :alt => "Facebook" %>
       </a>
@@ -12,14 +13,14 @@
       </a>
       <span style="color:#009CFF;"></span>
     </div>
-
-
     <div class="line-bg"><span>&nbsp;&nbsp;don't have an account?&nbsp;&nbsp;</span></div>
     <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
         <%#= link_to "", '/', :class => "register_button"%>
         <div><a href="#sign_up_inline" class="lightview" title=' ::  :: width: 540, height: 425'>Sign Up</a></div>
-      <% end %>
+      <% end %>-->
   </div>
+
+
   <div class="promo">
     <h1>With <span style="color: #1d9bca;">StudyEgg</span> you will...</h1>
     <h2 style="display: inline; margin-left: 20px;"> <span style="color:#1d9bca;">Learn More</span>  </h2><h3 style="display: inline;"> using our optimized learning methods</h3>
