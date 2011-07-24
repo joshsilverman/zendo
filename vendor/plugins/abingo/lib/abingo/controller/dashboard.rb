@@ -1,6 +1,7 @@
-class Abingo
+class Abingo    
   module Controller
     module Dashboard
+      
 
       if Rails::VERSION::MAJOR <= 2
         ActionController::Base.view_paths.unshift File.join(File.dirname(__FILE__), "../views")
