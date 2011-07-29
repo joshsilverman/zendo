@@ -3,7 +3,6 @@ class TagsController < ApplicationController
   helper TagsHelper
 
   def index
-
     # create Misc tag if not exists
     misc = current_user.tags.find_by_misc(true)
     if misc.nil?
@@ -24,7 +23,6 @@ class TagsController < ApplicationController
   end
 
   def create
-
     #params
     name = params[:name]
     doc_id = (params[:doc_id]) ? params[:doc_id] : nil

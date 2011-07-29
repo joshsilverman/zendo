@@ -81,7 +81,7 @@ Zendo::Application.routes.draw do
   match "/documents/update_document_name"
   match "/documents/:id" => "documents#edit", :via => [:get], :read_only => true
   match "/documents/enable_mobile/:id/:bool" => "documents#enable_mobile"
-  match "/documents/retrieve_notifications/:id" => "documents#retrieve_notifications"
+  #match "/documents/retrieve_notifications" => "documents#retrieve_notifications"
   resources :documents, :only => [:edit, :update, :destroy]
 
   # terms
@@ -101,6 +101,8 @@ Zendo::Application.routes.draw do
   # home page
   match "/users/welcome" => "users#home"
   match "/users/autocomplete"
+  match "/users/retrieve_notifications"
+  match "/users/add_device/:token" => "users#add_device"
   root :to => "users#home"
   root :controller => 'users', :action => 'home'
 

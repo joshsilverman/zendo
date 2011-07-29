@@ -13,8 +13,8 @@
     <% end %>
 
     <div class="user-tokens" id="viewers">
-      <span class="option" style="float:left; padding: 2px 2px 2px 0; margin: 2px 2px 2px 0;">Sharing with:</span>
-      <% @document.viewers.each do |viewer| %>
+      <span class="option" style="float:left; padding: 2px 2px 2px 0; margin: 2px 2px 2px 0;">Sharing with:</span>	  
+      <% @document.userships.where('owner = 0').all.each do |viewer| %>      	
         <span class="token removable" viewer_id="<%= viewer.id %>">
           <%= viewer.email %>
           <span class="remove" >X</span>

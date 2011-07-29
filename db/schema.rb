@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110720164626) do
+ActiveRecord::Schema.define(:version => 20110727173200) do
 
   create_table "alternatives", :force => true do |t|
     t.integer "experiment_id"
@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(:version => 20110720164626) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "last_registered_at"
+    t.integer  "user_id"
   end
 
   add_index "apn_devices", ["token"], :name => "index_apn_devices_on_token", :unique => true
@@ -44,6 +45,7 @@ ActiveRecord::Schema.define(:version => 20110720164626) do
     t.datetime "sent_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "user_id"
   end
 
   add_index "apn_notifications", ["device_id"], :name => "index_apn_notifications_on_device_id"
@@ -97,6 +99,8 @@ ActiveRecord::Schema.define(:version => 20110720164626) do
     t.datetime "review_after"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "document_id"
+    t.boolean  "pushed",       :default => false
   end
 
   add_index "mems", ["line_id"], :name => "index_mems_on_line_id"

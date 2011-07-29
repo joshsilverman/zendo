@@ -175,10 +175,14 @@ var cDoc = Class.create({
     },
 
     share: function() {
+    	console.log("About to req");
         new Ajax.Request('/documents/share', {
             method: 'put',
-            parameters: {id:doc.outline.documentId, email: $("share_email_input").value},
+            //console.log($("share_email_input").value);
+            //console.log(doc.outline.documentId);
+            parameters: {id : doc.outline.documentId, email: $("share_email_input").value},
             onSuccess: function(transport) {
+            	console.log("success");
                 var token = '<span class="token removable" viewer_id="' +
                     transport.responseText +
                     '">' +
@@ -187,6 +191,7 @@ var cDoc = Class.create({
                 $("viewers").insert({"bottom": token});
             },
             onCreate: function() {
+            	console.log("create");
                 $("update_share_loading").setStyle({'visibility': 'visible'});
             },
             onComplete: function() {
@@ -351,6 +356,7 @@ var cOutline = Class.create({
             var d = new Date();
             var today = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+ d.getDate();
             /* save */
+            console.log("yooooooo");
             new Ajax.Request('/documents/'+this.documentId, {
                 method: 'put',
                 parameters: {'html': doc.editor.getContent(),
@@ -395,7 +401,7 @@ var cOutline = Class.create({
                 }.bind(this),
 
                 onFailure: function(transport) {
-
+					console.log("Failed!");
                     /* add unsuccessfully saved changes back to unsaved changes and set attributes */
                     this.unsavedChanges = this.unsavedChanges.concat(this.savingChanges).uniq();
                     this.unsavedChanges.each(function(domId) {

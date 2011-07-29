@@ -19,7 +19,13 @@
       Title: <input id="document_name" value="<%=@document.name%>"  maxlength="40"></input>
     <% end %>
   </span>
-  <input type="checkbox" name="mobile" id="mobile_review" /> Push review
+  <input type="checkbox" checked name="mobile" id="mobile_review" /> Push review
+  <% if !@document.userships[0].push_enabled %>
+  	<script type="text/javascript"> 
+  		mobile_review.checked = false;
+  	</script>
+  <% end %>
+
   <button id="review_button" style="float:right">Review</button>
   <% if @read_only %>
     <%#*<button id="copy_button" style="float:right;">Make a copy</button>%>

@@ -20,25 +20,30 @@ class Tag < ActiveRecord::Base
    
     # append info on shared documents
     # shared_docs = current_user.vdocs.select(["documents.id", "documents.name", "documents.updated_at", "documents.created_at", "documents.tag_id"]).all
-    puts "before"
     #puts current_user.userships.select("document_id")
-	puts current_user.documents
-    puts "after"
-    
-    shared_docs = current_user.userships.documents.select(["documents.id", "documents.name", "documents.updated_at", "documents.created_at", "documents.tag_id"]).all
-    puts "\n**\n"
+	#puts current_user.documents.where(document).select(["documents.id", "document.name", "updated_at", "documents.created_at", "documents.tag_id"]).all
+	#puts current_user.userships.where('owner = 0').documents.select('document_id')#(["documents.id", "document.name", "updated_at", "documents.created_at", "documents.tag_id"]).all
+	
+    shared_docs = Array.new
+    for usership in current_user.userships
+    	if usership.owner == false    		
+    		shared_docs << usership.document
+    	end
+    end
+    #for doc in shared_docs
+    	#puts doc
+    #end
     shared_tag = Tag.new(:name => "Shared")
     shared_tag.documents << shared_docs
-    tags << shared_tag
-    logger.debug(tags.to_json(:include => {:documents => {:only => [:id, :name, :updated_at, :created_at, :tag_id]}}))
+    puts tags.to_json(:include => {:documents => {:only => [:id, :name, :updated_at, :created_at, :tag_id]}})
     return tags.to_json(:include => {:documents => {:only => [:id, :name, :updated_at, :created_at, :tag_id]}})
     #rescue: []
   end
 
   def self.recent_json(current_user = nil)
     return nil if current_user.blank?
-    recent_edit = Document.select(['name', 'id', 'tag_id', 'edited_at', 'reviewed_at']).where("edited_at <= ? AND edited_at >= ?  AND user_id = ?", Date.today, Date.today - 7, current_user.id).limit(10)
-    recent_review = Document.select(['name', 'id', 'tag_id', 'edited_at', 'reviewed_at']).where("reviewed_at <= ? AND reviewed_at >= ?  AND user_id = ?", Date.today, Date.today - 14, current_user.id).limit(10)
+    recent_edit = Document.joins(:userships).select(['documents.name', 'documents.id', 'documents.tag_id', 'documents.edited_at', 'documents.reviewed_at']).where("documents.edited_at <= ? AND documents.edited_at >= ?  AND userships.user_id = ?", Date.today, Date.today - 7, current_user.id).limit(10)
+    recent_review = Document.joins(:userships).select(['documents.name', 'documents.id', 'documents.tag_id', 'documents.edited_at', 'documents.reviewed_at']).where("documents.reviewed_at <= ? AND documents.reviewed_at >= ?  AND userships.user_id = ?", Date.today, Date.today - 14, current_user.id).limit(10)
     recent = recent_edit|recent_review
     recent.to_json()
     rescue: ['error']

@@ -30,7 +30,8 @@ class Document < ActiveRecord::Base
     id = params[:id]
     html = params[:html]
     delete_nodes = params[:delete_nodes]
-    document = Document.find(:first, :conditions => {:id => id, :user_id => user_id})
+    document = Document.find(:first, :conditions => {:id => id})
+    return nil if document.userships[0].user_id != user_id
     return nil if id.blank? || html.nil? || document.blank?
 
     Line.transaction do

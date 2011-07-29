@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
   has_many :reps
   has_many :shares
   #has_and_belongs_to_many :vdocs, :class_name => "Document", :uniq => true
-  
+  	
   has_many :userships
   has_many :documents, :through => :userships, :uniq => true
   #has_many :documents, :through => :userships

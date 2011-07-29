@@ -15,6 +15,7 @@ var cDoc = Class.create({
     h: null,
 
     initialize: function() {
+    	console.log("Initialize");
         this.prepareData();
         window.onresize = AppUtilities.resizeContents;
         AppUtilities.resizeContents();
@@ -26,14 +27,18 @@ var cDoc = Class.create({
     },
 
     prepareData: function() {
-        /* organize and set json member */
+    	console.log("prep");
+    	/* organize and set json member */
         this.tags = [];
         $('tags_json').innerHTML.evalJSON().collect(function(tag) {
             this.tags.push([tag['tag']['id'], tag['tag']]);
         }.bind(this));
 
         this.recent = [];
+        console.log($('recent_json'));
+        
         $('recent_json').innerHTML.evalJSON().collect(function(doc) {
+        	console.log(doc);
             this.recent.push(doc['document']);
         }.bind(this));
 
@@ -447,7 +452,8 @@ var cDoc = Class.create({
     },
 
     render: function(){
-        this._buildFolders();
+    	console.log("Render");
+    	this._buildFolders();
         this._buildDocs();
         this._buildDetails();
         this.resizeDetails();

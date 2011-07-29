@@ -90,7 +90,7 @@ class DocumentsController < ApplicationController
     # get lines
     owner_lines = Line.includes(:mems).where("lines.document_id = ?
                         AND mems.status = true AND mems.user_id = ?",
-                        params[:id], @document.user_id)
+                        params[:id], @document.userships.where('owner = 1')[0].user_id)
  
     if @document.id == current_user.id
       @lines_json = owner_lines.to_json :include => :mems
@@ -120,59 +120,51 @@ class DocumentsController < ApplicationController
             render :text => json
         }
     end
-  end 
-  
+  end  
   
   def enable_mobile
     get_document(params[:id])
-      	
   	if params[:bool] == "1"
   		logger.debug("Enable mobile!")
-  		#current_user.userships.update_attribute(:push_enabled, true)
-  		
-  		puts "before"
-    	puts current_user.id
-    	puts usership
-    	puts "after"
-    
-  		#current_user.userships.select(:push_enabled)
-  		puts "\n***\n"
-  		device = APN::Device.create( :token => "6d7295b5 58f294d5 5b542e46 77b28b73 34a6263a 9f98d6d3 820e8616 6f711fab" ) 
-  		#User specific device id
-		device.id = 1
-		device.save
-		notification = APN::Notification.new   
-		notification.device = device
-		notification.badge = 3
-		notification.sound = false   
-		notification.alert = "You have new cards to review!"
-		notification.custom_properties = {:doc => @document.id}
-		notification.save  
-		#APN::Notification.send_notifications		
+  		@usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
+      @usership.first.update_attribute(:push_enabled, true)
+      puts @usership.to_json
   	else
   		logger.debug("Disable mobile!")
-  		#Disable push notifications for the usership
-  		
-  		#Delete all pending notifications for the doc
+  		@usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
+      @usership.first.update_attribute(:push_enabled, false)
+      puts @usership.to_json
+  		#Delete all pending notifications for the usership
   	end
-    
-    #logger.debug(params[:id])
-    #THESE CONFIGURATIONS ARE DEFAULT, IF YOU WANT TO CHANGE UNCOMMENT LINES YOU WANT TO CHANGE   
-	#configatron.apn.passphrase  = ''   
-	#configatron.apn.port = 2195   
-	#configatron.apn.host  = 'gateway.sandbox.push.apple.com'   
-	#configatron.apn.cert = File.join(Rails.root, 'config', 'apple_push_notification_development.pem')    
-	#THE CONFIGURATIONS BELOW ARE FOR PRODUCTION PUSH SERVICES, IF YOU WANT TO CHANGE UNCOMMENT LINES YOU WANT TO CHANGE   
-	#configatron.apn.host = 'gateway.push.apple.com'   
-	#configatron.apn.cert = File.join(RAILS_ROOT, 'config', 'apple_push_notification_production.pem')  
-  
-	render :nothing => true, :status => 200
-  end
-
-  def retrieve_notifications
-  	logger.debug("Return 3 weakest mems")
-    #return three weakest mems from doc
     render :nothing => true, :status => 200
+
+    #Uncomment for immediate push demo
+#    if params[:bool] == "1"
+#      puts "Enable mobile!"
+#      device = APN::Device.create( :token => "6d7295b5 58f294d5 5b542e46 77b28b73 34a6263a 9f98d6d3 820e8616 6f711fab" )
+#      device.id = 1
+#      device.save
+#      notification = APN::Notification.new
+#      notification.device = device
+#      notification.badge = 3
+#      notification.sound = false
+#      notification.alert = "You have new cards to review!"
+#      notification.custom_properties = {:doc => params[:id]}
+#      notification.save
+#      APN::Notification.send_notifications
+#    end
+#    render :nothing => true, :status => 200
+#  logger.debug(params[:id])
+#  THESE CONFIGURATIONS ARE DEFAULT, IF YOU WANT TO CHANGE UNCOMMENT LINES YOU WANT TO CHANGE
+#	configatron.apn.passphrase  = ''
+#	configatron.apn.port = 2195
+#	configatron.apn.host  = 'gateway.sandbox.push.apple.com'
+#	configatron.apn.cert = File.join(Rails.root, 'config', 'apple_push_notification_development.pem')
+#	THE CONFIGURATIONS BELOW ARE FOR PRODUCTION PUSH SERVICES, IF YOU WANT TO CHANGE UNCOMMENT LINES YOU WANT TO CHANGE
+#	configatron.apn.host = 'gateway.push.apple.com'
+#	configatron.apn.cert = File.join(RAILS_ROOT, 'config', 'apple_push_notification_production.pem')
+  
+	
   end
 
   def update_tag
@@ -209,9 +201,25 @@ class DocumentsController < ApplicationController
   def share
     @user = User.find_by_email(params['email'])
     @document = current_user.documents.find(params['id'])
+    
+    @document.userships.where('owner = 0').all.each do |viewer|
+    	puts viewer
+    end
+    
     if @user and @document and @user.id != current_user.id
       begin
-        @user.vdocs << @document
+        puts "starting"
+      	#puts @user.userships
+      	puts @user.id
+      	puts @document.id
+      	Usership.create(:user_id => @user.id,
+      				    :document_id => @document.document_id
+      				   )
+#      	@user.userships << @usership
+      	puts "BREAK"
+      	puts @user.userships
+      	
+      	#@user.vdocs << @document
         @user.save
         render :text => @user.id
         return
@@ -227,7 +235,8 @@ class DocumentsController < ApplicationController
 
     if @user and @document and @user.id != current_user.id
       begin
-        @user.vdocs.delete(@document)
+        @user.userships.delete(@document)
+        #@user.vdocs.delete(@document)
         @user.save
         render :nothing => true, :status => 200
         return
@@ -248,13 +257,23 @@ class DocumentsController < ApplicationController
   def get_permission(document)
     @w = @r = false
     return if document.nil?
-
-    if document.user_id == current_user.id
+    #puts document.userships.find_by_id("1")
+	#puts document.userships.where('owner = 1')[0].user_id
+	#if 
+	if document.userships.where('owner = 1')[0].user_id == current_user.id
+    #if document.user_id == current_user.id
       @w = @r = true
     elsif document.public
       @r = true
-    elsif not document.viewers.find_by_id(current_user.id).nil?
+    #NOT SURE THIS IS WORKING....
+    elsif not document.userships.find_by_id(current_user.id).nil?
+    #elsif not document.viewers.find_by_id(current_user.id).nil?
       @r = true
     end
   end
+  
+#  def push_is_enabled
+#  	return false
+#  end
+  
 end

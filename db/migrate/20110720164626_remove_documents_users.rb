@@ -27,19 +27,9 @@ class RemoveDocumentsUsers < ActiveRecord::Migration
       t.column :document_id, :integer
       t.column :user_id, :integer
     end
+    
     add_index(:documents_users, [:document_id, :user_id], :unique => true)
     
-    Usership.all.each do |usership|
-    	@doc_user = Documents_user.new
-    	@doc_user.document_id = usership.document_id
-    	@doc_user.user_id = usership.user_id
-    	@doc_user.save
-    	
-    	#Documents_users.create(:document_id => usership.document_id,
-    	#					 :user_id => user_id)
-    end
-    #Repopulate the data
-
     #4 - Adds the column for user_id back into the documents table then loops through the 
     #    ownership table, restoring user_id to the documents
     add_column :documents, :user_id, :integer
