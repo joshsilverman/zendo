@@ -5,7 +5,7 @@ class RemoveDocumentsUsers < ActiveRecord::Migration
   	#What about all of the data that was in here?
   	
   	#2 - Add a column to the userships table to indicate ownership
-  	add_column :userships, :owner, :boolean
+  	add_column :userships, :owner, :boolean, :default => true
   	
   	#3 - Loop through all documents, creating a usership for each and populating
   	#    with the appropriate owner, document, and ownership status
@@ -14,6 +14,7 @@ class RemoveDocumentsUsers < ActiveRecord::Migration
     					:user_id => doc.user_id,
     					:owner => true)
     					#What about shared docs?
+              # ENSURE THAT THIS ISNT MAKING OWNERS OF USERS THAT ARE SHARED WITH!!!
     end 
     
     #4 - Removes the user_id column from the documents table (now stored in userships)

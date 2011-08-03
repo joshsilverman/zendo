@@ -4,7 +4,7 @@ class CreateUserships < ActiveRecord::Migration
     
       t.integer :user_id
       t.integer :document_id
-      t.boolean :push_enabled
+      t.boolean :push_enabled, :default => false
 
       t.timestamps
     end

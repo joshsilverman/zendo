@@ -9,33 +9,39 @@ class Tag < ActiveRecord::Base
   has_many :documents, :dependent => :destroy
   belongs_to :user
 
-  validates_uniqueness_of :name, :scope => :user_id
+#  validates_uniqueness_of :name, :scope => :user_id
 
   def self.tags_json(current_user = nil)
-    
     return nil if current_user.blank?
     tags = current_user.tags\
                     .includes(:documents)\
                     .all
-   
-    # append info on shared documents
-    # shared_docs = current_user.vdocs.select(["documents.id", "documents.name", "documents.updated_at", "documents.created_at", "documents.tag_id"]).all
-    #puts current_user.userships.select("document_id")
-	#puts current_user.documents.where(document).select(["documents.id", "document.name", "updated_at", "documents.created_at", "documents.tag_id"]).all
-	#puts current_user.userships.where('owner = 0').documents.select('document_id')#(["documents.id", "document.name", "updated_at", "documents.created_at", "documents.tag_id"]).all
-	
+#    puts "Start"
+#    tags.each do |tag|
+#      puts tag.documents.each do |doc|
+#
+#      end
+#    end
+#    puts "End"
+#    append info on shared documents
+#    shared_docs = current_user.vdocs.select(["documents.id", "documents.name", "documents.updated_at", "documents.created_at", "documents.tag_id"]).all
+#    puts current_user.userships.select("document_id")
+#    puts current_user.documents.where(document).select(["documents.id", "document.name", "updated_at", "documents.created_at", "documents.tag_id"]).all
+#	  puts current_user.userships.where('owner = 0').documents.select('document_id')#(["documents.id", "document.name", "updated_at", "documents.created_at", "documents.tag_id"]).all
+#    puts tags.to_json
     shared_docs = Array.new
     for usership in current_user.userships
-    	if usership.owner == false    		
+    	if usership.owner == false
     		shared_docs << usership.document
     	end
     end
-    #for doc in shared_docs
-    	#puts doc
-    #end
+
+    puts shared_docs.to_json
     shared_tag = Tag.new(:name => "Shared")
     shared_tag.documents << shared_docs
+    tags << shared_tag
     puts tags.to_json(:include => {:documents => {:only => [:id, :name, :updated_at, :created_at, :tag_id]}})
+
     return tags.to_json(:include => {:documents => {:only => [:id, :name, :updated_at, :created_at, :tag_id]}})
     #rescue: []
   end

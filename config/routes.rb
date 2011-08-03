@@ -79,9 +79,9 @@ Zendo::Application.routes.draw do
   match "/documents/unshare"
   match "/documents/update_privacy"
   match "/documents/update_document_name"
+  match "/documents/:id/cards" => "documents#cards"
   match "/documents/:id" => "documents#edit", :via => [:get], :read_only => true
   match "/documents/enable_mobile/:id/:bool" => "documents#enable_mobile"
-  #match "/documents/retrieve_notifications" => "documents#retrieve_notifications"
   resources :documents, :only => [:edit, :update, :destroy]
 
   # terms

@@ -24,6 +24,8 @@ class UsersController < ApplicationController
   
   def retrieve_notifications
     @payload = Array.new
+    @hash = Hash.new
+    @hash["cards"] = []
     Mem.where('user_id = ? AND pushed = true', current_user.id).all.each do |mem|
 #      puts mem.to_json
       @docid = Line.find_by_id(mem.line_id).document_id
@@ -40,21 +42,20 @@ class UsersController < ApplicationController
         @result = @result.split('- ')
       end
       @result << mem.id
+      puts @result.to_json
       @payload << @result
+      @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => mem.id}
     end
-    render :json => @payload
+    render :json => @hash
   end
 
   def add_device
-    puts params.to_json
     @device = APN::Device.new
-    @device.token = params[:token]
+    @token = params[:token]
+    @token = @token.insert(56, " ").insert(48, " ").insert(40, " ").insert(32, " ").insert(16, " ").insert(8, " ")
+    @device.token = @token
     @device.user_id = current_user.id
-    @device.last_registered_at = DateTime.now
-    @device.created_at = DateTime.now
-    @device.updated_at = DateTime.now
-    puts @device.to_json
-#    @device.save
+    @device.save
     render :nothing => true
   end
 

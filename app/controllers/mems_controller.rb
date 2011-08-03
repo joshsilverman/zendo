@@ -1,7 +1,7 @@
 class MemsController < ApplicationController
   
   def update
-
+    puts "In update mem"
     mem = current_user.mems.find(params[:id])
     puts mem.to_json
     puts params[:confidence]

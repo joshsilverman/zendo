@@ -174,6 +174,7 @@ var cDoc = Class.create({
         } else if((checkedList[0] == null && this.activeItemId!='')||(checkedList[1] == null && this.activeItemId!='')){
             var singleDoc = this.docs.get($(this.activeItemId).readAttribute('doc_id'));
             var d = singleDoc['created_at'].split('-');
+            console.log(singleDoc);
             this.convertDate(new Date(d[0], d[1], d[2].substring(0,2)));
             var created = this.theDate;
             d = singleDoc['updated_at'].split('-');
@@ -194,6 +195,8 @@ var cDoc = Class.create({
                     <em>'+created+'</em><br/>\
                     <h4 class="details_label">Last Updated: </h4>\
                     <em>'+updated+'</em></div>';
+//                    <h4 class="details_label">Push Review: </h4>\
+//                    <em>'+updated+'</em></div>';
         } else if(checkedList[1] == null && this.activeItemId == ''){
             html += 'You have selected <strong>'+this.docs.get(checkedList[0])['name']+'</strong>... Use the checkboxes to take actions on multiple documents';
         } else {
@@ -580,8 +583,12 @@ var cDoc = Class.create({
         //listen for doc folder change
         document.observe("document:moved", function() {
             new Ajax.Request('/tags/get_tags_json', {
-               onSuccess: function(transport) {
+               onSuccess : function(transport) {
                    $('tags_json').update(transport.responseText);
+               }.bind(this),
+               onComplete: function(){
+                   this.prepareData();
+                   this.render();
                }.bind(this)
             });
             new Ajax.Request('/tags/get_recent_json', {
@@ -590,7 +597,9 @@ var cDoc = Class.create({
                }.bind(this),
                onComplete: function(){
                    this.prepareData();
-                   this.render();
+//                   this.render();
+                   this._buildFolders();
+                   this._buildDocs();
                }.bind(this)
             });
         }.bind(this));

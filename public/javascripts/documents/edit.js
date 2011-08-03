@@ -99,11 +99,23 @@ var cDoc = Class.create({
             
         }.bind(this));
 
-		/* observe push enable */
+        /* observe push enable */
         Event.observe($("mobile_review"), "click", function(e) {
-        	var requestUrl = "/documents/enable_mobile/" + doc.outline.documentId + "/" + (($("mobile_review").checked)?1:0);
-        	//TODO fill callback parameters
-            new Ajax.Request(requestUrl, {});
+            var requestUrl = "/documents/enable_mobile/" + doc.outline.documentId + "/" + (($("mobile_review").checked)?1:0);
+            //TODO fill callback parameters
+            new Ajax.Request(requestUrl, {
+                onSuccess : function(e) {
+                    if (e.responseText == "fail") {
+                        console.log("No mobile device associated with account!");
+                        $("mobile_review").checked = false;
+                        alert("Looks like you don't have a mobile device enabled yet! To enable push review, you need to" +
+                              " download the StudyEgg app to your smartphone and sign in using your email and password. " +
+                              " If you believe you have received this message in error, please get in touch!");
+                    } else {
+                        console.log("Mobile device found.");
+                    }
+                }
+            });
         }.bind(this));
 
         $("doc_options").removeClassName("loading");

@@ -18,11 +18,11 @@ test:
   database: zendo_test
   pool: 5
   timeout: 5000
-  socket: <%= ['/opt/local/var/run/mysql5/mysqld.sock', # darwinports
+  socket: <%= ['/tmp/mysql.sock',
+	     '/opt/local/var/run/mysql5/mysqld.sock', # darwinports
          '/opt/local/var/run/mysqld/mysqld.sock', # darwinports, again
          '/var/run/mysqld/mysqld.sock',           # ubuntu/debian
-         '/var/mysql/mysql.sock',
-         '/tmp/mysql.sock'].select { |f| File.exist? f }.first %>
+         '/var/mysql/mysql.sock'].select { |f| File.exist? f }.first %>
          
 production:
   adapter: mysql2

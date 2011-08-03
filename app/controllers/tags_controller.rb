@@ -43,7 +43,6 @@ class TagsController < ApplicationController
   end
 
   def update
-
     #param check
     if params[:name].nil?
       render :nothing => true, :status => 400

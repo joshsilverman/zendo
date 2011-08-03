@@ -28,9 +28,11 @@ class DocumentsController < ApplicationController
     # check id posted
     id = params[:id]
     @read_only = params[:read_only]
-
     # check document exists
+    @document = Document.find_by_id(params[:id])
+    puts @document.to_json
     get_document(params[:id])
+    puts @document.to_json
     if @document.nil?
       redirect_to '/explore', :notice => "Error accessing that document."
       return
@@ -81,7 +83,9 @@ class DocumentsController < ApplicationController
   end
 
   def review
+    puts params[:id]
     get_document(params[:id])
+    puts @document
     if @document.nil?
       redirect_to '/', :notice => "Error accessing that document."
       return
@@ -90,7 +94,7 @@ class DocumentsController < ApplicationController
     # get lines
     owner_lines = Line.includes(:mems).where("lines.document_id = ?
                         AND mems.status = true AND mems.user_id = ?",
-                        params[:id], @document.userships.where('owner = 1')[0].user_id)
+                        params[:id], @document.userships(:conditions => {:owner => true}).first.user_id)
  
     if @document.id == current_user.id
       @lines_json = owner_lines.to_json :include => :mems
@@ -123,20 +127,31 @@ class DocumentsController < ApplicationController
   end  
   
   def enable_mobile
-    get_document(params[:id])
   	if params[:bool] == "1"
   		logger.debug("Enable mobile!")
-  		@usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
-      @usership.first.update_attribute(:push_enabled, true)
-      puts @usership.to_json
+      if APN::Device.all(:conditions => {:user_id => current_user.id}).empty?
+        render :text => "fail"
+      else
+        @usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
+        @usership.first.update_attribute(:push_enabled, true)
+        puts @usership.to_json
+        render :text => "pass"
+      end
   	else
   		logger.debug("Disable mobile!")
   		@usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
       @usership.first.update_attribute(:push_enabled, false)
       puts @usership.to_json
+      puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
+      Mem.all(:conditions => {:document_id => get_document(params[:id]), :pushed => true}).each do |mem|
+        mem.update_attribute(:pushed, false)
+        mem.save
+      end
+      puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
   		#Delete all pending notifications for the usership
+      render :nothing => true, :status => 200
   	end
-    render :nothing => true, :status => 200
+    
 
     #Uncomment for immediate push demo
 #    if params[:bool] == "1"
@@ -154,6 +169,8 @@ class DocumentsController < ApplicationController
 #      APN::Notification.send_notifications
 #    end
 #    render :nothing => true, :status => 200
+#
+#
 #  logger.debug(params[:id])
 #  THESE CONFIGURATIONS ARE DEFAULT, IF YOU WANT TO CHANGE UNCOMMENT LINES YOU WANT TO CHANGE
 #	configatron.apn.passphrase  = ''
@@ -168,9 +185,12 @@ class DocumentsController < ApplicationController
   end
 
   def update_tag
-    if @document = current_user.documents.find(params[:doc_id])
+    if @document = current_user.documents.find(params[:doc_id], :readonly => false)
+      puts "Yeah yo"
       if current_user.tags.find(params[:tag_id])
+        puts @document.tag_id
         @document.update_attribute(:tag_id, params[:tag_id])
+        puts @document.tag_id
       else
         render :nothing => true, :status => 403
       end
@@ -182,7 +202,7 @@ class DocumentsController < ApplicationController
 
   def update_document_name
     if @document = current_user.documents.find(params[:doc_id])
-        @document.update_attribute(:name, params[:name])
+      @document.update_attribute(:name, params[:name])
     else
       render :nothing => true, :status => 403
     end
@@ -190,8 +210,8 @@ class DocumentsController < ApplicationController
   end
 
   def update_privacy
-    if @document = current_user.documents.find(params[:id])
-        @document.update_attribute(:public, params[:bool])
+    if @document = current_user.documents.find(params[:id], :readonly => false)
+      @document.update_attribute(:public, params[:bool])
     else
       render :nothing => true, :status => 403
     end
@@ -199,27 +219,17 @@ class DocumentsController < ApplicationController
   end
 
   def share
+    #User to share with
     @user = User.find_by_email(params['email'])
+    #Document to be shared
     @document = current_user.documents.find(params['id'])
-    
-    @document.userships.where('owner = 0').all.each do |viewer|
-    	puts viewer
-    end
-    
+    #Sharing with someone else
     if @user and @document and @user.id != current_user.id
       begin
-        puts "starting"
-      	#puts @user.userships
-      	puts @user.id
-      	puts @document.id
       	Usership.create(:user_id => @user.id,
-      				    :document_id => @document.document_id
+      				    :document_id => @document.id,
+                  :owner => false
       				   )
-#      	@user.userships << @usership
-      	puts "BREAK"
-      	puts @user.userships
-      	
-      	#@user.vdocs << @document
         @user.save
         render :text => @user.id
         return
@@ -232,22 +242,40 @@ class DocumentsController < ApplicationController
   def unshare
     @user = User.find(params['viewer_id'])
     @document = current_user.documents.find(params['id'])
-
-    if @user and @document and @user.id != current_user.id
+#    if @user and @document and @user.id != current_user.id
+    if @user.id != current_user.id
       begin
-        @user.userships.delete(@document)
-        #@user.vdocs.delete(@document)
+        @user.userships.destroy(@user.userships.find_by_document_id(@document.id))
         @user.save
         render :nothing => true, :status => 200
         return
-      rescue
+#      rescue
       end
     end
     render :nothing => true, :status => 400
   end
 
+  def cards
+    @hash = Hash.new
+    @hash["cards"] = []
+    Mem.all(:conditions => {:user_id => current_user.id, :document_id => params[:id]}).each do |mem|
+      @docid = Line.find_by_id(mem.line_id).document_id
+      @domid = Line.find_by_id(mem.line_id).domid
+      #Check if line has a def tag, otherwise split on dash
+      @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(@docid).html + "</wrapper>").xpath("//li[@id='" + @domid + "']").first.children.first.text
+      @result = @result.split(' -')
+      if @result.class != Array
+        @result = @result.split('- ')
+      end
+      @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => mem.id}
+    end
+    render :json => @hash
+  end
+  
+
   private
 
+  
   def get_document(id)
     document = Document.find_by_id(id)
     get_permission(document)
@@ -259,21 +287,18 @@ class DocumentsController < ApplicationController
     return if document.nil?
     #puts document.userships.find_by_id("1")
 	#puts document.userships.where('owner = 1')[0].user_id
-	#if 
-	if document.userships.where('owner = 1')[0].user_id == current_user.id
-    #if document.user_id == current_user.id
+	#if
+
+    if Usership.find_by_document_id(document.id).user_id == current_user.id
+      puts "Owner"
       @w = @r = true
     elsif document.public
+      puts "Public document"
       @r = true
-    #NOT SURE THIS IS WORKING....
-    elsif not document.userships.find_by_id(current_user.id).nil?
-    #elsif not document.viewers.find_by_id(current_user.id).nil?
+    elsif !document.userships.find_by_user_id(current_user.id).nil?
+      puts "Shared document"
       @r = true
     end
+    puts "end"
   end
-  
-#  def push_is_enabled
-#  	return false
-#  end
-  
 end
