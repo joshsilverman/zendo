@@ -35,6 +35,109 @@ var cDoc = Class.create({
 
         /* place footer */
         AppUtilities.resizeContents();
+    },
+
+    setMC: function(){
+        console.log(jQuery('div#card_front_text')[0].innerHTML);
+        if (jQuery('div#card_front_text')[0].getAttribute('term')){
+            var term = jQuery('div#card_front_text')[0].getAttribute('term');
+        } else {
+            var term = jQuery('div#card_front_text')[0].innerHTML;
+        }
+        term = term.gsub(" ", "_");
+        console.log(term);
+        jQuery.ajax({
+                   url: "http://localhost:5000/multiple/"+term+".json",
+                   xhrFields: {
+                      withCredentials: true
+                   },
+                    beforeSend: function() {
+                        console.log("BEFORESEND");
+                    },
+                    success: function(transport) {
+                        console.log("SUCCESS");
+                        console.log(transport.blank);
+                        console.log(transport.answers);
+                        this.formatMC(transport.blank, transport.answers);
+                    }.bind(this),
+                    error: function(transport) {
+                        console.log(transport);
+                        console.log("ERROR");
+                    },
+                    complete: function() {
+                        console.log("COMPLETE");
+                    }
+                });
+    },
+
+    formatMC: function(blank, answers){
+        if (blank != "") {
+            jQuery('td#card_front')[0].innerHTML = "<div id='card_front_text' term='"+answers.c_answer+"'>"+blank+"</div>";
+            jQuery('td#card_back')[0].innerHTML = "<div id='card_back_text'><table id='answers'><tr><td>"+answers.c_answer+"</td><td>"+answers.i_answer[0]+"</td></tr><tr><td>"+answers.i_answer[1]+"</td><td>"+answers.i_answer[2]+"</td></tr></table></div>";
+        }
+
+        $$('.button_container, .grade_yourself').each(function (buttonContainer) {
+            if(!(buttonContainer.hasClassName('grade_hide'))){
+                buttonContainer.addClassName('grade_hide');
+            }
+        });
+
+        $('answers').observe('click', function(){
+            doc.reviewer.next();
+        });
+    },
+
+    setFitB: function(){
+        console.log(jQuery('div#card_front_text')[0].innerHTML);
+        if (jQuery('div#card_front_text')[0].getAttribute('term')){
+            var term = jQuery('div#card_front_text')[0].getAttribute('term');
+        } else {
+            var term = jQuery('div#card_front_text')[0].innerHTML;
+        }
+        term = term.gsub(" ", "_");
+        console.log(term);
+        jQuery.ajax({
+                   url: "http://localhost:5000/multiple/"+term+".json",
+                   xhrFields: {
+                      withCredentials: true
+                   },
+                    beforeSend: function() {
+                        console.log("BEFORESEND");
+                    },
+                    success: function(transport) {
+                        console.log("SUCCESS");
+                        console.log(transport.blank);
+                        console.log(transport.answers);
+                        this.formatFitB(transport.blank, transport.answers.c_answer);
+                    }.bind(this),
+                    error: function(transport) {
+                        console.log(transport);
+                        console.log("ERROR");
+                    },
+                    complete: function() {
+                        console.log("COMPLETE");
+                    }
+                });
+    },
+
+    formatFitB: function(blank, answer){
+        if (blank != "") {
+            jQuery('td#card_front')[0].innerHTML = "<div id='card_front_text' term='"+answer+"'>"+blank+"</div>";
+            jQuery('td#card_back')[0].innerHTML = "<div id='card_back_text'>"+answer+"</div>";
+        }
+
+        $$('.button_container, .grade_yourself').each(function (buttonContainer) {
+            if(!(buttonContainer.hasClassName('grade_hide'))){
+                buttonContainer.addClassName('grade_hide');
+            }
+        });
+
+        $('card_back').update('<input id="answer_input" type="text" />');
+        $('answer_input').observe('keydown', function(event){
+            if (event.keyCode == 13) {
+                doc.reviewer.next();
+            }
+        });
     }
 });
 
@@ -332,8 +435,11 @@ var cCard = Class.create({
         this.memId = data['mems'][0]['id'];
         this.documentId = data['document_id'];
         this.text = data['text'];
+<<<<<<< HEAD
 //        console.log(this.text);
 
+=======
+>>>>>>> multiple choice review
     },
 
     cue: function() {
@@ -344,6 +450,11 @@ var cCard = Class.create({
         /* front */
         $('card_front').update("<div id='card_front_text'>"+this.front+"</div>" + this.buttons);
         $('card_front_text').update(this.front);
+
+        console.log("FRONT: ");
+        console.log(this.front);
+        console.log("BACK: ");
+        console.log(this.back);
 
         /* back */
         $('card_back').update('<button id="card_show">Show (space bar)</button>');

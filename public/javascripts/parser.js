@@ -5,7 +5,7 @@ var cParser = Class.create({
     line:null,
 
     parse: function(Card, ellipsize) {
-
+        console.log(Card);
         //pull card text from doc if text is blank
         this._identifyDoc(Card);
         if (Card.text == null) Card.text = "";
@@ -27,6 +27,9 @@ var cParser = Class.create({
 
         /* ellipsize */
         if (ellipsize) this._ellipsize(Card);
+
+        console.log(Card);
+
     },
 
     _ellipsize: function(Card) {
@@ -97,10 +100,14 @@ var cParser = Class.create({
                 Card.back += node.getAttribute('def');
             }
             else {
-                console.log("HERES THE TERM:");
-                console.log(term);
-                new Ajax.Request("/terms/lookup/" + term, {
-                    onCreate: function() {
+
+                jQuery.ajax({
+                   url: "http://localhost:5000/topics/get/"+term+".json",
+                   xhrFields: {
+                      withCredentials: true
+                   },
+                    beforeSend: function() {
+                        console.log("BEFORESEND");
                         Card.autoActivate = true;
                         //set autoActivate member if this is the first time text has been parsable
                         if (!Card.back && !Card.active) {
@@ -110,22 +117,28 @@ var cParser = Class.create({
                         Card.back = '<img alt="loading" src="/images/shared/fb-loader.gif" style="border:none !important;">';
                         Card.render();
                     },
-                    onSuccess: function(transport) {
-                        node.setAttribute('def', transport.responseJSON['description']);
-                        node.setAttribute('img_src', transport.responseJSON['image']);
+                    success: function(transport) {
+                        console.log("SUCCESS");
+                        console.log(transport.topic.description)
+                        node.setAttribute('def', transport.topic.description);
+                        node.setAttribute('img_src', transport.topic.img_url);
+                        node.setAttribute('mc', true);
 
                         Card.front = Card.text
                         Card.back = "";
                         if (node.getAttribute('img_src'))
-                            Card.back += "<img src='" + transport.responseJSON['image'] + "'>";
-                        Card.back += transport.responseJSON['description'];
+                            Card.back += "<img src='" + transport.topic.img_url + "'>";
+                        Card.back += transport.topic.description;
                         Card.render();
                     },
-                    onFailure: function() {
+                    error: function(transport) {
+                        console.log(transport);
+                        console.log("ERROR");
                         Card.back = '';
                         Card.render();
                     },
-                    onComplete: function() {
+                    complete: function() {
+                        console.log("COMPLETE");
                         if (doc.outline) {
                             doc.editor.isNotDirty = false;
                             doc.outline.autosave();

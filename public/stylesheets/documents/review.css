@@ -8,6 +8,16 @@ ul {
     
 }
 
+#answers td{
+    padding:20px;
+    margin:5px;
+    cursor: pointer;
+    background-color: #e2e2e2;
+    text-align: center;
+    border:1px #a4a4a4 solid;
+    width:50%;
+}
+
 .contents {
     height: 10px !important;
 }

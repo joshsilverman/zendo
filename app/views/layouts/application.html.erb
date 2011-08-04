@@ -7,7 +7,7 @@
   <meta name="description" content="StudyEgg automatically creates study guides from your notes and tracks how much you know. Spend less time studying and know your material better with StudyEgg!" />
   <%= csrf_meta_tag %>
   <% auto_js_css =  controller.controller_name + '/' + controller.action_name  %>
-
+  
   <!--auto-include css if exists-->
   <% auto_css_full =  ::Rails.root.to_s + '/public/stylesheets/' + controller.controller_name + '/' + controller.action_name + '.css'  %>
   <% if  File.file?(auto_css_full) %>
@@ -26,6 +26,10 @@
     <%= javascript_include_tag 'default', :cache => false %>
   <% end %>
   <% if @page_specific_scripts_js %> <%= javascript_include_tag @page_specific_scripts_js, :cache => '/cache/' + auto_js_css %> <% end %>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
+  <script>
+      jQuery.noConflict();
+  </script>
   <link rel="icon" type="image/png" href="/images/logos/favicon.ico" />
   <meta name="google-site-verification" content="1kmG8JhfDQo1KP7tHKZsMRUa8Msr83nxkOj3aQ_jCl0" />
 </head>
