@@ -101,10 +101,12 @@ class DocumentsController < ApplicationController
     else
       # on demand mem creation
       Mem.transaction do
+        puts "creating a mem!"
         owner_lines.each do |owner_line|
           mem = Mem.find_or_initialize_by_line_id_and_user_id(owner_line.id, current_user.id);
           mem.strength = 0.5 if mem.strength.nil?
           mem.status = 1 if mem.status.nil?
+          mem.document_id = @document.id
           mem.save
         end
       end
@@ -127,19 +129,64 @@ class DocumentsController < ApplicationController
   end  
   
   def enable_mobile
-  	if params[:bool] == "1"
-  		logger.debug("Enable mobile!")
+#  	if params[:bool] == "1"
+#  		logger.debug("Enable mobile!")
+#      if APN::Device.all(:conditions => {:user_id => current_user.id}).empty?
+#        render :text => "fail"
+#      else
+#        @usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
+#        @usership.first.update_attribute(:push_enabled, true)
+#        puts @usership.to_json
+#        render :text => "pass"
+#      end
+#  	else
+#  		logger.debug("Disable mobile!")
+#  		@usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
+#      @usership.first.update_attribute(:push_enabled, false)
+#      puts @usership.to_json
+#      puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
+#      Mem.all(:conditions => {:document_id => get_document(params[:id]), :pushed => true}).each do |mem|
+#        mem.update_attribute(:pushed, false)
+#        mem.save
+#      end
+#      puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
+#  		#Delete all pending notifications for the usership
+#      render :nothing => true, :status => 200
+#  	end
+    
+
+    #Uncomment for immediate push demo
+    if params[:bool] == "1"
+      puts "CHeck"
+      puts APN::Device.all.to_json
       if APN::Device.all(:conditions => {:user_id => current_user.id}).empty?
         render :text => "fail"
       else
-        @usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
-        @usership.first.update_attribute(:push_enabled, true)
-        puts @usership.to_json
-        render :text => "pass"
+ #      @document = get_document(params[:id])
+#      puts @document.to_json
+        Mem.all(:conditions => {:document_id => params[:id]}).each do |mem|
+#          puts mem.to_json
+          mem.pushed = true
+          mem.save
+#          puts mem.to_json
+        end
+        puts "Enable mobile!"
+        @device = APN::Device.all(:conditions => {:user_id => current_user.id}).first
+        notification = APN::Notification.new
+        notification.device = @device
+        notification.badge = Mem.all(:conditions => {:document_id => params[:id]}).count
+        notification.sound = false
+        notification.user_id = current_user.id
+        notification.alert = "You have new cards to review!"
+        notification.custom_properties = {:doc => params[:id]}
+        puts notification.to_json
+        notification.save
+        APN::Notification.send_notifications
+        render :nothing => true, :status => 200
       end
-  	else
-  		logger.debug("Disable mobile!")
-  		@usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
+    else
+      logger.debug("Disable mobile!")
+      @usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
       @usership.first.update_attribute(:push_enabled, false)
       puts @usership.to_json
       puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
@@ -148,27 +195,10 @@ class DocumentsController < ApplicationController
         mem.save
       end
       puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
-  		#Delete all pending notifications for the usership
+      #Delete all pending notifications for the usership
       render :nothing => true, :status => 200
-  	end
+    end
     
-
-    #Uncomment for immediate push demo
-#    if params[:bool] == "1"
-#      puts "Enable mobile!"
-#      device = APN::Device.create( :token => "6d7295b5 58f294d5 5b542e46 77b28b73 34a6263a 9f98d6d3 820e8616 6f711fab" )
-#      device.id = 1
-#      device.save
-#      notification = APN::Notification.new
-#      notification.device = device
-#      notification.badge = 3
-#      notification.sound = false
-#      notification.alert = "You have new cards to review!"
-#      notification.custom_properties = {:doc => params[:id]}
-#      notification.save
-#      APN::Notification.send_notifications
-#    end
-#    render :nothing => true, :status => 200
 #
 #
 #  logger.debug(params[:id])
@@ -256,19 +286,36 @@ class DocumentsController < ApplicationController
   end
 
   def cards
+    puts "Cards"
     @hash = Hash.new
     @hash["cards"] = []
-    Mem.all(:conditions => {:user_id => current_user.id, :document_id => params[:id]}).each do |mem|
-      @docid = Line.find_by_id(mem.line_id).document_id
-      @domid = Line.find_by_id(mem.line_id).domid
-      #Check if line has a def tag, otherwise split on dash
-      @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(@docid).html + "</wrapper>").xpath("//li[@id='" + @domid + "']").first.children.first.text
+
+    Line.all(:conditions => {:user_id => current_user.id, :document_id => params[:id]}).each do |line|
+      @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@id='" + line.domid + "']").text
+      puts @result
+      puts Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@id='" + line.domid + "']").first.children.first.text
+      puts "**\n\n\n\n"
       @result = @result.split(' -')
       if @result.class != Array
         @result = @result.split('- ')
       end
-      @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => mem.id}
+      @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
     end
+
+#    Mem.all(:conditions => {:user_id => current_user.id, :document_id => params[:id]}).each do |mem|
+#      @docid = Line.find_by_id(mem.line_id).document_id
+#      @domid = Line.find_by_id(mem.line_id).domid
+#      puts "Start"
+#      puts @docid, @domid
+#      puts "End"
+#      #Check if line has a def tag, otherwise split on dash
+#      @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(@docid).html + "</wrapper>").xpath("//li[@id='" + @domid + "']").first.children.first.text
+#      @result = @result.split(' -')
+#      if @result.class != Array
+#        @result = @result.split('- ')
+#      end
+#      @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => mem.id}
+#    end
     render :json => @hash
   end
   

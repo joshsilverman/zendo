@@ -4,7 +4,7 @@ class LinesController < ApplicationController
     
     line = Line.where(:id => params[:line][:id], :user_id => current_user.id).first
     if line
-
+      
       #update denormalized html in documents table
       document = Document.find_by_id(line.document_id)
       html = document.html

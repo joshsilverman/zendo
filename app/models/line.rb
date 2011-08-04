@@ -29,6 +29,7 @@ class Line < ActiveRecord::Base
                         :user_id => user_id,
                         :line_id => existing_line.id,
                         :status => true,
+                        :document_id => document_id,
                         :review_after => Time.now})
           end
 
@@ -46,6 +47,7 @@ class Line < ActiveRecord::Base
                       :user_id => user_id,
                       :line_id => created_line.id,
                       :status => true,
+                      :document_id => document_id,
                       :review_after => Time.now})
         end
       elsif existing_line
