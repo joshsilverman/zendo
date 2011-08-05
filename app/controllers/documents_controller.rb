@@ -157,18 +157,14 @@ class DocumentsController < ApplicationController
 
     #Uncomment for immediate push demo
     if params[:bool] == "1"
-      puts "CHeck"
-      puts APN::Device.all.to_json
       if APN::Device.all(:conditions => {:user_id => current_user.id}).empty?
         render :text => "fail"
       else
- #      @document = get_document(params[:id])
-#      puts @document.to_json
         Mem.all(:conditions => {:document_id => params[:id]}).each do |mem|
 #          puts mem.to_json
           mem.pushed = true
           mem.save
-#          puts mem.to_json
+          puts mem.to_json
         end
         puts "Enable mobile!"
         @device = APN::Device.all(:conditions => {:user_id => current_user.id}).first
@@ -198,10 +194,6 @@ class DocumentsController < ApplicationController
       #Delete all pending notifications for the usership
       render :nothing => true, :status => 200
     end
-    
-#
-#
-#  logger.debug(params[:id])
 #  THESE CONFIGURATIONS ARE DEFAULT, IF YOU WANT TO CHANGE UNCOMMENT LINES YOU WANT TO CHANGE
 #	configatron.apn.passphrase  = ''
 #	configatron.apn.port = 2195
@@ -210,8 +202,6 @@ class DocumentsController < ApplicationController
 #	THE CONFIGURATIONS BELOW ARE FOR PRODUCTION PUSH SERVICES, IF YOU WANT TO CHANGE UNCOMMENT LINES YOU WANT TO CHANGE
 #	configatron.apn.host = 'gateway.push.apple.com'
 #	configatron.apn.cert = File.join(RAILS_ROOT, 'config', 'apple_push_notification_production.pem')
-  
-	
   end
 
   def update_tag
@@ -249,11 +239,8 @@ class DocumentsController < ApplicationController
   end
 
   def share
-    #User to share with
     @user = User.find_by_email(params['email'])
-    #Document to be shared
     @document = current_user.documents.find(params['id'])
-    #Sharing with someone else
     if @user and @document and @user.id != current_user.id
       begin
       	Usership.create(:user_id => @user.id,
@@ -285,37 +272,26 @@ class DocumentsController < ApplicationController
     render :nothing => true, :status => 400
   end
 
+  #Returns a hash of all of the cards belonging to a given document
   def cards
-    puts "Cards"
     @hash = Hash.new
     @hash["cards"] = []
-
     Line.all(:conditions => {:user_id => current_user.id, :document_id => params[:id]}).each do |line|
-      @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@id='" + line.domid + "']").text
-      puts @result
-      puts Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@id='" + line.domid + "']").first.children.first.text
-      puts "**\n\n\n\n"
-      @result = @result.split(' -')
-      if @result.class != Array
-        @result = @result.split('- ')
+      #If there if a <def> tag, create a card using its contents as the answer, otherwise split on the "-"
+      if !Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@def and @id='" + line.domid + "']").empty?
+        @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@def and @id='" + line.domid + "']")
+        @def = @result.first.attribute("def").to_s
+        @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
+      else
+        @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@id='" + line.domid + "']").first.children.first.text
+        @result = @result.split(' -')
+        if @result.class != Array
+          @result = @result.split('- ')
+        end
+        puts @result.to_json
+        @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
       end
-      @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
     end
-
-#    Mem.all(:conditions => {:user_id => current_user.id, :document_id => params[:id]}).each do |mem|
-#      @docid = Line.find_by_id(mem.line_id).document_id
-#      @domid = Line.find_by_id(mem.line_id).domid
-#      puts "Start"
-#      puts @docid, @domid
-#      puts "End"
-#      #Check if line has a def tag, otherwise split on dash
-#      @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(@docid).html + "</wrapper>").xpath("//li[@id='" + @domid + "']").first.children.first.text
-#      @result = @result.split(' -')
-#      if @result.class != Array
-#        @result = @result.split('- ')
-#      end
-#      @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => mem.id}
-#    end
     render :json => @hash
   end
   

@@ -65,7 +65,6 @@ namespace :notifications do
         else
           puts "No last notification... create a new one"
         end
-
       else
         puts "Good to send to this user"
         #If resend isn't nil, add new mems to review
