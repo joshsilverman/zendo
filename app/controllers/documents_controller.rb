@@ -129,60 +129,19 @@ class DocumentsController < ApplicationController
   end  
   
   def enable_mobile
-#  	if params[:bool] == "1"
-#  		logger.debug("Enable mobile!")
-#      if APN::Device.all(:conditions => {:user_id => current_user.id}).empty?
-#        render :text => "fail"
-#      else
-#        @usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
-#        @usership.first.update_attribute(:push_enabled, true)
-#        puts @usership.to_json
-#        render :text => "pass"
-#      end
-#  	else
-#  		logger.debug("Disable mobile!")
-#  		@usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
-#      @usership.first.update_attribute(:push_enabled, false)
-#      puts @usership.to_json
-#      puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
-#      Mem.all(:conditions => {:document_id => get_document(params[:id]), :pushed => true}).each do |mem|
-#        mem.update_attribute(:pushed, false)
-#        mem.save
-#      end
-#      puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
-#  		#Delete all pending notifications for the usership
-#      render :nothing => true, :status => 200
-#  	end
-    
-
-    #Uncomment for immediate push demo
-    if params[:bool] == "1"
+  	if params[:bool] == "1"
+  		logger.debug("Enable mobile!")
       if APN::Device.all(:conditions => {:user_id => current_user.id}).empty?
         render :text => "fail"
       else
-        Mem.all(:conditions => {:document_id => params[:id]}).each do |mem|
-#          puts mem.to_json
-          mem.pushed = true
-          mem.save
-          puts mem.to_json
-        end
-        puts "Enable mobile!"
-        @device = APN::Device.all(:conditions => {:user_id => current_user.id}).first
-        notification = APN::Notification.new
-        notification.device = @device
-        notification.badge = Mem.all(:conditions => {:document_id => params[:id]}).count
-        notification.sound = false
-        notification.user_id = current_user.id
-        notification.alert = "You have new cards to review!"
-        notification.custom_properties = {:doc => params[:id]}
-        puts notification.to_json
-        notification.save
-        APN::Notification.send_notifications
-        render :nothing => true, :status => 200
+        @usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
+        @usership.first.update_attribute(:push_enabled, true)
+        puts @usership.to_json
+        render :text => "pass"
       end
-    else
-      logger.debug("Disable mobile!")
-      @usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
+  	else
+  		logger.debug("Disable mobile!")
+  		@usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
       @usership.first.update_attribute(:push_enabled, false)
       puts @usership.to_json
       puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
@@ -191,9 +150,50 @@ class DocumentsController < ApplicationController
         mem.save
       end
       puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
-      #Delete all pending notifications for the usership
+  		#Delete all pending notifications for the usership
       render :nothing => true, :status => 200
-    end
+  	end
+    
+
+    #Uncomment for immediate push demo
+#    if params[:bool] == "1"
+#      if APN::Device.all(:conditions => {:user_id => current_user.id}).empty?
+#        render :text => "fail"
+#      else
+#        Mem.all(:conditions => {:document_id => params[:id]}).each do |mem|
+##          puts mem.to_json
+#          mem.pushed = true
+#          mem.save
+#          puts mem.to_json
+#        end
+#        puts "Enable mobile!"
+#        @device = APN::Device.all(:conditions => {:user_id => current_user.id}).first
+#        notification = APN::Notification.new
+#        notification.device = @device
+#        notification.badge = Mem.all(:conditions => {:document_id => params[:id]}).count
+#        notification.sound = false
+#        notification.user_id = current_user.id
+#        notification.alert = "You have new cards to review!"
+#        notification.custom_properties = {:doc => params[:id]}
+#        puts notification.to_json
+#        notification.save
+#        APN::Notification.send_notifications
+#        render :nothing => true, :status => 200
+#      end
+#    else
+#      logger.debug("Disable mobile!")
+#      @usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
+#      @usership.first.update_attribute(:push_enabled, false)
+#      puts @usership.to_json
+#      puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
+#      Mem.all(:conditions => {:document_id => get_document(params[:id]), :pushed => true}).each do |mem|
+#        mem.update_attribute(:pushed, false)
+#        mem.save
+#      end
+#      puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
+#      #Delete all pending notifications for the usership
+#      render :nothing => true, :status => 200
+#    end
 #  THESE CONFIGURATIONS ARE DEFAULT, IF YOU WANT TO CHANGE UNCOMMENT LINES YOU WANT TO CHANGE
 #	configatron.apn.passphrase  = ''
 #	configatron.apn.port = 2195
