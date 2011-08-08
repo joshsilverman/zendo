@@ -28,6 +28,8 @@ class UsersController < ApplicationController
     @hash = Hash.new
     @hash["cards"] = []
     #Iterates through all pushed mems the user owns
+    puts Usership.all(:conditions => {:user_id => current_user.id, :document_id => 4048}).to_json
+#    puts Mem.all(:conditions => {:user_id => current_user.id})
     Mem.where('user_id = ? AND pushed = true', current_user.id).all.each do |mem|
       @docid = Line.find_by_id(mem.line_id).document_id
       @domid = Line.find_by_id(mem.line_id).domid

@@ -35,6 +35,7 @@ namespace :notifications do
     #USE MEMS>COUNT
     User.all(:include => :userships, :conditions => { :userships => { :push_enabled => true }}).each do |user|
       @push_userships = user.userships.all(:conditions => { :userships => { :push_enabled => true }})
+      puts @push_userships.to_json
       @pushed_mems = Mem.all(:conditions => { :user_id => user.id, :pushed => true })
       #BELOW SHOULD BE OVERRIDEN IF THE USER HAS JUST PUSH ENABLED A NEW DOC AND IS EXPECTING NEW CARDS
       #REGARDLESS OF WHETHER THEY HAVE BEEN ANSWERING QUESTIONS ON THEIR OTHER DOCUMENTS => CHECK HERE
@@ -73,7 +74,8 @@ namespace :notifications do
             @last_notification.resend_at = nil
             @last_notification.save
             @push_userships.each do |usership|
-              Mem.where('document_id = ? AND pushed = false', usership.document.id).order('strength asc').limit(3).each do |mem|
+              Mem.all(:conditions => {:document_id => usership.document.id, :pushed => false, :user_id => usership.user_id}).order('strength asc').limit(3).each do |mem|
+#              Mem.where('document_id = ? AND pushed = false', usership.document.id).order('strength asc').limit(3).each do |mem|
                 mem.pushed = true
                 mem.save
                 puts mem.to_json
@@ -82,11 +84,11 @@ namespace :notifications do
           end
         else
           @push_userships.each do |usership|
-          Mem.where('document_id = ? AND pushed = false', usership.document.id).order('strength asc').limit(3).each do |mem|
-            mem.pushed = true
-            mem.save
-            puts mem.to_json
-          end
+            Mem.all(:conditions => {:document_id => usership.document.id, :pushed => false, :user_id => usership.user_id}).order('strength asc').limit(3).each do |mem|
+              mem.pushed = true
+              mem.save
+              puts mem.to_json
+            end
           end
         end
         notification = APN::Notification.new
