@@ -143,7 +143,7 @@ class DocumentsController < ApplicationController
             mem = Mem.find_or_initialize_by_line_id_and_user_id(owner_line.id, current_user.id);
             mem.strength = 0.5 if mem.strength.nil?
             mem.status = 1 if mem.status.nil?
-            mem.document_id = @owner_line.document_id if mem.document_id.nil?
+            mem.document_id = params[:id] if mem.document_id.nil?
             mem.line_id = owner_line.id if mem.line_id.nil?
             mem.user_id = current_user.id if mem.user_id.nil?
             mem.created_at = Time.now if mem.created_at.nil?
