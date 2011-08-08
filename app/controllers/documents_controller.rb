@@ -142,7 +142,6 @@ class DocumentsController < ApplicationController
           @new_usership.owner = false if @new_usership.owner.nil?
           @new_usership.push_enabled = false if @new_usership.push_enabled.nil?
           @new_usership.save
-          @new_usership.to_json
         end
         owner_lines = Line.includes(:mems).where("lines.document_id = ?
                             AND mems.status = true",
