@@ -138,7 +138,7 @@ class DocumentsController < ApplicationController
         #THIS CAN GET CONFUSED IF DONE ON A SHARED DOC, CHECK FOR USER ID!!!!
         #Fixed... I think
 
-        @usership = current_user.userships.where('document_id = ? AND user_id = ?', get_document(params[:id]), current_user.id)
+        @usership = current_user.userships.where('document_id = ? AND user_id = ?', params[:id], current_user.id)
         @usership.first.update_attribute(:push_enabled, true)
         puts @usership.to_json
         render :text => "pass"
@@ -148,7 +148,7 @@ class DocumentsController < ApplicationController
   		@usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
       @usership.first.update_attribute(:push_enabled, false)
       puts @usership.to_json
-      puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
+      puts Mem.all(:conditions => {:document_id => params[:id]}).to_json
       Mem.all(:conditions => {:document_id => get_document(params[:id]), :pushed => true}).each do |mem|
         mem.update_attribute(:pushed, false)
         mem.save

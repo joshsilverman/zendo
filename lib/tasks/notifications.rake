@@ -74,6 +74,7 @@ namespace :notifications do
             @last_notification.resend_at = nil
             @last_notification.save
             @push_userships.each do |usership|
+              puts usership.to_json
               Mem.where('document_id = ? AND pushed = false AND user_id = ?', usership.document_id, user.id).order('strength asc').limit(3).each do |mem|
                 mem.pushed = true
                 mem.save
