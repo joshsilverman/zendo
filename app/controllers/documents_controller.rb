@@ -134,6 +134,16 @@ class DocumentsController < ApplicationController
       if APN::Device.all(:conditions => {:user_id => current_user.id}).empty?
         render :text => "fail"
       else
+        Usership.transaction do
+          @new_usership = Usership.find_or_initialize_by_document_id_and_user_id(params[:id], current_user.id);
+          @new_usership.document_id = params[:id] if @new_usership.document_id.nil?
+          @new_usership.user_id = current_user.id if @new_usership.user_id.nil?
+          @new_usership.created_at = Time.now if @new_usership.created_at.nil?
+          @new_usership.owner = false if @new_usership.owner.nil?
+          @new_usership.push_enabled = false if @new_usership.push_enabled.nil?
+          @new_usership.save
+          @new_usership.to_json
+        end
         owner_lines = Line.includes(:mems).where("lines.document_id = ?
                             AND mems.status = true",
                             params[:id])                          
