@@ -134,7 +134,11 @@ class DocumentsController < ApplicationController
       if APN::Device.all(:conditions => {:user_id => current_user.id}).empty?
         render :text => "fail"
       else
-        @usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
+        #TODO
+        #THIS CAN GET CONFUSED IF DONE ON A SHARED DOC, CHECK FOR USER ID!!!!
+        #Fixed... I think
+
+        @usership = current_user.userships.where('document_id = ? AND user_id = ?', get_document(params[:id]), current_user.id)
         @usership.first.update_attribute(:push_enabled, true)
         puts @usership.to_json
         render :text => "pass"
@@ -285,8 +289,8 @@ class DocumentsController < ApplicationController
       else
         @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@id='" + line.domid + "']").first.children.first.text
         @result = @result.split(' -')
-        if @result.class != Array
-          @result = @result.split('- ')
+        if @result.length < 2
+          @result = @result[0].split('- ')
         end
         puts @result.to_json
         @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
