@@ -134,10 +134,22 @@ class DocumentsController < ApplicationController
       if APN::Device.all(:conditions => {:user_id => current_user.id}).empty?
         render :text => "fail"
       else
-        #TODO
-        #THIS CAN GET CONFUSED IF DONE ON A SHARED DOC, CHECK FOR USER ID!!!!
-        #Fixed... I think
-
+        owner_lines = Line.includes(:mems).where("lines.document_id = ?
+                            AND mems.status = true",
+                            params[:id])                          
+        Mem.transaction do
+          puts "creating a mem!"
+          owner_lines.each do |owner_line|
+            mem = Mem.find_or_initialize_by_line_id_and_user_id(owner_line.id, current_user.id);
+            mem.strength = 0.5 if mem.strength.nil?
+            mem.status = 1 if mem.status.nil?
+            mem.document_id = @owner_line.document_id if mem.document_id.nil?
+            mem.line_id = owner_line.id if mem.line_id.nil?
+            mem.user_id = current_user.id if mem.user_id.nil?
+            mem.created_at = Time.now if mem.created_at.nil?
+            mem.save
+          end
+        end
         @usership = current_user.userships.where('document_id = ? AND user_id = ?', params[:id], current_user.id)
         @usership.first.update_attribute(:push_enabled, true)
         puts @usership.to_json
@@ -149,7 +161,7 @@ class DocumentsController < ApplicationController
       @usership.first.update_attribute(:push_enabled, false)
       puts @usership.to_json
       puts Mem.all(:conditions => {:document_id => params[:id]}).to_json
-      Mem.all(:conditions => {:document_id => get_document(params[:id]), :pushed => true}).each do |mem|
+      Mem.all(:conditions => {:document_id => params[:id], :user_id => current_user.id, :pushed => true}).each do |mem|
         mem.update_attribute(:pushed, false)
         mem.save
       end
