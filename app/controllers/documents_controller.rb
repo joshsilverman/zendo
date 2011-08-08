@@ -151,6 +151,7 @@ class DocumentsController < ApplicationController
           end
         end
         @usership = current_user.userships.where('document_id = ? AND user_id = ?', params[:id], current_user.id)
+        puts @usership.to_json
         @usership.first.update_attribute(:push_enabled, true)
         puts @usership.to_json
         render :text => "pass"
