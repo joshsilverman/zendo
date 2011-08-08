@@ -81,12 +81,12 @@ namespace :notifications do
             end
           end
         else
-           @push_userships.each do |usership|
-            Mem.where('document_id = ? AND pushed = false', usership.document.id).order('strength asc').limit(3).each do |mem|
-              mem.pushed = true
-              mem.save
-              puts mem.to_json
-            end
+          @push_userships.each do |usership|
+          Mem.where('document_id = ? AND pushed = false', usership.document.id).order('strength asc').limit(3).each do |mem|
+            mem.pushed = true
+            mem.save
+            puts mem.to_json
+          end
           end
         end
         notification = APN::Notification.new

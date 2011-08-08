@@ -36,7 +36,7 @@ class UsersController < ApplicationController
         @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(@docid).html + "</wrapper>").xpath("//*[@def and @id='" + @domid + "']")
         @def = @result.first.attribute("def").to_s
 #        if @hash["cards"].length < 3
-          @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => mem.id}
+        @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => mem.id}
 #        end
       else
         @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(@docid).html + "</wrapper>").xpath("//*[@id='" + @domid + "']").first.children.first.text
@@ -45,7 +45,7 @@ class UsersController < ApplicationController
           @result = @result.split('- ')
         end
 #        if @hash["cards"].length < 3
-          @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => mem.id}
+        @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => mem.id}
 #        end
       end
     end

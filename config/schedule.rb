@@ -1,9 +1,9 @@
 set :environment, "development"
 
 #Add notifications from push enabled docs to queue
-every 1.minute do
-  rake "notifications:collect"
-end
+#every 1.minute do
+#  rake "notifications:collect"
+#end
 
 #every 1.hour do
 #  rake "notifications:collect"
