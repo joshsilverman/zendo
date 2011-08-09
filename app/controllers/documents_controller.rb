@@ -135,14 +135,18 @@ class DocumentsController < ApplicationController
         render :text => "fail"
       else
         if Usership.all(:conditions => {:user_id => current_user.id, :document_id => params[:id]}).empty?
+          puts "No existing usership... creating one."
           @new_usership = Usership.new
-          new_usership.document_id = params[:id]
-          new_usership.user_id = current_user.id
-          new_usership.created_at = Time.now
-          new_usership.owner = false
-          new_usership.push_enabled = false
+          @new_usership.document_id = params[:id]
+          @new_usership.user_id = current_user.id
+          @new_usership.created_at = Time.now
+          @new_usership.owner = false
+          @new_usership.push_enabled = false
           @new_usership.save
           puts @new_usership.to_json
+        else
+          puts "Usership already exists, it is:"
+          puts Usership.all(:conditions => {:user_id => current_user.id, :document_id => params[:id]}).to_json
         end
         owner_lines = Line.includes(:mems).where("lines.document_id = ?
                             AND mems.status = true",
