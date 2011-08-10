@@ -110,7 +110,7 @@ var cDoc = Class.create({
                         $("mobile_review").checked = false;
                         alert("Looks like you don't have a mobile device enabled yet! To enable push review, you need to" +
                               " download the StudyEgg app to your smartphone and sign in using your email and password. " +
-                              " If you believe you have received this message in error, please get in touch!");
+                              " If you believe you have received this message in error, please contact us!");
                     } else {
                         console.log("Mobile device found.");
                     }
@@ -353,9 +353,7 @@ var cOutline = Class.create({
             this.nextSaveTimer = doc.outline.autosave.bind(this).delay(2);
             return;
         }
-
         if (doc.readOnly) return;
-
         if(doc.editor.isDirty() || !doc.editor.isNotDirty) {
             doc.editor.isNotDirty = true;
 

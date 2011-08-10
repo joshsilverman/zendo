@@ -13,6 +13,15 @@
     /<%= link_to @document.tag.name, '/explore' %>
     /<%= link_to @document.name, '/documents/%i/edit' % @document.id %>
   <% end %>
+  <input type="checkbox" name="mobile" id="mobile_review" style="margin-top: 6px; margin-left: 8px;"/>
+  <%= puts "yooooo" %>
+  <%= puts @document.to_json %>
+  <% if !@document.userships.all(:conditions => {:user_id => current_user.id}).empty? %>
+    <% if @document.userships.all(:conditions => {:user_id => current_user.id}).first.push_enabled %>
+      <script type="text/javascript"> mobile_review.checked = true; </script>
+    <% end %>
+  <% end %>
+  <span style="padding-top: 5px"> Push review </span>
 </div>
 
 <div class="card_container">

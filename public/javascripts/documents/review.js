@@ -326,13 +326,14 @@ var cCard = Class.create({
               </div>',
     
     initialize: function(data) {
-
+        console.log(data['document_id']);
         this.lineId = data['id'];
         this.domId = data['domid'];
         this.memId = data['mems'][0]['id'];
         this.documentId = data['document_id'];
         this.text = data['text'];
-        console.log(this.text);
+//        console.log(this.text);
+
     },
 
     cue: function() {
@@ -499,9 +500,31 @@ var cProgressBar = Class.create({
 
 /* global objects */
 document.observe('dom:loaded', function() {
+    
     parser = new cParser(); //@todo move to doc object
     doc = new cDoc();
 
     /* fire app:loaded */
     document.fire('app:loaded');
+
+    /* observe push enable */
+    Event.observe($("mobile_review"), "click", function(e) {
+        var requestUrl = "/documents/enable_mobile/" + $('card_json').innerHTML.evalJSON()[0]['line']['document_id'] + "/" + (($("mobile_review").checked)?1:0);
+        //TODO fill callback parameters
+        new Ajax.Request(requestUrl, {
+            onSuccess : function(e) {
+                if (e.responseText == "fail") {
+                    console.log("No mobile device associated with account!");
+                    $("mobile_review").checked = false;
+                    alert("Looks like you don't have a mobile device enabled yet! To enable push review, you need to" +
+                          " download the StudyEgg app to your smartphone and sign in using your email and password. " +
+                          " If you believe you have received this message in error, please contact us!");
+                } else {
+                    console.log("Mobile device found.");
+                }
+            }
+        });
+    }.bind(this));
 });
+
+

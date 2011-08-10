@@ -26,11 +26,15 @@ class Document < ActiveRecord::Base
 
 
   def self.update(params, user_id)
-
+    puts params[:id]
+    puts "HERE IS THE USERSHIP in update:"
+    puts Usership.all(:conditions => {:document_id => params[:id]}).to_json
     id = params[:id]
     html = params[:html]
     delete_nodes = params[:delete_nodes]
+
     document = Document.find(:first, :conditions => {:id => id})
+
     return nil if document.userships[0].user_id != user_id
     return nil if id.blank? || html.nil? || document.blank?
 

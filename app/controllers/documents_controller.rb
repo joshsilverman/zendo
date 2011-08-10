@@ -3,6 +3,7 @@ class DocumentsController < ApplicationController
   # Look for existing documents (by name for now)
   # If exists, use this document, otherwise set document html and construct Line objects
   def create
+
     #attempt to use a provided tag
     tag_id = params[:tag_id]
     if tag_id
@@ -19,20 +20,38 @@ class DocumentsController < ApplicationController
       end
     end
 
-    @document = current_user.documents.create(:name => 'untitled', :tag_id => @tag.id)
-    @document.update_attribute(:edited_at, Date.today)
+    #Create a new document and usership
+    Document.transaction do
+      Usership.transaction do
+        @document = Document.new
+        @document.name = 'untitled'
+        @document.tag_id = @tag.id
+        @document.created_at = Date.today
+        @document.edited_at = Date.today
+        @document.public = false
+        @document.save
+        @usership = Usership.new
+        @usership.user_id = current_user.id
+        @usership.document_id = @document.id
+        @usership.push_enabled = false
+        @usership.owner = true
+        @usership.created_at = Time.now
+        @usership.save
+      end
+    end
+#    @document = current_user.documents.create(:name => 'untitled', :tag_id => @tag.id)
+#    @document.update_attribute(:edited_at, Date.today)
     redirect_to :action => 'edit', :id => @document.id
   end
   
   def edit
     # check id posted
     id = params[:id]
+    puts id
     @read_only = params[:read_only]
     # check document exists
     @document = Document.find_by_id(params[:id])
-    puts @document.to_json
     get_document(params[:id])
-    puts @document.to_json
     if @document.nil?
       redirect_to '/explore', :notice => "Error accessing that document."
       return
@@ -129,6 +148,7 @@ class DocumentsController < ApplicationController
   end  
   
   def enable_mobile
+    puts "ENABLINGGGG"
   	if params[:bool] == "1"
   		logger.debug("Enable mobile!")
       if APN::Device.all(:conditions => {:user_id => current_user.id}).empty?
@@ -164,6 +184,7 @@ class DocumentsController < ApplicationController
             mem.save
           end
         end
+        puts params[:id], current_user.id
         @usership = current_user.userships.where('document_id = ? AND user_id = ?', params[:id], current_user.id)
         puts @usership.to_json
         @usership.first.update_attribute(:push_enabled, true)

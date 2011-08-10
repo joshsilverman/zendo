@@ -86,10 +86,14 @@ var cDoc = Class.create({
     },
 
     _buildDocs: function(){
+//        console.log("BROOO");
+//        var JSONfoo = JSON.stringify(doc)
+//        console.log(JSONfoo);
         console.log("BUILDDOCS aiID: "+this.activeItemId);
         var html = '';
         //Build Recent Documents
         this.recent.each(function(doc){
+            console.log(doc);
             var tName = "unknown";
             this.tags.each(function(t){
                if(t[0]==doc['tag_id']){
@@ -126,6 +130,8 @@ var cDoc = Class.create({
         html = ''
         this.tags.each(function(tag) {
           tag[1]['documents'].each(function(doc){
+//              console.log(doc['name'])
+//              console.log(doc['userships']);
               //this.docs.set(doc['id'], doc);
               ///if($(this.activeItemId)){
               if(doc['id']==this.activeItemId){
