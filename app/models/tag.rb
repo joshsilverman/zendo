@@ -22,7 +22,9 @@ class Tag < ActiveRecord::Base
       shared_docs << usership.document
     end
     shared_tag = Tag.new(:name => "Shared")
-    shared_tag.documents << shared_docs
+    shared_docs.each do |doc|
+      shared_tag.documents << doc if !doc.nil?
+    end
     tags << shared_tag
 #    return tags.to_json(:include => {:documents => {:include => {:userships => {:only => :user_id}}, :only => :name}})
     return tags.to_json(:include => {:documents => {:only => [:id, :name, :updated_at, :created_at, :tag_id]}})
