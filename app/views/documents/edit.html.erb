@@ -18,13 +18,13 @@
       
       Title: <input id="document_name" value="<%=@document.name%>"  maxlength="40"></input>
     <% end %>
-    <input type="checkbox" name="mobile" id="mobile_review" style="margin-top: 6px; margin-left: 8px;"/>
+    <input type="checkbox" name="mobile" id="mobile_review" style="display: none; margin-top: 6px; margin-left: 8px;"/>
     <% if !@document.userships.all(:conditions => {:user_id => current_user.id}).empty? %>
       <% if @document.userships.all(:conditions => {:user_id => current_user.id}).first.push_enabled %>
         <script type="text/javascript"> mobile_review.checked = true; </script>
       <% end %>
     <% end %>
-    <span style="padding-top: 5px"> Push review </span>
+    <span style="display: none; padding-top: 5px"> Push review </span>
   </span>
   <button id="review_button" style="float:right">Review</button>
   <% if @read_only %>
