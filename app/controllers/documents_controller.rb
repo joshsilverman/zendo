@@ -148,104 +148,104 @@ class DocumentsController < ApplicationController
   end  
   
   def enable_mobile
-    puts "ENABLINGGGG"
-  	if params[:bool] == "1"
-  		logger.debug("Enable mobile!")
-      if APN::Device.all(:conditions => {:user_id => current_user.id}).empty?
-        render :text => "fail"
-      else
-        if Usership.all(:conditions => {:user_id => current_user.id, :document_id => params[:id]}).empty?
-          puts "No existing usership... creating one."
-          @new_usership = Usership.new
-          @new_usership.document_id = params[:id]
-          @new_usership.user_id = current_user.id
-          @new_usership.created_at = Time.now
-          @new_usership.owner = false
-          @new_usership.push_enabled = false
-          @new_usership.save
-          puts @new_usership.to_json
-        else
-          puts "Usership already exists, it is:"
-          puts Usership.all(:conditions => {:user_id => current_user.id, :document_id => params[:id]}).to_json
-        end
-        owner_lines = Line.includes(:mems).where("lines.document_id = ?
-                            AND mems.status = true",
-                            params[:id])                          
-        Mem.transaction do
-          puts "creating a mem!"
-          owner_lines.each do |owner_line|
-            mem = Mem.find_or_initialize_by_line_id_and_user_id(owner_line.id, current_user.id);
-            mem.strength = 0.5 if mem.strength.nil?
-            mem.status = 1 if mem.status.nil?
-            mem.document_id = params[:id] if mem.document_id.nil?
-            mem.line_id = owner_line.id if mem.line_id.nil?
-            mem.user_id = current_user.id if mem.user_id.nil?
-            mem.created_at = Time.now if mem.created_at.nil?
-            mem.save
-          end
-        end
-        puts params[:id], current_user.id
-        @usership = current_user.userships.where('document_id = ? AND user_id = ?', params[:id], current_user.id)
-        puts @usership.to_json
-        @usership.first.update_attribute(:push_enabled, true)
-        puts @usership.to_json
-        render :text => "pass"
-      end
-  	else
-  		logger.debug("Disable mobile!")
-  		@usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
-      @usership.first.update_attribute(:push_enabled, false)
-      puts @usership.to_json
-      puts Mem.all(:conditions => {:document_id => params[:id]}).to_json
-      Mem.all(:conditions => {:document_id => params[:id], :user_id => current_user.id, :pushed => true}).each do |mem|
-        mem.update_attribute(:pushed, false)
-        mem.save
-      end
-      puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
-  		#Delete all pending notifications for the usership
-      render :nothing => true, :status => 200
-  	end
-    
-
-    #Uncomment for immediate push demo
-#    if params[:bool] == "1"
+#    puts "ENABLINGGGG"
+#  	if params[:bool] == "1"
+#  		logger.debug("Enable mobile!")
 #      if APN::Device.all(:conditions => {:user_id => current_user.id}).empty?
 #        render :text => "fail"
 #      else
-#        Mem.all(:conditions => {:document_id => params[:id]}).each do |mem|
-##          puts mem.to_json
-#          mem.pushed = true
-#          mem.save
-#          puts mem.to_json
+#        if Usership.all(:conditions => {:user_id => current_user.id, :document_id => params[:id]}).empty?
+#          puts "No existing usership... creating one."
+#          @new_usership = Usership.new
+#          @new_usership.document_id = params[:id]
+#          @new_usership.user_id = current_user.id
+#          @new_usership.created_at = Time.now
+#          @new_usership.owner = false
+#          @new_usership.push_enabled = false
+#          @new_usership.save
+#          puts @new_usership.to_json
+#        else
+#          puts "Usership already exists, it is:"
+#          puts Usership.all(:conditions => {:user_id => current_user.id, :document_id => params[:id]}).to_json
 #        end
-#        puts "Enable mobile!"
-#        @device = APN::Device.all(:conditions => {:user_id => current_user.id}).first
-#        notification = APN::Notification.new
-#        notification.device = @device
-#        notification.badge = Mem.all(:conditions => {:document_id => params[:id]}).count
-#        notification.sound = false
-#        notification.user_id = current_user.id
-#        notification.alert = "You have new cards to review!"
-#        notification.custom_properties = {:doc => params[:id]}
-#        puts notification.to_json
-#        notification.save
-#        APN::Notification.send_notifications
-#        render :nothing => true, :status => 200
+#        owner_lines = Line.includes(:mems).where("lines.document_id = ?
+                            AND mems.status = true#",
+#                            params[:id])
+#        Mem.transaction do
+#          puts "creating a mem!"
+#          owner_lines.each do |owner_line|
+#            mem = Mem.find_or_initialize_by_line_id_and_user_id(owner_line.id, current_user.id);
+#            mem.strength = 0.5 if mem.strength.nil?
+#            mem.status = 1 if mem.status.nil?
+#            mem.document_id = params[:id] if mem.document_id.nil?
+#            mem.line_id = owner_line.id if mem.line_id.nil?
+#            mem.user_id = current_user.id if mem.user_id.nil?
+#            mem.created_at = Time.now if mem.created_at.nil?
+#            mem.save
+#          end
+#        end
+#        puts params[:id], current_user.id
+#        @usership = current_user.userships.where('document_id = ? AND user_id = ?', params[:id], current_user.id)
+#        puts @usership.to_json
+#        @usership.first.update_attribute(:push_enabled, true)
+#        puts @usership.to_json
+#        render :text => "pass"
 #      end
-#    else
-#      logger.debug("Disable mobile!")
-#      @usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
+#  	else
+#  		logger.debug("Disable mobile!")
+#  		@usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
 #      @usership.first.update_attribute(:push_enabled, false)
 #      puts @usership.to_json
-#      puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
-#      Mem.all(:conditions => {:document_id => get_document(params[:id]), :pushed => true}).each do |mem|
+#      puts Mem.all(:conditions => {:document_id => params[:id]}).to_json
+#      Mem.all(:conditions => {:document_id => params[:id], :user_id => current_user.id, :pushed => true}).each do |mem|
 #        mem.update_attribute(:pushed, false)
 #        mem.save
 #      end
 #      puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
-#      #Delete all pending notifications for the usership
+#  		#Delete all pending notifications for the usership
 #      render :nothing => true, :status => 200
-#    end
+#  	end
+    
+
+    #Uncomment for immediate push demo
+    if params[:bool] == "1"
+      if APN::Device.all(:conditions => {:user_id => current_user.id}).empty?
+        render :text => "fail"
+      else
+        Mem.all(:conditions => {:document_id => params[:id]}).each do |mem|
+#          puts mem.to_json
+          mem.pushed = true
+          mem.save
+          puts mem.to_json
+        end
+        puts "Enable mobile!"
+        @device = APN::Device.all(:conditions => {:user_id => current_user.id}).first
+        notification = APN::Notification.new
+        notification.device = @device
+        notification.badge = Mem.all(:conditions => {:document_id => params[:id]}).count
+        notification.sound = false
+        notification.user_id = current_user.id
+        notification.alert = "You have new cards to review!"
+        notification.custom_properties = {:doc => params[:id]}
+        puts notification.to_json
+        notification.save
+        APN::Notification.send_notifications
+        render :nothing => true, :status => 200
+      end
+    else
+      logger.debug("Disable mobile!")
+      @usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
+      @usership.first.update_attribute(:push_enabled, false)
+      puts @usership.to_json
+      puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
+      Mem.all(:conditions => {:document_id => get_document(params[:id]), :pushed => true}).each do |mem|
+        mem.update_attribute(:pushed, false)
+        mem.save
+      end
+      puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
+      #Delete all pending notifications for the usership
+      render :nothing => true, :status => 200
+    end
 #  THESE CONFIGURATIONS ARE DEFAULT, IF YOU WANT TO CHANGE UNCOMMENT LINES YOU WANT TO CHANGE
 #	configatron.apn.passphrase  = ''
 #	configatron.apn.port = 2195
