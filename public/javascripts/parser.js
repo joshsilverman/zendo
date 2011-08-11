@@ -82,7 +82,7 @@ var cParser = Class.create({
 
         if (node && node.nodeName == "STRONG") {
 
-            var term = Card.text.gsub(/<[^>]*>/, '').strip().gsub(/\s/, "_");
+            var term = Card.text.gsub(/<[^>]*>/, '').strip().gsub(/\s/, "_").gsub(/\&nbsp;/, "");
             term = term.underscore();
             term = term.charAt(0).toUpperCase() + term.slice(1);
 
@@ -97,6 +97,8 @@ var cParser = Class.create({
                 Card.back += node.getAttribute('def');
             }
             else {
+                console.log("HERES THE TERM:");
+                console.log(term);
                 new Ajax.Request("/terms/lookup/" + term, {
                     onCreate: function() {
                         Card.autoActivate = true;

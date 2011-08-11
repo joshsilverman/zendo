@@ -18,7 +18,7 @@ class TermsController < ApplicationController
 
         result  :image, :description, :follow
       end
-
+      puts params['term']
       article = wiki_article.scrape(URI.parse("http://en.wikipedia.org/wiki/#{params['term']}"))
 
       # follow "may refer to:"

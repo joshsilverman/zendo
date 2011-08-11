@@ -326,22 +326,29 @@ class DocumentsController < ApplicationController
 
   #Returns a hash of all of the cards belonging to a given document
   def cards
+#    puts "Cards"
+#    puts params[:id]
+#    puts Document.find_by_id(params[:id]).to_json
     @hash = Hash.new
     @hash["cards"] = []
-    Line.all(:conditions => {:user_id => current_user.id, :document_id => params[:id]}).each do |line|
+    Line.all(:conditions => {:document_id => params[:id]}).each do |line|
+#      puts "Starting:"
+#      puts line.to_json
       #If there if a <def> tag, create a card using its contents as the answer, otherwise split on the "-"
       if !Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@def and @id='" + line.domid + "']").empty?
+        puts "WORDDDD"
         @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@def and @id='" + line.domid + "']")
         @def = @result.first.attribute("def").to_s
         @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
       else
-        @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@id='" + line.domid + "']").first.children.first.text
-        @result = @result.split(' -')
-        if @result.length < 2
-          @result = @result[0].split('- ')
+        if !Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@id='" + line.domid + "']").empty?
+          @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html.gsub("<em>", "").gsub("<\/em>", "") + "</wrapper>").xpath("//*[@id='" + line.domid + "']").first.children.first.text
+          @result = @result.split(' -')
+          if @result.length < 2
+            @result = @result[0].split('- ')
+          end
+          @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
         end
-        puts @result.to_json
-        @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
       end
     end
     render :json => @hash
