@@ -326,14 +326,9 @@ class DocumentsController < ApplicationController
 
   #Returns a hash of all of the cards belonging to a given document
   def cards
-#    puts "Cards"
-#    puts params[:id]
-#    puts Document.find_by_id(params[:id]).to_json
     @hash = Hash.new
     @hash["cards"] = []
     Line.all(:conditions => {:document_id => params[:id]}).each do |line|
-#      puts "Starting:"
-#      puts line.to_json
       #If there if a <def> tag, create a card using its contents as the answer, otherwise split on the "-"
       if !Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@def and @id='" + line.domid + "']").empty?
         puts "WORDDDD"
