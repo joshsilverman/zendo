@@ -333,24 +333,67 @@ class DocumentsController < ApplicationController
       if !Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@def and @id='" + line.domid + "']").empty?
         @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@def and @id='" + line.domid + "']")
         @def = @result.first.attribute("def").to_s
+        puts @def
         @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
       else
-        if !Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@id='" + line.domid + "']").empty?
-          puts line.domid
-          puts Document.find_by_id(params[:id]).html.gsub("<em>", "").gsub("<\/em>", "")
-          @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html.gsub("<em>", "").gsub("<\/em>", "") + "</wrapper>").xpath("//*[@id='" + line.domid + "']").first.children.first.text
-#          puts @result.to_json
+        puts "No def tag"
+        if !Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@class=\"outline_node active\" and @id='" + line.domid + "']").empty?
+          @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@class=\"outline_node active\" and @id='" + line.domid + "']").first.children.first.text
           @result = @result.split(' -')
-#          puts @result.to_json
           if @result.length < 2
             @result = @result[0].split('- ')
           end
-#          puts @result.to_json
-#          puts line.id
-#          puts Mem.all(:conditions => {:line_id => line.id}).to_json
-          @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
+          if Mem.all(:conditions => {:line_id => line.id}).empty?
+            puts "NO MEMS!"
+            @mem = Mem.new
+            @mem.line_id = line.id
+            @mem.user_id = current_user.id
+            @mem.created_at = Time.now
+            @mem.document_id = params[:id]
+            @mem.pushed = false
+            puts @mem.to_json
+          else
+            @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
+          end
         end
       end
+
+
+
+#      if !Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@def and @id='" + line.domid + "']").empty?
+#        @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@def and @id='" + line.domid + "']")
+#        @def = @result.first.attribute("def").to_s
+#        @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
+#      else
+#        if !Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@id='" + line.domid + "']").empty?
+#          puts line.domid
+##          puts Document.find_by_id(params[:id]).html.gsub("<em>", "").gsub("<\/em>", "")
+#          @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html.gsub("<em>", "").gsub("<\/em>", "") + "</wrapper>").xpath("//*[@id='" + line.domid + "']").first.children.first.text
+#          if !@result.empty?
+#            puts @result.to_json
+#            @result = @result.split(' -')
+#            puts @result.to_json
+#            if @result.length < 2
+#              @result = @result[0].split('- ')
+#            end
+#            puts @result.to_json
+#            puts line.id
+#            puts Mem.all(:conditions => {:line_id => line.id}).to_json
+#            #If no mem exists, create one
+#            if Mem.all(:conditions => {:line_id => line.id}).empty?
+#              @mem = Mem.new
+#              @mem.line_id = line.id
+#              @mem.user_id = current_user.id
+#              @mem.created_at = Time.now
+#              @mem.document_id = params[:id]
+#              @mem.pushed = false
+#              puts @mem.to_json
+#            else
+#              @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
+#            end
+#          end
+#        end
+#      end
     end
     render :json => @hash
   end
