@@ -337,6 +337,7 @@ class DocumentsController < ApplicationController
         @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
       else
         puts "No def tag"
+        puts line.to_json
         if !Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@class=\"outline_node active\" and @id='" + line.domid + "']").empty?
           @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@class=\"outline_node active\" and @id='" + line.domid + "']").first.children.first.text
           @result = @result.split(' -')
