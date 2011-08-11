@@ -169,7 +169,7 @@ class DocumentsController < ApplicationController
 #          puts Usership.all(:conditions => {:user_id => current_user.id, :document_id => params[:id]}).to_json
 #        end
 #        owner_lines = Line.includes(:mems).where("lines.document_id = ?
-                            AND mems.status = true#",
+#                            AND mems.status = true#",
 #                            params[:id])
 #        Mem.transaction do
 #          puts "creating a mem!"
