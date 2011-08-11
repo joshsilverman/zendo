@@ -331,17 +331,23 @@ class DocumentsController < ApplicationController
     Line.all(:conditions => {:document_id => params[:id]}).each do |line|
       #If there if a <def> tag, create a card using its contents as the answer, otherwise split on the "-"
       if !Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@def and @id='" + line.domid + "']").empty?
-        puts "WORDDDD"
         @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@def and @id='" + line.domid + "']")
         @def = @result.first.attribute("def").to_s
         @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
       else
         if !Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@id='" + line.domid + "']").empty?
+          puts line.domid
+          puts Document.find_by_id(params[:id]).html.gsub("<em>", "").gsub("<\/em>", "")
           @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html.gsub("<em>", "").gsub("<\/em>", "") + "</wrapper>").xpath("//*[@id='" + line.domid + "']").first.children.first.text
+#          puts @result.to_json
           @result = @result.split(' -')
+#          puts @result.to_json
           if @result.length < 2
             @result = @result[0].split('- ')
           end
+#          puts @result.to_json
+#          puts line.id
+#          puts Mem.all(:conditions => {:line_id => line.id}).to_json
           @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
         end
       end
