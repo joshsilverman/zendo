@@ -37,18 +37,18 @@ class UsersController < ApplicationController
       if !Nokogiri::XML("<wrapper>" + Document.find_by_id(@docid).html + "</wrapper>").xpath("//*[@def and @id='" + @domid + "']").empty?
         @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(@docid).html + "</wrapper>").xpath("//*[@def and @id='" + @domid + "']")
         @def = @result.first.attribute("def").to_s
-#        if @hash["cards"].length < 3
-        @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => mem.id}
-#        end
+        if @hash["cards"].length < 3
+          @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => mem.id}
+        end
       else
         @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(@docid).html + "</wrapper>").xpath("//*[@id='" + @domid + "']").first.children.first.text
         @result = @result.split(' -')
         if @result.length < 2
           @result = @result[0].split('- ')
         end
-#        if @hash["cards"].length < 3
-        @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => mem.id}
-#        end
+        if @hash["cards"].length < 3
+          @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => mem.id}
+        end
       end
     end
     render :json => @hash
