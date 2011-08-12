@@ -26,12 +26,11 @@ class Document < ActiveRecord::Base
 
 
   def self.update(params, user_id)
-    puts params[:id]
-    puts Usership.all(:conditions => {:document_id => params[:id]}).to_json
+#    puts params[:id]
+#    puts Usership.all(:conditions => {:document_id => params[:id]}).to_json
     id = params[:id]
     html = params[:html]
     delete_nodes = params[:delete_nodes]
-
     document = Document.find(:first, :conditions => {:id => id})
 
     return nil if document.userships[0].user_id != user_id

@@ -53,7 +53,6 @@ class DocumentsController < ApplicationController
       redirect_to '/explore', :notice => "Error accessing that document."
       return
     end
-#    @document = @usership.document
     get_document(params[:id])
     if @document.nil?
       redirect_to '/explore', :notice => "Error accessing that document."
@@ -328,7 +327,9 @@ class DocumentsController < ApplicationController
   def cards
     @hash = Hash.new
     @hash["cards"] = []
-    @document = Document.find_by_id(params[:id])
+    @document = get_document(params[:id])
+    update_params = {:id => params[:id], :html => @document.html, :delete_nodes => [], :name => @document.name, :edited_at => @document.edited_at}
+    Document.update(update_params, current_user.id)
     @html = "<wrapper>" + @document.html + "</wrapper>"
     Line.all(:conditions => {:document_id => params[:id]}).each do |line|
       if line.domid.nil?
@@ -342,17 +343,21 @@ class DocumentsController < ApplicationController
         puts @def
         @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
       else
-        @node = Nokogiri::XML(@html).xpath("//*[@class=\"outline_node active\" or @class=\"outline_node changed active\" and @id='" + line.domid + "']")
+        @node = Nokogiri::XML(@html).xpath("//*[@id='" + line.domid + "']")
+
+        puts "*********"
+#        @node = Nokogiri::XML(@html).xpath("//*[@class=\"outline_node active\" and @id='" + line.domid + "']")
+#        if @node.empty?
+#           @node = Nokogiri::XML(@html).xpath("//*[@class=\"outline_node changed active\" and @id='" + line.domid + "']")
+#        end
         if !@node.empty?
           @result = @node.first.children.first.text
-          puts @result.to_json
+#          puts @result.to_json
           @result = @result.split(' -')
           if @result.length < 2
             @result = @result[0].split('- ')
           end
-          puts @result.to_json
           if Mem.all(:conditions => {:line_id => line.id}).empty?
-            puts "Yppp"
             @mem = Mem.new
             @mem.line_id = line.id
             @mem.user_id = current_user.id
@@ -360,9 +365,9 @@ class DocumentsController < ApplicationController
             @mem.document_id = params[:id]
             @mem.pushed = false
             @mem.save
-            @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => @mem.id}
+            @hash["cards"] << {"prompt" => @result[0].strip, "answer" => @result[1].strip, "mem" => @mem.id}
           else
-            @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
+            @hash["cards"] << {"prompt" => @result[0].strip, "answer" => @result[1].strip, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
           end
         end
       end
