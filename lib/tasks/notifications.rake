@@ -44,17 +44,15 @@ namespace :notifications do
         #INSTEAD, WHEN A USER ENABLES MOBILE, SET THE RESEND VALUE TO NIL FOR THAT USER'S NOTIFICATION
         #Check to see if there are both too many mems/doc and that the current time is before the resend time
         @last_notification = APN::Notification.all(:conditions => {:user_id => user.id}).last
-  #      puts @last_notification.resend_at
-  #      puts @last_notification.resend_at > Time.now
-        if @pushed_mems.length / @push_userships.length > 6
+        if @pushed_mems.length / @push_userships.length > 3
           puts "More than 6 pending mems per doc for this user"
           if !@last_notification.nil?
             if @last_notification.resend_at.nil?
               puts "No resend set yet"
-              puts Time.now
-              puts Time.now + (60 * 2)
-              @last_notification.resend_at = Time.now + (60 * 2)
-  #            @last_notification.resend_at = Time.now + (60 * 60 * 9)
+#              puts Time.now
+#              puts Time.now + (60 * 2)
+#              @last_notification.resend_at = Time.now + (60 * 2)
+              @last_notification.resend_at = Time.now + (60 * 60 * 7)
               @last_notification.save
             elsif Time.now > @last_notification.resend_at
               puts "Time to wake up!"
