@@ -435,11 +435,6 @@ var cCard = Class.create({
         this.memId = data['mems'][0]['id'];
         this.documentId = data['document_id'];
         this.text = data['text'];
-<<<<<<< HEAD
-//        console.log(this.text);
-
-=======
->>>>>>> multiple choice review
     },
 
     cue: function() {

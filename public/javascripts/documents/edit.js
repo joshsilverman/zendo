@@ -412,12 +412,7 @@ var cOutline = Class.create({
                 }.bind(this),
 
                 onFailure: function(transport) {
-<<<<<<< HEAD
-					console.log("Failed!");
-=======
-                    console.log("save Fail");
-
->>>>>>> multiple choice review
+                    console.log("Failed!");
                     /* add unsuccessfully saved changes back to unsaved changes and set attributes */
                     this.unsavedChanges = this.unsavedChanges.concat(this.savingChanges).uniq();
                     this.unsavedChanges.each(function(domId) {
