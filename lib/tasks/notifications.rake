@@ -34,7 +34,7 @@ namespace :notifications do
     #
     #USE MEMS>COUNT
     User.all(:include => :userships, :conditions => { :userships => { :push_enabled => true }}).each do |user|
-      begin
+#      begin
         @push_userships = user.userships.all(:conditions => { :userships => { :push_enabled => true }})
         puts @push_userships.to_json
         @pushed_mems = Mem.all(:conditions => { :user_id => user.id, :pushed => true })
@@ -99,9 +99,9 @@ namespace :notifications do
           notification.user_id = user.id
           notification.save
         end
-      rescue
-        puts "Error during notifications rake"
-      end 
+#      rescue
+#        puts "Error during notifications rake"
+#      end
     end
     APN::Notification.send_notifications
   end
