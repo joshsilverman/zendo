@@ -47,22 +47,23 @@ class DocumentsController < ApplicationController
   def edit
     # check id posted
     id = params[:id]
-    puts id
     @read_only = params[:read_only]
-    # check document exists
-    @document = Document.find_by_id(params[:id])
+    @usership = Usership.find_by_document_id_and_user_id(params[:id], current_user.id)
+    if @usership.nil?
+      redirect_to '/explore', :notice => "Error accessing that document."
+      return
+    end
+#    @document = @usership.document
     get_document(params[:id])
     if @document.nil?
       redirect_to '/explore', :notice => "Error accessing that document."
       return
     end
-
     # redirect if public, not owner, and trying to edit
     if not @read_only and not @w
       redirect_to "/documents/#{id}"
       return
     end
-
     @tag = Tag.find_by_id(@document.tag_id)
     @line_ids = Hash[*@document.lines.map {|line| [line.id, line.domid]}.flatten].to_json
 
@@ -148,7 +149,6 @@ class DocumentsController < ApplicationController
   end  
   
   def enable_mobile
-    puts "ENABLINGGGG"
   	if params[:bool] == "1"
   		logger.debug("Enable mobile!")
       if APN::Device.all(:conditions => {:user_id => current_user.id}).empty?
@@ -328,31 +328,39 @@ class DocumentsController < ApplicationController
   def cards
     @hash = Hash.new
     @hash["cards"] = []
+    @document = Document.find_by_id(params[:id])
+    @html = "<wrapper>" + @document.html + "</wrapper>"
     Line.all(:conditions => {:document_id => params[:id]}).each do |line|
+      if line.domid.nil?
+        puts "Nil domid!"
+        next
+      end
       #If there if a <def> tag, create a card using its contents as the answer, otherwise split on the "-"
-      if !Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@def and @id='" + line.domid + "']").empty?
-        @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@def and @id='" + line.domid + "']")
+      if !Nokogiri::XML(@html).xpath("//*[@def and @id='" + line.domid + "']").empty?
+        @result = Nokogiri::XML(@html).xpath("//*[@def and @id='" + line.domid + "']")
         @def = @result.first.attribute("def").to_s
         puts @def
         @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
       else
-        puts "No def tag"
-        puts line.to_json
-        if !Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@class=\"outline_node active\" and @id='" + line.domid + "']").empty?
-          @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@class=\"outline_node active\" and @id='" + line.domid + "']").first.children.first.text
+        @node = Nokogiri::XML(@html).xpath("//*[@class=\"outline_node active\" or @class=\"outline_node changed active\" and @id='" + line.domid + "']")
+        if !@node.empty?
+          @result = @node.first.children.first.text
+          puts @result.to_json
           @result = @result.split(' -')
           if @result.length < 2
             @result = @result[0].split('- ')
           end
+          puts @result.to_json
           if Mem.all(:conditions => {:line_id => line.id}).empty?
-            puts "NO MEMS!"
+            puts "Yppp"
             @mem = Mem.new
             @mem.line_id = line.id
             @mem.user_id = current_user.id
             @mem.created_at = Time.now
             @mem.document_id = params[:id]
             @mem.pushed = false
-            puts @mem.to_json
+            @mem.save
+            @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => @mem.id}
           else
             @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
           end

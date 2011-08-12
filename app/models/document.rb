@@ -27,7 +27,6 @@ class Document < ActiveRecord::Base
 
   def self.update(params, user_id)
     puts params[:id]
-    puts "HERE IS THE USERSHIP in update:"
     puts Usership.all(:conditions => {:document_id => params[:id]}).to_json
     id = params[:id]
     html = params[:html]
