@@ -330,33 +330,36 @@ class DocumentsController < ApplicationController
     @document = get_document(params[:id])
     update_params = {:id => params[:id], :html => @document.html, :delete_nodes => [], :name => @document.name, :edited_at => @document.edited_at}
     Document.update(update_params, current_user.id)
-    @html = "<wrapper>" + @document.html + "</wrapper>"
+    @html = "<wrapper>" + @document.html.gsub("<em>", "").gsub("<\/em>", "") + "</wrapper>"
     Line.all(:conditions => {:document_id => params[:id]}).each do |line|
-      if line.domid.nil?
-        puts "Nil domid!"
-        next
-      end
-      #If there if a <def> tag, create a card using its contents as the answer, otherwise split on the "-"
-      if !Nokogiri::XML(@html).xpath("//*[@def and @id='" + line.domid + "']").empty?
-        @result = Nokogiri::XML(@html).xpath("//*[@def and @id='" + line.domid + "']")
-        @def = @result.first.attribute("def").to_s
-        puts @def
-        @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
-      else
-        @node = Nokogiri::XML(@html).xpath("//*[@id='" + line.domid + "']")
-
-        puts "*********"
-#        @node = Nokogiri::XML(@html).xpath("//*[@class=\"outline_node active\" and @id='" + line.domid + "']")
-#        if @node.empty?
-#           @node = Nokogiri::XML(@html).xpath("//*[@class=\"outline_node changed active\" and @id='" + line.domid + "']")
+      begin
+#        if line.domid.nil?
+#          puts "Nil domid!"
+#          next
 #        end
-        if !@node.empty?
+        #If there if a <def> tag, create a card using its contents as the answer, otherwise split on the "-"
+        if !Nokogiri::XML(@html).xpath("//*[@def and @id='" + line.domid + "']").empty?
+          @result = Nokogiri::XML(@html).xpath("//*[@def and @id='" + line.domid + "']")
+          @def = @result.first.attribute("def").to_s
+          puts @def
+          @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
+        else
+  #        @node = Nokogiri::XML(@html).xpath("//*[@class=\"outline_node active\" and @id='" + line.domid + "']")
+          @node = Nokogiri::XML(@html).xpath("//*[@id='" + line.domid + "']")
+#          puts "*********"
+#          puts @node
+#          if !@node.empty?
           @result = @node.first.children.first.text
-#          puts @result.to_json
+#            if @result.empty?
+#              next
+#            end
           @result = @result.split(' -')
           if @result.length < 2
             @result = @result[0].split('- ')
           end
+#            if @result.length < 2
+#              next
+#            end
           if Mem.all(:conditions => {:line_id => line.id}).empty?
             @mem = Mem.new
             @mem.line_id = line.id
@@ -369,9 +372,15 @@ class DocumentsController < ApplicationController
           else
             @hash["cards"] << {"prompt" => @result[0].strip, "answer" => @result[1].strip, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
           end
+#          end
         end
+      rescue
+        puts "Caught card parsing error..."
+        next
       end
-
+    end
+    render :json => @hash
+  end
 
 
 #      if !Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@def and @id='" + line.domid + "']").empty?
@@ -408,10 +417,7 @@ class DocumentsController < ApplicationController
 #          end
 #        end
 #      end
-    end
-    render :json => @hash
-  end
-  
+
 
   private
 
