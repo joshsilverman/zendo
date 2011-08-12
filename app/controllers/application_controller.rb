@@ -20,6 +20,8 @@ class ApplicationController < ActionController::Base
   def redirect_logger
     @@redirect_logger ||= Logger.new("#{::Rails.root.to_s}/log/redirect.log")
   end
+  
+
 
   private
   def set_abingo_identity
@@ -33,4 +35,9 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def mobile_device?
+    return request.user_agent.include? 'iPhone'
+  end
+  helper_method :mobile_device?
+  
 end

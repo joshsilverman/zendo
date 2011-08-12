@@ -5,7 +5,7 @@ class Mem < ActiveRecord::Base
 
   has_many :reps
 
-  def update_reviewed(confidence, importance)
+  def update_reviewed(confidence, importance, mobile)
 
     # calculate time delta
     time_delta_to_now = Time.now - self.updated_at
@@ -28,17 +28,15 @@ class Mem < ActiveRecord::Base
       review_after = Time.now;
       strength_pre = 0;
     end
-
+    
     # update attributes
     self.update_attributes(:review_after => review_after,
                            :strength => strength_pre)
-
     # create rep
     Rep.create(:mem_id => self.id,
                :user_id => self.user_id,
                :confidence => confidence,
-               :strength => strength_pre)
-
+               :strength => strength_pre,
+               :mobile => mobile)
   end
-  
 end
