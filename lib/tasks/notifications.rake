@@ -1,6 +1,6 @@
 namespace :notifications do
   task :collect => :environment do
-
+    puts "Yo"
     #RAKE TASK TO CREATE NOTIFICATIONS / MARK MEMS
     # For each user that has a push enabled document do:
     #   For each push enabled usership the owner has do:
@@ -92,6 +92,9 @@ namespace :notifications do
           end
           notification = APN::Notification.new
           #Multi device support?
+          puts "Here:"
+          puts APN::Device.where('user_id = ?', user.id).first
+          puts user.id
           notification.device = APN::Device.where('user_id = ?', user.id).first
           notification.badge = Mem.all(:conditions => {:user_id => user.id, :pushed => true}).length
           notification.sound = false
