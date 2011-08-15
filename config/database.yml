@@ -29,14 +29,3 @@ production:
   database: zendo_prod
   pool: 5
   timeout: 5000
-
-#production:
-#  adapter: mysql2
-#  database: zendo
-#  pool: 5
-#  timeout: 5000
-#  socket: <%= ['/tmp/mysql.sock',
-#	     '/opt/local/var/run/mysql5/mysqld.sock', # darwinports
-#         '/opt/local/var/run/mysqld/mysqld.sock', # darwinports, again
-#         '/var/run/mysqld/mysqld.sock',           # ubuntu/debian
-#         '/var/mysql/mysql.sock'].select { |f| File.exist? f }.first #%>
