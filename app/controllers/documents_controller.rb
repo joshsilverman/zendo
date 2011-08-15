@@ -48,12 +48,20 @@ class DocumentsController < ApplicationController
     # check id posted
     id = params[:id]
     @read_only = params[:read_only]
+    get_document(params[:id])
+    if @document.public
+      puts "Public doc!"
+      Usership.create(:user_id => current_user.id,
+                      :document_id => @document.id,
+                      :push_enabled => false,
+                      :created_at => Time.now,
+                      :owner => false)
+    end
     @usership = Usership.find_by_document_id_and_user_id(params[:id], current_user.id)
     if @usership.nil?
       redirect_to '/explore', :notice => "Error accessing that document."
       return
     end
-    get_document(params[:id])
     if @document.nil?
       redirect_to '/explore', :notice => "Error accessing that document."
       return
