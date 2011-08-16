@@ -303,9 +303,9 @@ class DocumentsController < ApplicationController
     if @user and @document and @user.id != current_user.id
       begin
       	Usership.create(:user_id => @user.id,
-      				    :document_id => @document.id,
-                  :owner => false
-      				   )
+      				          :document_id => @document.id,
+                        :owner => false
+      				          )
         @user.save
         render :text => @user.id
         return
