@@ -49,20 +49,15 @@ class DocumentsController < ApplicationController
     id = params[:id]
     @read_only = params[:read_only]
     get_document(params[:id])
-    if @document.public
-      puts "Public doc!"
-      Usership.create(:user_id => current_user.id,
-                      :document_id => @document.id,
-                      :push_enabled => false,
-                      :created_at => Time.now,
-                      :owner => false)
-    end
     @usership = Usership.find_by_document_id_and_user_id(params[:id], current_user.id)
-    if @usership.nil?
-      redirect_to '/explore', :notice => "Error accessing that document."
-      return
+    if @document.public && @usership.nil?
+      @usership = Usership.create(:user_id => current_user.id,
+                                  :document_id => @document.id,
+                                  :push_enabled => false,
+                                  :created_at => Time.now,
+                                  :owner => false)
     end
-    if @document.nil?
+    if @usership.nil? || @document.nil?
       redirect_to '/explore', :notice => "Error accessing that document."
       return
     end
@@ -107,13 +102,15 @@ class DocumentsController < ApplicationController
     end
     @usership = Usership.all(:conditions => {:user_id => current_user.id, :document_id => id}).first
     puts @usership.to_json
-
     if @usership.owner == false
-      render :nothing => true, :status => 400
+      puts "Yooooo"
+      @usership.destroy
+      render :json => Tag.tags_json(current_user)
       return
     else
       document = current_user.documents.find_by_id(id)
       document.delete unless document.blank?
+      @usership.destroy
       render :json => Tag.tags_json(current_user)
     end
   end
