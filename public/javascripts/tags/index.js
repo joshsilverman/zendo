@@ -358,7 +358,7 @@ var cDoc = Class.create({
                 });
             }.bind(this),
             onFailure: function(transport) {
-                alert('There was an error removing the directory.');
+                alert('There was an error removing the document.');
             }
         });
     },

@@ -98,15 +98,24 @@ class DocumentsController < ApplicationController
   end
   
   def destroy
+    puts "In delete!"
     id = params[:id]
+    puts id
     if id.nil?
       render :nothing => true, :status => 400
       return
     end
-    
-    document = current_user.documents.find_by_id(id)
-    document.delete unless document.blank?
-    render :json => Tag.tags_json(current_user)
+    @usership = Usership.all(:conditions => {:user_id => current_user.id, :document_id => id}).first
+    puts @usership.to_json
+
+    if @usership.owner == false
+      render :nothing => true, :status => 400
+      return
+    else
+      document = current_user.documents.find_by_id(id)
+      document.delete unless document.blank?
+      render :json => Tag.tags_json(current_user)
+    end
   end
 
   def review
