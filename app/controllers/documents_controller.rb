@@ -315,7 +315,27 @@ class DocumentsController < ApplicationController
     render :nothing => true, :status => 400
   end
 
-  #Renders a hash of all of the cards belonging to a given document
+
+  def purchase_doc
+    @user = current_user
+    @document = Document.find(params['doc_id'])
+    if @user and @document and @document.public
+      begin
+      	Usership.create(:user_id => @user.id,
+      				    :document_id => @document.id,
+                  :owner => false
+      				   )
+        @user.save
+        render :text => @user.id
+        return
+      rescue
+      end
+    end
+    render :nothing => true, :status => 400
+  end
+
+  #Returns a hash of all of the cards belonging to a given document
+
   def cards
     @document = get_document(params[:id])
     #If document has been updated since last cache, regenerate the cards hash and recache, otherwise serve the cache

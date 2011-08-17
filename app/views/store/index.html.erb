@@ -1,0 +1,88 @@
+<style>
+  .buy{
+    cursor: pointer;
+    text-decoration: underline;
+    color: blue;
+  }
+  li {
+    list-style-type: none;
+    list-style-position: inside;
+    display: block;
+    width: 85px;
+    float: left;
+    margin: 0 25px 15px 0;
+}
+  .egg{
+    display: block;
+    width: 83px;
+    height: 115px;
+    overflow: hidden;
+    background: url("../../images/nounproject/egg.png");
+    position: relative;
+}
+
+  .icon{
+    position: relative;
+    top: 30px;
+    left: 25px;
+    display:block;
+
+}
+</style>
+<div id="usership" style="display:none;">
+<% @popular_public_docs.each do |t|%>
+  <%= t.doc_count %><br/>
+<% end %>
+</div>
+<h2>EggStore</h2>
+<div class="rounded_border" style="margin:20px; padding:10px;">
+  <h3>Recent Eggs</h3>
+  <div id="recent_eggs">
+    <% if @recent_public_docs.empty? %>
+      <strong>Sorry, there are no public documents right now</strong>
+    <% else %>
+      <ul style="margin-left: -20px;">
+      <% @recent_public_docs.each do |d| %>
+        <li><div class="egg"><img src="../../images/nounproject/beer.png" class="icon"></div><%= d.name %> <br />
+        <% purchased = false %>
+        <% @userships.each do |u| %>
+          <% if d.id == u.document_id.to_i%>
+            <% purchased = true %>
+          <% end %>
+        <% end %>
+        <% if purchased %>
+          <span id="<%= d.id%>" class="">Purchased</span> </li>
+        <% else %>
+          <span id="<%= d.id%>" class="buy">Get It Now</span> </li>
+        <% end %>
+      <% end %>
+      </ul>
+      <div style="clear:both"></div>
+    <% end %>
+  </div><!--End Recent Eggs-->
+
+  <h3>Popular Eggs</h3>
+  <div id="popular_eggs">
+    <% if @popular_public_docs.empty? %>
+      <strong>Sorry, there are no public documents right now</strong>
+    <% else %>
+      <ul style="margin-left: -20px;">
+      <% @popular_public_docs.each do |d| %>
+        <li><div class="egg"><img src="../../images/nounproject/beer.png" class="icon"></div><%= d.name %> <br />
+        <% purchased = false %>
+        <% @userships.each do |u| %>
+          <% if d.id == u.document_id.to_i%>
+            <% purchased = true %>
+          <% end %>
+        <% end %>
+        <% if purchased %>
+          <span id="<%= d.id%>" class="">Purchased</span> </li>
+        <% else %>
+          <span id="<%= d.id%>" class="buy">Get It Now</span> </li>
+        <% end %>
+      <% end %>
+      </ul>
+      <div style="clear:both"></div>
+    <% end %>
+  </div><!--End Recent Eggs-->
+</div>
