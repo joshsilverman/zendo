@@ -39,6 +39,8 @@ GEM
     addressable (2.2.6)
     arel (2.0.10)
     bcrypt-ruby (2.1.4)
+    braintree (2.10.2)
+      builder (>= 2.0.0)
     builder (2.1.2)
     capybara (1.0.0)
       mime-types (>= 1.16)
@@ -215,6 +217,7 @@ PLATFORMS
 
 DEPENDENCIES
   apn_on_rails!
+  braintree
   bundler (= 1.0.10)
   capybara
   database_cleaner

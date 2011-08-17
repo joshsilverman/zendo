@@ -77,6 +77,7 @@ Zendo::Application.routes.draw do
   match "/documents/update_tag"
   match "/documents/share"
   match "/documents/unshare"
+  match "/documents/purchase_doc"
   match "/documents/update_privacy"
   match "/documents/update_document_name"
   match "/documents/:id/cards" => "documents#cards"
@@ -120,6 +121,9 @@ Zendo::Application.routes.draw do
 
   #abingo dashboard
   match '/abingo(/:action(/:id))' => 'abingo_dash', :as => :abingo
+
+  #store
+  match '/store' => 'store#index'
 
   #static
 
