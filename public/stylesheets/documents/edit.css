@@ -197,6 +197,10 @@ button.saving {
     border:#B2F233 1px solid
 }
 
+.not-found {
+    display:block;
+}
+
 img.sync {
     margin:2px;
     height:21px;

@@ -97,8 +97,6 @@ var cParser = Class.create({
                 Card.back += node.getAttribute('def');
             }
             else {
-                console.log("HERES THE TERM:");
-                console.log(term);
                 new Ajax.Request("/terms/lookup/" + term, {
                     onCreate: function() {
                         Card.autoActivate = true;
@@ -122,6 +120,7 @@ var cParser = Class.create({
                         Card.render();
                     },
                     onFailure: function() {
+                        $('card_' + Card.cardNumber).addClassName('not-found');
                         Card.back = '';
                         Card.render();
                     },

@@ -797,12 +797,13 @@ var cCard = Class.create({
         if (this.active == true) checkbox = '<input type="checkbox" class="card_activation" checked="yes" />';
         else checkbox = '<input type="checkbox" class="card_activation" />';
 
-        //is not active
-        if (!this.active)
-            this.elmntCard.innerHTML = checkbox + '<i>Click checkbox to activate</i>';
-
-        //both sides set
-        else if (this.back) {
+//        //is not active
+//        if (!this.active)
+//            this.elmntCard.innerHTML = checkbox + '<i>Click checkbox to activate</i>';
+//
+//        //both sides set
+//        else
+        if (this.back) {
             this.elmntCard.innerHTML = '<div class="card_front">'
                     + checkbox + '</div>\
                 <div class="card_back">'+this.back+'</div>';
