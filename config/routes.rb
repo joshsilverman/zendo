@@ -118,6 +118,7 @@ Zendo::Application.routes.draw do
   # search
   match "/dashboard" => "search#index"
   match "/search/query/:page" => "search#query"
+  match "/search/full_query/" => "search#full_query"
 
   #abingo dashboard
   match '/abingo(/:action(/:id))' => 'abingo_dash', :as => :abingo
