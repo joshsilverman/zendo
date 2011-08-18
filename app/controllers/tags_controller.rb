@@ -15,8 +15,6 @@ class TagsController < ApplicationController
   end
 
   def get_tags_json
-#    @tags = Tag.tags_json(current_user)
-#    puts @tags
     render :text => Tag.tags_json(current_user)
   end
 

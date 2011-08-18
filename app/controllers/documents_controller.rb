@@ -30,6 +30,7 @@ class DocumentsController < ApplicationController
         @document.edited_at = Date.today
         @document.public = false
         @document.save
+
         @usership = Usership.new
         @usership.user_id = current_user.id
         @usership.document_id = @document.id
@@ -83,7 +84,7 @@ class DocumentsController < ApplicationController
   def update
     # update document
     @document = Document.update(params, current_user.id)
-    logger.debug("This is the updated doc #{@document.inspect}")
+#    logger.debug("This is the updated doc #{@document.inspect}")
 	
     if @document.nil?
       render :nothing => true, :status => 400
@@ -337,43 +338,33 @@ class DocumentsController < ApplicationController
     render :nothing => true, :status => 400
   end
 
-  #Returns a hash of all of the cards belonging to a given document
+  #Renders a hash of all of the cards belonging to a given document
   def cards
+    @document = get_document(params[:id])
+#    puts @document.updated_at
+#    puts "Yeah bro"
+#    puts Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
+#    puts Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}").nil?
     @hash = Hash.new
     @hash["cards"] = []
-    @document = get_document(params[:id])
     update_params = {:id => params[:id], :html => @document.html, :delete_nodes => [], :name => @document.name, :edited_at => @document.edited_at}
     Document.update(update_params, current_user.id)
     @html = "<wrapper>" + @document.html.gsub("<em>", "").gsub("<\/em>", "") + "</wrapper>"
     Line.all(:conditions => {:document_id => params[:id]}).each do |line|
       begin
-#        if line.domid.nil?
-#          puts "Nil domid!"
-#          next
-#        end
         #If there if a <def> tag, create a card using its contents as the answer, otherwise split on the "-"
         if !Nokogiri::XML(@html).xpath("//*[@def and @id='" + line.domid + "']").empty?
           @result = Nokogiri::XML(@html).xpath("//*[@def and @id='" + line.domid + "']")
           @def = @result.first.attribute("def").to_s
-          puts @def
+#          puts @def
           @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
         else
-  #        @node = Nokogiri::XML(@html).xpath("//*[@class=\"outline_node active\" and @id='" + line.domid + "']")
           @node = Nokogiri::XML(@html).xpath("//*[@id='" + line.domid + "']")
-#          puts "*********"
-#          puts @node
-#          if !@node.empty?
           @result = @node.first.children.first.text
-#            if @result.empty?
-#              next
-#            end
           @result = @result.split(' -')
           if @result.length < 2
             @result = @result[0].split('- ')
           end
-#            if @result.length < 2
-#              next
-#            end
           if Mem.all(:conditions => {:line_id => line.id}).empty?
             @mem = Mem.new
             @mem.line_id = line.id
@@ -386,51 +377,18 @@ class DocumentsController < ApplicationController
           else
             @hash["cards"] << {"prompt" => @result[0].strip, "answer" => @result[1].strip, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
           end
-#          end
         end
       rescue
         puts "Caught card parsing error..."
         next
       end
     end
+
+    #Cache a json representation of the cards from the updated doc
+#    Rails.cache.write("#{params[:controller]}_#{params[:action]}_#{params[:id]}", {"updated_at" => Time.now, "cards" => @hash}.to_json)
+#    puts Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
     render :json => @hash
   end
-
-
-#      if !Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@def and @id='" + line.domid + "']").empty?
-#        @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@def and @id='" + line.domid + "']")
-#        @def = @result.first.attribute("def").to_s
-#        @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
-#      else
-#        if !Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html + "</wrapper>").xpath("//*[@id='" + line.domid + "']").empty?
-#          puts line.domid
-##          puts Document.find_by_id(params[:id]).html.gsub("<em>", "").gsub("<\/em>", "")
-#          @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(params[:id]).html.gsub("<em>", "").gsub("<\/em>", "") + "</wrapper>").xpath("//*[@id='" + line.domid + "']").first.children.first.text
-#          if !@result.empty?
-#            puts @result.to_json
-#            @result = @result.split(' -')
-#            puts @result.to_json
-#            if @result.length < 2
-#              @result = @result[0].split('- ')
-#            end
-#            puts @result.to_json
-#            puts line.id
-#            puts Mem.all(:conditions => {:line_id => line.id}).to_json
-#            #If no mem exists, create one
-#            if Mem.all(:conditions => {:line_id => line.id}).empty?
-#              @mem = Mem.new
-#              @mem.line_id = line.id
-#              @mem.user_id = current_user.id
-#              @mem.created_at = Time.now
-#              @mem.document_id = params[:id]
-#              @mem.pushed = false
-#              puts @mem.to_json
-#            else
-#              @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
-#            end
-#          end
-#        end
-#      end
 
 
   private
