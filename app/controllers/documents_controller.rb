@@ -49,7 +49,7 @@ class DocumentsController < ApplicationController
     # check id posted
     id = params[:id]
     @read_only = params[:read_only]
-    get_document(params[:id])
+    get_document(params[:id])    
     @usership = Usership.find_by_document_id_and_user_id(params[:id], current_user.id)
     if @document.public && @usership.nil?
       @usership = Usership.create(:user_id => current_user.id,
@@ -271,8 +271,10 @@ class DocumentsController < ApplicationController
   end
 
   def update_tag
+#    if @document = current_user.documents.find(params[:doc_id])
     if @document = current_user.documents.find(params[:doc_id], :readonly => false)
       puts "Yeah yo"
+      puts params[:tag_id]
       if current_user.tags.find(params[:tag_id])
         puts @document.tag_id
         @document.update_attribute(:tag_id, params[:tag_id])
@@ -341,53 +343,56 @@ class DocumentsController < ApplicationController
   #Renders a hash of all of the cards belonging to a given document
   def cards
     @document = get_document(params[:id])
-#    puts @document.updated_at
-#    puts "Yeah bro"
-#    puts Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
+    #If document has been updated since last cache, regenerate the cards hash and recache, otherwise serve the cache
 #    puts Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}").nil?
-    @hash = Hash.new
-    @hash["cards"] = []
-    update_params = {:id => params[:id], :html => @document.html, :delete_nodes => [], :name => @document.name, :edited_at => @document.edited_at}
-    Document.update(update_params, current_user.id)
-    @html = "<wrapper>" + @document.html.gsub("<em>", "").gsub("<\/em>", "") + "</wrapper>"
-    Line.all(:conditions => {:document_id => params[:id]}).each do |line|
-      begin
-        #If there if a <def> tag, create a card using its contents as the answer, otherwise split on the "-"
-        if !Nokogiri::XML(@html).xpath("//*[@def and @id='" + line.domid + "']").empty?
-          @result = Nokogiri::XML(@html).xpath("//*[@def and @id='" + line.domid + "']")
-          @def = @result.first.attribute("def").to_s
-#          puts @def
-          @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
-        else
-          @node = Nokogiri::XML(@html).xpath("//*[@id='" + line.domid + "']")
-          @result = @node.first.children.first.text
-          @result = @result.split(' -')
-          if @result.length < 2
-            @result = @result[0].split('- ')
-          end
-          if Mem.all(:conditions => {:line_id => line.id}).empty?
-            @mem = Mem.new
-            @mem.line_id = line.id
-            @mem.user_id = current_user.id
-            @mem.created_at = Time.now
-            @mem.document_id = params[:id]
-            @mem.pushed = false
-            @mem.save
-            @hash["cards"] << {"prompt" => @result[0].strip, "answer" => @result[1].strip, "mem" => @mem.id}
+    @cache = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
+#    puts @cache
+    if @cache.nil? || @document.updated_at > @cache["updated_at"]
+      @hash = Hash.new
+      @hash["cards"] = []
+      update_params = {:id => params[:id], :html => @document.html, :delete_nodes => [], :name => @document.name, :edited_at => @document.edited_at}
+      Document.update(update_params, current_user.id)
+      @html = "<wrapper>" + @document.html.gsub("<em>", "").gsub("<\/em>", "") + "</wrapper>"
+      Line.all(:conditions => {:document_id => params[:id]}).each do |line|
+        begin
+          #If there if a <def> tag, create a card using its contents as the answer, otherwise split on the "-"
+          if !Nokogiri::XML(@html).xpath("//*[@def and @id='" + line.domid + "']").empty?
+            @result = Nokogiri::XML(@html).xpath("//*[@def and @id='" + line.domid + "']")
+            @def = @result.first.attribute("def").to_s
+  #          puts @def
+            @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
           else
-            @hash["cards"] << {"prompt" => @result[0].strip, "answer" => @result[1].strip, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
+            @node = Nokogiri::XML(@html).xpath("//*[@id='" + line.domid + "']")
+            @result = @node.first.children.first.text
+            @result = @result.split(' -')
+            if @result.length < 2
+              @result = @result[0].split('- ')
+            end
+            if Mem.all(:conditions => {:line_id => line.id}).empty?
+              @mem = Mem.new
+              @mem.line_id = line.id
+              @mem.user_id = current_user.id
+              @mem.created_at = Time.now
+              @mem.document_id = params[:id]
+              @mem.pushed = false
+              @mem.save
+              @hash["cards"] << {"prompt" => @result[0].strip, "answer" => @result[1].strip, "mem" => @mem.id}
+            else
+              @hash["cards"] << {"prompt" => @result[0].strip, "answer" => @result[1].strip, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
+            end
           end
+        rescue
+          puts "Caught card parsing error..."
+          next
         end
-      rescue
-        puts "Caught card parsing error..."
-        next
       end
+      Rails.cache.write("#{params[:controller]}_#{params[:action]}_#{params[:id]}", {"cards" => @hash["cards"], "updated_at" => Time.now})
+      render :json => @hash
+      puts "Regenerated hash and cached"
+    else
+      render :json => Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
+      puts "Served cache"
     end
-
-    #Cache a json representation of the cards from the updated doc
-#    Rails.cache.write("#{params[:controller]}_#{params[:action]}_#{params[:id]}", {"updated_at" => Time.now, "cards" => @hash}.to_json)
-#    puts Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
-    render :json => @hash
   end
 
 

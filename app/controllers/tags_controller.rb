@@ -35,7 +35,7 @@ class TagsController < ApplicationController
         render :nothing => true, :status => 400
         return
       else
-        current_user.documents.find(doc_id).update_attribute(:tag_id, @tag.id) unless doc_id.nil?
+        current_user.documents.find(doc_id, :readonly => false).update_attribute(:tag_id, @tag.id) unless doc_id.nil?
         render :text => @tag.id
       end
     end
