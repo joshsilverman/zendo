@@ -366,7 +366,6 @@ var cOutline = Class.create({
             var d = new Date();
             var today = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+ d.getDate();
             /* save */
-            console.log("yooooooo");
             new Ajax.Request('/documents/'+this.documentId, {
                 method: 'put',
                 parameters: {'html': doc.editor.getContent(),
@@ -411,7 +410,7 @@ var cOutline = Class.create({
                 }.bind(this),
 
                 onFailure: function(transport) {
-					console.log("Failed!");
+                    console.log("Failed!");
                     /* add unsuccessfully saved changes back to unsaved changes and set attributes */
                     this.unsavedChanges = this.unsavedChanges.concat(this.savingChanges).uniq();
                     this.unsavedChanges.each(function(domId) {
@@ -468,11 +467,12 @@ var cOutline = Class.create({
     },
 
     onChange: function(target, e) {
-        if (e && e.keyCode >= 37 && e.keyCode <= 40) return;
+
+        if (e && ((e.keyCode >= 37 && e.keyCode <= 40) || (e.keyCode >= 16 && e.keyCode <= 20))) return;
 
         if (target) {
-            if (target.tagName != "P" && target.tagName != "LI" && target.tagName != "DIV")  {
-                target = Element.up(target, "p, li, div");
+            if (target.tagName != "STRONG" && target.tagName != "P" && target.tagName != "LI" && target.tagName != "DIV")  {
+                target = Element.up(target, "strong, p, li, div");
                 if (!target) {
                     return;
                 }
@@ -493,6 +493,14 @@ var cOutline = Class.create({
             }
             else if(doc.rightRail.cards.get(id)) {
                 doc.rightRail.updateFocusCardWrapper(id, target);
+            }
+
+            /* re-initiate lookup if strong */
+            if (target.tagName == "STRONG") {
+                var nodeId = doc.utilities.toNodeId(target);
+                Card = doc.rightRail.cards.get(nodeId);
+                Card.elmntCard.removeClassName("not-found");
+                parser.parse(Card);
             }
         }
 
@@ -744,6 +752,7 @@ var cCard = Class.create({
     },
 
     update: function(node, truncate) {
+
         //node exists?
         if (!node) {
             this.destroy();
@@ -753,7 +762,8 @@ var cCard = Class.create({
         this.active = Element.hasClassName(node, 'active');
 
         /* parse and render */
-        this.text = node.innerHTML.split(/<[uoUO](?:l|L)/)[0];
+        this.text = node.innerHTML.split(/<(?:li|ol|ul|p|strong)/)[0];
+
         parser.parse(this);
         this.render(truncate);
     },
@@ -771,6 +781,7 @@ var cCard = Class.create({
     deactivate: function() {
         this.active = false;
         $('card_' + this.cardNumber).removeClassName('card_active');
+        $('card_' + this.cardNumber).addClassName('deselected');
         var node = doc.outline.iDoc.getElementById("node_" + this.cardNumber);
         Element.removeClassName(node, "active");
         Element.addClassName(node, "deactivated");

@@ -3,6 +3,13 @@ var cParser = Class.create({
     iDocClone: null, /* clone */
     iDoc: null,
     line:null,
+    ajaxCalls: [],
+    ajaxEmptyCount: 0, /* consecutive empty queue tests */
+
+    initialize: function() {
+      /* start ajax invoker */
+      this.invokeAjax();
+    },
 
     parse: function(Card, ellipsize) {
 
@@ -54,7 +61,7 @@ var cParser = Class.create({
         /* locate adjust line node */
         this.line = Element.select(this.docHtml, '#' + Card.domId);
         if (this.line.length == 0) return;
-        Card.text = this.line[0].innerHTML.split(/<(?:li|ol|ul|p)/)[0];
+        Card.text = this.line[0].innerHTML.split(/<(?:li|ol|ul|p|strong)/)[0];
         this.line = Element.extend(this.line[0]);
         Element.update(this.line, Card.front);
     },
@@ -89,48 +96,75 @@ var cParser = Class.create({
             if (term.match(/Figure|Table/)) return false;
 
             /* @ugly this shouldn't be here... ugh */
-            if (node.getAttribute('def') || node.getAttribute('def') == "") {
+
+            if (node.getAttribute('changed') != '1' && Element.hasClassName(node, 'not-found')) {
+                $('card_' + Card.cardNumber).addClassName('not-found');
+                Card.front = Card.text
+                Card.back = '';
+                Card.render();
+            }
+            else if (node.getAttribute('changed') != '1' && (node.getAttribute('def') || node.getAttribute('def') == "")) {
                 Card.front = Card.text
                 Card.back = "";
                 if (node.getAttribute('img_src')) 
                     Card.back += "<img src='" + node.getAttribute('img_src') + "'>";
-                Card.back += node.getAttribute('def');
+                if (node.getAttribute('def')) Card.back += node.getAttribute('def');
             }
             else {
-                new Ajax.Request("/terms/lookup/" + term, {
-                    onCreate: function() {
-                        Card.autoActivate = true;
-                        //set autoActivate member if this is the first time text has been parsable
-                        if (!Card.back && !Card.active) {
-                            Card.autoActivate = true;
+                this.ajaxCalls.push(
+                    function () {
+                        
+                        /* check if node still exists */
+                        try {
+                            var node = Element.select(this.iDoc, '#' + Card.domId)[0];
+                            if (!node) return false;
                         }
-                        Card.front = Card.text
-                        Card.back = '<img alt="loading" src="/images/shared/fb-loader.gif" style="border:none !important;">';
-                        Card.render();
-                    },
-                    onSuccess: function(transport) {
-                        node.setAttribute('def', transport.responseJSON['description']);
-                        node.setAttribute('img_src', transport.responseJSON['image']);
+                        catch (e) {}
 
-                        Card.front = Card.text
-                        Card.back = "";
-                        if (node.getAttribute('img_src'))
-                            Card.back += "<img src='" + transport.responseJSON['image'] + "'>";
-                        Card.back += transport.responseJSON['description'];
-                        Card.render();
-                    },
-                    onFailure: function() {
-                        $('card_' + Card.cardNumber).addClassName('not-found');
-                        Card.back = '';
-                        Card.render();
-                    },
-                    onComplete: function() {
-                        if (doc.outline) {
-                            doc.editor.isNotDirty = false;
-                            doc.outline.autosave();
+                        new Ajax.Request("/terms/lookup/" + term, {
+                        onCreate: function() {
+                            Card.autoActivate = true;
+                            //set autoActivate member if this is the first time text has been parsable
+                            if (!Card.back && !Card.active) {
+                                Card.autoActivate = true;
+                            }
+                            Card.front = Card.text
+                            Card.back = '<img alt="loading" src="/images/shared/fb-loader.gif" style="border:none !important;">';
+                            Card.render();
+                        },
+                        onSuccess: function(transport) {
+
+                            node.setAttribute('def', transport.responseJSON['description']);
+                            node.setAttribute('img_src', transport.responseJSON['image']);
+
+                            Card.front = Card.text
+                            Card.back = "";
+                            if (node.getAttribute('img_src'))
+                                Card.back += "<img src='" + transport.responseJSON['image'] + "'>";
+                            Card.back += transport.responseJSON['description'];
+                            Card.activate();
+                            node.setAttribute('changed', 1);
+                            Element.addClassName(node, 'changed');
+                            Card.render();
+                        },
+                        onFailure: function() {
+                            $('card_' + Card.cardNumber).addClassName('not-found');
+                            Element.addClassName(node, 'not-found');
+                            Card.back = '';
+                            node.setAttribute('changed', 1);
+                            Element.addClassName(node, 'changed');
+                            Card.render();
+                        },
+                        onComplete: function() {
+                            if (doc.outline) {
+                                doc.editor.isNotDirty = false;
+                                doc.outline.autosave();
+                            }
+                            document.fire("lookup:complete");
                         }
-                    }
-                });
+                    });
+                    return true;
+                }.bind(this));
             }
             return true;
         }
@@ -155,5 +189,35 @@ var cParser = Class.create({
         }
         catch (e) {}
         return false;
+    },
+
+    invokeAjax: function() {
+
+        console.log("invoke ajax");
+
+        /* check queue status */
+        if (this.ajaxCalls.length == 0) this.ajaxEmptyCount++;
+        else this.ajaxEmptyCount = 0;
+        if (this.ajaxEmptyCount > 2) {
+            document.fire("lookup:idle");
+        }
+
+        if (this.ajaxCalls.length > 0) {
+            document.observe("lookup:complete", function() {
+                document.stopObserving("lookup:complete");
+                console.log("new ajax call");
+                this.invokeAjax();
+            }.bind(this));
+            while (this.ajaxCalls.length > 0 && !this.ajaxCalls.shift().call()) {
+                console.log("call!");
+            }
+        }
+        else {
+            console.log("delay call");
+            document.stopObserving("lookup:complete");
+            this.invokeAjax.bind(this).delay(3);
+        }
+
+
     }
 });

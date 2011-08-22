@@ -114,7 +114,8 @@ tinyMCE.init({
 
   setup : function(ed) {
     ed.onKeyDown.add(function(ed, e) {
-        doc.outline.onChange(ed.selection.getNode(), e);
+        <%#*var node = ed.selection.getNode();%>
+        (function () {doc.outline.onChange(ed.selection.getNode(), e);}).defer();
     });
     ed.onBeforeExecCommand.add(function(ed) {
         doc.outline.onChange(ed.selection.getNode());
