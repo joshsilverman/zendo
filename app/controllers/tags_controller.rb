@@ -35,11 +35,32 @@ class TagsController < ApplicationController
         render :nothing => true, :status => 400
         return
       else
-        current_user.documents.find(doc_id).update_attribute(:tag_id, @tag.id) unless doc_id.nil?
+        current_user.documents.find(doc_id, :readonly => false).update_attribute(:tag_id, @tag.id) unless doc_id.nil?
         render :text => @tag.id
       end
     end
+  end
 
+  def create_with_index
+
+    return unless params[:create_with_index]
+
+    # get and split index contents
+    index = params[:create_with_index][:index].tempfile.readlines.join "\n"
+    pages = index.split /<\/ul>/
+
+    # create tag
+    @tag = current_user.tags.find_by_name(params[:create_with_index][:name])
+    @tag.delete if @tag
+    @tag = current_user.tags.new(:name => params[:create_with_index][:name])
+
+    # create documents
+    pages.each_with_index do |page, i|
+      @tag.documents << current_user.documents.create(:html => page, :name => (i + 1).to_s)
+    end
+    @tag.save
+
+    render :layout => false
   end
 
   def update

@@ -1,0 +1,32 @@
+<html>
+  <body style="margin:0; padding:0;">
+    <% if @tag.nil? %>
+      <h1>Index Import</h1>
+      <%= form_for :create_with_index, :html => {:multipart => true} do |f| %>
+        <%= f.label :name %>:
+        <%= f.text_field :name %>
+
+        <br />
+        <%= f.label :index %>:
+        <%= f.file_field :index %>
+        <%= f.submit "Upload" %>
+      <% end %>
+
+    <% else %>
+      <%= javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/prototype/1/prototype.js', :cache => false %>
+      <%= javascript_include_tag "tags/create_with_index" %>
+      <table width="100%" height="2%">
+        <tr>
+          <% @tag.documents.each do |document| %>
+            <td id="cell_<%=document.id%>" cellpadding="0">
+              <%= link_to "", edit_document_path(document), :target => "editor" %>
+            </td>
+          <% end %>
+        </tr>
+      </table>
+
+      <iframe name="editor" id="editor" style="width:100%; height:98%; border:none;"></iframe>
+
+    <% end %>
+  </body>
+</html>

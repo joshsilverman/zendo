@@ -71,6 +71,7 @@ Zendo::Application.routes.draw do
   match "/tags/create" => "tags#create"
   match "/tags/create_and_assign" => "tags#create"
   match "/tags/update_tags_name"
+  match "/tags/create_with_index"
 
   # documents
   match "/documents/create/:tag_id" => "documents#create"
