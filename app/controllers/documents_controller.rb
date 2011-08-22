@@ -395,6 +395,10 @@ class DocumentsController < ApplicationController
     end
   end
 
+  def get_public_documents
+    render :json => Document.all(:conditions => {:public => true}).to_json(:only => [:name, :id])
+  end
+
 
   private
 

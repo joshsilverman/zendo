@@ -1,17 +1,5 @@
 namespace :notifications do
   task :collect => :environment do
-    puts "Yo"
-    #RAKE TASK TO CREATE NOTIFICATIONS / MARK MEMS
-    # For each user that has a push enabled document do:
-    #   For each push enabled usership the owner has do:
-    #     Locate the three weakest mems that are not "pushed" and change them
-    #     to "pushed" 
-    #   If the user doesn't have a pending notification do:
-    #     Create a notification
-    #     Set notification user ID
-    #
-    #
-
     #REVISED RAKE TASK TO CREATE NOTIFICATIONS / MARK MEMS
     # For each user that has a push enabled document do:
     #   If average pushed mems per mobile enabled doc is greater than 6 do:
@@ -34,7 +22,7 @@ namespace :notifications do
     #
     #USE MEMS>COUNT
     User.all(:include => :userships, :conditions => { :userships => { :push_enabled => true }}).each do |user|
-#      begin
+      begin
         @push_userships = user.userships.all(:conditions => { :userships => { :push_enabled => true }})
         puts @push_userships.to_json
         @pushed_mems = Mem.all(:conditions => { :user_id => user.id, :pushed => true })
@@ -44,7 +32,7 @@ namespace :notifications do
         #INSTEAD, WHEN A USER ENABLES MOBILE, SET THE RESEND VALUE TO NIL FOR THAT USER'S NOTIFICATION
         #Check to see if there are both too many mems/doc and that the current time is before the resend time
         @last_notification = APN::Notification.all(:conditions => {:user_id => user.id}).last
-        if @pushed_mems.length / @push_userships.length > 3
+        if @pushed_mems.length / @push_userships.length > 6
           puts "More than 6 pending mems per doc for this user"
           if !@last_notification.nil?
             if @last_notification.resend_at.nil?
@@ -102,9 +90,9 @@ namespace :notifications do
           notification.user_id = user.id
           notification.save
         end
-#      rescue
-#        puts "Error during notifications rake"
-#      end
+      rescue
+        puts "Error during notifications rake"
+      end
     end
     APN::Notification.send_notifications
   end
