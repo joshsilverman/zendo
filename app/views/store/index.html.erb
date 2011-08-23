@@ -1,5 +1,5 @@
-<% @page_specific_scripts_js = ["/javascripts/store/effects.js", "/javascripts/store/pluit-carousel.js"] %>
-<% @page_specific_scripts_css = ["/stylesheets/store/pluit-carousel.css", "/stylesheets/store/pluit-carousel-skins.css"] %>
+<% @page_specific_scripts_js = ["/javascripts/store/effects.js", "/javascripts/store/pluit-carousel.js"] #, "/javascripts/vendors/lightview/js/lightview.js"%>
+<% @page_specific_scripts_css = ["/stylesheets/store/pluit-carousel.css", "/stylesheets/store/pluit-carousel-skins.css"] #, "/javascripts/vendors/lightview/css/lightview.css"%>
 
 <style>
   .buy{
@@ -12,12 +12,13 @@
     list-style-position: inside;
     float:left;
 }
+
   .egg{
     display: block;
     width: 83px;
     height: 115px;
     overflow: hidden;
-    background: url("../../images/nounproject/egg.png");
+    background: url("../../images/nounproject/egg.png") no-repeat;
     position: relative;
 }
 
@@ -30,9 +31,8 @@
   .icon{
     position: relative;
     top: 30px;
-    left: 25px;
+    left:15px;
     display:block;
-
 }
 
 #search-box{
@@ -55,11 +55,13 @@ input[type="search"]::-webkit-search-results-decoration {
   display: none;
 }
 </style>
-<div id="search_json" style="display:none;">
 <% @popular_public_docs.each do |t|%>
-  <%= t.doc_count %><br/>
+  <% t.doc_count %>
 <% end %>
+<div id="search_json" style="display:none;">
+  <%= Document::ICON_TYPES.to_json %>
 </div>
+<% i = 4 %>
 <h2>EggStore</h2>
 <div class="rounded_border" style="margin:10px auto; padding:10px; width: 600px;">
   <div id="search">
@@ -77,18 +79,9 @@ input[type="search"]::-webkit-search-results-decoration {
     <% else %>
       <ul style="margin-left: -20px;">
       <% @recent_public_docs.each do |d| %>
-        <li><div class="egg-box"><div class="egg"><img src="../../images/nounproject/erlenmeyer-flask.png" class="icon"></div><%= d.name %> <br />
-        <% purchased = false %>
-        <% @userships.each do |u| %>
-          <% if d.id == u.document_id.to_i%>
-            <% purchased = true %>
-          <% end %>
-        <% end %>
-        <% if purchased %>
-          <span id="<%= d.id%>" class="">Purchased</span></div></li>
-        <% else %>
-          <span id="<%= d.id%>" class="buy">Get It Now</span></div></li>
-        <% end %>
+        <li><div class="egg-box"><a href='store/details/<%= d.id %>' ><div class="egg">
+                <img src="../../images/nounproject/<%= Document::ICON_TYPES[d.icon_id] %>" class="icon"></div></a><%= d.name %> <br />
+                <%i+=1%>
       <% end %>
       </ul>
       <div style="clear:both"></div>
@@ -102,18 +95,9 @@ input[type="search"]::-webkit-search-results-decoration {
     <% else %>
       <ul style="margin-left: -20px;">
       <% @popular_public_docs.each do |d| %>
-        <li><div class="egg-box"><div class="egg"><img src="../../images/nounproject/beer.png" class="icon"></div><%= d.name %> <br />
-        <% purchased = false %>
-        <% @userships.each do |u| %>
-          <% if d.id == u.document_id.to_i%>
-            <% purchased = true %>
-          <% end %>
-        <% end %>
-        <% if purchased %>
-          <span id="<%= d.id%>" class="">Purchased</span> </div></li>
-        <% else %>
-          <span id="<%= d.id%>" class="buy">Get It Now</span> </div></li>
-        <% end %>
+        <li><div class="egg-box"><a href='store/details/<%= d.id %>' ><div class="egg">
+                <img src="../../images/nounproject/<%= Document::ICON_TYPES[d.icon_id] %>" class="icon"></div></a><%= d.name %> <br />
+      <%i+=1%>
       <% end %>
       </ul>
       <div style="clear:both"></div>

@@ -81,6 +81,7 @@ Zendo::Application.routes.draw do
   match "/documents/purchase_doc"
   match "/documents/update_privacy"
   match "/documents/update_document_name"
+  match "/documents/update_icon"
   match "/documents/:id/cards" => "documents#cards"
   match "/documents/get_public_documents" => "documents#get_public_documents"
   match "/documents/:id" => "documents#edit", :via => [:get], :read_only => true
@@ -120,13 +121,15 @@ Zendo::Application.routes.draw do
   # search
   match "/dashboard" => "search#index"
   match "/search/query/:page" => "search#query"
-  match "/search/full_query/" => "search#full_query"
+  match "/search/full_query" => "search#full_query"
 
   #abingo dashboard
   match '/abingo(/:action(/:id))' => 'abingo_dash', :as => :abingo
 
   #store
   match '/store' => 'store#index'
+  match '/store/details/:id' => 'store#details'
+  match '/choose_icon/:doc_id' => 'store#choose_icon'
 
   #static
 
