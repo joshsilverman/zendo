@@ -127,6 +127,9 @@ var cParser = Class.create({
                             document.fire("lookup:complete");
                         }
 
+                        /* focus on card before lookup */
+                        doc.rightRail.focus(node.id);
+
                         var term = Card.text.gsub(/<[^>]*>/, '').strip().gsub(/\s/, "_").gsub(/\&nbsp;/, "");
                         term = term.underscore();
                         term = term.charAt(0).toUpperCase() + term.slice(1);
@@ -145,7 +148,7 @@ var cParser = Class.create({
                         },
                         onSuccess: function(transport) {
 
-                            node.setAttribute('def', transport.responseJSON['description']);
+                            node.setAttribute('def', transport.responseJSON['description'].gsub(/\(pronounced[^)]*\)/, ""));
                             node.setAttribute('img_src', transport.responseJSON['image']);
 
                             Card.front = Card.text
@@ -153,6 +156,10 @@ var cParser = Class.create({
                             if (node.getAttribute('img_src'))
                                 Card.back += "<img src='" + transport.responseJSON['image'] + "'>";
                             Card.back += transport.responseJSON['description'];
+
+                            /* remove pronunciation notes */
+                            Card.back = Card.back.gsub(/\(pronounced[^)]*\)/, "");
+
                             Card.activate();
                             node.setAttribute('changed', 1);
                             Element.addClassName(node, 'changed');
