@@ -29,6 +29,7 @@ class DocumentsController < ApplicationController
         @document.created_at = Date.today
         @document.edited_at = Date.today
         @document.public = false
+        @document.icon_id = 0
         @document.save
         @usership = Usership.new
         @usership.user_id = current_user.id
@@ -283,6 +284,15 @@ class DocumentsController < ApplicationController
   def update_privacy
     if @document = current_user.documents.find(params[:id], :readonly => false)
       @document.update_attribute(:public, params[:bool])
+    else
+      render :nothing => true, :status => 403
+    end
+    render :nothing => true
+  end
+
+  def update_icon
+    if @document = current_user.documents.find(params[:doc_id], :readonly => false)
+      @document.update_attribute(:icon_id, params[:icon_id])
     else
       render :nothing => true, :status => 403
     end

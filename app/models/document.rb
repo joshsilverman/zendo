@@ -24,6 +24,27 @@ class Document < ActiveRecord::Base
   #scope :recent_edit, where("updated_at < ? AND user_id = ?", Date.today, current_user.id)
   #scope :recent_review, where("reviewed_at between ? and ?", Date.today, (Date.today - 30))
 
+  ICON_TYPES = ["none.png",
+                "beaker.png",
+                "beer.png",
+                "book1.png",
+                "book2.png",
+                "brain.png",
+                "computer.png",
+                "erlenmeyer-flask.png",
+                "gears.png",
+                "genetics.png",
+                "globe.png",
+                "iphone.png",
+                "laptop.png",
+                "lungs.png",
+                "martini.png",
+                "museum.png",
+                "nuclear.png",
+                "pencil.png",
+                "picture.png",
+                "stopwatch.png"]
+
 
   def self.update(params, user_id)
 #    puts params[:id]
