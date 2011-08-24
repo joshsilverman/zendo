@@ -90,9 +90,6 @@ var cParser = Class.create({
         if (node && (node.nodeName == "STRONG" || node.nodeName == "B")) {
 
             /* @ugly this shouldn't be here... ugh */
-//
-//            console.log(node);
-//            return;
 
             if (node.getAttribute('changed') != '1' && Element.hasClassName(node, 'not-found')) {
                 $('card_' + Card.cardNumber).addClassName('not-found');

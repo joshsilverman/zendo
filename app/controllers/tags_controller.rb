@@ -1,5 +1,7 @@
 class TagsController < ApplicationController
   
+  before_filter :check_admin, :only => [:create_with_index]
+
   helper TagsHelper
 
   def index
