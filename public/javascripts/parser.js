@@ -90,6 +90,9 @@ var cParser = Class.create({
         if (node && (node.nodeName == "STRONG" || node.nodeName == "B")) {
 
             /* @ugly this shouldn't be here... ugh */
+//
+//            console.log(node);
+//            return;
 
             if (node.getAttribute('changed') != '1' && Element.hasClassName(node, 'not-found')) {
                 $('card_' + Card.cardNumber).addClassName('not-found');
@@ -107,9 +110,12 @@ var cParser = Class.create({
             else {
 
                 /* temp loading */
-                Card.front = '<img alt="loading" src="/images/shared/fb-loader.gif" style="border:none !important;">';
-                Card.back = '';
-                Card.render();
+                if (Card['render']) {
+                    Card.front = '<img alt="loading" src="/images/shared/fb-loader.gif" style="border:none !important;">';
+                    Card.back = '';
+                    console.log(Card);
+                    Card.render();
+                }
 
                 var call = new Hash({
                     id: node.id,
