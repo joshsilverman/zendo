@@ -340,13 +340,35 @@ class DocumentsController < ApplicationController
     render :nothing => true, :status => 400
   end
 
+
+#  def add_egg
+#
+#  end
+
+  def add_document
+    puts params[:id]
+    if !Usership.find_by_user_id_and_document_id(current_user.id, params[:id]).nil?
+      render :nothing => true, :status => 400
+      return
+    end
+    if get_document(params[:id]).public?
+      Usership.create(:user_id => current_user.id,
+                      :document_id => @document.id,
+                      :push_enabled => false,
+                      :created_at => Time.now,
+                      :owner => false)      
+      render :nothing => true, :status => 200
+    else
+      render :nothing => true, :status => 400
+    end
+  end
+
+
   #Renders a hash of all of the cards belonging to a given document
   def cards
     @document = get_document(params[:id])
     #If document has been updated since last cache, regenerate the cards hash and recache, otherwise serve the cache
-#    puts Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}").nil?
     @cache = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
-#    puts @cache
     if @cache.nil? || @document.updated_at > @cache["updated_at"]
       @hash = Hash.new
       @hash["cards"] = []
@@ -359,7 +381,6 @@ class DocumentsController < ApplicationController
           if !Nokogiri::XML(@html).xpath("//*[@def and @id='" + line.domid + "']").empty?
             @result = Nokogiri::XML(@html).xpath("//*[@def and @id='" + line.domid + "']")
             @def = @result.first.attribute("def").to_s
-  #          puts @def
             @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
           else
             @node = Nokogiri::XML(@html).xpath("//*[@id='" + line.domid + "']")

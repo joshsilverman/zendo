@@ -84,6 +84,7 @@ Zendo::Application.routes.draw do
   match "/documents/get_public_documents" => "documents#get_public_documents"
   match "/documents/:id" => "documents#edit", :via => [:get], :read_only => true
   match "/documents/enable_mobile/:id/:bool" => "documents#enable_mobile"
+  match "/documents/add_document/:id" => "documents#add_document"
   resources :documents, :only => [:edit, :update, :destroy]
 
   # terms

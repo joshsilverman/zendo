@@ -38,17 +38,23 @@ var cDoc = Class.create({
         console.log($('recent_json'));
         
         $('recent_json').innerHTML.evalJSON().collect(function(doc) {
-        	console.log(doc);
+//        	console.log(doc);
             this.recent.push(doc['document']);
         }.bind(this));
 
         //set all documents
         this.docs = new Hash();
         this.tags.each(function(tag){
+//            console.log("Tag:");
+//            console.log(tag[1]);
             tag[1]['documents'].each(function(doc){
+//                console.log("Doc:");
+//                console.log(doc);
+//                console.log(doc['id']);
                 this.docs.set(doc['id'], doc);
             }.bind(this));
         }.bind(this));
+
 
         if(this.activeTags==null){
             this.activeTags = new Hash();
@@ -86,14 +92,10 @@ var cDoc = Class.create({
     },
 
     _buildDocs: function(){
-//        console.log("BROOO");
-//        var JSONfoo = JSON.stringify(doc)
-//        console.log(JSONfoo);
         console.log("BUILDDOCS aiID: "+this.activeItemId);
         var html = '';
         //Build Recent Documents
         this.recent.each(function(doc){
-            console.log(doc);
             var tName = "unknown";
             this.tags.each(function(t){
                if(t[0]==doc['tag_id']){
@@ -129,9 +131,9 @@ var cDoc = Class.create({
         //Builds All Documents
         html = ''
         this.tags.each(function(tag) {
+          console.log(tag[1]);
+          console.log(tag[1].id);
           tag[1]['documents'].each(function(doc){
-//              console.log(doc['name'])
-//              console.log(doc['userships']);
               //this.docs.set(doc['id'], doc);
               ///if($(this.activeItemId)){
               if(doc['id']==this.activeItemId){
@@ -157,6 +159,7 @@ var cDoc = Class.create({
                     </div>';
               }
           }.bind(this));
+
           var elemId = 'accordion_content_'+tag[1]['id'];
           $(elemId).update(html);
           html='';
