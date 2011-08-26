@@ -425,6 +425,9 @@ class DocumentsController < ApplicationController
     elsif !document.userships.find_by_user_id(current_user.id).nil?
       puts "Shared document"
       @r = true
+    elseif current_user.try(:admin?)
+      puts "Admin Access"
+      @r = true
     end
     puts "end"
   end
