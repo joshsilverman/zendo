@@ -29,5 +29,28 @@
       <%= image_tag "shared/fb-loader.gif", :alt => 'loading', :style => "margin-right:5px;visibility:hidden;", :id => "update_share_loading" %>
       <div id="share_email_choices" class="autocomplete"></div>
     </div>
+    <style>
+      .egg{
+    display: block;
+    width: 73px;
+    height: 105px;
+    overflow: hidden;
+    background: url("../../images/nounproject/egg.png") no-repeat;
+    position: relative;
+}
+      .icon{
+    position: relative;
+    top: 30px;
+    left:15px;
+    display:block;
+}
+    </style>
+    <div class="icon-view">
+      Icon
+      <div class="egg">
+        <img src="../../images/nounproject/<%= Document::ICON_TYPES[@document.icon_id] %>" class="icon">
+      </div>
+      <a href='../../choose_icon/<%= @document.id %>' class='lightview' title=" :: :: width: 520, height: 170">Change Icon</a>
+    </div>
   </div>
 </div>

@@ -1,0 +1,111 @@
+<% @page_specific_scripts_js = ["/javascripts/store/effects.js", "/javascripts/store/pluit-carousel.js"] #, "/javascripts/vendors/lightview/js/lightview.js"%>
+<% @page_specific_scripts_css = ["/stylesheets/store/pluit-carousel.css", "/stylesheets/store/pluit-carousel-skins.css"] #, "/javascripts/vendors/lightview/css/lightview.css"%>
+
+<style>
+  .buy{
+    cursor: pointer;
+    text-decoration: underline;
+    color: blue;
+  }
+  #recent_eggs li, #popular_eggs li {
+    list-style-type: none;
+    list-style-position: inside;
+    float:left;
+}
+
+  .egg{
+    display: block;
+    width: 83px;
+    height: 115px;
+    overflow: hidden;
+    background: url("../../images/nounproject/egg.png") no-repeat;
+    position: relative;
+}
+
+.egg-box{
+    display: block;
+    width: 85px;
+    margin: 0 25px 15px 0;
+}
+
+  .icon{
+    position: relative;
+    top: 30px;
+    left:15px;
+    display:block;
+}
+
+#search-box{
+    -webkit-appearance: none;
+    -webkit-font-smoothing: antialiased;
+    border: none;
+    font-size: 30px;
+    width: 500px;
+    letter-spacing: -2px;
+    font-weight: bold;
+    position: relative;
+    margin-left: 10px;
+    z-index: 10;
+    border-bottom: #a0a0a0 1px solid;
+}
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  display: none;
+}
+</style>
+<% @popular_public_docs.each do |t|%>
+  <% t.doc_count %>
+<% end %>
+<div id="search_json" style="display:none;">
+  <%= Document::ICON_TYPES.to_json %>
+</div>
+<% i = 4 %>
+<h2>EggStore</h2>
+<div class="rounded_border" style="margin:10px auto; padding:10px; width: 600px;">
+  <div id="search">
+      <div id="loader" style="width:32px; height:32px; display: block; float:left; margin:4px;"><img id="mag" src="../../images/nounproject/magnifying-glass.png" />
+                                                                                    <img id="load_search" src="../../images/search/ajax-loader.gif"  style="display:none;" /></div>
+      <!--<input type="text" id="search_bar" name="search_bar" size="30" value="Search Public Study Guides"/>-->
+      <input xmlns="http://www.w3.org/1999/xhtml" type="search" id="search-box" placeholder="Search" />
+    </div>
+    <div id="search_results">
+
+  <h3>Recent Eggs</h3>
+  <div id="recent_eggs">
+    <% if @recent_public_docs.empty? %>
+      <strong>Sorry, there are no public documents right now</strong>
+    <% else %>
+      <ul style="margin-left: -20px;">
+      <% @recent_public_docs.each do |d| %>
+        <li><div class="egg-box"><a href='store/details/<%= d.id %>' ><div class="egg">
+                <img src="../../images/nounproject/<%= Document::ICON_TYPES[d.icon_id] %>" class="icon"></div></a><%= d.name %> <br />
+                <%i+=1%>
+      <% end %>
+      </ul>
+      <div style="clear:both"></div>
+    <% end %>
+  </div><!--End Recent Eggs-->
+
+  <h3>Popular Eggs</h3>
+  <div id="popular_eggs">
+    <% if @popular_public_docs.empty? %>
+      <strong>Sorry, there are no public documents right now</strong>
+    <% else %>
+      <ul style="margin-left: -20px;">
+      <% @popular_public_docs.each do |d| %>
+        <li><div class="egg-box"><a href='store/details/<%= d.id %>' ><div class="egg">
+                <img src="../../images/nounproject/<%= Document::ICON_TYPES[d.icon_id] %>" class="icon"></div></a><%= d.name %> <br />
+      <%i+=1%>
+      <% end %>
+      </ul>
+      <div style="clear:both"></div>
+    <% end %>
+  </div><!--End Recent Eggs-->
+
+  </div><!--End Results-->
+  <div style="clear:both"></div>
+
+
+</div>

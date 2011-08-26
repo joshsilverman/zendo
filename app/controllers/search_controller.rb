@@ -9,9 +9,8 @@ class SearchController < ApplicationController
 
   def query
     q = params[:q]
-    puts "DECODED: " + q
     len = Document.joins(:tag).select(['documents.name', 'documents.id', 'tags.name AS tag_name']).where("(tags.name LIKE ? OR documents.name LIKE ?) AND public", '%'+q+'%', '%'+q+'%').length
-    query = Document.joins(:tag).select(['documents.name', 'documents.id', 'tags.name AS tag_name']).where("(tags.name LIKE ? OR documents.name LIKE ?) AND public", '%'+q+'%', '%'+q+'%').page(params[:page]).per(5)
+    query = Document.joins(:tag).select(['documents.name', 'documents.id', 'tags.name AS tag_name']).where("(tags.name LIKE ? OR documents.name LIKE ?) AND public", '%'+q+'%', '%'+q+'%').page(params[:page]).per(8)
     query = query.to_json()
     puts query.length
     if query.length <= 2
@@ -19,6 +18,13 @@ class SearchController < ApplicationController
     else
       query["]"]=',{"size":'+len.to_s+'}]'
     end
+    render :text => query
+  end
+
+  def full_query
+    q = params[:q]
+    query = Document.joins(:tag).select(['documents.name', 'documents.id', 'documents.icon_id', 'tags.name AS tag_name']).where("(tags.name LIKE ? OR documents.name LIKE ?) AND public", '%'+q+'%', '%'+q+'%')
+    query = query.to_json()
     render :text => query
   end
 end

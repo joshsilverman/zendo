@@ -29,6 +29,7 @@ class DocumentsController < ApplicationController
         @document.created_at = Date.today
         @document.edited_at = Date.today
         @document.public = false
+        @document.icon_id = 0
         @document.save
 
         @usership = Usership.new
@@ -306,6 +307,15 @@ class DocumentsController < ApplicationController
     render :nothing => true
   end
 
+  def update_icon
+    if @document = current_user.documents.find(params[:doc_id], :readonly => false)
+      @document.update_attribute(:icon_id, params[:icon_id])
+    else
+      render :nothing => true, :status => 403
+    end
+    render :nothing => true
+  end
+
   def share
     @user = User.find_by_email(params['email'])
     @document = current_user.documents.find(params['id'])
@@ -363,8 +373,24 @@ class DocumentsController < ApplicationController
     end
   end
 
+  def purchase_doc
+    @user = current_user
+    @document = Document.find(params['doc_id'])
+    if @user and @document and @document.public
+      begin
+      	Usership.create(:user_id => @user.id,
+      				    :document_id => @document.id,
+                  :owner => false
+      				   )
+        @user.save
+        render :text => @user.id
+        return
+      rescue
+      end
+    end
+    render :nothing => true, :status => 400
+  end
 
-  #Renders a hash of all of the cards belonging to a given document
   def cards
     @document = get_document(params[:id])
     #If document has been updated since last cache, regenerate the cards hash and recache, otherwise serve the cache
