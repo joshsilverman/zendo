@@ -33,8 +33,8 @@ class Tag < ActiveRecord::Base
 
   def self.recent_json(current_user = nil)
     return nil if current_user.blank?
-    recent_edit = Document.joins(:userships).select(['documents.name', 'documents.id', 'documents.tag_id', 'documents.edited_at', 'documents.reviewed_at']).where("documents.edited_at <= ? AND documents.edited_at >= ?  AND userships.user_id = ?", Date.today, Date.today - 7, current_user.id).limit(10)
-    recent_review = Document.joins(:userships).select(['documents.name', 'documents.id', 'documents.tag_id', 'documents.edited_at', 'documents.reviewed_at']).where("documents.reviewed_at <= ? AND documents.reviewed_at >= ?  AND userships.user_id = ?", Date.today, Date.today - 14, current_user.id).limit(10)
+    recent_edit = Document.joins(:userships).select(['documents.name', 'documents.id', 'documents.tag_id', 'documents.edited_at', 'documents.reviewed_at']).where("documents.edited_at <= ? AND documents.edited_at >= ?  AND userships.user_id = ?", Date.yesterday + 1, Date.yesterday - 7, current_user.id).limit(10)
+    recent_review = Document.joins(:userships).select(['documents.name', 'documents.id', 'documents.tag_id', 'documents.edited_at', 'documents.reviewed_at']).where("documents.reviewed_at <= ? AND documents.reviewed_at >= ?  AND userships.user_id = ?", Date.yesterday + 1, Date.yesterday - 14, current_user.id).limit(10)
     recent = recent_edit|recent_review
     recent.to_json()
     rescue: ['error']
