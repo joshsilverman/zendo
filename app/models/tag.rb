@@ -12,7 +12,6 @@ class Tag < ActiveRecord::Base
 #  validates_uniqueness_of :name, :scope => :user_id
 
   def self.tags_json(current_user = nil)
-    puts current_user.to_json
     return nil if current_user.blank?
     tags = current_user.tags\
                     .includes(:documents)\

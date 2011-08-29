@@ -44,7 +44,6 @@ class AuthenticationsController < ApplicationController
         if @resource.errors['email'].include?("has already been taken")
           auth_logger.info("\n\"Email has already been taken\"\n#{Time.now.to_s(:db)}\nemail: #{@resource.email}\n")
           @resource.password = ""
-          puts @resource.to_yaml
           render "/registrations/new"
         elsif @resource.errors['email'].include?("can't be blank")
           session[:omniauth] = omniauth.except('extra')
