@@ -74,9 +74,6 @@ describe "tags", :js => true do
 
       it "doesn't change tag count" do
 #        wait_until{ page.has_content?('Shareasd') }
-        puts "Next"
-        puts @user2.tags.first.to_json
-        puts @user2.tags.first.documents.to_json
         #This was:
         #@user2.tags.all.count.should == 0
         #Think it needed to change in order to count Misc.
