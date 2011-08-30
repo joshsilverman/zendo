@@ -5,6 +5,9 @@ class SearchController < ApplicationController
     @popular += Document.joins(:tag).select(['documents.name', 'documents.id', 'tags.name AS tag_name']).where("public AND documents.name LIKE ?", '%1.1%').limit(1)
     @popular += Document.joins(:tag).select(['documents.name', 'documents.id', 'tags.name AS tag_name']).where("public AND documents.name LIKE ?", '%1.2%').limit(1)
     @popular += Document.joins(:tag).select(['documents.name', 'documents.id', 'tags.name AS tag_name']).where("public AND documents.name LIKE ?", '%2.1%').limit(1)
+    
+    @username = current_user.username.nil?
+    puts @username
   end
 
   def query
@@ -20,5 +23,15 @@ class SearchController < ApplicationController
       query["]"]=',{"size":'+len.to_s+'}]'
     end
     render :text => query
+  end
+
+  def is_username_available
+    u = User.where("username = ?", params['u']).first
+    puts u
+    if not u.nil?
+      render :text => false
+    else
+      render :text => true
+    end
   end
 end

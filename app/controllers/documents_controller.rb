@@ -307,7 +307,7 @@ class DocumentsController < ApplicationController
   end
 
   def share
-    @user = User.find_by_email(params['email'])
+    @user = User.find_by_username(params['username'])
     @document = current_user.documents.find(params['id'])
     if @user and @document and @user.id != current_user.id
       begin

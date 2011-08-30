@@ -17,7 +17,7 @@
       <% @document.userships.where('owner = 0').all.each do |viewer| %>
         <% puts viewer.to_json %>
         <span class="token removable" viewer_id="<%= viewer.user_id %>">
-          <%= viewer.user.email %>
+          <%= viewer.user.username %>
           <span class="remove" >X</span>
         </span>
       <% end %>
@@ -25,9 +25,9 @@
     <div class="clr-thin"></div>
     <div>
       <span class="option">Add a person:</span>
-      <%= text_field_tag :email, '', :id => 'share_email_input' %>
+      <%= text_field_tag :username, '', :id => 'share_username_input' %>
       <%= image_tag "shared/fb-loader.gif", :alt => 'loading', :style => "margin-right:5px;visibility:hidden;", :id => "update_share_loading" %>
-      <div id="share_email_choices" class="autocomplete"></div>
+      <div id="share_username_choices" class="autocomplete"></div>
     </div>
   </div>
 </div>

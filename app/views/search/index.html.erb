@@ -98,3 +98,17 @@ li{
       <a href="/explore?ref=dash" class="button">Organize Your Study Guides</a>
   </div>
 <div style="clear: both;"></div>
+
+<% if @username %>
+  <div id="username" style="display: none;">
+    <h2>Thanks for signing up!</h2>
+    <h3>Choose a sweet username to get started!</h3>
+    <h5>Don't worry, you can always change it later</h5>
+    <strong>Username: </strong>
+    <input type="text" id="userfield" name="userfield" placeholder="Username"></input>
+    <span id="taken" style="display:none; color: red;">Sorry, this is taken</span>
+    <span id="available" style="display:none; color: green;">Nice choice!</span>
+    <br/><button id="submit" style="display:none;">Get it!</button>
+    <a href="/users/sign_out">cancel</a>
+  </div>
+<% end %>
