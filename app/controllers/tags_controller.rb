@@ -157,7 +157,9 @@ class TagsController < ApplicationController
     else
       @new_egg = Tag.create(:name => @base_egg.name, :user_id => current_user.id)
       @base_egg.documents.each do |doc|
-        Usership.create(:user_id => current_user.id, :document_id => doc.id, :push_enabled => false, :owner => false)
+        if doc.public?
+          Usership.create(:user_id => current_user.id, :document_id => doc.id, :push_enabled => false, :owner => false)
+        end
       end
       render :nothing => true
     end
