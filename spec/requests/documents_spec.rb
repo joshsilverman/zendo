@@ -191,7 +191,7 @@ describe "document" do
             end
             
             click_button "Review"
-            wait_until{ page.has_content?('0/4') }
+            wait_until{ page.has_content?('1/4') }
           end
         end
 
@@ -317,7 +317,7 @@ describe "document" do
 
           visit "/documents/#{@document.id}"
           click_button "Review"
-          wait_until{ page.has_content?('0/4') }
+          wait_until{ page.has_content?('1/4') }
 
           @owner_mem_ids_post = Mem.find_all_by_user_id(@user).collect { |mem| mem.id }.to_set
           @viewer_mem_ids = Mem.find_all_by_user_id(@user2).collect { |mem| mem.id }
@@ -388,7 +388,7 @@ describe "document" do
 
           visit "/documents/#{@document.id}"
           click_button "Review"
-          wait_until{ page.has_content?('0/4') }
+          wait_until{ page.has_content?('1/4') }
 
           @owner_mem_ids_post = Mem.find_all_by_user_id(@user).collect { |mem| mem.id }.to_set
           @viewer_mem_ids = Mem.find_all_by_user_id(@user2).collect { |mem| mem.id }

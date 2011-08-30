@@ -9,6 +9,7 @@ class Tag < ActiveRecord::Base
   has_many :documents, :dependent => :destroy
   belongs_to :user
 
+  # this is a miserable method that should be optimized by somebody smart than me! ~josh
   def self.tags_json(current_user = nil)
     return nil if current_user.blank?
     userships = current_user.userships\
@@ -16,6 +17,7 @@ class Tag < ActiveRecord::Base
       .includes(:document)\
       .all
 
+    # build tags dynamically
     tags = {}
     userships.each do |usership|
       next if usership.document.nil?
@@ -24,6 +26,8 @@ class Tag < ActiveRecord::Base
       doc = Document.new(:id => doc.id, :name => doc.name, :tag_id => doc.tag_id, :created_at => doc.created_at, :updated_at => doc.updated_at)
       doc.id = id
       doc.userships << Usership.new(:push_enabled => usership.push_enabled)
+
+      # cache tag data so as not to repeat tag lookups
       if tags[doc.tag_id.to_s].nil?
         tag = Tag.find_by_id doc.tag_id
         next unless tag
@@ -33,6 +37,14 @@ class Tag < ActiveRecord::Base
       tags[doc.tag_id.to_s].documents << doc
 
     end
+
+    # get empty tags and add ... urg
+    tags_all = current_user.tags.all
+    tags_all.each do |tag|
+      next if tags[tag.id.to_s]
+      tags[tag.id.to_s] = tag
+    end
+
     tags = tags.map {|id, tag| tag}
     return tags.to_json(:include => {:documents => {:only => [:id, :name, :updated_at, :created_at, :tag_id], :include => {:userships => {:only => [:push_enabled] }}}})
   end
