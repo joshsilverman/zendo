@@ -24,6 +24,11 @@ class TagsController < ApplicationController
     render :text => Tag.recent_json(current_user)
   end
 
+  def get_popular_json
+    popular = TAG::POPULAR_TAGS.to_json
+    render :text => popular
+  end
+
   def create
     #params
     name = params[:name]
