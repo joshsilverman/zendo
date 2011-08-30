@@ -25,7 +25,7 @@ class TagsController < ApplicationController
   end
 
   def get_popular_json
-    popular = TAG::POPULAR_TAGS.to_json
+    popular = Tag::POPULAR_TAGS.to_json
     render :text => popular
   end
 
@@ -157,18 +157,21 @@ class TagsController < ApplicationController
     render :nothing => true
   end
 
-  def add
+  def claim_tag
     @base_egg = Tag.find_by_id(params[:id])
     if @base_egg.nil?
       render :nothing => true, :status => 400
     else
-      @new_egg = Tag.create(:name => @base_egg.name, :user_id => current_user.id)
+#      @new_egg = Tag.create(:name => @base_egg.name, :user_id => current_user.id)
       @base_egg.documents.each do |doc|
         if doc.public?
+          puts "public doc found!"
+          puts doc.id
+          ##TODO Check if userships already exists!!!
           Usership.create(:user_id => current_user.id, :document_id => doc.id, :push_enabled => false, :owner => false)
         end
       end
-      render :nothing => true
+      render :nothing => true, :status => 200
     end
   end
 end
