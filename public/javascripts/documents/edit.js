@@ -187,7 +187,6 @@ var cDoc = Class.create({
     },
 
     share: function() {
-    	console.log("About to req");
         new Ajax.Request('/documents/share', {
             method: 'put',
             //console.log($("share_email_input").value);
@@ -468,11 +467,11 @@ var cOutline = Class.create({
 
     onChange: function(target, e) {
 
-        if (e && ((e.keyCode >= 37 && e.keyCode <= 40) || (e.keyCode >= 16 && e.keyCode <= 20))) return;
+        if (e && ((e.keyCode >= 33 && e.keyCode <= 40) || (e.keyCode >= 16 && e.keyCode <= 20))) return;
 
         if (target) {
-            if (target.tagName != "STRONG" && target.tagName != "P" && target.tagName != "LI" && target.tagName != "DIV")  {
-                target = Element.up(target, "strong, p, li, div");
+            if (target.tagName != "STRONG" && target.tagName != "P" && target.tagName != "LI" && target.tagName != "DIV" && target.tagName != "B")  {
+                target = Element.up(target, "strong, p, li, div, b");
                 if (!target) {
                     return;
                 }
@@ -496,7 +495,7 @@ var cOutline = Class.create({
             }
 
             /* re-initiate lookup if strong */
-            if (target.tagName == "STRONG") {
+            if (target.tagName == "STRONG" || target.tagName == "B") {
                 var nodeId = doc.utilities.toNodeId(target);
                 Card = doc.rightRail.cards.get(nodeId);
                 Card.elmntCard.removeClassName("not-found");
@@ -545,12 +544,14 @@ var cOutline = Class.create({
 
         /* bold triggers card creation */
         if (command == "Bold") {
+            console.log("Bold");
             var htmlMatch = doc.editor.selection.getContent({format : 'html'});
-            var rawMatch = doc.editor.selection.getContent({format : 'raw'}).match(/^<strong>.*<\/strong>$/);
+            var rawMatch = doc.editor.selection.getContent({format : 'raw'}).match(/^<strong|b>.*<\/strong|b>$/);
             if (htmlMatch && htmlMatch.length > 0) {
-                Element.select(elm, "strong").each(function(element) {
+                Element.select(elm, "strong, b").each(function(element) {
                     if (element.innerHTML == htmlMatch.gsub(/<[^>]*>/, ''))
-                        var card = doc.rightRail.createCard(element);
+                        console.log("create card");
+                        doc.rightRail.createCard(element);
                 });
             }
         }
@@ -568,7 +569,7 @@ var cRightRail = Class.create({
     build: function() {
 
         /* set card count */
-        Element.select(doc.outline.iDoc, 'li, p, div, strong').each(function (node) {
+        Element.select(doc.outline.iDoc, 'li, p, div, strong, b').each(function (node) {
             var index = parseInt(node.id.replace('node_', ''));
             if (index >= this.cardCount) this.cardCount = index + 1;
         }.bind(this));
@@ -606,6 +607,7 @@ var cRightRail = Class.create({
         if (   node.tagName.toUpperCase() != 'LI'
             && node.tagName.toUpperCase() != 'P'
             && node.tagName.toUpperCase() != 'STRONG'
+            && node.tagName.toUpperCase() != 'B'
             && node.tagName.toUpperCase() != 'DIV') return null;
 
         Element.addClassName(node, "outline_node");
@@ -653,12 +655,12 @@ var cRightRail = Class.create({
         if (!$(cardId)) return;
 
         //scroll function
-        var rightRail = document.getElementById("right_rail");
+        var rightRail = $('card_container');
         var scrollTo = function () {
             rightRail.scrollTop = this.inFocus.offsetTop
                 - this.inFocus.getHeight()
-                - $('right_rail').getHeight()/2
-                - 10;
+                - rightRail.getHeight()/2
+                + 100;
         }.bind(this);
 
         //check if already in focus - if so, just make sure scrollTtop is still correct
@@ -686,7 +688,7 @@ var cRightRail = Class.create({
     sync: function() {
 
         /* collect all potential nodes - li/p with text */
-        var nodes = Element.select(doc.outline.iDoc, 'li, p, div, strong')
+        var nodes = Element.select(doc.outline.iDoc, 'li, p, div, strong, b')
             .findAll(function (node) {return node.innerHTML});
 
         /* try to create card - only will be created if doesn't exist */
@@ -762,7 +764,8 @@ var cCard = Class.create({
         this.active = Element.hasClassName(node, 'active');
 
         /* parse and render */
-        this.text = node.innerHTML.split(/<(?:li|ol|ul|p|strong)/)[0];
+        this.text = node.innerHTML.gsub(/<\/?(:?strong|b)[^>]*>/, '');
+        this.text = this.text.split(/<(?:li|ol|ul|p|strong|b)[^>]*>/)[0];
 
         parser.parse(this);
         this.render(truncate);

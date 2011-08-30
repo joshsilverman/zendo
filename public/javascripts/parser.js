@@ -19,9 +19,7 @@ var cParser = Class.create({
 
         if (this._parseDash(Card)) {}
         else if (this._parseStrong(Card)) {}
-        else if (this._parseUnderline(Card)) {
-//            console.log('parsed underline');
-        }
+//        else if (this._parseUnderline(Card)) {}
         //no match
         else {
             //console.log('not parsable...');
@@ -61,12 +59,13 @@ var cParser = Class.create({
         /* locate adjust line node */
         this.line = Element.select(this.docHtml, '#' + Card.domId);
         if (this.line.length == 0) return;
-        Card.text = this.line[0].innerHTML.split(/<(?:li|ol|ul|p|strong)/)[0];
+        Card.text = this.line[0].innerHTML.split(/<(?:li|ol|ul|p|strong|b)/)[0];
         this.line = Element.extend(this.line[0]);
         Element.update(this.line, Card.front);
     },
 
     _parseDash: function(Card) {
+
         var defParts = Card.text.split(/(?:\s+-+\s+|-+\s+|\s+-+)/);
         if (defParts.length > 1) {
 
@@ -84,16 +83,11 @@ var cParser = Class.create({
     },
 
     _parseStrong: function(Card) {
+
         try {var node = Element.select(this.iDoc, '#' + Card.domId)[0];}
         catch (e) {}
 
-        if (node && node.nodeName == "STRONG") {
-
-            var term = Card.text.gsub(/<[^>]*>/, '').strip().gsub(/\s/, "_").gsub(/\&nbsp;/, "");
-            term = term.underscore();
-            term = term.charAt(0).toUpperCase() + term.slice(1);
-
-            if (term.match(/Figure|Table/)) return false;
+        if (node && (node.nodeName == "STRONG" || node.nodeName == "B")) {
 
             /* @ugly this shouldn't be here... ugh */
 
@@ -111,15 +105,38 @@ var cParser = Class.create({
                 if (node.getAttribute('def')) Card.back += node.getAttribute('def');
             }
             else {
-                this.ajaxCalls.push(
-                    function () {
-                        
+
+                /* temp loading */
+                if (Card['render']) {
+                    Card.front = '<img alt="loading" src="/images/shared/fb-loader.gif" style="border:none !important;">';
+                    Card.back = '';
+                    console.log(Card);
+                    Card.render();
+                }
+
+                var call = new Hash({
+                    id: node.id,
+                    func: function () {
+
                         /* check if node still exists */
                         try {
                             var node = Element.select(this.iDoc, '#' + Card.domId)[0];
-                            if (!node) return false;
+                            if (!node) {
+                                document.fire("lookup:complete");
+                                return false;
+                            }
                         }
-                        catch (e) {}
+                        catch (e) {
+                            document.fire("lookup:complete");
+                        }
+
+                        /* focus on card before lookup */
+                        doc.rightRail.focus(node.id);
+
+                        var term = Card.text.gsub(/<[^>]*>/, '').strip().gsub(/\s/, "_").gsub(/\&nbsp;/, "");
+                        term = term.underscore();
+                        term = term.charAt(0).toUpperCase() + term.slice(1);
+                        if (term.match(/Figure|Table/)) return false;
 
                         new Ajax.Request("/terms/lookup/" + term, {
                         onCreate: function() {
@@ -134,7 +151,7 @@ var cParser = Class.create({
                         },
                         onSuccess: function(transport) {
 
-                            node.setAttribute('def', transport.responseJSON['description']);
+                            node.setAttribute('def', transport.responseJSON['description'].gsub(/\(pronounced[^)]*\)/, ""));
                             node.setAttribute('img_src', transport.responseJSON['image']);
 
                             Card.front = Card.text
@@ -142,9 +159,14 @@ var cParser = Class.create({
                             if (node.getAttribute('img_src'))
                                 Card.back += "<img src='" + transport.responseJSON['image'] + "'>";
                             Card.back += transport.responseJSON['description'];
+
+                            /* remove pronunciation notes */
+                            Card.back = Card.back.gsub(/\(pronounced[^)]*\)/, "");
+
                             Card.activate();
                             node.setAttribute('changed', 1);
                             Element.addClassName(node, 'changed');
+                            Element.removeClassName(node, 'not-found');
                             Card.render();
                         },
                         onFailure: function() {
@@ -164,7 +186,18 @@ var cParser = Class.create({
                         }
                     });
                     return true;
+                }.bind(this)});
+
+                /* replace older calls if exists */
+                var inserted = false;
+                this.ajaxCalls.each(function(call, i) {
+                    if (call.get('id') == node.id) {
+                        this.ajaxCalls[i] = call;
+                        inserted = true;
+                    }
                 }.bind(this));
+
+                if (!inserted) this.ajaxCalls.push(call);
             }
             return true;
         }
@@ -193,8 +226,6 @@ var cParser = Class.create({
 
     invokeAjax: function() {
 
-        console.log("invoke ajax");
-
         /* check queue status */
         if (this.ajaxCalls.length == 0) this.ajaxEmptyCount++;
         else this.ajaxEmptyCount = 0;
@@ -205,15 +236,11 @@ var cParser = Class.create({
         if (this.ajaxCalls.length > 0) {
             document.observe("lookup:complete", function() {
                 document.stopObserving("lookup:complete");
-                console.log("new ajax call");
                 this.invokeAjax();
             }.bind(this));
-            while (this.ajaxCalls.length > 0 && !this.ajaxCalls.shift().call()) {
-                console.log("call!");
-            }
+            while (this.ajaxCalls.length > 0 && !this.ajaxCalls.shift().get('func').call()) {}
         }
         else {
-            console.log("delay call");
             document.stopObserving("lookup:complete");
             this.invokeAjax.bind(this).delay(3);
         }

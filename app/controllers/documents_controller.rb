@@ -58,7 +58,7 @@ class DocumentsController < ApplicationController
                                   :created_at => Time.now,
                                   :owner => false)
     end
-    if @usership.nil? || @document.nil?
+    if (@usership.nil? || @document.nil?) && !current_user.try(:admin?)
       redirect_to '/explore', :notice => "Error accessing that document."
       return
     end
@@ -445,6 +445,9 @@ class DocumentsController < ApplicationController
       @r = true
     elsif !document.userships.find_by_user_id(current_user.id).nil?
       puts "Shared document"
+      @r = true
+    elsif current_user.try(:admin?)
+      puts "Admin Access"
       @r = true
     end
     puts "end"

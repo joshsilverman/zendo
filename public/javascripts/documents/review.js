@@ -77,7 +77,7 @@ var cReviewer = Class.create({
 
         /* progress bar */
         this.progressBar = new cProgressBar();
-        $('progress_fraction').update("0/"+this.cards.length);
+        $('progress_fraction').update("1/"+this.cards.length);
     },
 
     next: function(grade) {
@@ -95,8 +95,8 @@ var cReviewer = Class.create({
 
             /* update progress bar */
             if (this.currentCardIndex <= this.cards.length) {
-                this.progressBar.update((this.currentCardIndex)/this.cards.length);
-                $('progress_fraction').update(this.currentCardIndex+"/"+this.cards.length);
+                this.progressBar.update(this.currentCardIndex, this.cards.length);
+//                $('progress_fraction').update(this.currentCardIndex+"/"+this.cards.length);
 
             }
         }
@@ -493,7 +493,11 @@ var cProgressBar = Class.create({
 
             console.log(currentCardIndex);
             console.log(cardCount);
-            $('progress_fraction').update(currentCardIndex + "/" + cardCount);
+
+            var currentCardNumber = currentCardIndex + 1;
+            if (currentCardNumber > cardCount) currentCardNumber = cardCount;
+
+            $('progress_fraction').update(currentCardNumber + "/" + cardCount);
         }
     }
 });
