@@ -1,5 +1,7 @@
 class TagsController < ApplicationController
   
+  before_filter :check_admin, :only => [:create_with_index]
+
   helper TagsHelper
 
   def index
@@ -20,6 +22,11 @@ class TagsController < ApplicationController
 
   def get_recent_json
     render :text => Tag.recent_json(current_user)
+  end
+
+  def get_popular_json
+    popular = TAG::POPULAR_TAGS.to_json
+    render :text => popular
   end
 
   def create

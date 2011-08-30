@@ -21,7 +21,9 @@ class ApplicationController < ActionController::Base
     @@redirect_logger ||= Logger.new("#{::Rails.root.to_s}/log/redirect.log")
   end
   
-
+  def check_admin
+    redirect_to "/dashboard" unless current_user.try(:admin?)
+  end
 
   private
   def set_abingo_identity

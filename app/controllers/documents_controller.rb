@@ -59,7 +59,7 @@ class DocumentsController < ApplicationController
                                   :created_at => Time.now,
                                   :owner => false)
     end
-    if @usership.nil? || @document.nil?
+    if (@usership.nil? || @document.nil?) && !current_user.try(:admin?)
       redirect_to '/explore', :notice => "Error accessing that document."
       return
     end
@@ -95,17 +95,13 @@ class DocumentsController < ApplicationController
   end
   
   def destroy
-    puts "In delete!"
     id = params[:id]
-    puts id
     if id.nil?
       render :nothing => true, :status => 400
       return
     end
     @usership = Usership.all(:conditions => {:user_id => current_user.id, :document_id => id}).first
-    puts @usership.to_json
     if @usership.owner == false
-      puts "Yooooo"
       @usership.destroy
       render :json => Tag.tags_json(current_user)
       return
@@ -118,9 +114,7 @@ class DocumentsController < ApplicationController
   end
 
   def review
-    puts params[:id]
     get_document(params[:id])
-    puts @document
     if @document.nil?
       redirect_to '/', :notice => "Error accessing that document."
       return
@@ -136,7 +130,6 @@ class DocumentsController < ApplicationController
     else
       # on demand mem creation
       Mem.transaction do
-        puts "creating a mem!"
         owner_lines.each do |owner_line|
           mem = Mem.find_or_initialize_by_line_id_and_user_id(owner_line.id, current_user.id);
           mem.strength = 0.5 if mem.strength.nil?
@@ -170,7 +163,6 @@ class DocumentsController < ApplicationController
         render :text => "fail"
       else
         if Usership.all(:conditions => {:user_id => current_user.id, :document_id => params[:id]}).empty?
-          puts "No existing usership... creating one."
           @new_usership = Usership.new
           @new_usership.document_id = params[:id]
           @new_usership.user_id = current_user.id
@@ -178,16 +170,12 @@ class DocumentsController < ApplicationController
           @new_usership.owner = false
           @new_usership.push_enabled = false
           @new_usership.save
-          puts @new_usership.to_json
         else
-          puts "Usership already exists, it is:"
-          puts Usership.all(:conditions => {:user_id => current_user.id, :document_id => params[:id]}).to_json
         end
         owner_lines = Line.includes(:mems).where("lines.document_id = ?
                             AND mems.status = true",
                             params[:id])                          
         Mem.transaction do
-          puts "creating a mem!"
           owner_lines.each do |owner_line|
             mem = Mem.find_or_initialize_by_line_id_and_user_id(owner_line.id, current_user.id);
             mem.strength = 0.5 if mem.strength.nil?
@@ -199,24 +187,18 @@ class DocumentsController < ApplicationController
             mem.save
           end
         end
-        puts params[:id], current_user.id
         @usership = current_user.userships.where('document_id = ? AND user_id = ?', params[:id], current_user.id)
-        puts @usership.to_json
         @usership.first.update_attribute(:push_enabled, true)
-        puts @usership.to_json
         render :text => "pass"
       end
   	else
   		logger.debug("Disable mobile!")
   		@usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
       @usership.first.update_attribute(:push_enabled, false)
-      puts @usership.to_json
-      puts Mem.all(:conditions => {:document_id => params[:id]}).to_json
       Mem.all(:conditions => {:document_id => params[:id], :user_id => current_user.id, :pushed => true}).each do |mem|
         mem.update_attribute(:pushed, false)
         mem.save
       end
-      puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
   		#Delete all pending notifications for the usership
       render :nothing => true, :status => 200
   	end
@@ -228,12 +210,9 @@ class DocumentsController < ApplicationController
 #        render :text => "fail"
 #      else
 #        Mem.all(:conditions => {:document_id => params[:id]}).each do |mem|
-##          puts mem.to_json
 #          mem.pushed = true
 #          mem.save
-#          puts mem.to_json
 #        end
-#        puts "Enable mobile!"
 #        @device = APN::Device.all(:conditions => {:user_id => current_user.id}).first
 #        notification = APN::Notification.new
 #        notification.device = @device
@@ -274,12 +253,8 @@ class DocumentsController < ApplicationController
   def update_tag
 #    if @document = current_user.documents.find(params[:doc_id])
     if @document = current_user.documents.find(params[:doc_id], :readonly => false)
-      puts "Yeah yo"
-      puts params[:tag_id]
       if current_user.tags.find(params[:tag_id])
-        puts @document.tag_id
         @document.update_attribute(:tag_id, params[:tag_id])
-        puts @document.tag_id
       else
         render :nothing => true, :status => 403
       end
@@ -432,16 +407,13 @@ class DocumentsController < ApplicationController
             end
           end
         rescue
-          puts "Caught card parsing error..."
           next
         end
       end
       Rails.cache.write("#{params[:controller]}_#{params[:action]}_#{params[:id]}", {"cards" => @hash["cards"], "updated_at" => Time.now})
       render :json => @hash
-      puts "Regenerated hash and cached"
     else
       render :json => Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
-      puts "Served cache"
     end
   end
 
@@ -467,15 +439,14 @@ class DocumentsController < ApplicationController
 	#if
 
     if Usership.find_by_document_id(document.id).user_id == current_user.id
-      puts "Owner"
       @w = @r = true
     elsif document.public
-      puts "Public document"
       @r = true
     elsif !document.userships.find_by_user_id(current_user.id).nil?
-      puts "Shared document"
+      @r = true
+    elsif current_user.try(:admin?)
+      puts "Admin Access"
       @r = true
     end
-    puts "end"
   end
 end

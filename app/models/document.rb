@@ -47,8 +47,6 @@ class Document < ActiveRecord::Base
 
 
   def self.update(params, user_id)
-#    puts params[:id]
-#    puts Usership.all(:conditions => {:document_id => params[:id]}).to_json
     id = params[:id]
     html = params[:html]
     delete_nodes = params[:delete_nodes]
