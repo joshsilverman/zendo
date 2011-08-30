@@ -54,20 +54,23 @@ class Tag < ActiveRecord::Base
 
     Document.transaction do
 
-      recent_edit = Document.joins(:userships).select(['documents.name', 'documents.id', 'documents.tag_id', 'documents.edited_at', 'documents.reviewed_at', 'userships.push_enabled']).where("documents.edited_at <= ? AND documents.edited_at >= ?  AND userships.user_id = ?", Date.yesterday + 1, Date.yesterday - 7, current_user.id).limit(10)
-      recent_review = Document.joins(:userships).select(['documents.name', 'documents.id', 'documents.tag_id', 'documents.edited_at', 'documents.reviewed_at', 'userships.push_enabled']).where("documents.reviewed_at <= ? AND documents.reviewed_at >= ?  AND userships.user_id = ?", Date.yesterday + 1, Date.yesterday - 14, current_user.id).limit(10)
+      recent_edit = Document.joins(:userships).select(['documents.name', 'documents.id', 'documents.tag_id', 'documents.edited_at', 'userships.reviewed_at', 'userships.push_enabled']).where("documents.edited_at >= ?  AND userships.user_id = ?", Date.yesterday - 7, current_user.id).limit(10)
+      recent_review = Document.joins(:userships).select(['documents.name', 'documents.id', 'documents.tag_id', 'documents.edited_at', 'userships.reviewed_at', 'userships.push_enabled']).where("userships.reviewed_at >= ?  AND userships.user_id = ?", Date.yesterday - 14, current_user.id).limit(10)
       recent = recent_edit|recent_review
+      puts recent_edit.inspect
+      puts recent_review.inspect
+      puts recent.inspect
 
       recent.map! do |doc|
         doc_attributes = doc.attributes
         push_enabled = doc_attributes.delete("push_enabled")
         doc_init = Document.new(doc_attributes)
         doc_init.id = doc.attributes['id']
-        user_init = Usership.new({:push_enabled => push_enabled})
+        user_init = Usership.new({:push_enabled => push_enabled, :reviewed_at => doc.attributes['reviewed_at']})
         doc_init.userships << user_init
         doc = doc_init
       end
-      recent.to_json(:only => ["name","tag_id","id","push_enabled","edited_at","reviewed_at"], :include => {:userships => {:only => [:push_enabled]}})
+      recent.to_json(:only => ["name","tag_id","id","push_enabled","edited_at"], :include => {:userships => {:only => [:push_enabled, :reviewed_at]}})
     end
     rescue: ['error']
   end
