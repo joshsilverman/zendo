@@ -105,7 +105,6 @@ describe "tags", :js => true do
     end
 
     it "deletes doc from Recent Docs" do
-      Capybara.default_wait_time = 30
       visit "/explore"
       wait_until{ page.has_content?('Recent Documents')}
       wait_until{ page.has_content?('my tag2')}
