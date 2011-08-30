@@ -16,7 +16,7 @@ class Tag < ActiveRecord::Base
       .includes(:document)\
       .all
 
-    tags = {"shared" => Tag.new(:name => "Shared")}
+    tags = {}
     userships.each do |usership|
       next if usership.document.nil?
       doc = usership.document
@@ -27,16 +27,11 @@ class Tag < ActiveRecord::Base
       if tags[doc.tag_id.to_s].nil?
         tag = Tag.find_by_id doc.tag_id
         next unless tag
-        if tag.user_id == current_user.id
-          tags[doc.tag_id.to_s] = Tag.new(:name => tag.name, :user_id => tag.user_id, :created_at => tag.created_at, :misc => tag.misc, :updated_at => tag.updated_at)
-          tags[doc.tag_id.to_s].id = tag.id
-        end
+        tags[doc.tag_id.to_s] = Tag.new(:name => tag.name, :user_id => tag.user_id, :created_at => tag.created_at, :misc => tag.misc, :updated_at => tag.updated_at)
+        tags[doc.tag_id.to_s].id = tag.id
       end
-      if tags[doc.tag_id.to_s].nil?
-        tags["shared"].documents << doc
-      else
-        tags[doc.tag_id.to_s].documents << doc
-      end
+      tags[doc.tag_id.to_s].documents << doc
+
     end
     tags = tags.map {|id, tag| tag}
     return tags.to_json(:include => {:documents => {:only => [:id, :name, :updated_at, :created_at, :tag_id], :include => {:userships => {:only => [:push_enabled] }}}})
