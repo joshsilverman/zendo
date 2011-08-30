@@ -92,6 +92,7 @@ var cDoc = Class.create({
         console.log("BUILDDOCS aiID: "+this.activeItemId);
         var html = '';
         //Build Recent Documents
+        console.log(this.recent);
         this.recent.each(function(doc){
             console.log(doc);
             var tName = "unknown";

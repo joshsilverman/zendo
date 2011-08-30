@@ -67,6 +67,7 @@ class Tag < ActiveRecord::Base
         doc_attributes = doc.attributes
         push_enabled = doc_attributes.delete("push_enabled")
         doc_init = Document.new(doc_attributes)
+        doc_init.id = doc.attributes['id']
         user_init = Usership.new({:push_enabled => push_enabled})
         doc_init.userships << user_init
         doc = doc_init
