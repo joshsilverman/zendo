@@ -98,6 +98,7 @@ Zendo::Application.routes.draw do
   # organizer
   resources :tags, :only => [:destroy, :create, :update]
   match "/tags/get_tags_json" => "tags#get_tags_json"
+  match "/tags/get_popular_json" => "tags#get_popular_json"
   match "/tags/get_recent_json" => "tags#get_recent_json"
 
   # home page

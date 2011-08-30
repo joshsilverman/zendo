@@ -41,4 +41,10 @@ class Tag < ActiveRecord::Base
     #recent_review.inspect includes(:name, :id, :tag_id, :edited_at, :reviewed_at).
   end
 
+  POPULAR_TAGS = [
+                  [13,"Computational Linguisitcs"],
+                  [14, "IT Security"],
+                  [43, "ITE"]
+                 ]
+
 end
