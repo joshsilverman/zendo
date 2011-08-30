@@ -127,8 +127,9 @@ ActiveRecord::Schema.define(:version => 20110819174501) do
   add_index "tags", ["user_id"], :name => "index_tags_on_user_id"
 
   create_table "users", :force => true do |t|
-    t.string   "email",                               :default => "",    :null => false
-    t.string   "encrypted_password",   :limit => 128, :default => "",    :null => false
+    t.string   "email",                               :default => "", :null => false
+    t.string   "encrypted_password",   :limit => 128, :default => "", :null => false
+    t.string   "password_salt",                       :default => "", :null => false
     t.string   "reset_password_token"
     t.string   "remember_token"
     t.datetime "remember_created_at"
@@ -148,7 +149,6 @@ ActiveRecord::Schema.define(:version => 20110819174501) do
     t.string   "authentication_token"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "admin",                               :default => false
   end
 
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
@@ -161,10 +161,10 @@ ActiveRecord::Schema.define(:version => 20110819174501) do
   create_table "userships", :force => true do |t|
     t.integer  "user_id"
     t.integer  "document_id"
-    t.boolean  "push_enabled", :default => false
+    t.boolean  "push_enabled"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "owner",        :default => true
+    t.boolean  "owner"
   end
 
 end

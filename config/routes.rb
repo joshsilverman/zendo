@@ -102,6 +102,7 @@ Zendo::Application.routes.draw do
   resources :tags, :only => [:destroy, :create, :update]
   match "/tags/get_tags_json" => "tags#get_tags_json"
   match "/tags/get_recent_json" => "tags#get_recent_json"
+  match "/tags/add/:id" => "tags#add"
 
   # home page
   match "/users/welcome" => "users#home"

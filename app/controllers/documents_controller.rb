@@ -356,17 +356,18 @@ class DocumentsController < ApplicationController
 #  end
 
   def add_document
-    puts params[:id]
+    # Check if current user already owns doc
     if !Usership.find_by_user_id_and_document_id(current_user.id, params[:id]).nil?
-      render :nothing => true, :status => 400
+      render :nothing => true, :status => 200
       return
     end
+    # Check if doc is public, if so -> add usership
     if get_document(params[:id]).public?
       Usership.create(:user_id => current_user.id,
                       :document_id => @document.id,
                       :push_enabled => false,
                       :created_at => Time.now,
-                      :owner => false)      
+                      :owner => false)
       render :nothing => true, :status => 200
     else
       render :nothing => true, :status => 400
@@ -415,7 +416,8 @@ class DocumentsController < ApplicationController
             if @result.length < 2
               @result = @result[0].split('- ')
             end
-            if Mem.all(:conditions => {:line_id => line.id}).empty?
+            if Mem.all(:conditions => {:line_id => line.id, :user_id => current_user.id}).empty?
+#              puts "new mem!"
               @mem = Mem.new
               @mem.line_id = line.id
               @mem.user_id = current_user.id
@@ -425,6 +427,7 @@ class DocumentsController < ApplicationController
               @mem.save
               @hash["cards"] << {"prompt" => @result[0].strip, "answer" => @result[1].strip, "mem" => @mem.id}
             else
+#              puts "existing mem!"
               @hash["cards"] << {"prompt" => @result[0].strip, "answer" => @result[1].strip, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
             end
           end
