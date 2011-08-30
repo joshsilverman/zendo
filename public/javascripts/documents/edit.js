@@ -189,24 +189,27 @@ var cDoc = Class.create({
     share: function() {
         new Ajax.Request('/documents/share', {
             method: 'put',
-            //console.log($("share_email_input").value);
+            //console.log($("share_username_input").value);
             //console.log(doc.outline.documentId);
-            parameters: {id : doc.outline.documentId, email: $("share_email_input").value},
+            parameters: {id : doc.outline.documentId, username: $("share_username_input").value},
             onSuccess: function(transport) {
             	console.log("success");
                 var token = '<span class="token removable" viewer_id="' +
                     transport.responseText +
                     '">' +
-                    $("share_email_input").value +
+                    $("share_username_input").value +
                     '<span class="remove" >X</span></span>'
                 $("viewers").insert({"bottom": token});
+            },
+            onFailure: function(){
+                console.log('failed');
             },
             onCreate: function() {
             	console.log("create");
                 $("update_share_loading").setStyle({'visibility': 'visible'});
             },
             onComplete: function() {
-                $("share_email_input").value = "";
+                $("share_username_input").value = "";
                 $('update_share_loading').setStyle({'visibility': 'hidden'});
             }
         });
@@ -230,7 +233,7 @@ var cDoc = Class.create({
             if (e.target.hasClassName("remove")) doc.unshare(token);
         });
 
-        new Ajax.Autocompleter("share_email_input", "share_email_choices", "/users/autocomplete", {
+        new Ajax.Autocompleter("share_username_input", "share_username_choices", "/users/autocomplete", {
             afterUpdateElement: doc.share
         });
     },

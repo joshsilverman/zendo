@@ -18,7 +18,7 @@ class UsersController < ApplicationController
   end
 
   def autocomplete
-    @users = User.where("users.email LIKE ?", params['email'] + "%" ).limit(10)
+    @users = User.where("users.username LIKE ?", "%" + params['username'] + "%" ).limit(10)
     render :layout => false
   end
 
@@ -63,6 +63,11 @@ class UsersController < ApplicationController
     @device.created_at = Time.now
     @device.updated_at = Time.now
     @device.save
+    render :nothing => true
+  end
+
+  def update_username
+    current_user.update_attribute(:username, params[:u])
     render :nothing => true
   end
 end

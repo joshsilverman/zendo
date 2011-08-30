@@ -3,6 +3,9 @@ var cDoc = Class.create({
     back: false,
     p: null,
     size: null,
+    typingTimer: setTimeout(),                //timer identifier
+    doneTypingInterval: 1000,  //time in ms, 2 second for example
+
 
     initialize: function() {
         /* resize listener */
@@ -26,6 +29,27 @@ var cDoc = Class.create({
         $('search_bar').observe('blur', function(){
             if($('search_bar').value=='') $('search_bar').value = 'Search Public Study Guides';
         });
+
+        if(document.getElementById('userfield')!=null){
+            $('userfield').observe('keyup', function(){
+                clearTimeout(this.typingTimer);
+                if($('userfield').value.length != 0){
+                    console.log("interval "+this.doneTypingInterval);
+                    this.typingTimer = setTimeout(function(){this.checkUsername($('userfield').value);}.bind(this), this.doneTypingInterval);
+                    $('submit').setStyle({'display': 'none'});
+                    $('taken').setStyle({'display': 'none'});
+                    $('available').setStyle({'display': 'none'});
+
+                }
+            }.bind(this));
+
+            $('submit').observe('click', function(){
+                if($('userfield').value.length != 0){
+                    this.setUsername($('userfield').value);
+                }
+            }.bind(this));
+        }
+
     },
 
     search: function(page){
@@ -47,6 +71,61 @@ var cDoc = Class.create({
                $('load_search').setStyle({'display': 'none'});
                this.render();
            }.bind(this)
+        });
+    },
+
+    checkUsername: function(username){
+        var u = $('userfield').value;
+        if(u.length === 0) {
+            $('taken').setStyle({'display': 'none'});
+            $('available').setStyle({'display': 'none'});
+            $('submit').setStyle({'display': 'none'});
+            return
+        };
+        var parameters = {};
+        parameters['u'] = u;
+        new Ajax.Request('/search/is_username_available', {
+           method: 'post',
+           parameters: parameters,
+           onComplete: function(transport) {
+               console.log("Is it available? "+transport.responseText);
+               if(transport.responseText=='true'){
+                    console.log('evaluated as true');
+                    $('taken').setStyle({'display': 'none'});
+                    $('available').setStyle({'display': 'inline'});
+                    $('submit').setStyle({'display': 'block'});
+               } else {
+                    console.log('false');
+                    $('taken').setStyle({'display': 'inline'});
+                    $('available').setStyle({'display': 'none'});
+                    $('submit').setStyle({'display': 'none'});
+               }
+               console.log('success2');
+           }
+        });
+    },
+
+    setUsername: function(username){
+        var u = $('userfield').value;
+        if(u.length === 0) {
+            $('taken').setStyle({'display': 'none'});
+            $('available').setStyle({'display': 'none'});
+            $('submit').setStyle({'display': 'none'});
+            return
+        };
+        var parameters = {};
+        parameters['u'] = u;
+        new Ajax.Request('/users/update_username', {
+           method: 'post',
+           parameters: parameters,
+           onComplete: function(transport) {
+               if(transport.status == 200){
+                Lightview.hide();
+                console.log('success2');
+               } else {
+                   alert('there was an error with your screen name');
+               }
+           }
         });
     },
 
@@ -104,4 +183,21 @@ document.observe('dom:loaded', function() {
 
     /* fire app:loaded */
     document.fire('app:loaded');
+});
+
+document.observe('lightview:loaded', function() {
+    if(document.getElementById('userfield')!=null){
+      Lightview.show({
+        href: 'username',
+        rel: 'inline',
+    //    title: 'Choose a Username',
+    //    caption: 'Don\'t worry, you can always change it later',
+        options: {
+          width: 400,
+          height: 400,
+          overlayClose: false,
+          closeButton: false
+        }
+      });
+    }
 });

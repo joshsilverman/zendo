@@ -149,10 +149,7 @@ ActiveRecord::Schema.define(:version => 20110830184751) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "admin",                               :default => false
-<<<<<<< HEAD
     t.string   "username"
-=======
->>>>>>> added icon and icon picker, removed lightbox from store
   end
 
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
@@ -169,10 +166,7 @@ ActiveRecord::Schema.define(:version => 20110830184751) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "owner",        :default => true
-<<<<<<< HEAD
     t.datetime "reviewed_at"
-=======
->>>>>>> added icon and icon picker, removed lightbox from store
   end
 
 end
