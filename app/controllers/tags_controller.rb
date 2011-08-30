@@ -25,7 +25,7 @@ class TagsController < ApplicationController
   end
 
   def get_popular_json
-    popular = TAG::POPULAR_TAGS.to_json
+    popular = Tag::POPULAR_TAGS.to_json
     render :text => popular
   end
 
