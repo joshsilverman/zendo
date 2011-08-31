@@ -76,7 +76,7 @@ class Tag < ActiveRecord::Base
   end
 
   POPULAR_TAGS = [
-                  [13,"Computational Linguisitcs"],
+                  [13,"Computational Linguistics"],
                   [14, "IT Security"],
                   [43, "ITE"]
                  ]

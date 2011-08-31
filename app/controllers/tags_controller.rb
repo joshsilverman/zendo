@@ -25,6 +25,24 @@ class TagsController < ApplicationController
   end
 
   def get_popular_json
+    #within each tag, if the user is missing a usership for any doc, return false
+    
+    Tag::POPULAR_TAGS.each do |tag|
+      @owner = true
+      #should check public?
+      Document.all(:conditions => {:tag_id => tag[0]}).each do |doc|
+        if Usership.find_by_document_id_and_user_id(doc.id, current_user.id).nil?
+          @owner = false
+          break
+        else
+          puts 'owns this doc'
+        end
+      end
+      puts @owner
+      tag << @owner
+#      puts @owner
+    end
+
     popular = Tag::POPULAR_TAGS.to_json
     render :text => popular
   end
