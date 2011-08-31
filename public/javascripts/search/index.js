@@ -3,7 +3,7 @@ var cDoc = Class.create({
     back: false,
     p: null,
     size: null,
-    typingTimer: setTimeout(),                //timer identifier
+    typingTimer: setTimeout('', 100),                //timer identifier
     doneTypingInterval: 1000,  //time in ms, 2 second for example
 
 
@@ -39,6 +39,7 @@ var cDoc = Class.create({
                     $('submit').setStyle({'display': 'none'});
                     $('taken').setStyle({'display': 'none'});
                     $('available').setStyle({'display': 'none'});
+                    $('validate').setStyle({'display':'none'});
 
                 }
             }.bind(this));
@@ -77,32 +78,44 @@ var cDoc = Class.create({
     checkUsername: function(username){
         var u = $('userfield').value;
         if(u.length === 0) {
+            $('validate').setStyle({'display':'block'});
             $('taken').setStyle({'display': 'none'});
             $('available').setStyle({'display': 'none'});
             $('submit').setStyle({'display': 'none'});
             return
         };
-        var parameters = {};
-        parameters['u'] = u;
-        new Ajax.Request('/search/is_username_available', {
-           method: 'post',
-           parameters: parameters,
-           onComplete: function(transport) {
-               console.log("Is it available? "+transport.responseText);
-               if(transport.responseText=='true'){
-                    console.log('evaluated as true');
-                    $('taken').setStyle({'display': 'none'});
-                    $('available').setStyle({'display': 'inline'});
-                    $('submit').setStyle({'display': 'block'});
-               } else {
-                    console.log('false');
-                    $('taken').setStyle({'display': 'inline'});
-                    $('available').setStyle({'display': 'none'});
-                    $('submit').setStyle({'display': 'none'});
+        var regex = /^\w+[^\s]\w+$/.test(u);
+        console.log(u);
+        if(u.length<3 || u.length>20 || !regex ){
+            $('validate').setStyle({'display':'block'});
+            $('taken').setStyle({'display': 'none'});
+            $('available').setStyle({'display': 'none'});
+            $('submit').setStyle({'display': 'none'});
+        } else {
+            var parameters = {};
+            parameters['u'] = u;
+            new Ajax.Request('/search/is_username_available', {
+               method: 'post',
+               parameters: parameters,
+               onComplete: function(transport) {
+                   console.log("Is it available? "+transport.responseText);
+                   if(transport.responseText=='true'){
+                        console.log('evaluated as true');
+                        $('validate').setStyle({'display':'none'});
+                        $('taken').setStyle({'display': 'none'});
+                        $('available').setStyle({'display': 'inline'});
+                        $('submit').setStyle({'display': 'block'});
+                   } else {
+                        console.log('false');
+                        $('validate').setStyle({'display':'none'});
+                        $('taken').setStyle({'display': 'inline'});
+                        $('available').setStyle({'display': 'none'});
+                        $('submit').setStyle({'display': 'none'});
+                   }
+                   console.log('success2');
                }
-               console.log('success2');
-           }
-        });
+            });
+        }
     },
 
     setUsername: function(username){
@@ -186,6 +199,7 @@ document.observe('dom:loaded', function() {
 });
 
 document.observe('lightview:loaded', function() {
+
     if(document.getElementById('userfield')!=null){
       Lightview.show({
         href: 'username',
