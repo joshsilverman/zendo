@@ -76,9 +76,11 @@ class Tag < ActiveRecord::Base
   end
 
   POPULAR_TAGS = [
-                  [13,"Computational Linguistics"],
-                  [14, "IT Security"],
-                  [43, "ITE"]
+                  [13, "Companion to Biological Science (Freeman)"],
+                  [13, "Companion to Biology with MasteringBiology (Campbell & Reece)"],
+                  [13,"Computational Linguistics"]
+#                  [14, "IT Security"]
+#                  [43, "ITE"]
                  ]
 
 end
