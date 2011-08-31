@@ -5,9 +5,10 @@ class User < ActiveRecord::Base
   validates :username, :length => {:minimum => 3,
                                :maximum => 20,
                                :message => "Name must be between 3-20 characters"},
-                   :format => {:with => /[a-zA-Z0-9_]+/,
+                   :format => {:with => /^\w+[^\s]$/,
                                :message => "Please use only letters numbers and underscores _"},
-                   :uniqueness => true
+                   :uniqueness => true,
+                   :allow_nil => true
 
   has_many :authentications, :dependent => :destroy
   #has_many :documents
