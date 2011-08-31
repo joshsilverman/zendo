@@ -81,9 +81,9 @@ class Tag < ActiveRecord::Base
                   [13, "Companion to Psychology Applied to Modern Life (Weiten)"],
                   [13, "Companion to Organic Chemistry (Solomons & Fryhle)"],
                   [13, "Companion to Chemistry: The Central Science (Brown)"],
-                  [13, "Companion to Psychology (Myers)"]
+                  [13, "Companion to Psychology (Myers)"],
 #                  [14, "IT Security"]
-#                  [43, "ITE"]
+                  [43, "ITE"]
                  ]
 
 end
