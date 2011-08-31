@@ -62,7 +62,7 @@ Zendo::Application.routes.draw do
   # match ':controller(/:action(/:id(.:format)))'
   
   #devise
-  devise_for :users, :timeout_in => 7.days,
+  devise_for :users, # :timeout_in => 5.seconds, #7.days,
     :controllers => {:registrations => 'registrations', :sessions => 'sessions'}
 
   #tags
