@@ -76,12 +76,12 @@ class Tag < ActiveRecord::Base
   end
 
   POPULAR_TAGS = [
-                  [13, "Companion to Biological Science (Freeman)"],
-                  [13, "Companion to Biology with MasteringBiology (Campbell & Reece)"],
-                  [13, "Companion to Psychology Applied to Modern Life (Weiten)"],
-                  [13, "Companion to Organic Chemistry (Solomons & Fryhle)"],
-                  [13, "Companion to Chemistry: The Central Science (Brown)"],
-                  [13, "Companion to Psychology (Myers)"],
+                  [43, "Companion to Biological Science (Freeman)"],
+                  [43, "Companion to Biology with MasteringBiology (Campbell & Reece)"],
+                  [43, "Companion to Psychology Applied to Modern Life (Weiten)"],
+                  [43, "Companion to Organic Chemistry (Solomons & Fryhle)"],
+                  [43, "Companion to Chemistry: The Central Science (Brown)"],
+                  [43, "Companion to Psychology (Myers)"],
 #                  [14, "IT Security"]
                   [43, "ITE"]
                  ]
