@@ -2,12 +2,12 @@ class User < ActiveRecord::Base
   
 #  validates_length_of :first_name, :minimum => 1
 #  validates_length_of :last_name, :minimum => 1
-
-  validates :username, :length => {:minimum => 1,
+  validates :username, :length => {:minimum => 3,
                                :maximum => 20,
-                               :message => "Name must be between 1-20 characters"},
-                   :format => {:with => /[a-zA-Z0-9_]/,
-                               :message => "Please use only letters numbers and underscores _"}
+                               :message => "Name must be between 3-20 characters"},
+                   :format => {:with => /[a-zA-Z0-9_]+/,
+                               :message => "Please use only letters numbers and underscores _"},
+                   :uniqueness => true
 
   has_many :authentications, :dependent => :destroy
   #has_many :documents
