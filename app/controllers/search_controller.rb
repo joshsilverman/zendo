@@ -23,7 +23,7 @@ class SearchController < ApplicationController
 
   def full_query
     q = params[:q]
-    query = Document.joins(:tag).select(['documents.name', 'documents.id', 'documents.icon_id', 'tags.name AS tag_name']).where("(tags.name LIKE ? OR documents.name LIKE ?) AND public", '%'+q+'%', '%'+q+'%')
+    query = Document.joins(:tag).select(['documents.name', 'documents.id', 'documents.icon_id', 'tags.name AS tag_name']).where("(tags.name LIKE ? OR documents.name LIKE ?) AND public", '%'+q+'%', '%'+q+'%').limit(50)
     query = query.to_json()
     render :text => query
   end
