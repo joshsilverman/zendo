@@ -325,7 +325,6 @@ class DocumentsController < ApplicationController
     render :nothing => true, :status => 400
   end
 
-
   def purchase_doc
     @user = current_user
     @document = Document.find(params['doc_id'])
