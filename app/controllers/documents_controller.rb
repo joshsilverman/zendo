@@ -292,7 +292,7 @@ class DocumentsController < ApplicationController
   end
 
   def share
-    @user = User.find_by_email(params['email'])
+    @user = User.find_by_username(params['username'])
     @document = current_user.documents.find(params['id'])
     if @user and @document and @user.id != current_user.id
       begin
@@ -324,11 +324,6 @@ class DocumentsController < ApplicationController
     end
     render :nothing => true, :status => 400
   end
-
-
-#  def add_egg
-#
-#  end
 
   def add_document
     # Check if current user already owns doc
@@ -367,6 +362,7 @@ class DocumentsController < ApplicationController
     render :nothing => true, :status => 400
   end
 
+  #Returns a hash of all of the cards belonging to a given document
   def cards
     @document = get_document(params[:id])
     #If document has been updated since last cache, regenerate the cards hash and recache, otherwise serve the cache

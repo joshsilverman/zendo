@@ -16,7 +16,7 @@
       <span class="option" style="float:left; padding: 2px 2px 2px 0; margin: 2px 2px 2px 0;">Sharing with:</span>	  
       <% @document.userships.where('owner = 0').all.each do |viewer| %>
         <span class="token removable" viewer_id="<%= viewer.user_id %>">
-          <%= viewer.user.email %>
+          <%= viewer.user.username %>
           <span class="remove" >X</span>
         </span>
       <% end %>
@@ -24,9 +24,32 @@
     <div class="clr-thin"></div>
     <div>
       <span class="option">Add a person:</span>
-      <%= text_field_tag :email, '', :id => 'share_email_input' %>
+      <%= text_field_tag :username, '', :id => 'share_username_input' %>
       <%= image_tag "shared/fb-loader.gif", :alt => 'loading', :style => "margin-right:5px;visibility:hidden;", :id => "update_share_loading" %>
-      <div id="share_email_choices" class="autocomplete"></div>
+      <div id="share_username_choices" class="autocomplete"></div>
+    </div>
+    <style>
+      .egg{
+    display: block;
+    width: 73px;
+    height: 105px;
+    overflow: hidden;
+    background: url("../../images/nounproject/egg.png") no-repeat;
+    position: relative;
+}
+      .icon{
+    position: relative;
+    top: 30px;
+    left:15px;
+    display:block;
+}
+    </style>
+    <div class="icon-view">
+      Icon
+      <div class="egg">
+        <img src="../../images/nounproject/<%= Document::ICON_TYPES[@document.icon_id] %>" class="icon">
+      </div>
+      <a href='../../choose_icon/<%= @document.id %>' class='lightview' title=" :: :: width: 520, height: 170">Change Icon</a>
     </div>
     <style>
       .egg{

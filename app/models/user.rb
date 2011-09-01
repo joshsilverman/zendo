@@ -2,6 +2,13 @@ class User < ActiveRecord::Base
   
 #  validates_length_of :first_name, :minimum => 1
 #  validates_length_of :last_name, :minimum => 1
+  validates :username, :length => {:minimum => 3,
+                               :maximum => 20,
+                               :message => "Name must be between 3-20 characters"},
+                   :format => {:with => /^\w+[^\s]$/,
+                               :message => "Please use only letters numbers and underscores _"},
+                   :uniqueness => true,
+                   :allow_nil => true
 
   has_many :authentications, :dependent => :destroy
   #has_many :documents
@@ -23,7 +30,7 @@ class User < ActiveRecord::Base
          :token_authenticatable, :lockable, :timeoutable #, :confirmable
   
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :first_name, :last_name, :email, :password, :password_confirmation
+  attr_accessible :first_name, :last_name, :email, :username, :password, :password_confirmation
 
   def apply_omniauth(omniauth)
 
