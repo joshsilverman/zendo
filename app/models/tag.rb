@@ -9,7 +9,7 @@ class Tag < ActiveRecord::Base
   has_many :documents, :dependent => :destroy
   belongs_to :user
 
-  # this is a miserable method that should be optimized by somebody smart than me! ~josh
+  # this is a miserable method that should be optimized by somebody smarter than me! ~josh
   def self.tags_json(current_user = nil)
     return nil if current_user.blank?
     userships = current_user.userships\
@@ -23,7 +23,7 @@ class Tag < ActiveRecord::Base
       next if usership.document.nil?
       doc = usership.document
       id = doc.id
-      doc = Document.new(:id => doc.id, :name => doc.name, :tag_id => doc.tag_id, :created_at => doc.created_at, :updated_at => doc.updated_at)
+      doc = Document.new(:name => doc.name, :tag_id => doc.tag_id, :created_at => doc.created_at, :updated_at => doc.updated_at)
       doc.id = id
       doc.userships << Usership.new(:push_enabled => usership.push_enabled)
 

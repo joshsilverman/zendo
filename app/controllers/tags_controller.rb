@@ -34,15 +34,10 @@ class TagsController < ApplicationController
         if Usership.find_by_document_id_and_user_id(doc.id, current_user.id).nil?
           @owner = false
           break
-        else
-          puts 'owns this doc'
         end
       end
-      puts @owner
       tag << @owner
-#      puts @owner
     end
-
     popular = Tag::POPULAR_TAGS.to_json
     render :text => popular
   end
