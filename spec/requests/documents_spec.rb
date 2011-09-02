@@ -367,7 +367,7 @@ describe "document" do
         @user2 = Factory.create(:user)
         @user2.save!
 
-        fill_in "share_email_input", :with => @user2.email
+        fill_in "share_username_input", :with => @user2.username
 
         wait_until{ page.find('li.selected') }
         page.find('li.selected').click
