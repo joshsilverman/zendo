@@ -68,7 +68,7 @@ ActiveRecord::Schema.define(:version => 20110830184751) do
     t.datetime "reviewed_at"
     t.datetime "edited_at"
     t.boolean  "public"
-    t.integer  "icon_id"
+    t.integer  "icon_id",                   :default => 0
   end
 
   add_index "documents", ["tag_id"], :name => "index_documents_on_tag_id"
