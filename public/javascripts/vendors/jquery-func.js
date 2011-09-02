@@ -39,6 +39,5 @@ $(document).ready(function(){
 	})
 	
 	/* End Drop Down */
-
 	
 });
