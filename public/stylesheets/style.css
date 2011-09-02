@@ -66,6 +66,7 @@ h1#logo a { background: url(../images/home/logo.png) no-repeat 0 0; height: 121p
 #head .row .left { padding: 4px 0 0 0; }
 #head .row .right { padding: 8px 17px 0 0; width: 222px; }
 #head .row h2 { font-size: 72px; line-height: 30px; color: #fff; }
+
 #head .row p { padding: 3px 0 0 0; font-size: 19px; width: 620px; }
 #head .row input { line-height: 31px; color: #cccccc; font-size: 15px; }
 #head .row input.field { background: url(../images/home/head-input.jpg) no-repeat 0 0; width: 202px; height: 31px; display: block; margin-bottom: 2px; padding: 0 10px; }

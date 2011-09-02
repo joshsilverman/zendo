@@ -4,6 +4,7 @@
   <title>StudyEgg | passionate learners</title>
 
   <%= stylesheet_link_tag 'application' %>
+  <%= stylesheet_link_tag 'style' %>
   <meta name="description" content="StudyEgg automatically creates study guides from your notes and tracks how much you know. Spend less time studying and know your material better with StudyEgg!" />
   <%= csrf_meta_tag %>
   <% auto_js_css =  controller.controller_name + '/' + controller.action_name  %>
@@ -31,6 +32,7 @@
 </head>
 <body>
   <div class="wrapper">
+<<<<<<< HEAD
     <!-- Header -->
 <div id="header">
 
@@ -41,6 +43,15 @@
         </div>
     </div>
     <div class="clr-zero"></div>
+=======
+    <div id="header">
+      <!-- Shell -->
+	<div class="shell">
+          <!-- Head -->
+            <div id="head">
+              <%= render 'shared/authentication' %>
+              
+>>>>>>> homepage design initial commit
     <!--flash messages-->
     <% unless flash[:notice].blank? && flash[:error].blank? && flash[:alert].blank? %>
       <div class="flash_container">
@@ -49,8 +60,17 @@
         <% unless flash[:error].blank? %><span class="error rounded_border"><%= flash[:error] %></span><% end %>
       </div>
     <% end %>
+<<<<<<< HEAD
     <div id="contents" class="shell">
       <%= yield %>
+=======
+
+    <%= yield %>
+
+    <div class="clr-zero"></div>
+    <div class="footer">
+      
+>>>>>>> homepage design initial commit
     </div>
     <div class="clr-zero"></div>
     <!-- Footer -->
