@@ -9,11 +9,9 @@ class DocumentsController < ApplicationController
     if tag_id
       @tag = current_user.tags.find_by_id(tag_id)
     end
-
     # if not tag look for misc or create misc
     if @tag.blank?
       @tag = current_user.tags.find_by_misc(true)
-
       #generate miscellaneous tag if none
       if @tag.blank?
         @tag = current_user.tags.create(:misc => true, :name => 'Misc')
@@ -23,8 +21,8 @@ class DocumentsController < ApplicationController
     #Create a new document and usership
     Document.transaction do
       Usership.transaction do
-        Document.create(:name => 'untitled', :tag_id => @tag.id, :public => false, :icon_id => 0)
-        Usership.create(:user_id => current_user.id, :document_id => @document.id, :push_enabled => false, :owner => true)
+        Document.create(:name => 'untitled', :tag_id => @tag.id, :public => false, :icon_id => 0).to_json
+        puts Usership.create(:user_id => current_user.id, :document_id => @document.id, :push_enabled => false, :owner => true).to_json
       end
     end
     redirect_to :action => 'edit', :id => @document.id
