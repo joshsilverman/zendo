@@ -24,6 +24,24 @@ class TagsController < ApplicationController
     render :text => Tag.recent_json(current_user)
   end
 
+  def get_popular_json
+    #within each tag, if the user is missing a usership for any doc, return false
+    
+    Tag::POPULAR_TAGS.each do |tag|
+      @owner = true
+      #should check public?
+      Document.all(:conditions => {:tag_id => tag[0]}).each do |doc|
+        if Usership.find_by_document_id_and_user_id(doc.id, current_user.id).nil?
+          @owner = false
+          break
+        end
+      end
+      tag << @owner
+    end
+    popular = Tag::POPULAR_TAGS.to_json
+    render :text => popular
+  end
+
   def create
     #params
     name = params[:name]
@@ -152,4 +170,21 @@ class TagsController < ApplicationController
     render :nothing => true
   end
 
+  def claim_tag
+    @base_egg = Tag.find_by_id(params[:id])
+    if @base_egg.nil?
+      render :nothing => true, :status => 400
+    else
+#      @new_egg = Tag.create(:name => @base_egg.name, :user_id => current_user.id)
+      @base_egg.documents.each do |doc|
+        if doc.public?
+          puts "public doc found!"
+          puts doc.id
+          ##TODO Check if userships already exists!!!
+          Usership.create(:user_id => current_user.id, :document_id => doc.id, :push_enabled => false, :owner => false)
+        end
+      end
+      render :nothing => true, :status => 200
+    end
+  end
 end

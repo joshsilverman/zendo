@@ -62,7 +62,7 @@ Zendo::Application.routes.draw do
   # match ':controller(/:action(/:id(.:format)))'
   
   #devise
-  devise_for :users, :timeout_in => 7.days,
+  devise_for :users, # :timeout_in => 5.seconds, #7.days,
     :controllers => {:registrations => 'registrations', :sessions => 'sessions'}
 
   #tags
@@ -86,6 +86,7 @@ Zendo::Application.routes.draw do
   match "/documents/get_public_documents" => "documents#get_public_documents"
   match "/documents/:id" => "documents#edit", :via => [:get], :read_only => true
   match "/documents/enable_mobile/:id/:bool" => "documents#enable_mobile"
+  match "/documents/add_document/:id" => "documents#add_document"
   resources :documents, :only => [:edit, :update, :destroy]
 
   # terms
@@ -100,7 +101,9 @@ Zendo::Application.routes.draw do
   # organizer
   resources :tags, :only => [:destroy, :create, :update]
   match "/tags/get_tags_json" => "tags#get_tags_json"
+  match "/tags/get_popular_json" => "tags#get_popular_json"
   match "/tags/get_recent_json" => "tags#get_recent_json"
+  match "/tags/claim_tag/:id" => "tags#claim_tag"
 
   # home page
   match "/users/welcome" => "users#home"

@@ -9,12 +9,10 @@ class DocumentsController < ApplicationController
     if tag_id
       @tag = current_user.tags.find_by_id(tag_id)
     end
-
     # if not tag look for misc or create misc
     if @tag.blank?
       @tag = current_user.tags.find_by_misc(true)
-
-      #generate miscelaneous tag if none
+      #generate miscellaneous tag if none
       if @tag.blank?
         @tag = current_user.tags.create(:misc => true, :name => 'Misc')
       end
@@ -23,34 +21,22 @@ class DocumentsController < ApplicationController
     #Create a new document and usership
     Document.transaction do
       Usership.transaction do
-        @document = Document.new
-        @document.name = 'untitled'
-        @document.tag_id = @tag.id
-        @document.created_at = Date.today
-        @document.edited_at = Date.today
-        @document.public = false
-        @document.icon_id = 0
-        @document.save
-
-        @usership = Usership.new
-        @usership.user_id = current_user.id
-        @usership.document_id = @document.id
-        @usership.push_enabled = false
-        @usership.owner = true
-        @usership.created_at = Time.now
-        @usership.save
+        @document = Document.create(:name => 'untitled', :tag_id => @tag.id, :public => false, :icon_id => 0)
+        Usership.create(:user_id => current_user.id, :document_id => @document.id, :push_enabled => false, :owner => true)
       end
     end
-#    @document = current_user.documents.create(:name => 'untitled', :tag_id => @tag.id)
-#    @document.update_attribute(:edited_at, Date.today)
     redirect_to :action => 'edit', :id => @document.id
   end
   
   def edit
     # check id posted
     id = params[:id]
+    puts id
+    puts params[:read_only]
     @read_only = params[:read_only]
-    get_document(params[:id])    
+    puts @read_only
+    puts get_document(params[:id])
+    puts @document
     @usership = Usership.find_by_document_id_and_user_id(params[:id], current_user.id)
     if @document.public && @usership.nil?
       @usership = Usership.create(:user_id => current_user.id,
@@ -325,6 +311,25 @@ class DocumentsController < ApplicationController
     render :nothing => true, :status => 400
   end
 
+  def add_document
+    # Check if current user already owns doc
+    if !Usership.find_by_user_id_and_document_id(current_user.id, params[:id]).nil?
+      render :nothing => true, :status => 200
+      return
+    end
+    # Check if doc is public, if so -> add usership
+    if get_document(params[:id]).public?
+      Usership.create(:user_id => current_user.id,
+                      :document_id => @document.id,
+                      :push_enabled => false,
+                      :created_at => Time.now,
+                      :owner => false)
+      render :nothing => true, :status => 200
+    else
+      render :nothing => true, :status => 400
+    end
+  end
+
   def purchase_doc
     @user = current_user
     @document = Document.find(params['doc_id'])
@@ -344,27 +349,25 @@ class DocumentsController < ApplicationController
   end
 
   #Returns a hash of all of the cards belonging to a given document
-
   def cards
-    @document = get_document(params[:id])
+    get_document(params[:id])
+    if @document.nil?
+      render :nothing => true, :status => 400
+      return
+    end
     #If document has been updated since last cache, regenerate the cards hash and recache, otherwise serve the cache
-#    puts Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}").nil?
     @cache = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
-#    puts @cache
     if @cache.nil? || @document.updated_at > @cache["updated_at"]
       @hash = Hash.new
       @hash["cards"] = []
-      update_params = {:id => params[:id], :html => @document.html, :delete_nodes => [], :name => @document.name, :edited_at => @document.edited_at}
-      Document.update(update_params, current_user.id)
+      Document.update({:id => params[:id], :html => @document.html, :delete_nodes => [], :name => @document.name, :edited_at => @document.edited_at}, current_user.id)
       @html = "<wrapper>" + @document.html.gsub("<em>", "").gsub("<\/em>", "") + "</wrapper>"
       Line.all(:conditions => {:document_id => params[:id]}).each do |line|
         begin
           #If there if a <def> tag, create a card using its contents as the answer, otherwise split on the "-"
           if !Nokogiri::XML(@html).xpath("//*[@def and @id='" + line.domid + "']").empty?
             @result = Nokogiri::XML(@html).xpath("//*[@def and @id='" + line.domid + "']")
-            @def = @result.first.attribute("def").to_s
-  #          puts @def
-            @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
+            @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @result.first.attribute("def").to_s, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
           else
             @node = Nokogiri::XML(@html).xpath("//*[@id='" + line.domid + "']")
             @result = @node.first.children.first.text
@@ -372,14 +375,8 @@ class DocumentsController < ApplicationController
             if @result.length < 2
               @result = @result[0].split('- ')
             end
-            if Mem.all(:conditions => {:line_id => line.id}).empty?
-              @mem = Mem.new
-              @mem.line_id = line.id
-              @mem.user_id = current_user.id
-              @mem.created_at = Time.now
-              @mem.document_id = params[:id]
-              @mem.pushed = false
-              @mem.save
+            if Mem.all(:conditions => {:line_id => line.id, :user_id => current_user.id}).empty?
+              @mem = Mem.create(:line_id => line.id, :user_id => current_user.id, :document_id => params[:id], :pushed => false)
               @hash["cards"] << {"prompt" => @result[0].strip, "answer" => @result[1].strip, "mem" => @mem.id}
             else
               @hash["cards"] << {"prompt" => @result[0].strip, "answer" => @result[1].strip, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
@@ -411,12 +408,9 @@ class DocumentsController < ApplicationController
   end
 
   def get_permission(document)
+    puts document.to_json
     @w = @r = false
     return if document.nil?
-    #puts document.userships.find_by_id("1")
-	#puts document.userships.where('owner = 1')[0].user_id
-	#if
-
     if Usership.find_by_document_id(document.id).user_id == current_user.id
       @w = @r = true
     elsif document.public
@@ -424,7 +418,6 @@ class DocumentsController < ApplicationController
     elsif !document.userships.find_by_user_id(current_user.id).nil?
       @r = true
     elsif current_user.try(:admin?)
-      puts "Admin Access"
       @r = true
     end
   end
