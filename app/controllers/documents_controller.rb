@@ -21,7 +21,7 @@ class DocumentsController < ApplicationController
     #Create a new document and usership
     Document.transaction do
       Usership.transaction do
-        Document.create(:name => 'untitled', :tag_id => @tag.id, :public => false, :icon_id => 0).to_json
+        @document = Document.create(:name => 'untitled', :tag_id => @tag.id, :public => false, :icon_id => 0)
         Usership.create(:user_id => current_user.id, :document_id => @document.id, :push_enabled => false, :owner => true)
       end
     end
@@ -31,8 +31,12 @@ class DocumentsController < ApplicationController
   def edit
     # check id posted
     id = params[:id]
+    puts id
+    puts params[:read_only]
     @read_only = params[:read_only]
-    get_document(params[:id])
+    puts @read_only
+    puts get_document(params[:id])
+    puts @document
     @usership = Usership.find_by_document_id_and_user_id(params[:id], current_user.id)
     if @document.public && @usership.nil?
       @usership = Usership.create(:user_id => current_user.id,
@@ -398,19 +402,27 @@ class DocumentsController < ApplicationController
 
   
   def get_document(id)
+#    puts id
     document = Document.find_by_id(id)
+#    puts document
     get_permission(document)
+
     @document = document if @w or @r
+#    puts @document
   end
 
   def get_permission(document)
+    puts document.to_json
     @w = @r = false
     return if document.nil?
     if Usership.find_by_document_id(document.id).user_id == current_user.id
+      puts '1'
       @w = @r = true
     elsif document.public
+      puts '2'
       @r = true
     elsif !document.userships.find_by_user_id(current_user.id).nil?
+      puts '3'
       @r = true
     elsif current_user.try(:admin?)
       puts "Admin Access"
