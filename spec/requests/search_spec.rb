@@ -107,7 +107,7 @@ describe "dashboard", :js => true do
     it "pops up and sets username" do
       wait_until{ page.find('#lv_overlay').visible? }
       wait_until{ page.has_content?('Thanks for signing up!')}
-      sleep 5
+      sleep 2
       fill_in "userfield", :with => @user.first_name
       wait_until{ page.find('#submit').visible? }
       page.find('#submit').click
@@ -117,7 +117,7 @@ describe "dashboard", :js => true do
     it "pops up and sets username less than 3 chars" do
       wait_until{ page.find('#lv_overlay').visible? }
       wait_until{ page.has_content?('Thanks for signing up!')}
-      sleep 5
+      sleep 2
       fill_in "userfield", :with => 'te'
       wait_until{ page.find('#validate').visible? }
     end
@@ -125,7 +125,7 @@ describe "dashboard", :js => true do
     it "pops up and sets username more than 20 chars" do
       wait_until{ page.find('#lv_overlay').visible? }
       wait_until{ page.has_content?('Thanks for signing up!')}
-      sleep 5
+      sleep 2
       fill_in "userfield", :with => 'testtesttesttesttesttest'
       wait_until{ page.find('#validate').visible? }
     end
@@ -133,7 +133,7 @@ describe "dashboard", :js => true do
     it "pops up and sets username with special chars" do
       wait_until{ page.find('#lv_overlay').visible? }
       wait_until{ page.has_content?('Thanks for signing up!')}
-      sleep 5
+      sleep 2
       fill_in "userfield", :with => "#{@user.first_name}@#"
       wait_until{ page.find('#validate').visible? }
     end
@@ -141,7 +141,7 @@ describe "dashboard", :js => true do
     it "pops up and sets username to reserved name" do
       wait_until{ page.find('#lv_overlay').visible? }
       wait_until{ page.has_content?('Thanks for signing up!')}
-      sleep 5
+      sleep 2
       fill_in "userfield", :with => 'reserved_name'
       wait_until{ page.find('#taken').visible? }
     end

@@ -20,6 +20,7 @@ describe "user", :js => true do
     it "signs up with correct info" do
       visit "/users/sign_up"
       fill_in "Email", :with => "asdf@asdfasf.com"
+      fill_in "Username", :with => "asdf1234"
 
       fill_in "Password", :with => @user.password
       fill_in "Password confirmation", :with => @user.password

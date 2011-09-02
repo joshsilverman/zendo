@@ -54,7 +54,7 @@ describe "tags", :js => true do
 
         wait_until{ page.has_content?('Share') }
         click_button "Share"
-        fill_in "share_email_input", :with => @user2.email
+        fill_in "share_username_input", :with => @user2.username
         wait_until{ page.find('li.selected') }
         page.find('li.selected').click
         wait_until{ page.find('.removable') }
@@ -68,7 +68,7 @@ describe "tags", :js => true do
       end
 
       it "is displayed" do
-        wait_until{ page.has_content?('Shared')}
+        wait_until{ page.has_content?('Recent')}
         wait_until{ page.has_content?('title one')}
       end
 
