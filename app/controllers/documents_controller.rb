@@ -402,13 +402,9 @@ class DocumentsController < ApplicationController
 
   
   def get_document(id)
-#    puts id
     document = Document.find_by_id(id)
-#    puts document
     get_permission(document)
-
     @document = document if @w or @r
-#    puts @document
   end
 
   def get_permission(document)
@@ -416,16 +412,12 @@ class DocumentsController < ApplicationController
     @w = @r = false
     return if document.nil?
     if Usership.find_by_document_id(document.id).user_id == current_user.id
-      puts '1'
       @w = @r = true
     elsif document.public
-      puts '2'
       @r = true
     elsif !document.userships.find_by_user_id(current_user.id).nil?
-      puts '3'
       @r = true
     elsif current_user.try(:admin?)
-      puts "Admin Access"
       @r = true
     end
   end
