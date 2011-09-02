@@ -99,7 +99,7 @@ li{
   </div>
 <div style="clear: both;"></div>
 
-<% # if @username %>
+<% if @username %>
   <div id="username" style="display: none;">
     <a href="/users/sign_out" style="margin:5px;">cancel</a>
     <h2 style="text-align: center;">Thanks for signing up!</h2>
@@ -117,4 +117,4 @@ li{
     <h5 style="text-align: center;">Don't worry, you can always change it later</h5>
     
   </div>
-<% # end %>
+<% end %>
