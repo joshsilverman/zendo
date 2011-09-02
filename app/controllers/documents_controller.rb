@@ -22,7 +22,7 @@ class DocumentsController < ApplicationController
     Document.transaction do
       Usership.transaction do
         Document.create(:name => 'untitled', :tag_id => @tag.id, :public => false, :icon_id => 0).to_json
-        puts Usership.create(:user_id => current_user.id, :document_id => @document.id, :push_enabled => false, :owner => true).to_json
+        Usership.create(:user_id => current_user.id, :document_id => @document.id, :push_enabled => false, :owner => true)
       end
     end
     redirect_to :action => 'edit', :id => @document.id
