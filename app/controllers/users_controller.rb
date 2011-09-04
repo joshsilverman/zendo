@@ -7,7 +7,11 @@ class UsersController < ApplicationController
   end 
 
   def home
-    redirect_to "/dashboard" if current_user
+    if current_user
+      redirect_to "/dashboard"
+    else
+      render :layout => "jquery"
+    end
   end
 
   def get_email

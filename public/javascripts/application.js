@@ -24,13 +24,13 @@ var cAppUtilities = Class.create({
     resizeContents: function() {
         
         /* calculations */
-        var footer = $$('.footer')[0];
+        var footer = $('footer');
         console.log(footer);
         var footerY = footer.getHeight();
         var viewportY = document.viewport.getHeight();
         var footerOffsetY = footer.cumulativeOffset()[1];
 
-        var contents = $$('.contents')[0];
+        var contents = $('contents');
         var contentsY = contents.getHeight();
 
         var difference = viewportY - footerOffsetY - footerY;
@@ -150,3 +150,21 @@ var cAppUtilities = Class.create({
 
 /* global vars */
 var AppUtilities = new cAppUtilities;
+
+/* global objects */
+document.observe('dom:loaded', function() {
+    /* Drop Down */
+        if($('login-link')){
+            $('login-link').observe('click', function () {
+                    console.log('test');
+                    $('dd').setStyle({'display':'block'});
+                    console.log('test');
+            });
+            $('login-link-hr').observe('click', function(){
+                    $('dd').hide();
+                    return false;
+            });
+            console.log('test');
+        }
+	/* End Drop Down */
+});
