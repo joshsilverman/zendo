@@ -1,5 +1,8 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> redesign
 <% unless user_signed_in? %>
 <div class="login">
         <a href="#" class="login-link" id="login-link">Login</a>
@@ -30,6 +33,7 @@
 
                                 </div>
                         </div>
+<<<<<<< HEAD
                 </div>
 
         </div>
@@ -74,24 +78,23 @@
                   <input type="text" class="field blink" value="Password" title="Password" />
                   <input type="submit" value="Submit" class="button notext" />
                   <label for="check"><input type="checkbox" name="remember" id="check" value="Remember" />Remember Me</label>
+=======
+>>>>>>> redesign
                 </div>
-              </form>
-              <div class="cl">&nbsp;</div>
-              <p><a href="#" class="dd-link">Lost Password?</a></p>
-            </div>
-          </div>
+
         </div>
-      </div>
-      <!-- End DropDown -->
-    </div>
-  <% else %>
-    <span style="float:right; margin: 18px 6px 0 0;">
-      Welcome, <%= current_user.first_name %>&nbsp;|&nbsp;
-      <%= link_to "Edit Account", edit_user_registration_path %>&nbsp;|&nbsp;
-      <%= link_to "Sign Out", destroy_user_session_path %>
-    </span>
-  <% end %>
-<div class="cl">&nbsp;</div>
+        <!-- End DropDown -->
+
 </div>
+<<<<<<< HEAD
 <!-- End Head Row -->
 >>>>>>> homepage design initial commit
+=======
+<% else %>
+  <span style="float:right; margin: 18px 6px 0 0;">
+    Welcome, <%= current_user.first_name %>&nbsp;|&nbsp;
+    <%= link_to "Edit Account", edit_user_registration_path %>&nbsp;|&nbsp;
+    <%= link_to "Sign Out", destroy_user_session_path %>
+  </span>
+<% end %>
+>>>>>>> redesign

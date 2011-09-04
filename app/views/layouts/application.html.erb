@@ -34,6 +34,7 @@
   <div class="wrapper">
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     <!-- Header -->
 <div id="header">
 
@@ -56,6 +57,11 @@
 >>>>>>> design changes
               
 >>>>>>> homepage design initial commit
+=======
+    <div id="header">
+      <%= render 'shared/authentication' %>
+    </div>
+>>>>>>> redesign
     <!--flash messages-->
     <% unless flash[:notice].blank? && flash[:error].blank? && flash[:alert].blank? %>
       <div class="flash_container">
@@ -65,12 +71,18 @@
       </div>
     <% end %>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <div id="contents" class="shell">
       <%= yield %>
 =======
 
     <%= yield %>
 
+=======
+    <div id="contents">
+      <%= yield %>
+    </div>
+>>>>>>> redesign
     <div class="clr-zero"></div>
 <<<<<<< HEAD
     <div class="footer">
@@ -131,6 +143,7 @@
 <!-- End Footer -->
 =======
     <!-- Footer -->
+<<<<<<< HEAD
     <div id="footer">
 
       <!-- Shell -->
@@ -173,6 +186,58 @@
     </div>
     <!-- End Footer -->
 >>>>>>> design changes
+=======
+<div id="footer">
+
+	<!-- Shell -->
+	<div class="shell">
+
+		<div class="links">
+			<h4>StudyEgg</h4>
+			<ul>
+			    <li><a href="#">The Team</a></li>
+			    <li><a href="#">Josh's Story</a></li>
+			    <li><a href="#">About</a></li>
+			</ul>
+		</div>
+
+		<div class="links">
+			<h4>Legal</h4>
+			<ul>
+			    <li><a href="#">Privacy Policy</a></li>
+			    <li><a href="#">Terms of Service</a></li>
+			</ul>
+		</div>
+
+		<div class="address">
+			<h4>Contact</h4>
+			<ul>
+			    <li><a href="#">Email Us</a></li>
+			    <li><a href="#">Facebook</a></li>
+			    <li><a href="#">Twitter</a></li>
+			</ul>
+		</div>
+
+		<div class="social">
+			<a href="#" class="twitter-link">Twitter</a>
+			<a href="#" class="facebook-link">Facebook</a>
+			<a href="#" class="google-link">Google</a>
+
+			<div class="cl">&nbsp;</div>
+		</div>
+
+		<div class="cl">&nbsp;</div>
+
+		<div class="bottom">
+			<p>Copyright 2011 Zendo Labs, Inc. All rights reserved.</p>
+		</div>
+
+	</div>
+	<!-- End Shell -->
+
+</div>
+<!-- End Footer -->
+>>>>>>> redesign
   </div>
   <div id="script_userecho"></div>
 
