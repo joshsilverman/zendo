@@ -10,6 +10,8 @@ body {
     height:100%;
 }
 
+
+
 a {
     color:#007AC7;
     text-decoration: underline;
@@ -51,7 +53,7 @@ img.home {
 
 .shell { width:971px; margin: 0 auto; }
 
-#header { background: #218dd2; }
+#header { background: #218dd2; height: 150px;}
 
 #head { background: url(../images/home/head-bg.jpg) no-repeat 8px 17px; padding: 17px 0 130px 14px; position: relative; }
 #head .row-top { padding-bottom: 179px; }
@@ -59,6 +61,25 @@ img.home {
 
 h1#logo { width: 183px; height: 121px; float: left; display: inline; }
 h1#logo a { background: url(../images/home/logo.png) no-repeat 0 0; height: 121px; display: block; }
+
+.login { float: right; display: inline; width: 252px; margin-top: 6px; position: relative; z-index: 4; }
+.login a.login-link { background: url(../images/home/login-down.png) no-repeat right 0; height: 24px; line-height: 24px; padding: 0 31px 0 0; margin-right: 16px; display: block; }
+.login a.login-link { font-size: 18px; font-weight: bold; color: #fff; text-align: right; }
+.login a:hover { text-decoration: none; }
+
+.dd { position: absolute; top: -4px; right: 0; width: 252px; display: none; z-index: 3; }
+.dd .cnt-top { background: url(../images/home/cnt-top.png) no-repeat 0 0; padding-top: 39px; }
+.dd .cnt-bottom { background: url(../images/home/cnt-bottom.png) no-repeat 0 bottom; padding-bottom: 22px; }
+.dd .cnt { padding: 1px 15px 0 14px; background: url(../images/home/cnt-bg.png) repeat-y 0 0;}
+.dd .cnt a.login-link-hr { background: url(../images/home/login-up.png) no-repeat right 0; height: 24px; padding: 0 31px 0 0; margin-top: -36px; display: block; float: right; }
+.dd .cnt a.login-link-hr { font-size: 18px; font-weight: bold; color: #fff; line-height: 24px; }
+
+.dd .cnt input { color: #cccccc; font-size: 14px; }
+.dd .cnt input.field { background: #fff; border: solid 1px #ccc; width: 200px; height: 32px; margin-bottom: 6px; padding: 0 10px; line-height: 32px; }
+.dd .cnt input.button { background: url(../images/home/login-button.jpg) no-repeat 0 0; width: 102px; height: 36px; cursor: pointer; float:right; display: block; margin-top: 3px; }
+.dd .cnt input#check { margin: 10px 5px 0 5px; }
+.dd .cnt p { text-align: center; padding: 10px 0 0 0; }
+.dd .cnt a.dd-link { color: #333; }
 
 #footer { background: #cf8e07 url(../images/home/footer-bg.jpg) repeat-x 0 0; }
 #footer .shell { padding: 25px 0 0 0; width: 971px; }

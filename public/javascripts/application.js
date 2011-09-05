@@ -154,18 +154,8 @@ var AppUtilities = new cAppUtilities;
 /* global objects */
 document.observe('dom:loaded', function() {
     /* Drop Down */
-<<<<<<< HEAD
-<<<<<<< HEAD
-        //if($('login-link')){
-            $('login-link').observe('mouseover', function () {
-=======
         if($('login-link')){
             $('login-link').observe('click', function () {
->>>>>>> redesign
-=======
-        //if($('login-link')){
-            $('login-link').observe('mouseover', function () {
->>>>>>> redesign
                     console.log('test');
                     $('dd').setStyle({'display':'block'});
                     console.log('test');
@@ -175,14 +165,7 @@ document.observe('dom:loaded', function() {
                     return false;
             });
             console.log('test');
-<<<<<<< HEAD
-<<<<<<< HEAD
-       // }
-=======
+
         }
->>>>>>> redesign
-=======
-       // }
->>>>>>> redesign
 	/* End Drop Down */
 });

@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <% @page_specific_scripts_css = ["/stylesheets/registrations/new"] %>
 <% @page_specific_scripts_js = ["/javascripts/vendors/cufon-yui.js", "/javascripts/vendors/ITC_Franklin_Gothic_LT_500.font.js", "/javascripts/vendors/jquery-1.6.2.min.js", "/javascripts/vendors/jquery-func.js"] %>
@@ -119,3 +120,22 @@
 >>>>>>> design changes
 =======
 >>>>>>> redesign
+=======
+<!-- Navigation -->
+<div id="navigation">
+        <ul>
+          <% i=0 %>
+          <% @eggs.each do |e| %>
+            <% if i<5 %>
+            <li><a href="/demo/review/<%= e[0] %> "><%=  e[1] %></a></li>
+            <% i+=1 %>
+            <% end %>
+          <% end %>
+        </ul>
+        <div class="cl">&nbsp;</div>
+
+        <a href="#" class="more notext">Browse additional titles</a>
+
+</div>
+<!-- End Navigation -->
+>>>>>>> tag viewer
