@@ -68,6 +68,7 @@ class TagsController < ApplicationController
     # get and split index contents
     index = params[:create_with_index][:index].tempfile.readlines.join "\n"
     pages = index.split /<\/ul>/
+    pages.shift
 
     # create tag
     @tag = current_user.tags.find_by_name(params[:create_with_index][:name])
@@ -76,7 +77,7 @@ class TagsController < ApplicationController
 
     # create documents
     pages.each_with_index do |page, i|
-      @tag.documents << current_user.documents.create(:html => page, :name => (i + 1).to_s)
+      @tag.documents << current_user.documents.create(:html => page, :name => "Chapter #{(i + 1).to_s}")
     end
     @tag.save
 

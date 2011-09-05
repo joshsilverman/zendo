@@ -651,6 +651,10 @@ var cRightRail = Class.create({
 
     focus: function(id) {
 
+        /* cancel if in supervised editing mode */
+        if (top === self) { /* continue */ }
+        else { return; }
+
         //normalize id
         var cardId = doc.utilities.toCardId(id);
 
