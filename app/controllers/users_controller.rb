@@ -10,6 +10,7 @@ class UsersController < ApplicationController
     if current_user
       redirect_to "/dashboard"
     else
+      @eggs = Tag::POPULAR_TAGS
       render :layout => "jquery"
     end
   end

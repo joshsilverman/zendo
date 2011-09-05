@@ -221,3 +221,40 @@ td {
 #next_button {
     background-image: url(/images/reviewer/right.png);
 }
+
+.signup_button {
+   display:inline;
+   width: 200px;
+   height: 50px;
+   border-top: 1px solid #96d1f8;
+   background-color:  #78d140;
+   background: -webkit-gradient(linear, left top, left bottom, from(#78d140), to(#49bb0f));
+   background: -moz-linear-gradient(top, #78d140, #49bb0f);
+   padding: 10px;
+   -webkit-border-radius: 7px;
+   -moz-border-radius: 7px;
+   border-radius: 7px;
+   -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   box-shadow: rgba(0,0,0,1) 0 1px 0;
+   text-shadow: rgba(0,0,0,.4) 0 1px 0;
+   color: white;
+   font-size: 28px;
+   font-family: Georgia, Serif;
+   text-decoration: none;
+   vertical-align: middle;
+   text-align: center;
+   line-height: 20px;
+   margin: 0 10px 0 0;
+   }
+
+.signup_button:hover {
+    border-top-color: #5c945b;
+   background: #5c945b;
+   color: #ccc;
+   }
+
+.signup_button:active {
+   border-top-color: #1b435e;
+   background: #1b435e;
+   }
