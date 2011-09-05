@@ -110,7 +110,6 @@ var cParser = Class.create({
                 if (Card['render']) {
                     Card.front = '<img alt="loading" src="/images/shared/fb-loader.gif" style="border:none !important;">';
                     Card.back = '';
-                    console.log(Card);
                     Card.render();
                 }
 
@@ -122,12 +121,12 @@ var cParser = Class.create({
                         try {
                             var node = Element.select(this.iDoc, '#' + Card.domId)[0];
                             if (!node) {
-                                document.fire("lookup:complete");
+//                                document.fire("lookup:complete");
                                 return false;
                             }
                         }
                         catch (e) {
-                            document.fire("lookup:complete");
+//                            document.fire("lookup:complete");
                         }
 
                         /* focus on card before lookup */
@@ -182,7 +181,7 @@ var cParser = Class.create({
                                 doc.editor.isNotDirty = false;
                                 doc.outline.autosave();
                             }
-                            document.fire("lookup:complete");
+                            (function() {document.fire("lookup:complete");}).delay(1.5);
                         }
                     });
                     return true;
