@@ -1,17 +1,19 @@
 class DemoController < ApplicationController
+  before_filter :authenticate_user!, :except => [:review, :get_document]
 
   def review
-    get_document(params[:id])
+    doc = Document.find_by_tag_id(params[:id])
+    get_document(doc.id)
     if @document.nil?
       redirect_to '/', :notice => "Error accessing that document."
       return
     end
 
     # get lines
-      user_lines = Line.includes(:mems).where("lines.document_id = ?",
-                        params[:id], current_user.id)
+      user_lines = Line.where("lines.document_id = ?",
+                        doc.id)
 
-      @lines_json = user_lines.to_json :include => :mems
+      @lines_json = user_lines.to_json
 
     respond_to do |format|
         format.html
@@ -24,8 +26,14 @@ class DemoController < ApplicationController
   end
 
   def get_document(id)
+    puts id
     document = Document.find_by_id(id)
+    puts document
     @document = document if document.public
+  end
+
+  def egg_details
+    @documents = Document.where("tag_id = ? AND public", params[:id])
   end
 
 end

@@ -1,25 +1,11 @@
 <% @page_specific_scripts_js = ["parser", "progressbar"] %>
 
-<%#*if, reviewing full tag, make sure review.js is included%>
-<% if controller.controller_name == 'tags' %>
-  <% @page_specific_scripts_js += ["documents/review"] %>
   <% @page_specific_scripts_css = "documents/review" %>
-<% end %>
 
 <div id="title">
-  <% if @document.nil? %>
-    /<%= link_to @tag.name, '/explore' %>
-  <% else %>
-    /<%= link_to @document.tag.name, '/explore' %>
-    /<%= link_to @document.name, '/documents/%i/edit' % @document.id %>
-  <% end %>
-  <input type="checkbox" name="mobile" id="mobile_review" style="margin-top: 6px; margin-left: 8px;"/>
-  <% if !@document.userships.all(:conditions => {:user_id => current_user.id}).empty? %>
-    <% if @document.userships.all(:conditions => {:user_id => current_user.id}).first.push_enabled %>
-      <script type="text/javascript"> mobile_review.checked = true; </script>
-    <% end %>
-  <% end %>
-  <span style="padding-top: 5px"> Push review </span>
+    /<%= @document.tag.name %>
+    /<%= @document.name %>
+
 </div>
 
 <div class="card_container">
@@ -85,5 +71,20 @@
 <% end %>
 
 <div id="log" style="margin-top:25px;"></div>
+<div id="sign-up" style="display:none">
+  <div style="text-align: center;">
+  <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
+  <p>
+  <div style="width:5px; display: block; text-align: left; float:left; margin-left:50px;"><strong>Email</strong></div><%= f.text_field :email %>
+  </p>
+  <div style="clear:both"></div>
+  <p>
+  <div style="width:5px; display: block; text-align: left; float:left; margin-left:50px;"><strong>Password</strong></div><%= f.password_field :password %>
+  </p>
+    <%= f.submit "Sign Up Free!", :class=>"signup_button" %>
+
+  <% end %>
+  </div>
+</div>
 
 <img alt="loading" src="/images/shared/fb-loader.gif" style="display:none;" />

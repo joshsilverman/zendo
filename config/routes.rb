@@ -135,6 +135,7 @@ Zendo::Application.routes.draw do
   #store
   match '/store' => 'store#index'
   match '/store/details/:id' => 'store#details'
+  match '/store/egg_details/:id' => 'store#egg_details'
   match '/choose_icon/:doc_id' => 'store#choose_icon'
 
   #static

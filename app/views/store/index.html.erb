@@ -74,13 +74,13 @@ input[type="search"]::-webkit-search-results-decoration {
 
   <h3>Recent Eggs</h3>
   <div id="recent_eggs">
-    <% if @recent_public_docs.empty? %>
+    <% if @recent_public_eggs.empty? %>
       <strong>Sorry, there are no public documents right now</strong>
     <% else %>
       <ul style="margin-left: -20px;">
-      <% @recent_public_docs.each do |d| %>
-        <li><div class="egg-box"><a href='store/details/<%= d.id %>' ><div class="egg">
-                <img src="../../images/nounproject/<%= Document::ICON_TYPES[d.icon_id] %>" class="icon"></div></a><%= d.name %> <br />
+      <% @recent_public_eggs.each do |e| %>
+        <li><div class="egg-box"><a href='store/egg_details/<%= e.id %>' ><div class="egg">
+                <!--<img src="../../images/nounproject/<%= Document::ICON_TYPES[e.icon_id] %>" class="icon">--></div></a><%= e.name %> <br />
                 <%i+=1%>
       <% end %>
       </ul>
@@ -90,13 +90,13 @@ input[type="search"]::-webkit-search-results-decoration {
 
   <h3>Popular Eggs</h3>
   <div id="popular_eggs">
-    <% if @popular_public_docs.empty? %>
+    <% if @popular_public_eggs.empty? %>
       <strong>Sorry, there are no public documents right now</strong>
     <% else %>
       <ul style="margin-left: -20px;">
-      <% @popular_public_docs.each do |d| %>
-        <li><div class="egg-box"><a href='store/details/<%= d.id %>' ><div class="egg">
-                <img src="../../images/nounproject/<%= Document::ICON_TYPES[d.icon_id] %>" class="icon"></div></a><%= d.name %> <br />
+      <% @popular_public_eggs.each do |e| %>
+        <li><div class="egg-box"><a href='store/details/<%= e.id %>' ><div class="egg">
+                <!--<img src="../../images/nounproject/<%= Document::ICON_TYPES[e.icon_id] %>" class="icon">--></div></a><%= e.name %> <br />
       <%i+=1%>
       <% end %>
       </ul>
