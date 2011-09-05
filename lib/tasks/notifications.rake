@@ -1,4 +1,97 @@
 namespace :notifications do
+  task :deliver => :environment do
+    User.all( :include => :userships, :conditions => { :userships => { :push_enabled => true }}).each do |user|
+      @push_userships = user.userships.all(:conditions => { :userships => { :push_enabled => true }})
+      @push_userships.each do |usership|
+        if Mem.all(:conditions => { :user_id => user.id, :pushed => true, :document_id => usership.document_id }).length < 6
+          Mem.where('document_id = ? AND pushed = false AND user_id = ?', usership.document_id, user.id).order('strength asc').limit(3).each do |mem|
+            mem.pushed = true
+            mem.save
+          end
+        end
+      end
+      APN::Notification.create(:device => APN::Device.where('user_id = ?', user.id).first, :badge => Mem.all(:conditions => {:user_id => user.id, :pushed => true}).length, :sound => false, :alert => "You have new cards to review!", :user_id => user.id)
+    end
+    APN::Notification.send_notifications
+  end
+      
+#    end
+#      begin
+#        @push_userships = user.userships.all(:conditions => { :userships => { :push_enabled => true }})
+#        puts @push_userships.to_json
+#        @pushed_mems = Mem.all(:conditions => { :user_id => user.id, :pushed => true })
+#        #BELOW SHOULD BE OVERRIDEN IF THE USER HAS JUST PUSH ENABLED A NEW DOC AND IS EXPECTING NEW CARDS
+#        #REGARDLESS OF WHETHER THEY HAVE BEEN ANSWERING QUESTIONS ON THEIR OTHER DOCUMENTS => CHECK HERE
+#        #FOR USERSHIPS WHERE THE COUNT OF PUSHED MEMS IS 0 => IF EXISTS USERSHIP WHERE MEMS.PUSHED.COUNT = 0
+#        #INSTEAD, WHEN A USER ENABLES MOBILE, SET THE RESEND VALUE TO NIL FOR THAT USER'S NOTIFICATION
+#        #Check to see if there are both too many mems/doc and that the current time is before the resend time
+#        @last_notification = APN::Notification.all(:conditions => {:user_id => user.id}).last
+#        if @pushed_mems.length / @push_userships.length > 6
+#          puts "More than 6 pending mems per doc for this user"
+#          if !@last_notification.nil?
+#            if @last_notification.resend_at.nil?
+#              puts "No resend set yet"
+##              puts Time.now
+##              puts Time.now + (60 * 2)
+##              @last_notification.resend_at = Time.now + (60 * 2)
+#              @last_notification.resend_at = Time.now + (60 * 60 * 7)
+#              @last_notification.save
+#            elsif Time.now > @last_notification.resend_at
+#              puts "Time to wake up!"
+#              @last_notification.sent_at = nil
+#              @last_notification.resend_at = nil
+#              @last_notification.save
+#            else
+#              puts "Shhh... user is sleeping"
+#            end
+#          else
+#            puts "No last notification... create a new one"
+#          end
+#        else
+#          puts "Good to send to this user"
+#          #If resend isn't nil, add new mems to review
+#          if !@last_notification.nil?
+#            if @last_notification.resend_at.nil?
+#              @last_notification.resend_at = nil
+#              @last_notification.save
+#              @push_userships.each do |usership|
+#                puts usership.to_json
+#                Mem.where('document_id = ? AND pushed = false AND user_id = ?', usership.document_id, user.id).order('strength asc').limit(3).each do |mem|
+#                  mem.pushed = true
+#                  mem.save
+#                  puts mem.to_json
+#                end
+#              end
+#            end
+#          else
+#            @push_userships.each do |usership|
+#              Mem.where('document_id = ? AND pushed = false AND user_id = ?', usership.document_id, user.id).order('strength asc').limit(3).each do |mem|
+#                mem.pushed = true
+#                mem.save
+#                puts mem.to_json
+#              end
+#            end
+#          end
+#          notification = APN::Notification.new
+#          #Multi device support?
+#          puts "Here:"
+#          puts APN::Device.where('user_id = ?', user.id).first
+#          puts user.id
+#          notification.device = APN::Device.where('user_id = ?', user.id).first
+#          notification.badge = Mem.all(:conditions => {:user_id => user.id, :pushed => true}).length
+#          notification.sound = false
+#          notification.alert = "You have new cards to review!"
+#          notification.user_id = user.id
+#          notification.save
+#        end
+#      rescue
+#        puts "Error during notifications rake"
+#      end
+#    end
+#    APN::Notification.send_notifications
+#  end
+
+
   task :collect => :environment do
     #REVISED RAKE TASK TO CREATE NOTIFICATIONS / MARK MEMS
     # For each user that has a push enabled document do:
@@ -140,52 +233,3 @@ namespace :notifications do
     end
   end
 end
-
-
-#    User.all(:include => :userships).where("")
-#      puts user.to_json
-#    end
-
-
-
-
-    # Make this more efficient!?
-#    User.all.each do |user|
-#      @pending_notification = false
-#      user.userships.all.each do |usership|
-#        if usership.push_enabled == true
-##          puts Document.find_by_id(usership.document_id).html
-#          if !APN::Notification.where('user_id = ? AND sent_at IS NULL', usership.user_id).empty?
-#            @pending_notification = true
-#          end
-#          #Find top three weakest mems that haven't already been pushed
-#          #Does this also need to filter for only active nodes?
-#          Mem.where('document_id = ? AND pushed = false', usership.document.id).order('strength asc').limit(3).each do |mem|
-##            puts Line.find_by_id(mem.line_id).to_json
-#            #Update top three mems to pushed
-#            mem.pushed = true
-#            mem.save
-#            #Check if the user already has a pending notification, if not, create one
-#            if !@pending_notification
-##              puts "Create notification for: "
-##              puts usership.user_id
-##              puts usership.document_id
-#              @pending_notification = true
-#              notification = APN::Notification.new
-#              # TODO Could support multi-device push here!
-#              notification.device = APN::Device.where('user_id = ?', usership.user_id).limit(1)[0]
-#              notification.badge = 1
-#              notification.sound = false
-#              notification.alert = "You have new cards to review!"
-#              notification.user_id = usership.user_id
-#              notification.save
-#            else
-#              @updated_badge = APN::Notification.where('user_id = ?', usership.user_id).limit(1)[0].badge + 1
-#              APN::Notification.where('user_id = ?', usership.user_id).limit(1)[0].update_attribute(:badge, @updated_badge)
-#            end
-#          end
-#        end
-#      end
-#    end
-#    #Deliver all notifications
-#    APN::Notification.send_notifications

@@ -37,8 +37,6 @@ describe "document" do
         Capybara.default_wait_time = 3
         @tag = @user.tags.create!(:name => "my tag")
         @document = @user.documents.create!(:name => "title one", :tag_id => @tag.id)
-        puts @document
-        puts @document.to_json
         visit "/documents/#{@document.id}/edit"
         wait_until{ page.has_content?(@tag.name) }
         wait_until{ page.find('#document_name').visible? }

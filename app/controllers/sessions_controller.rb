@@ -5,7 +5,9 @@ class SessionsController < Devise::SessionsController
   end
 
   def create
+    puts 'starting session create'
     resource = warden.authenticate!(:scope => resource_name, :recall => "#{controller_path}#new")
+    puts resource.to_json
     set_flash_message(:notice, :signed_in) if is_navigational_format?
     sign_in(resource_name, resource)
     redirect_to "/dashboard"
