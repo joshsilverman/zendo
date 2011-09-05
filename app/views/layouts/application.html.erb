@@ -4,7 +4,6 @@
   <title>StudyEgg | passionate learners</title>
 
   <%= stylesheet_link_tag 'application' %>
-  <%= stylesheet_link_tag 'style' %>
   <meta name="description" content="StudyEgg automatically creates study guides from your notes and tracks how much you know. Spend less time studying and know your material better with StudyEgg!" />
   <%= csrf_meta_tag %>
   <% auto_js_css =  controller.controller_name + '/' + controller.action_name  %>
@@ -27,14 +26,21 @@
     <%= javascript_include_tag 'default', :cache => false %>
   <% end %>
   <% if @page_specific_scripts_js %> <%= javascript_include_tag @page_specific_scripts_js, :cache => '/cache/' + auto_js_css %> <% end %>
-  <link rel="icon" type="image/png" href="/images/logos/favicon.ico" />
+  <link rel="shortcut icon" href="../images/home/favicon.ico" />
   <meta name="google-site-verification" content="1kmG8JhfDQo1KP7tHKZsMRUa8Msr83nxkOj3aQ_jCl0" />
 </head>
 <body>
   <div class="wrapper">
-    <div id="header">
+    <!-- Header -->
+<div id="header">
+
+	<!-- Shell -->
+	<div class="shell">
+	<h1 id="logo"><a href="#" class="notext">Logo</a></h1>
       <%= render 'shared/authentication' %>
+        </div>
     </div>
+    <div class="clr-zero"></div>
     <!--flash messages-->
     <% unless flash[:notice].blank? && flash[:error].blank? && flash[:alert].blank? %>
       <div class="flash_container">
@@ -43,7 +49,7 @@
         <% unless flash[:error].blank? %><span class="error rounded_border"><%= flash[:error] %></span><% end %>
       </div>
     <% end %>
-    <div id="contents">
+    <div id="contents" class="shell">
       <%= yield %>
     </div>
     <div class="clr-zero"></div>
