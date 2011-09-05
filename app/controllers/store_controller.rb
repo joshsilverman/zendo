@@ -5,6 +5,12 @@ class StoreController < ApplicationController
     @userships = Usership.select(['document_id']).where("user_id = ?", current_user.id )
   end
 
+  def egg_details
+    @tag = Tag.find_by_id(params[:id])
+    @documents = Document.where("tag_id = ? AND public", params[:id])
+    @userships = Usership.select(['document_id']).where("user_id = ?", current_user.id )
+  end
+
   def details
     @document = Document.find_by_id(params[:id])
     @userships = Usership.select(['document_id']).where("user_id = ?", current_user.id )

@@ -15,9 +15,9 @@
   <% end %>
 
   <% if @page_specific_scripts_css %> <%= stylesheet_link_tag @page_specific_scripts_css %> <% end %>
-  <%= javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/prototype/1/prototype.js', :cache => false %>
-  <%#= javascript_include_tag '/javascripts/vendors/prototype.js', :cache => false %>
-  <%= javascript_include_tag ['/javascripts/vendors/scriptaculous/src/scriptaculous.js?load=effects,dragdrop,controls', 'rails', 'application', '/javascripts/vendors/scriptaculous/src/effects', '/javascripts/vendors/scriptaculous/src/dragdrop', '/javascripts/vendors/scriptaculous/src/controls'], :cache => '/cache/all' %>
+      <%= javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/prototype/1/prototype.js', :cache => false %>
+      <%#= javascript_include_tag '/javascripts/vendors/prototype.js', :cache => false %>
+      <%= javascript_include_tag ['/javascripts/vendors/scriptaculous/src/scriptaculous.js?load=effects,dragdrop,controls', 'rails', 'application', '/javascripts/vendors/scriptaculous/src/effects', '/javascripts/vendors/scriptaculous/src/dragdrop', '/javascripts/vendors/scriptaculous/src/controls'], :cache => '/cache/all' %>
   <!--auto-include js if exists-->
   <% auto_js_full =  ::Rails.root.to_s + '/public/javascripts/' + controller.controller_name + '/' + controller.action_name + '.js'  %>
   <% if  File.file?(auto_js_full) %>
@@ -26,18 +26,21 @@
     <%= javascript_include_tag 'default', :cache => false %>
   <% end %>
   <% if @page_specific_scripts_js %> <%= javascript_include_tag @page_specific_scripts_js, :cache => '/cache/' + auto_js_css %> <% end %>
-  <link rel="icon" type="image/png" href="/images/logos/favicon.ico" />
+  <link rel="shortcut icon" href="../images/home/favicon.ico" />
   <meta name="google-site-verification" content="1kmG8JhfDQo1KP7tHKZsMRUa8Msr83nxkOj3aQ_jCl0" />
 </head>
 <body>
   <div class="wrapper">
+    <!-- Header -->
+<div id="header">
 
-    <div class="header_container">
-      <div class="header">
-        <%= render 'shared/authentication' %>
-      </div>
+	<!-- Shell -->
+	<div class="shell">
+	<h1 id="logo"><a href="/" class="notext">Logo</a></h1>
+      <%= render 'shared/authentication' %>
+        </div>
     </div>
-
+    <div class="clr-zero"></div>
     <!--flash messages-->
     <% unless flash[:notice].blank? && flash[:error].blank? && flash[:alert].blank? %>
       <div class="flash_container">
@@ -46,51 +49,63 @@
         <% unless flash[:error].blank? %><span class="error rounded_border"><%= flash[:error] %></span><% end %>
       </div>
     <% end %>
-
-    <div class="contents"><%= yield %></div>
-
-    <div class="clr-zero"></div>
-    <div class="footer">
-      <div class="footer_columns">
-        <div class="footer_column">
-          <h5>StudyEgg</h5>
-          <%= link_to "About", "/about" %>
-          <!--<span>Blog</span>-->
-          <%= link_to "Terms of Service", "/tos" %>
-          <%= link_to "Privacy Policy", "/privacy" %>
-        </div>
-
-        <div class="footer_column">
-          <h5>Product</h5>
-          <%= link_to "FAQ", "/faq" %>
-          <%= link_to "Blog", "http://blog.studyegg.com" %>
-        </div>
-
-        <div class="footer_column">
-          <h5>Contact</h5>
-          <a href="/contact">Contact us</a>
-        </div>
-
-        <div class="footer_column">
-          
-          <h5>Facebook</h5>
-          <div style="height:50px; margin-left: -10px;"><iframe src="http://www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fpages%2FStudyEgg%2F208458809191394&amp;width=292&amp;colorscheme=light&amp;show_faces=false&amp;border_color&amp;stream=false&amp;header=false&amp;height=62" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:292px; height:62px;" allowTransparency="true"></iframe></div>
-
-          <h5>Twitter</h5><div id="script_twitter1"></div><div id="script_twitter2"><a href="http://twitter.com/StudyEgg" class="twitter-follow-button" data-show-count="false">Follow @StudyEgg</a>
-<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script></div>
-
-        </div>
-        <div class="footer_column">
-          <a href="http://itunes.apple.com/us/app/studyegg/id449602397?mt=8">
-            <%= image_tag '/images/home/appstore.png', :size => '150x50', :style => 'margin:15px 0 0 75px;'%>
-          </a>
-        </div>
-        <h6 class="copyright">Copyright 2011 Zendo Labs, Inc. All rights reserved.</h6>
-      </div>
+    <div id="contents" class="shell">
+      <%= yield %>
     </div>
+    <div class="clr-zero"></div>
+    <!-- Footer -->
+<div id="footer">
+
+	<!-- Shell -->
+	<div class="shell">
+
+		<div class="links">
+			<h4>StudyEgg</h4>
+			<ul>
+			    <li><a href="#">The Team</a></li>
+			    <li><a href="#">Josh's Story</a></li>
+			    <li><a href="#">About</a></li>
+			</ul>
+		</div>
+
+		<div class="links">
+			<h4>Legal</h4>
+			<ul>
+			    <li><a href="#">Privacy Policy</a></li>
+			    <li><a href="#">Terms of Service</a></li>
+			</ul>
+		</div>
+
+		<div class="address">
+			<h4>Contact</h4>
+			<ul>
+			    <li><a href="#">Email Us</a></li>
+			    <li><a href="#">Facebook</a></li>
+			    <li><a href="#">Twitter</a></li>
+			</ul>
+		</div>
+
+		<div class="social">
+			<a href="#" class="twitter-link">Twitter</a>
+			<a href="#" class="facebook-link">Facebook</a>
+			<a href="#" class="google-link">Google</a>
+
+			<div class="cl">&nbsp;</div>
+		</div>
+
+		<div class="cl">&nbsp;</div>
+
+		<div class="bottom">
+			<p>Copyright 2011 Zendo Labs, Inc. All rights reserved.</p>
+		</div>
+
+	</div>
+	<!-- End Shell -->
+
+</div>
+<!-- End Footer -->
   </div>
   <div id="script_userecho"></div>
-  <div id="script_facebook"></div>
 
 <!-- begin olark code --><script type='text/javascript'>/*{literal}<![CDATA[*/window.olark||(function(i){var e=window,h=document,a=e.location.protocol=="https:"?"https:":"http:",g=i.name,b="load";(function(){e[g]=function(){(c.s=c.s||[]).push(arguments)};var c=e[g]._={},f=i.methods.length; while(f--){(function(j){e[g][j]=function(){e[g]("call",j,arguments)}})(i.methods[f])} c.l=i.loader;c.i=arguments.callee;c.f=setTimeout(function(){if(c.f){(new Image).src=a+"//"+c.l.replace(".js",".png")+"&"+escape(e.location.href)}c.f=null},20000);c.p={0:+new Date};c.P=function(j){c.p[j]=new Date-c.p[0]};function d(){c.P(b);e[g](b)}e.addEventListener?e.addEventListener(b,d,false):e.attachEvent("on"+b,d); (function(){function l(j){j="head";return["<",j,"></",j,"><",z,' onl'+'oad="var d=',B,";d.getElementsByTagName('head')[0].",y,"(d.",A,"('script')).",u,"='",a,"//",c.l,"'",'"',"></",z,">"].join("")}var z="body",s=h[z];if(!s){return setTimeout(arguments.callee,100)}c.P(1);var y="appendChild",A="createElement",u="src",r=h[A]("div"),G=r[y](h[A](g)),D=h[A]("iframe"),B="document",C="domain",q;r.style.display="none";s.insertBefore(r,s.firstChild).id=g;D.frameBorder="0";D.id=g+"-loader";if(/MSIE[ ]+6/.test(navigator.userAgent)){D.src="javascript:false"} D.allowTransparency="true";G[y](D);try{D.contentWindow[B].open()}catch(F){i[C]=h[C];q="javascript:var d="+B+".open();d.domain='"+h.domain+"';";D[u]=q+"void(0);"}try{var H=D.contentWindow[B];H.write(l());H.close()}catch(E){D[u]=q+'d.write("'+l().replace(/"/g,String.fromCharCode(92)+'"')+'");d.close();'}c.P(2)})()})()})({loader:(function(a){return "static.olark.com/jsclient/loader0.js?ts="+(a?a[1]:(+new Date))})(document.cookie.match(/olarkld=([0-9]+)/)),name:"olark",methods:["configure","extend","declare","identify"]});
 /* custom configuration goes here (www.olark.com/documentation) */

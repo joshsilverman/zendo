@@ -1,0 +1,64 @@
+<%= javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/prototype/1/prototype.js', :cache => false %>
+
+  <% if @page_specific_scripts_js %> <%= javascript_include_tag @page_specific_scripts_js, :cache => '/cache/' + auto_js_css %> <% end %>
+    <script type="text/javascript" src="../../javascripts/store/details.js"></script>
+<style>
+  .buy{
+    cursor: pointer;
+    text-decoration: underline;
+    color: blue;
+  }
+  #recent_eggs li, #popular_eggs li {
+    list-style-type: none;
+    list-style-position: inside;
+    float:left;
+}
+  .egg{
+    display: block;
+    width: 83px;
+    height: 115px;
+    overflow: hidden;
+    background: url("../../images/nounproject/egg.png");
+    position: relative;
+    float: left;
+}
+
+.egg-box{
+    display: block;
+    width: 85px;
+    margin: 0 25px 15px 0;
+}
+
+  .icon{
+    position: relative;
+    top: 30px;
+    left:15px;
+    display:block;
+}
+
+</style>
+    <h2>EggStore</h2>
+<div class="rounded_border" style="margin:10px auto; padding:10px; width: 600px;">
+<h1><%= @tag.name %></h1>
+
+<ul>
+  <% @documents.each do |d| %>
+    <li><a href="/store/details/<%= d.id %>"><%= d.name %></a>
+    <% purchased = false %>
+    <% @userships.each do |u| %>
+      <% if d.id == u.document_id.to_i%>
+        <% purchased = true %>
+      <% end %>
+    <% end %>
+
+    <% if purchased %>
+      <span class="purchased">Purchased</span>
+      <% purchased = false %>
+    <% else %>
+      <span id="<%= d.id%>" class="buy">Get It Now</span>
+    <% end %>
+    </li>
+  <% end %>
+</ul>
+    
+</div>

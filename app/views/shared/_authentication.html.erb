@@ -1,57 +1,43 @@
-<% if user_signed_in? %>
-    <% if  ['static'].count(controller.controller_name) > 0 %>
-      <a href="/" style="text-decoration:none;"><img src="/images/logos/studyegg_logo_75.png" /></a>
-      <span style="float:right; margin: 18px 6px 0 0;">
-              Welcome, <%= current_user.first_name %>&nbsp;|&nbsp;
-              <%= link_to "Edit Account", edit_user_registration_path %>&nbsp;|&nbsp;
-              <%= link_to "Sign Out", destroy_user_session_path %>
-      </span>
-    <% else %>
-      <a href="/" style="text-decoration:none;"><img src="/images/logos/studyegg_logo_50.png" /></a>
-      <span style="float:right; margin: 18px 6px 0 0;">
-              Welcome, <%= current_user.first_name %>&nbsp;|&nbsp;
-              <%= link_to "Edit Account", edit_user_registration_path %>&nbsp;|&nbsp;
-              <%= link_to "Sign Out", destroy_user_session_path %>
-      </span>
-    <% end %>
-<% elsif ['static'].count(controller.controller_name) > 0 %>
-    <a href="/" style="text-decoration:none;"><img src="/images/logos/studyegg_logo_75.png"/></a>
-    <div class="buttons">
-      <div style="float:right; width:529px; margin:10px 20px 0 0;">
-        <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
-          <div style="float:left; width:200px; margin-right: 20px;">
-            <%= f.label :email, :class => "email_pass_label" %>
-            <%= f.text_field :email, :class => "text_field_height" %>
-          </div>
-          <div style="float:left; width:214px;">
-            <%= f.label :password, :class => "email_pass_label", :style => "width:80px; margin-right:10px;" %>
-            <%= f.password_field :password, :class => "text_field_height", :style => "width:120px;"%>
-          </div>
-          <div style="float:left; width:60px; margin: 2px 0 0 10px;">
-            <%= f.submit "Sign in", :style=>"height:24px;" %>
-          </div>
+<% unless user_signed_in? %>
+<div class="login">
+        <a href="#" class="login-link" id="login-link">Login</a>
+
+        <!-- DropDown -->
+        <div class="dd" id="dd">
+
+                <div class="cnt-top">
+                        <div class="cnt-bottom">
+                                <div class="cnt">
+
+                                        <a href="#" class="login-link-hr" id="login-link-hr">Login</a>
+
+                                        <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+
+                                          <%= f.text_field :email, :class => "field blink", :value => "Email", :title => "Email"%>
+                                          <%= f.password_field :password, :class => "field blink", :value => "Password", :title => "Password"%>
+                                          <%= f.submit "Sign in", :class=>"button notext" %>
+                                          <% if devise_mapping.rememberable? -%>
+                                            <%= f.check_box :remember_me, :id => "check" %> <%= f.label :remember_me, :for => "check" %>
+                                          <% end %>
+
+                                        <% end %>
+
+                                        <div class="cl">&nbsp;</div>
+
+                                        <p><a href="#" class="dd-link">Lost Password?</a></p>
+
+                                </div>
+                        </div>
+                </div>
+
         </div>
-        <% end %>
-      </div>
+        <!-- End DropDown -->
+
+</div>
 <% else %>
-    <a href="/" style="text-decoration:none;"><img src="/images/logos/studyegg_logo_75.png"/></a>
-    <% unless /users/.match(request.path) %>
-      <div class="buttons">
-      <div style="float:right; width:529px; margin:10px 20px 0 0;">
-        <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
-          <div style="float:left; width:200px; margin-right: 20px;">
-            <%= f.label :email, :class => "email_pass_label" %>
-            <%= f.text_field :email, :class => "text_field_height" %>
-          </div>
-          <div style="float:left; width:214px;">
-            <%= f.label :password, :class => "email_pass_label", :style => "width:80px; margin-right:10px;" %>
-            <%= f.password_field :password, :class => "text_field_height", :style => "width:120px;"%>
-          </div>
-          <div style="float:left; width:60px; margin: 2px 0 0 10px;">
-            <%= f.submit "Sign in", :style=>"height:24px;" %>
-          </div>
-        </div>
-        <% end %>
-      </div>
-    <% end %>
+  <span style="float:right; margin: 18px 6px 0 0;">
+    Welcome, <%= current_user.first_name %>&nbsp;|&nbsp;
+    <%= link_to "Edit Account", edit_user_registration_path %>&nbsp;|&nbsp;
+    <%= link_to "Sign Out", destroy_user_session_path %>
+  </span>
 <% end %>

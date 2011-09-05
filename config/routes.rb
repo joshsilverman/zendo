@@ -62,7 +62,7 @@ Zendo::Application.routes.draw do
   # match ':controller(/:action(/:id(.:format)))'
   
   #devise
-  devise_for :users, # :timeout_in => 5.seconds, #7.days,
+  devise_for :users, :remember_for => 4.weeks,
     :controllers => {:registrations => 'registrations', :sessions => 'sessions'}
 
   #tags
@@ -96,6 +96,7 @@ Zendo::Application.routes.draw do
   match "/review/:id" => "documents#review" #** public **#
   match "/review/dir/:id" => "tags#review" #** public **#
   match "/mems/update/:id/:confidence/:importance" => "mems#update"
+  match "/demo/review/:id" => "demo#review"
   resources :lines, :only => [:update]
   
   # organizer
@@ -134,6 +135,7 @@ Zendo::Application.routes.draw do
   #store
   match '/store' => 'store#index'
   match '/store/details/:id' => 'store#details'
+  match '/store/egg_details/:id' => 'store#egg_details'
   match '/choose_icon/:doc_id' => 'store#choose_icon'
 
   #static
