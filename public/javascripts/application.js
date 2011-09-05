@@ -154,8 +154,8 @@ var AppUtilities = new cAppUtilities;
 /* global objects */
 document.observe('dom:loaded', function() {
     /* Drop Down */
-        if($('login-link')){
-            $('login-link').observe('click', function () {
+        //if($('login-link')){
+            $('login-link').observe('mouseover', function () {
                     console.log('test');
                     $('dd').setStyle({'display':'block'});
                     console.log('test');
@@ -165,6 +165,6 @@ document.observe('dom:loaded', function() {
                     return false;
             });
             console.log('test');
-        }
+       // }
 	/* End Drop Down */
 });
