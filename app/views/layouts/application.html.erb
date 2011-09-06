@@ -49,6 +49,7 @@
         <% unless flash[:error].blank? %><span class="error rounded_border"><%= flash[:error] %></span><% end %>
       </div>
     <% end %>
+    <div class="header-bevel"></div>
     <div id="contents" class="shell">
       <%= yield %>
     </div>
@@ -60,28 +61,23 @@
 	<div class="shell">
 
 		<div class="links">
-			<h4>StudyEgg</h4>
 			<ul>
-			    <li><a href="#">The Team</a></li>
+                            <li><a href="#">About</a></li>
 			    <li><a href="#">Josh's Story</a></li>
-			    <li><a href="#">About</a></li>
 			</ul>
 		</div>
 
 		<div class="links">
-			<h4>Legal</h4>
 			<ul>
-			    <li><a href="#">Privacy Policy</a></li>
-			    <li><a href="#">Terms of Service</a></li>
+			    <li><a href="#">Privacy</a></li>
+                            <li><a href="#">Terms</a></li>
 			</ul>
 		</div>
 
 		<div class="address">
-			<h4>Contact</h4>
 			<ul>
-			    <li><a href="#">Email Us</a></li>
-			    <li><a href="#">Facebook</a></li>
-			    <li><a href="#">Twitter</a></li>
+                            <li><a href="#">Team</a></li>
+			    <li><a href="#">Contact</a></li>
 			</ul>
 		</div>
 

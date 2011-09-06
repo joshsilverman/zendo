@@ -163,10 +163,10 @@ ActiveRecord::Schema.define(:version => 20110830184751) do
   create_table "userships", :force => true do |t|
     t.integer  "user_id"
     t.integer  "document_id"
-    t.boolean  "push_enabled"
+    t.boolean  "push_enabled", :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "owner"
+    t.boolean  "owner",        :default => true
     t.datetime "reviewed_at"
   end
 
