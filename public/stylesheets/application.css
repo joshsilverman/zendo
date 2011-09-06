@@ -8,6 +8,7 @@ body {
     padding:0;
     margin:0;
     height:100%;
+    background: url(../images/shared/thatch-bg.jpg) repeat 0 0;
 }
 
 
@@ -53,14 +54,37 @@ img.home {
 
 .shell { width:971px; margin: 0 auto; }
 
-#header { background: #218dd2; height: 150px;}
+#header { background: #218dd2; height: 40px;}
+
+.header-bevel {
+    background: url(../images/home/footer-bg-reverse.jpg) repeat-x;
+    height:5px;
+    margin-bottom: 15px;
+}
 
 #head { background: url(../images/home/head-bg.jpg) no-repeat 8px 17px; padding: 17px 0 130px 14px; position: relative; }
 #head .row-top { padding-bottom: 179px; }
 #head .row { padding: 0 0 19px 0; }
 
-h1#logo { width: 183px; height: 121px; float: left; display: inline; }
-h1#logo a { background: url(../images/home/logo.png) no-repeat 0 0; height: 121px; display: block; }
+h1#logo { width: 183px; height: 38px; margin-top:2px; float: left; display: inline; }
+h1#logo a {
+    background: url(../images/home/logo-small.gif) no-repeat 0 0;
+    height: 38px;
+    display: block;
+}
+
+.shell h1 {
+    margin:0;
+    padding:0;
+}
+
+.shell {
+    color:white;
+}
+
+.shell a {
+    color:white;
+}
 
 .login { float: right; display: inline; width: 252px; margin-top: 6px; position: relative; z-index: 4; }
 .login a.login-link { background: url(../images/home/login-down.png) no-repeat right 0; height: 24px; line-height: 24px; padding: 0 31px 0 0; margin-right: 16px; display: block; }
@@ -81,11 +105,11 @@ h1#logo a { background: url(../images/home/logo.png) no-repeat 0 0; height: 121p
 .dd .cnt p { text-align: center; padding: 10px 0 0 0; }
 .dd .cnt a.dd-link { color: #333; }
 
-#footer { background: #cf8e07 url(../images/home/footer-bg.jpg) repeat-x 0 0; }
-#footer .shell { padding: 25px 0 0 0; width: 971px; }
+#footer { background: #004578 url(../images/home/footer-bg.jpg) repeat-x 0 0; }
+#footer .shell { padding: 15px 0 0 0; width: 971px; }
 #footer h4 { color: #fff; font-size: 14px; }
-#footer ul { list-style: none; }
-#footer ul li { display: block; font-size: 14px; color: #dfdacd;  }
+#footer ul { list-style: none; margin:0; padding:0;}
+#footer ul li { display: block; font-size: 13px; color: #dfdacd; }
 #footer ul li a { color: #dfdacd; }
 #footer .links { float: left; display: inline; padding-right: 130px; }
 #footer .address { float: left; display: inline; padding-right: 130px; }
@@ -94,8 +118,8 @@ h1#logo a { background: url(../images/home/logo.png) no-repeat 0 0; height: 121p
 #footer .social a.twitter-link { background: url(../images/home/twitter-icon.jpg) no-repeat 0 0; width: 40px; height: 44px; padding: 0 19px 0 0; }
 #footer .social a.facebook-link { background: url(../images/home/facebook-icon.jpg) no-repeat 0 0; width: 21px; height: 44px; padding: 0 17px 0 0; }
 #footer .social a.google-link { background: url(../images/home/google-icon.jpg) no-repeat 0 0; width: 43px; height: 44px; }
-#footer .bottom { padding: 50px 0 10px 0; }
-#footer .bottom p { text-align: center; font-size: 12px; color: #dfdacd; }
+#footer .bottom { padding: 13px 0 5px 0; }
+#footer .bottom p { text-align: left; font-size: 12px; color: #dfdacd; margin:18px 0 0; }
 
 .copyright {
     color:#383838;
