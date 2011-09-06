@@ -97,6 +97,7 @@ Zendo::Application.routes.draw do
   match "/review/dir/:id" => "tags#review" #** public **#
   match "/mems/update/:id/:confidence/:importance" => "mems#update"
   match "/demo/review/:id" => "demo#review"
+  match "/demo/egg_details/:id" => "demo#egg_details"
   resources :lines, :only => [:update]
   
   # organizer

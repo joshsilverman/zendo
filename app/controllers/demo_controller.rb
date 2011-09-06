@@ -1,8 +1,8 @@
 class DemoController < ApplicationController
-  before_filter :authenticate_user!, :except => [:review, :get_document]
+  before_filter :authenticate_user!, :except => [:review, :get_document, :egg_details]
 
   def review
-    doc = Document.find_by_tag_id(params[:id])
+    doc = Document.find_by_id(params[:id])
     get_document(doc.id)
     if @document.nil?
       redirect_to '/', :notice => "Error accessing that document."
@@ -33,6 +33,7 @@ class DemoController < ApplicationController
   end
 
   def egg_details
+    @tag = Tag.find_by_id(params[:id])
     @documents = Document.where("tag_id = ? AND public", params[:id])
   end
 
