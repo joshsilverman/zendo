@@ -25,11 +25,11 @@ class AuthenticationsController < ApplicationController
     if authentication
       # flash[:notice] = "Signed in successfully."
       sign_in(:user, authentication.user)
-      redirect_to "dashboard"
+      redirect_to "my_eggs"
     elsif current_user
       current_user.authentications.create!(:provider => omniauth['provider'], :uid => omniauth['uid'])
       flash[:notice] = "Authentication successful."
-      redirect_to "/dashboard"
+      redirect_to "/my_eggs"
     else
       @resource = User.new
       @resource.apply_omniauth(omniauth)
@@ -37,7 +37,7 @@ class AuthenticationsController < ApplicationController
       if @resource.save
         sign_in(:user, @resource)
         flash[:notice] = "Account successfully created. Welcome!"
-        redirect_to "/dashboard"
+        redirect_to "/my_eggs"
       else
 
         #log failed account creation if due to email already taken

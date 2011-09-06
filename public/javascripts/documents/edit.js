@@ -178,6 +178,7 @@ var cDoc = Class.create({
         helperContainer.setStyle({height: rightRailHeight - 20+ 'px'});
         cardContainer.setStyle({height: rightRailHeight - 30 + 'px'});
         $("editor_ifr").setStyle({height: editorIfrHeight - 20 + 'px'});
+        $('shadow_wrapper').setStyle({height : editorVerticalSpaceHeight +18 + 'px'});
         
 
         /* set widths */

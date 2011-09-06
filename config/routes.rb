@@ -67,7 +67,7 @@ Zendo::Application.routes.draw do
 
   #tags
   get "tag/index" # ???
-  match "/explore" => "tags#index" #** public **#
+  match "/my_eggs" => "tags#index" #** public **#
   match "/tags/create" => "tags#create"
   match "/tags/create_and_assign" => "tags#create"
   match "/tags/update_tags_name"
@@ -125,7 +125,7 @@ Zendo::Application.routes.draw do
   match "/users/update_username" => "users#update_username"
 
   # search
-  match "/dashboard" => "search#index"
+  #match "/dashboard" => "search#index"
   match "/search/query/:page" => "search#query"
   match "/search/full_query" => "search#full_query"
   match "/search/is_username_available" => "search#is_username_available"

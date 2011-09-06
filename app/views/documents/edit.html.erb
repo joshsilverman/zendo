@@ -1,7 +1,7 @@
 <% @page_specific_scripts_js = ["parser", "vendors/prototip/prototip", "class_selector", "vendors/modal.js", "/javascripts/vendors/lightview/js/lightview.js"] #"vendors/lightview/js/lightview.js"] %>
 <% @page_specific_scripts_css = ["prototip/prototip", "/javascripts/vendors/lightview/css/lightview"] %>
 <% @page_specific_scripts_css.push "documents/view" if @read_only %>
-
+<div id="shadow_wrapper">
 <div id="doc_options" class="doc_options loading">
   
   <span>
@@ -12,12 +12,14 @@
         <input id="document_name" value="<%=@document.name%>" style="display:none;"></input>
       </div>
     <% else %>
-      Folder:
+    <div style="margin-left:10px; float:left;">
+      Egg Name:
 
       <%= select 'tag', 'id', current_user.tags.collect {|t| [ t.name, t.id, {:_selected => (@document.tag_id == t.id)}] } %>
       <%= image_tag "shared/fb-loader.gif", :alt => 'loading', :style => "margin-right:5px;visibility:hidden;", :id => "doc_loading" %>
       
-      Title: <input id="document_name" value="<%=@document.name%>"  maxlength="40"></input>
+      Section Title: <input id="document_name" value="<%=@document.name%>"  maxlength="40"></input>
+    </div>
     <% end %>
     <input type="checkbox" name="mobile" id="mobile_review" style="margin-top: 6px; margin-left: 8px;"/>
     <% if !@document.userships.all(:conditions => {:user_id => current_user.id}).empty? %>
@@ -68,6 +70,7 @@
     </div>-->
   </td></tr></table>
   </div>
+</div>
 </div>
 
 <!-- document vars -->
