@@ -7,6 +7,10 @@ body{
     background-color: #fafafa;
 }
 
+#contents a{
+    color: #007AC7;
+}
+
 /*
 Vertical Accordions
 */

@@ -14,6 +14,7 @@ class TagsController < ApplicationController
     end
     @tags_json = Tag.tags_json(current_user)
     @recent_json = Tag.recent_json(current_user)
+    @username = current_user.username.nil?
   end
 
   def get_tags_json

@@ -41,6 +41,7 @@
         </div>
     </div>
     <div class="clr-zero"></div>
+    <div class="header-bevel"></div>
     <!--flash messages-->
     <% unless flash[:notice].blank? && flash[:error].blank? && flash[:alert].blank? %>
       <div class="flash_container">
@@ -49,7 +50,7 @@
         <% unless flash[:error].blank? %><span class="error rounded_border"><%= flash[:error] %></span><% end %>
       </div>
     <% end %>
-    <div class="header-bevel"></div>
+    
     <div id="contents" class="shell">
       <%= yield %>
     </div>
