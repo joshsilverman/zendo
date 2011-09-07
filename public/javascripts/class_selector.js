@@ -71,7 +71,7 @@ var cClassSelector = Class.create({
 
     _appendNewFolderOption: function() {
         if ($('tag_id'))
-            $('tag_id').insert({bottom: new Element('option', {id: 'new_folder_option', style: 'color:green;'}).insert("New Folder")});
+            $('tag_id').insert({bottom: new Element('option', {id: 'new_folder_option', style: 'color:green;'}).insert("New StudyEgg")});
     },
 
     /* create tag and assign document to it if id provided */

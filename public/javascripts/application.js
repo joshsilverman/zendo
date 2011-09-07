@@ -30,7 +30,7 @@ var cAppUtilities = Class.create({
         var viewportY = document.viewport.getHeight();
         var footerOffsetY = footer.cumulativeOffset()[1];
 
-        var contents = $('contents');
+        var contents = $('content');
         var contentsY = contents.getHeight();
 
         var difference = viewportY - footerOffsetY - footerY;
@@ -165,7 +165,27 @@ document.observe('dom:loaded', function() {
                     return false;
             });
             console.log('test');
+            $$('.blink')[0].observe('focus', function(){
+		if( $(this).getAttribute('title') == $(this).value ) {
+			$(this).value = "";
+		}
+            });
+            $$('.blink')[0].observe('blur', function(){
+		if( $(this).value == '' ) {
+			$(this).value = $(this).getAttribute('title');
+		}
+            });
 
+            $$('.blink')[1].observe('focus', function(){
+		if( $(this).getAttribute('title') == $(this).value ) {
+			$(this).value = "";
+		}
+            });
+            $$('.blink')[1].observe('blur', function(){
+		if( $(this).value == '' ) {
+			$(this).value = $(this).getAttribute('title');
+		}
+            });
         }
 	/* End Drop Down */
 });

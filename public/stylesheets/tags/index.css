@@ -158,7 +158,7 @@ Vertical Accordions
     background-color: #f2f9ff;
     position:absolute;
     top:21px;
-    left:538px;
+    left:503px;
 }
 
 .doc_actions ul{
@@ -297,3 +297,8 @@ Vertical Accordions
     margin:-2px 0 0 -2px;
     width:100%;
 }
+
+#username h1, #username h2, #username h3, #username h4, #username h5{ margin:5px; padding:5px;}
+#username input{border: #b6ae9a 1px solid;}
+
+#details input, #details textarea, #details select { font-size: 16px; font-family: arial, sans-serif; background: transparent; border: solid 1px #CFCFCF;}

@@ -29,7 +29,7 @@
 
                                         <div class="cl">&nbsp;</div>
 
-                                        <p><a href="#" class="dd-link">Lost Password?</a></p>
+                                        <p><a href="/users/password/new" class="dd-link">Lost Password?</a></p>
 
                                 </div>
                         </div>
@@ -41,6 +41,7 @@
 
 </div>
 <% else %>
+<<<<<<< HEAD
   <span style="float:right; margin: 18px 6px 0 0;">
     Welcome, <%= current_user.first_name %>&nbsp;|&nbsp;
     <%= link_to "Edit Account", edit_user_registration_path %>&nbsp;|&nbsp;
@@ -96,5 +97,16 @@
     <%= link_to "Edit Account", edit_user_registration_path %>&nbsp;|&nbsp;
     <%= link_to "Sign Out", destroy_user_session_path %>
   </span>
+<% end %>
+>>>>>>> redesign
+=======
+  <div class="usernav">
+          <ul>
+                  <li class="first"><a href="/my_eggs" class="<%if controller.controller_name == 'tags'%>active<% end %>">My Eggs</a></li>
+                  <li><a href="/store"class="<%if controller.controller_name == 'store'%>active<% end %>">Egg Store</a></li>
+                  <li><a href="/users/edit" class="<%if controller.controller_name == 'registrations' && controller.action_name == 'edit' %>active<% end %>">Edit Account</a></li>
+                  <li><a>Log Out</a></li>
+          </ul>
+  </div>
 <% end %>
 >>>>>>> redesign

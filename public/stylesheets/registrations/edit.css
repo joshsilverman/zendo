@@ -5,7 +5,7 @@
 
 .authentications_container {
     width: 230px;
-    margin:33px 0 0 220px;
+    margin:33px 0 0 70px;
 }
 
 .authentications_container p {
@@ -76,4 +76,7 @@
   text-decoration: none;
   margin: 10px 10px;
   text-align: center;
+}
+#contents a{
+    color: #007AC7;
 }

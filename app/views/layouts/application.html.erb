@@ -43,12 +43,21 @@
                   <!--flash messages-->
                   <% unless flash[:notice].blank? && flash[:error].blank? && flash[:alert].blank? %>
                     <div class="flash_container">
+<<<<<<< HEAD
                       <% unless flash[:alert].blank? %><div class="error"><p><%= flash[:alert] %></p></div><% end %>
                       <% unless flash[:notice].blank? %><div class="notice"><p><%= flash[:notice] %></p></div><% end %>
                       <% unless flash[:error].blank? %><<div class="error"><p><%= flash[:error] %></p></div><% end %>
                     </div>
                   <% end %>
 
+=======
+                      <% unless flash[:alert].blank? %><div class="error"><%= flash[:alert] %></div><% end %>
+                      <% unless flash[:notice].blank? %><div class="notice"><%= flash[:notice] %></div><% end %>
+                      <% unless flash[:error].blank? %><<div class="error"><%= flash[:error] %></div><% end %>
+                    </div>
+                  <% end %>
+    
+>>>>>>> redesign
                     <%= yield %>
                 </div>
 		<!-- End Content -->
@@ -56,9 +65,15 @@
 	</div>
 	<!-- End Shell -->
 
+<<<<<<< HEAD
 </div>
 <!-- End Main -->
 
+=======
+</div> 
+<!-- End Main -->
+    
+>>>>>>> redesign
     <div class="clr-zero"></div>
     <%= render 'layouts/footer' %>
 

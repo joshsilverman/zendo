@@ -20,7 +20,7 @@ var cDoc = Class.create({
     onResize: function() {
 
         /* vertically center cards */
-        var footer = $$('.footer')[0];
+        var footer = $('footer');
         var footerY = footer.getHeight();
         var viewportY = document.viewport.getHeight();
         var title = $('title');

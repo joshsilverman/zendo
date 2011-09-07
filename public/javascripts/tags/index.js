@@ -28,16 +28,18 @@ var cDoc = Class.create({
         //$('rename_folder_modal').show();
 
         if(document.getElementById('userfield')!=null){
-            $('userfield').observe('keyup', function(){
+            $('userfield').observe('keydown', function(){
                 clearTimeout(this.typingTimer);
+                $('submit').setStyle({'display': 'none'});
+                $('taken').setStyle({'display': 'none'});
+                $('available').setStyle({'display': 'none'});
+                $('validate').setStyle({'display':'none'});
+            }.bind(this));
+
+            $('userfield').observe('keyup', function(){
                 if($('userfield').value.length != 0){
                     console.log("interval "+this.doneTypingInterval);
                     this.typingTimer = setTimeout(function(){this.checkUsername($('userfield').value);}.bind(this), this.doneTypingInterval);
-                    $('submit').setStyle({'display': 'none'});
-                    $('taken').setStyle({'display': 'none'});
-                    $('available').setStyle({'display': 'none'});
-                    $('validate').setStyle({'display':'none'});
-
                 }
             }.bind(this));
 
@@ -98,7 +100,7 @@ var cDoc = Class.create({
         });
         if(isEmpty) {
             this.render();
-            $('documents').update("<div style='text-align: center; color:#d22b21; margin-top:150px;'><h2>Looks like you don't have any StudyEggs right now.</h2> <h3 style='color:#595448;'>Check out the <a href='/store'>EggStore</a> and snag yourself some knowledge!</h3>");
+            $('documents').update("<div style='text-align: center; color:#d22b21; margin-top:150px;'><h2>Looks like you don't have any StudyEggs right now.</h2> <h4 style='color:#595448;'>Check out the <a href='/store'>EggStore</a> and snag yourself some knowledge!</h4>");
 
         } else {
             this.render();
@@ -140,7 +142,7 @@ var cDoc = Class.create({
             //if($(this.activeItemId)){
             if((doc['id']+'_recent')==this.activeItemId){
                   html+= '<div class="doc_item active" doc_id="'+doc['id']+'" id="'+doc['id']+'_recent">\
-                    <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
+                    <!--<input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>-->\
                     <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+' </span> ('+tName+')\
                     <div class="doc_actions" style="display:block;">\
                     <ul><li><a href="/documents/'+doc['id']+'/edit"><img class="doc_action_img" src="../../images/organizer/edit-icon-15x15.png">edit</a></li>\
@@ -151,7 +153,7 @@ var cDoc = Class.create({
               //}
                 } else {
                   html += '<div class="doc_item inactive" doc_id="'+doc['id']+'" id="'+doc['id']+'_recent">\
-                    <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
+                    <!--<input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>-->\
                     <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+' </span> ('+tName+')\
                     <div class="doc_actions">\
                     <ul><li><a href="/documents/'+doc['id']+'/edit"><img class="doc_action_img" src="../../images/organizer/edit-icon-15x15.png">edit</a></li>\
@@ -173,7 +175,7 @@ var cDoc = Class.create({
               ///if($(this.activeItemId)){
               if(doc['id']==this.activeItemId){
                   html+= '<div id="'+doc['id']+'" class="doc_item active" doc_id="'+doc['id']+'">\
-                    <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
+                    <!--<input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>-->\
                     <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+'</span>\
                     <div class="doc_actions" style="display:block;">\
                     <ul><li><a href="/documents/'+doc['id']+'/edit"><img class="doc_action_img" src="../../images/organizer/edit-icon-15x15.png">edit</a></li>\
@@ -184,7 +186,7 @@ var cDoc = Class.create({
               //}
                 } else {
               html += '<div id="'+doc['id']+'" class="doc_item inactive" doc_id="'+doc['id']+'">\
-                    <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
+                    <!--<input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>-->\
                     <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+'</span>\
                     <div class="doc_actions">\
                     <ul><li><a href="/documents/'+doc['id']+'/edit"><img class="doc_action_img" src="../../images/organizer/edit-icon-15x15.png">edit</a></li>\
