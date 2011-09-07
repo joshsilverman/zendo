@@ -1,27 +1,7 @@
 <% @page_specific_scripts_css = ["static/edit_account", "registrations/edit", "static/devise"] %>
 
-  <div id="sign_up_inline">
-  <div class="authentications_container">
-<!--
-    <p><strong>Sign in using:</strong></p>
-
-    <a href="/auth/twitter" class="auth_provider">
-      <%#= image_tag "logos/twitter_32.png", :size => "32x32", :alt => "Twitter" %>
-    </a>
-    <a href="/auth/open_id" class="auth_provider">
-      <%#= image_tag "logos/openid_32.png", :size => "32x32", :alt => "OpenID" %>
-    </a>
-    <a href="/auth/facebook" class="auth_provider">
-      <%= image_tag "logos/facebook_64.png", :size => "64x64", :alt => "Facebook" %>
-    </a>
-    <a href="/auth/open_id?openid_url=gmail.com" class="auth_provider">
-      <%= image_tag "logos/google_64.png", :size => "64x64", :alt => "Google" %>
-    </a>-->
-
-    <div class="clr"></div>
-  </div>
-
-  <div class="form_container">
+<div style="width:350px; margin: 0 auto 15px auto;">
+  <div class="form_container" style="border-left: none;">
     <h2>Sign in</h2>
 
     <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>

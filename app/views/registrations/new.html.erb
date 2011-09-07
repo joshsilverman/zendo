@@ -1,3 +1,23 @@
-<% @page_specific_scripts_css = ["static/edit_account", "static/devise"] %>
+
 <% @page_specific_scripts_css.push("registrations/new") if controller.action_name != "new" %>
-<div class="sign_up_inline_container"><%= render :partial => "shared/sign_up_form" %></div>
+<% @page_specific_scripts_css = ["static/edit_account", "registrations/edit", "static/devise"] %>
+
+<div style="width:350px; margin: 0 auto 15px auto;">
+  <div class="form_container" style="border-left: none;">
+    <h2>Sign Up</h2>
+
+    <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
+      <p><%= f.label :email %><br />
+      <%= f.text_field :email %></p>
+
+      <p><%= f.label :password %><br />
+      <%= f.password_field :password %></p>
+
+      <p><%= f.submit "Sign in" %></p>
+    <% end %>
+
+    <%= render :partial => "devise/shared/links" %>
+  </div>
+
+  <div class="clr"></div>
+</div>

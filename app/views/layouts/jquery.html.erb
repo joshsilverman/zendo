@@ -10,7 +10,8 @@
 	<script src="../javascripts/vendors/ITC_Franklin_Gothic_LT_500.font.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../javascripts/vendors/jquery-func.js" type="text/javascript" charset="utf-8"></script>
 </head>
-<body>
+
+<body id="home">
 <!-- Header -->
 <div id="header">
 
@@ -49,7 +50,7 @@
 
 									<div class="cl">&nbsp;</div>
 
-									<p><a href="#" class="dd-link">Lost Password?</a></p>
+									<p><a href="/users/password/new" class="dd-link">Lost Password?</a></p>
 
 								</div>
 							</div>
@@ -68,7 +69,7 @@
 			<div class="row">
 				<div class="left">
 					<h2>Learning Evolved.</h2>
-					<p>Welcome to the next step in the evolution of learning. Sign up for a <strong>FREE BETA ACCOUNT</strong> today!</p>
+					<p>Welcome to the next step in the evolution of learning. StudyEgg helps you learn more while studying less. Sign up for a free beta account today!</p>
 				</div>
 
 				<div class="right">
@@ -84,8 +85,8 @@
 				<div class="cl">&nbsp;</div>
 			</div>
 			<!-- End Head Row -->
-			<%= yield %>
 
+			<%= yield %>
 
 		</div>
 		<!-- End Head -->
@@ -153,10 +154,15 @@
 			<div class="vision">
 				<div class="col-cnt">
 					<h4>Vision</h4>
-					<p>Our mission here at Studyegg is to make studying easier, less stressful, and more effective.  For too many students learning has become an exercise in putting out fires. Cramming in just enough to do well on an exam (or not) the night before. Finishing just in time to do it all over again with a different class.  Studying this way is not only high stress but it’s an extremely ineffective way to learn.  Studyegg changes all that by utilizing state-of-the-art learning research to help students learn better, retain information longer, and spend less time studying.  We built Studyegg to address these universal student issues of time and stress directly and, as students and Studyegg users ourselves, we can confidently proclaim: It works!</p>
+                                        <p>Our mission here at StudyEgg is to make studying <strong>easier, less stressful, and more effective</strong>.  For too many students learning has become an exercise in putting out fires. Cramming in just enough to do well on an exam (or not) the night before. Finishing just in time to do it all over again with a different class.  Studying this way is not only <em>high stress</em> but it’s an <em>extremely ineffective</em> way to learn.  StudyEgg changes all that by utilizing state-of-the-art learning research to help students learn better, retain information longer, and spend less time studying.</p>
 				</div>
-				<div class="col-photo">
-					<img src="../images/home/studyegg-team.png" alt="StudyEgg Team" />
+				<div class="col-more">
+					<p>We built StudyEgg to address these universal student issues of time and stress directly and, as students and StudyEgg users ourselves, we can confidently proclaim: It works!</p>
+					<ul class="morelinks">
+						<li><a href="/about">Learn More About StudyEgg</a></li>
+						<li><a href="/team#josh">Meet the Team</a></li>
+						<li><a href="/story">Learn What Drove Josh to Start StudyEgg</a></li>
+					</ul>
 				</div>
 				<div class="cl">&nbsp;</div>
 			</div>
@@ -171,57 +177,7 @@
 </div>
 <!-- End Main -->
 
-<!-- Footer -->
-<div id="footer">
-
-	<!-- Shell -->
-	<div class="shell">
-
-		<div class="links">
-			<h4>StudyEgg</h4>
-			<ul>
-			    <li><a href="#">The Team</a></li>
-			    <li><a href="#">Josh's Story</a></li>
-			    <li><a href="#">About</a></li>
-			</ul>
-		</div>
-
-		<div class="links">
-			<h4>Legal</h4>
-			<ul>
-			    <li><a href="#">Privacy Policy</a></li>
-			    <li><a href="#">Terms of Service</a></li>
-			</ul>
-		</div>
-
-		<div class="address">
-			<h4>Contact</h4>
-			<ul>
-			    <li><a href="#">Email Us</a></li>
-			    <li><a href="#">Facebook</a></li>
-			    <li><a href="#">Twitter</a></li>
-			</ul>
-		</div>
-
-		<div class="social">
-			<a href="#" class="twitter-link">Twitter</a>
-			<a href="#" class="facebook-link">Facebook</a>
-			<a href="#" class="google-link">Google</a>
-
-			<div class="cl">&nbsp;</div>
-		</div>
-
-		<div class="cl">&nbsp;</div>
-
-		<div class="bottom">
-			<p>Copyright 2011 Zendo Labs, Inc. All rights reserved.</p>
-		</div>
-
-	</div>
-	<!-- End Shell -->
-
-</div>
-<!-- End Footer -->
+<%= render 'layouts/footer' %>
 
 </body>
 </html>

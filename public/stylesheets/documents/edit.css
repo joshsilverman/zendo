@@ -11,7 +11,8 @@ body {
 #shadow_wrapper{
     width:960px;
     height: 0;
-    box-shadow:2px 2px 3px #b6ae9a;
+    /*box-shadow:2px 2px 3px #b6ae9a;*/
+    margin: -20px -30px -30px -30px;
 }
 
 .doc_options {
@@ -45,6 +46,11 @@ body {
 
 .loading span, .loading button, .loading img {
     display:none;
+}
+
+#doc_options button{
+    padding: 1px;
+    margin: 1px 5px 0 0 ;
 }
 
 #save_button {
@@ -293,6 +299,6 @@ img.sync:active {
     width:330px;
 }
 
-#footer{
+/* #footer{
     display:none;
-}
+}*/

@@ -30,86 +30,44 @@
   <meta name="google-site-verification" content="1kmG8JhfDQo1KP7tHKZsMRUa8Msr83nxkOj3aQ_jCl0" />
 </head>
 <body>
-  <div class="wrapper">
-    <!-- Header -->
-<div id="header">
+    <%= render "layouts/header" %>
 
+    <div class="clr-zero"></div>
+
+    <!-- Main -->
+<div id="main">
 	<!-- Shell -->
 	<div class="shell">
-	<h1 id="logo"><a href="/" class="notext">Logo</a></h1>
-      <%= render 'shared/authentication' %>
-        </div>
-    </div>
-    <div class="clr-zero"></div>
-    <div class="header-bevel"></div>
-    <!--flash messages-->
-    <% unless flash[:notice].blank? && flash[:error].blank? && flash[:alert].blank? %>
-      <div class="flash_container">
-        <% unless flash[:alert].blank? %><span class="error rounded_border"><%= flash[:alert] %></span><% end %>
-        <% unless flash[:notice].blank? %><span class="notice rounded_border"><%= flash[:notice] %></span><% end %>
-        <% unless flash[:error].blank? %><span class="error rounded_border"><%= flash[:error] %></span><% end %>
-      </div>
-    <% end %>
+		<!-- Content -->
+		<div id="content" class="whitebg">
+                  <!--flash messages-->
+                  <% unless flash[:notice].blank? && flash[:error].blank? && flash[:alert].blank? %>
+                    <div class="flash_container">
+                      <% unless flash[:alert].blank? %><div class="error"><%= flash[:alert] %></div><% end %>
+                      <% unless flash[:notice].blank? %><div class="notice"><%= flash[:notice] %></div><% end %>
+                      <% unless flash[:error].blank? %><<div class="error"><%= flash[:error] %></div><% end %>
+                    </div>
+                  <% end %>
     
-    <div id="contents" class="shell">
-      <%= yield %>
-    </div>
-    <div class="clr-zero"></div>
-    <!-- Footer -->
-<div id="footer">
-
-	<!-- Shell -->
-	<div class="shell">
-
-		<div class="links">
-			<ul>
-                            <li><a href="#">About</a></li>
-			    <li><a href="#">Josh's Story</a></li>
-			</ul>
-		</div>
-
-		<div class="links">
-			<ul>
-			    <li><a href="#">Privacy</a></li>
-                            <li><a href="#">Terms</a></li>
-			</ul>
-		</div>
-
-		<div class="address">
-			<ul>
-                            <li><a href="#">Team</a></li>
-			    <li><a href="#">Contact</a></li>
-			</ul>
-		</div>
-
-		<div class="social">
-			<a href="#" class="twitter-link">Twitter</a>
-			<a href="#" class="facebook-link">Facebook</a>
-			<a href="#" class="google-link">Google</a>
-
-			<div class="cl">&nbsp;</div>
-		</div>
-
-		<div class="cl">&nbsp;</div>
-
-		<div class="bottom">
-			<p>Copyright 2011 Zendo Labs, Inc. All rights reserved.</p>
-		</div>
+                    <%= yield %>
+                </div>
+		<!-- End Content -->
 
 	</div>
 	<!-- End Shell -->
 
-</div>
-<!-- End Footer -->
-  </div>
+</div> 
+<!-- End Main -->
+    
+    <div class="clr-zero"></div>
+    <%= render 'layouts/footer' %>
+
   <div id="script_userecho"></div>
 
 <!-- begin olark code --><script type='text/javascript'>/*{literal}<![CDATA[*/window.olark||(function(i){var e=window,h=document,a=e.location.protocol=="https:"?"https:":"http:",g=i.name,b="load";(function(){e[g]=function(){(c.s=c.s||[]).push(arguments)};var c=e[g]._={},f=i.methods.length; while(f--){(function(j){e[g][j]=function(){e[g]("call",j,arguments)}})(i.methods[f])} c.l=i.loader;c.i=arguments.callee;c.f=setTimeout(function(){if(c.f){(new Image).src=a+"//"+c.l.replace(".js",".png")+"&"+escape(e.location.href)}c.f=null},20000);c.p={0:+new Date};c.P=function(j){c.p[j]=new Date-c.p[0]};function d(){c.P(b);e[g](b)}e.addEventListener?e.addEventListener(b,d,false):e.attachEvent("on"+b,d); (function(){function l(j){j="head";return["<",j,"></",j,"><",z,' onl'+'oad="var d=',B,";d.getElementsByTagName('head')[0].",y,"(d.",A,"('script')).",u,"='",a,"//",c.l,"'",'"',"></",z,">"].join("")}var z="body",s=h[z];if(!s){return setTimeout(arguments.callee,100)}c.P(1);var y="appendChild",A="createElement",u="src",r=h[A]("div"),G=r[y](h[A](g)),D=h[A]("iframe"),B="document",C="domain",q;r.style.display="none";s.insertBefore(r,s.firstChild).id=g;D.frameBorder="0";D.id=g+"-loader";if(/MSIE[ ]+6/.test(navigator.userAgent)){D.src="javascript:false"} D.allowTransparency="true";G[y](D);try{D.contentWindow[B].open()}catch(F){i[C]=h[C];q="javascript:var d="+B+".open();d.domain='"+h.domain+"';";D[u]=q+"void(0);"}try{var H=D.contentWindow[B];H.write(l());H.close()}catch(E){D[u]=q+'d.write("'+l().replace(/"/g,String.fromCharCode(92)+'"')+'");d.close();'}c.P(2)})()})()})({loader:(function(a){return "static.olark.com/jsclient/loader0.js?ts="+(a?a[1]:(+new Date))})(document.cookie.match(/olarkld=([0-9]+)/)),name:"olark",methods:["configure","extend","declare","identify"]});
 /* custom configuration goes here (www.olark.com/documentation) */
 olark.identify('1996-368-10-2806');/*]]>{/literal}*/</script>
 <!-- end olark code -->
-
-
 <script type="text/javascript">
 
   var _gaq = _gaq || [];

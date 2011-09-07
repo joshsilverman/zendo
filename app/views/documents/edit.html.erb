@@ -6,20 +6,20 @@
   
   <span>
     <% if @read_only %>
-      <div style="padding:3px 0 0 3px; float:left;">
+      <div style="padding:2px 0 2px 3px; float:left;">
         <em><%=@document.name%></em>
         (<em><%= @tag.name %></em>)
         <input id="document_name" value="<%=@document.name%>" style="display:none;"></input>
-      </div>
+      
     <% else %>
-    <div style="margin-left:10px; float:left;">
+    <div style="margin:-3px 0 0 10px; float:left;">
       Egg Name:
 
       <%= select 'tag', 'id', current_user.tags.collect {|t| [ t.name, t.id, {:_selected => (@document.tag_id == t.id)}] } %>
       <%= image_tag "shared/fb-loader.gif", :alt => 'loading', :style => "margin-right:5px;visibility:hidden;", :id => "doc_loading" %>
       
       Section Title: <input id="document_name" value="<%=@document.name%>"  maxlength="40"></input>
-    </div>
+    
     <% end %>
     <input type="checkbox" name="mobile" id="mobile_review" style="margin-top: 6px; margin-left: 8px;"/>
     <% if !@document.userships.all(:conditions => {:user_id => current_user.id}).empty? %>
@@ -28,6 +28,7 @@
       <% end %>
     <% end %>
     <span style="padding-top: 5px"> Push review </span>
+    </div>
   </span>
   <button id="review_button" style="float:right">Review</button>
   <% if @read_only %>
