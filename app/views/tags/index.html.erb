@@ -12,7 +12,7 @@
    <a href="/documents/create/0" class="button">New Document</a>
 </div>
 
-<div id="details" class="rounded_border">
+<div id="details">
     <!--<div id="metainfo">
       <h4 class="details_label">Title: </h4><em>Cells</em><br/>
       <h4 class="details_label">Last Updated: </h4><em>5/29/2011</em>
@@ -20,7 +20,7 @@
 </div>
 </div>
 
-<div id="documents" class="rounded_border">
+<div id="documents" >
   <!--<h2 tag_id="1234" class="accordion_toggle">Misc</h2>
   <div id="accordion_content_1234" class="accordion_content" tag_id="1234" >
     <div class="doc_item inactive" doc_id="1020">
@@ -128,12 +128,12 @@
 
 <% if @username %>
   <div id="username" style="display: none;">
-    <a href="/users/sign_out" style="margin:5px;">cancel</a>
-    <h2 style="text-align: center;">Thanks for signing up!</h2>
+    
+    <h2 style="text-align: center; color:#d22b21;">Thanks for signing up!</h2>
     <h3 style="text-align: center;">Choose a sweet username to get started!</h3>
     <div style="text-align:center">
       <strong>Username: </strong>
-      <input type="text" id="userfield" name="userfield" placeholder="Username"></input>
+      <input type="text" id="userfield" name="userfield" placeholder="Leroy_Jenkins"></input>
       <br/>
       <span id="validate" style="display:none; color: red; margin-top: 5px;">Username must be 3-20 characters. <br/>Letters, numbers, and underscores only.</span>
       <span id="taken" style="display:none; color: red; margin-top: 5px;">Sorry, this is taken</span>
@@ -142,6 +142,8 @@
     </div>
 
     <h5 style="text-align: center;">Don't worry, you can always change it later</h5>
+
+    <a href="/users/sign_out" style="margin:5px; float: right;">cancel</a>
 
   </div>
 <% end %>

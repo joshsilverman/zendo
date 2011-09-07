@@ -1,0 +1,8 @@
+.form_container { margin: 0 auto; width: 300px; }
+.form_container form { margin: 10px 0; }
+.form_container input { line-height: 31px; color: #cccccc; font-size: 15px; border:0;}
+.form_container input.field { background: url(../../images/home/input.jpg) no-repeat 0 0; border:0; width: 300px; height: 35px; display: block; margin-bottom: 5px; padding: 0 10px; }
+input#user_submit { background: url(../../images/home/signin-button.png) no-repeat 0 0; border: 0; width: 131px; height: 45px; cursor: pointer; float:right; display: block; margin-top: 5px; }
+.form_container label { margin-left: 5px; }
+.form_container p { clear: both; margin: 50px 0 0 0; text-align: center; }
+.form_container .reg-links {display: block; text-align: center; margin-top:15px;}

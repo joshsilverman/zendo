@@ -1,4 +1,5 @@
 <%= javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/prototype/1/prototype.js', :cache => false %>
+<% @page_specific_scripts_css = ["/stylesheets/store/index.css"]%>
 
   <% if @page_specific_scripts_js %> <%= javascript_include_tag @page_specific_scripts_js, :cache => '/cache/' + auto_js_css %> <% end %>
     <script type="text/javascript" src="../../javascripts/store/details.js"></script>
@@ -37,10 +38,12 @@
 }
 
 </style>
-    <h2>EggStore</h2>
-<div class="rounded_border" style="margin:10px auto; padding:10px; width: 600px;">
-<div class="egg"><img src="../../images/nounproject/<%= Document::ICON_TYPES[@document.icon_id] %> " class="icon"></div>
-<h1><%= @document.name %></h1>
+<div style="margin:10px auto; padding:10px; width: 600px;">
+  <div style="float:left;"><img src="../../images/home/document.png"/></div>
+  <div class="detail-float">
+
+
+<h1 class="egg-head"><%= @document.name %></h1>
 
 <% purchased = false %>
 <% @userships.each do |u| %>
@@ -50,13 +53,13 @@
 <% end %>
 
 <% if purchased %>
-  <h2 class="purchased">Purchased</h2>
+  <h4 class="purchased">Purchased</h4>
 <% else %>
-  <h2 id="<%= @document.id%>" class="buy">Get It Now</h2>
+  <h4 id="<%= @document.id%>" class="buy">Get It Now</h4>
 <% end %>
 
   <div id="content" style="display:block; clear: both; height:220px; overflow: hidden; margin-top:15px;">
-    <h3 style="margin-bottom: 10px;">Preview</h3>
+    <h4>Preview</h4>
     <% html =  @document.html.split(/[<>]/) %>
     <% i = 0 %>
     <% html.each do |h| %>
@@ -66,4 +69,6 @@
       <% i+=1 %>
     <% end %>
   </div>
+</div>
+  <div class="cl"></div>
 </div>

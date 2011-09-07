@@ -1,40 +1,4 @@
 <div style="width:710px; margin:0 auto 15px auto;">
-<div class="authentications_container">
-
-  <% if @authentications %>
-    <% unless @authentications.empty? %>
-      <p>You can sign in to this account using:</p>
-      <div class="authentications">
-        <% for authentication in @authentications %>
-          <div class="authentication">
-            <%= image_tag "logos/#{authentication.provider}_32.png", :size => "32x32" %>
-            <div class="provider"><%= authentication.provider_name %></div>
-            <div class="uid"><%= authentication.uid %></div>
-            <%= link_to "X", authentication, :confirm => 'Are you sure you want to remove this authentication option?', :method => :delete, :class => "remove" %>
-          </div>
-        <% end %>
-        <div class="clear"></div>
-      </div>
-    <% end %>
-    <p>Add another service to sign in with:</p>
-  <% else %>
-    <p><strong>Sign in through one of these services:</strong></p>
-  <% end %>
-
-  <!--<a href="/auth/twitter" class="auth_provider">
-    <%#= image_tag "logos/twitter_32.png", :size => "32x32", :alt => "Twitter" %>
-  </a>
-  <a href="/auth/open_id" class="auth_provider">
-    <%#= image_tag "logos/openid_32.png", :size => "32x32", :alt => "OpenID" %>
-  </a>-->
-  <a href="/auth/facebook" class="auth_provider">
-    <%= image_tag "logos/facebook_32.png", :size => "32x32", :alt => "Facebook" %>
-  </a>
-  <a href="/auth/open_id?openid_url=gmail.com" class="auth_provider">
-    <%= image_tag "logos/google_32.png", :size => "32x32", :alt => "Google" %>
-  </a>
-  
-</div>
 
 <div class="form_container">
   <h2>Edit <%= resource_name.to_s.humanize %></h2>
