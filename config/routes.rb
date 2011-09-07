@@ -147,7 +147,7 @@ Zendo::Application.routes.draw do
   match "/contact" => "static#contact"
 
   namespace :user do
-    root :controller => 'search', :action => 'index'
+    root :controller => 'tags', :action => 'index'
   end
 
   # catch-all route for static pages

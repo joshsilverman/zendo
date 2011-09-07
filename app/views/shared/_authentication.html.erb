@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> redesign
 <% unless user_signed_in? %>
 <div class="login">
         <a href="#" class="login-link" id="login-link">Login</a>
@@ -33,7 +28,6 @@
 
                                 </div>
                         </div>
-<<<<<<< HEAD
                 </div>
 
         </div>
@@ -41,72 +35,12 @@
 
 </div>
 <% else %>
-<<<<<<< HEAD
-  <span style="float:right; margin: 18px 6px 0 0;">
-    Welcome, <%= current_user.first_name %>&nbsp;|&nbsp;
-    <%= link_to "Edit Account", edit_user_registration_path %>&nbsp;|&nbsp;
-    <%= link_to "Sign Out", destroy_user_session_path %>
-  </span>
-<% end %>
-=======
-=======
-<div id="header">
-      <!-- Shell -->
-	<div class="shell">
-          <!-- Head -->
-            <div id="head">
-
-
-
->>>>>>> design changes
-<!-- Head Row -->
-<div class="row-top">
-  <h1 id="logo"><a href="#" class="notext">Logo</a></h1>
-  <% unless user_signed_in? %>
-    <div class="login">
-      <a href="#" class="login-link">Login</a>
-
-      <!-- DropDown -->
-      <div class="dd">
-
-        <div class="cnt-top">
-          <div class="cnt-bottom">
-            <div class="cnt">
-              <a href="#" class="login-link-hr">Login</a>
-              <form action="" method="post">
-                <div>
-                  <input type="text" class="field blink" value="Email" title="Email" />
-                  <input type="text" class="field blink" value="Password" title="Password" />
-                  <input type="submit" value="Submit" class="button notext" />
-                  <label for="check"><input type="checkbox" name="remember" id="check" value="Remember" />Remember Me</label>
-=======
->>>>>>> redesign
-                </div>
-
-        </div>
-        <!-- End DropDown -->
-
-</div>
-<<<<<<< HEAD
-<!-- End Head Row -->
->>>>>>> homepage design initial commit
-=======
-<% else %>
-  <span style="float:right; margin: 18px 6px 0 0;">
-    Welcome, <%= current_user.first_name %>&nbsp;|&nbsp;
-    <%= link_to "Edit Account", edit_user_registration_path %>&nbsp;|&nbsp;
-    <%= link_to "Sign Out", destroy_user_session_path %>
-  </span>
-<% end %>
->>>>>>> redesign
-=======
   <div class="usernav">
           <ul>
                   <li class="first"><a href="/my_eggs" class="<%if controller.controller_name == 'tags'%>active<% end %>">My Eggs</a></li>
                   <li><a href="/store"class="<%if controller.controller_name == 'store'%>active<% end %>">Egg Store</a></li>
                   <li><a href="/users/edit" class="<%if controller.controller_name == 'registrations' && controller.action_name == 'edit' %>active<% end %>">Edit Account</a></li>
-                  <li><a>Log Out</a></li>
+                  <li><a href="/users/sign_out">Log Out</a></li>
           </ul>
   </div>
 <% end %>
->>>>>>> redesign
