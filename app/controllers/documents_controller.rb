@@ -31,6 +31,7 @@ class DocumentsController < ApplicationController
   def edit
     # check id posted
     id = params[:id]
+    get_document(params[:id])
     @read_only = params[:read_only]
     @usership = Usership.find_by_document_id_and_user_id(params[:id], current_user.id)
     if @document.public && @usership.nil?
