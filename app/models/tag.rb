@@ -76,14 +76,7 @@ class Tag < ActiveRecord::Base
   end
 
   POPULAR_TAGS = [
-                  [573, "Companion to Biological Science (Freeman)"],
-                  [43, "Companion to Biology with MasteringBiology (Campbell & Reece)"],
-                  [573, "Companion to Psychology Applied to Modern Life (Weiten)"],
-                  [43, "Companion to Organic Chemistry (Solomons & Fryhle)"],
-                  [573, "Companion to Chemistry: The Central Science (Brown)"],
-                  [573, "Companion to Psychology (Myers)"],
-#                  [14, "IT Security"]
-                  [43, "ITE"]
+                  [2011, "Companion to Applied Psychology (10th Edition)"]
                  ]
 
 end

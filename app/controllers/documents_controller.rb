@@ -31,12 +31,7 @@ class DocumentsController < ApplicationController
   def edit
     # check id posted
     id = params[:id]
-    puts id
-    puts params[:read_only]
     @read_only = params[:read_only]
-    puts @read_only
-    puts get_document(params[:id])
-    puts @document
     @usership = Usership.find_by_document_id_and_user_id(params[:id], current_user.id)
     if @document.public && @usership.nil?
       @usership = Usership.create(:user_id => current_user.id,

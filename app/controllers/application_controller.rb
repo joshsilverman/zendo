@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
   include ApplicationHelper
 
-  def check_headers
+#  def check_headers
 #    puts request.env
 #    @headers |= request.env.inject({}) { |h, (k, v)|
 #      if k =~ /^(HTTP|CONTENT)_/ then
@@ -16,7 +16,7 @@ class ApplicationController < ActionController::Base
 #      end
 #      h    
 #    }
-  end
+#  end
 
   def check_uri
 
@@ -37,7 +37,10 @@ class ApplicationController < ActionController::Base
     redirect_to "/dashboard" unless current_user.try(:admin?)
   end
 
+  
   private
+
+
   def set_abingo_identity
     if request.user_agent =~ /\b(Baidu|Gigabot|Googlebot|libwww-perl|lwp-trivial|msnbot|SiteUptime|Slurp|WordPress|ZIBB|ZyBorg)\b/i
       Abingo.identity = "robot"
