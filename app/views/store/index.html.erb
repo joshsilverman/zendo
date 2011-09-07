@@ -80,7 +80,7 @@ input[type="search"]::-webkit-search-results-decoration {
       <ul style="margin-left: -20px;">
       <% @recent_public_docs.each do |d| %>
         <li><div class="egg-box"><a href='store/details/<%= d.id %>' ><div class="egg">
-                <img src="../../images/nounproject/<%= Document::ICON_TYPES[d.icon_id] %>" class="icon"></div></a><%= d.name %> <br />
+                <img src="../../images/nounproject/<%= Document::ICON_TYPES[d.icon_id] %>" class="icon"></div></a><%= d.name %> <br /></div></li>
                 <%i+=1%>
       <% end %>
       </ul>
@@ -96,7 +96,7 @@ input[type="search"]::-webkit-search-results-decoration {
       <ul style="margin-left: -20px;">
       <% @popular_public_docs.each do |d| %>
         <li><div class="egg-box"><a href='store/details/<%= d.id %>' ><div class="egg">
-                <img src="../../images/nounproject/<%= Document::ICON_TYPES[d.icon_id] %>" class="icon"></div></a><%= d.name %> <br />
+                <img src="../../images/nounproject/<%= Document::ICON_TYPES[d.icon_id] %>" class="icon"></div></a><%= d.name %> <br /></div></li>
       <%i+=1%>
       <% end %>
       </ul>

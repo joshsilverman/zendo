@@ -104,7 +104,7 @@ var cDoc = Class.create({
                         $('validate').setStyle({'display':'none'});
                         $('taken').setStyle({'display': 'none'});
                         $('available').setStyle({'display': 'inline'});
-                        $('submit').setStyle({'display': 'block'});
+                        $('submit').setStyle({'display': 'inline'});
                    } else {
                         console.log('false');
                         $('validate').setStyle({'display':'none'});
@@ -208,7 +208,7 @@ document.observe('lightview:loaded', function() {
     //    caption: 'Don\'t worry, you can always change it later',
         options: {
           width: 400,
-          height: 400,
+          height: 220,
           overlayClose: false,
           closeButton: false
         }
