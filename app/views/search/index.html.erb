@@ -101,15 +101,20 @@ li{
 
 <% if @username %>
   <div id="username" style="display: none;">
-    <h2>Thanks for signing up!</h2>
-    <h3>Choose a sweet username to get started!</h3>
-    <h5>Don't worry, you can always change it later</h5>
-    <span id="validate" style="display:none; color: red;">Username must be 3-20 characters. <br/>Letters, numbers, and underscores only.</span>
-    <strong>Username: </strong>
-    <input type="text" id="userfield" name="userfield" placeholder="Username"></input>
-    <span id="taken" style="display:none; color: red;">Sorry, this is taken</span>
-    <span id="available" style="display:none; color: green;">Nice choice!</span>
-    <br/><button id="submit" style="display:none;">Get it!</button>
-    <a href="/users/sign_out">cancel</a>
+    <a href="/users/sign_out" style="margin:5px;">cancel</a>
+    <h2 style="text-align: center;">Thanks for signing up!</h2>
+    <h3 style="text-align: center;">Choose a sweet username to get started!</h3>
+    <div style="text-align:center">
+      <strong>Username: </strong>
+      <input type="text" id="userfield" name="userfield" placeholder="Username"></input>
+      <br/>
+      <span id="validate" style="display:none; color: red; margin-top: 5px;">Username must be 3-20 characters. <br/>Letters, numbers, and underscores only.</span>
+      <span id="taken" style="display:none; color: red; margin-top: 5px;">Sorry, this is taken</span>
+      <span id="available" style="display:none; color: green; margin-top: 5px;">Nice choice!</span>
+      <button id="submit" style="display:none; margin:5px 0 0 15px;">Get it!</button>
+    </div>
+
+    <h5 style="text-align: center;">Don't worry, you can always change it later</h5>
+    
   </div>
 <% end %>
