@@ -96,7 +96,7 @@ var cReviewer = Class.create({
             /* update progress bar */
             if (this.currentCardIndex <= this.cards.length) {
                 //this.progressBar.update(this.currentCardIndex, this.cards.length);
-                $('progress_fraction').update(this.currentCardIndex+"/"+this.cards.length);
+                $('progress_fraction').update(this.currentCardIndex+1+"/"+this.cards.length);
 
             }
         }
@@ -137,8 +137,11 @@ var cReviewer = Class.create({
                     "&chdl=Got%20it+-+" + gradeHash.get(this.grade_4) + "|Kinda+-+" + gradeHash.get(this.grade_3) +
                     "|Barely+-+" + gradeHash.get(this.grade_2) + "|No%20clue+-+" + gradeHash.get(this.grade_1) + "&chma=|2"
 
-                $('card_front').update("Your score: <h1>" + Math.round((score/total)*100) + "%</h1> <a href=/explore>Back to my notes</a>");
+                $('card_front').update("Your score: <h1>" + Math.round((score/total)*100) + "%</h1>");
                 $('card_back').update("<img src=" + chartURL + "></img>");
+                $('grade_container').setStyle({'display':'none'});
+                $('card_show').setStyle({'display':'none'});
+                $('summary').setStyle({'display':'block'});
 
             }
         }
@@ -159,7 +162,7 @@ var cReviewer = Class.create({
         else if (this.currentCardIndex > 0) this.currentCardIndex++;
 
         /* update progress bar */
-        $('progress_fraction').update(this.currentCardIndex+"/"+this.cards.length);
+        $('progress_fraction').update(this.currentCardIndex+1+"/"+this.cards.length);
 
         //this.progressBar.update(this.currentCardIndex, this.cards.length);
     },
@@ -348,7 +351,7 @@ var cCard = Class.create({
         $('card_front_text').update(this.front);
 
         /* back */
-        $('card_back').update('<button id="card_show">Show (space bar)</button>');
+        $('card_back').update('');
         $('card_show').observe('click', this.showAll.bind(this));
 
         /* hide grade buttons */
@@ -359,6 +362,11 @@ var cCard = Class.create({
                 button.removeClassName('chosen');
             }
         });
+        console.log('test');
+        $('grade_container').setStyle({'display':'none'});
+        console.log('test');
+        $('card_show').setStyle({'display':'block'});
+        console.log('test');
 //        $$('.arrows_up_down')[0].hide();
     },
 
@@ -371,8 +379,12 @@ var cCard = Class.create({
         $('card_back').update( "<div id='card_back_text'>"+this.back+"</div>");
 
         /* show grading buttons */
+        $('grade_container').setStyle({'display':'block'});
         $$('.button_container, .grade_yourself').each(function (buttonContainer) {buttonContainer.removeClassName('grade_hide')});
 //        $$('.arrows_up_down')[0].show();
+
+        /*hide show bar*/
+        $('card_show').setStyle({'display':'none'});
 
         /* set grade associated with current card */
         doc.reviewer.displayGrade(doc.reviewer.cards[doc.reviewer.currentCardIndex].confidence);

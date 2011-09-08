@@ -43,15 +43,6 @@ table, tr, td {
     font-size: 14px;
 }
 
-.card_container button {
-    border: #007AC7 solid 1px;
-    background-color: white;
-}
-
-.card_container button:hover {
-    border: #007AC7 solid 1px;
-    background-color: lightgrey;
-}
 
 td {
     vertical-align: middle;
@@ -61,10 +52,12 @@ td {
 
 .card_side {
     width:500px;
-    padding: 0 15px;
+    padding: 15px 15px 15px 15px;
     background: #f5f5f5;
     border-radius: 5px 5px 0 0;
     border: 1px solid #ddd;
+    margin: 0 auto;
+    text-align: center;
 }
 
 #card_front {
@@ -76,10 +69,12 @@ td {
 
 #card_back {
     border-top: 0;
+    padding-top: 5px;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     -moz-border-radius:0px 0px 5px 5px;
     height:200px;
+    padding-bottom: 25px;
 }
 
 #card_front_text {
@@ -127,6 +122,8 @@ td {
 
 .button_container {
     height:50px;
+    width:50px;
+    margin:0 15px;
 }
 
 .grade .button_container button {
@@ -138,7 +135,6 @@ td {
     padding:10px;
     border:none !important;
     font-size: 15px;
-    background-image: url(/images/reviewer/key.png);
 }
 
 .grade .button_container button.chosen {
@@ -290,3 +286,26 @@ td {
     background: url('/images/reviewer/separator.png');
     float:left;
 }
+
+#summary{
+    width:433px;
+    background-color:transparent;
+    border:none;
+    float: left;
+    padding-top:15px;
+    display:none;
+}
+
+#grade_container{display:none; width:433px; padding:5px 0 0 0; float: left;}
+
+.got_it, .kinda, .barely, .no_clue{height:42px; width: 44px; margin:0 20px; border:0; cursor: pointer;}
+
+.got_it{background: url('../../images/reviewer/got-it.png');}
+.kinda{background: url('../../images/reviewer/kinda.png');}
+.barely{background: url('../../images/reviewer/barely.png');}
+.no_clue{background: url('../../images/reviewer/no-clue.png');}
+
+.got_it:hover{background: url('../../images/reviewer/got-it-hover.png')}
+.kinda:hover{background: url('../../images/reviewer/kinda-hover.png');}
+.barely:hover{background: url('../../images/reviewer/barely-hover.png');}
+.no_clue:hover{background: url('../../images/reviewer/no-clue-hover.png');}

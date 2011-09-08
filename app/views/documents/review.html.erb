@@ -27,50 +27,23 @@
 </div>
 
 <div class="card_container">
-  <table>
-    <tr>
-      <td class="grade grade_top_left"><button id="strength_2" style="display:none" class="rounded_border">I got it, but who cares</button></td>
-      <td class="rounded_border card_side" id="card_front"></td>
-      <td class="grade grade_top_right">
-        <div class="grade_yourself grade_hide">How well do you know it?</div>
-        <div class="clr"></div>
+  <div class="rounded_border card_side" id="card_front"></div>
+  <div class="rounded_border card_side" id="card_back"></div>
 
-        <div class="button_container grade_hide">
-          <label for="grade_4">Got it!</label>
-          <button id="grade_4" class="rounded_border">4</button>
-        </div>
 
-        <div class="button_container grade_hide">
-          <label for="grade_3">Kinda</label>
-          <button id="grade_3" class="rounded_border">3</button>
-        </div>
-        <!--<img class="arrows_up_down" style="display:none" src="/images/reviewer/up_down.png" />-->
-      </td>
-    </tr>
-    <tr>
-      <td class="grade grade_lower grade_bottom_left"><button id="strength_1" style="display:none" class="rounded_border">A</button></td>
-      <td class="rounded_border card_side" id="card_back"></td>
-      <td class="grade grade_lower grade_bottom_right">
 
-        <div class="button_container grade_hide">
-          <label for="grade_2">Barely</label>
-          <button id="grade_2" class="rounded_border">2</button>
-        </div>
-
-        <div class="button_container grade_hide">
-          <label for="grade_1">No clue</label>
-          <button id="grade_1" class="rounded_border">1</button>
-        </div>
-
-        <!--<button class="enter" style="display:block" >Grade</button>-->
-      </td>
-    </tr>
-  </table>
   
   <div id="nav_container">
     <button id="back_button"></button>
     <div class="separator"></div>
     <button id="card_show" class="spacebar">Show (space bar)</button>
+    <div id="grade_container">
+          <button id="grade_4" class="got_it"></button>
+          <button id="grade_3" class="kinda"></button>
+          <button id="grade_2" class="barely"></button>
+          <button id="grade_1" class="no_clue"></button>
+    </div>
+    <div id="summary"><a href='/my_eggs'>Back to My Eggs</a></div>
     <div class="separator"></div>
     <button id="next_button"></button>
     <div class="cl"></div>
