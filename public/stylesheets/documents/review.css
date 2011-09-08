@@ -60,9 +60,11 @@ td {
 }
 
 .card_side {
-    width:470px;
+    width:500px;
     padding: 0 15px;
-    background-color: #F5F5F5;
+    background: #f5f5f5;
+    border-radius: 5px 5px 0 0;
+    border: 1px solid #ddd;
 }
 
 #card_front {
@@ -73,7 +75,7 @@ td {
 }
 
 #card_back {
-    border-top: #5e5e55 dashed 1px;
+    border-top: 0;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     -moz-border-radius:0px 0px 5px 5px;
@@ -82,6 +84,8 @@ td {
 
 #card_front_text {
     font-weight: bold;
+    color: #000;
+    font-size: 18px;
 }
 
 #card_back_text {
@@ -96,13 +100,11 @@ td {
 }
 
 #card_show {
-    width:207px;
-    height:41px;
+    width:433px;
     background-color:transparent;
-    background-position: 0 3px;
-    background-image: url(/images/reviewer/spacebar.png);
-    background-repeat: no-repeat;
     border:none;
+    float: left;
+    padding:15px;
 }
 
 #card_back_text img {
@@ -172,12 +174,16 @@ td {
     margin: 5px;
 }
 
-#progress_bar_container {
-    margin:15px 5px 5px;
+#nav_container {
+    width:500px;
+    margin:0 auto;
+    padding:0 15px;
     text-align: center;
-    font-size:13px;
-    color:#737357;
     position: relative;
+    border-radius: 0 0 5px 5px;
+    border: #ddd 1px solid;
+    border-top:0;
+    background: url('../../images/reviewer/nav-bg.png') repeat-x;
 }
 
 .outline_node {
@@ -205,22 +211,26 @@ td {
 
 #back_button, #next_button {
     background-repeat: no-repeat;
-    width:37px;
-    height: 37px;
+    background: transparent;
+    margin-top:15px;
+    width:16px;
+    height: 17px;
     border:none;
-    background-color: transparent;
-    margin:5px 10px;
     position: relative;
-    top:-10px;
+    float: left;
 }
 
 #back_button {
-    background-image: url(/images/reviewer/left.png);
+    background-image: url('/images/reviewer/back.png');
+    margin-right:15px;
 }
 
 #next_button {
-    background-image: url(/images/reviewer/right.png);
+    background-image: url('/images/reviewer/next.png');
+    margin-left: 15px;
 }
+
+#progress_fraction{text-align: center; margin:5px;}
 
 .signup_button {
    display:inline;
@@ -262,3 +272,21 @@ td {
 .breadcrumbs{font-size: 12px; color: #828282; margin:0 0 15px -50px;}
 .breadcrumbs a{color:  #828282;}
 .breadcrumbs a:hover{text-decoration: underline;}
+
+.spacebar {
+	color: #666;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.navigation {
+	border-radius: 0 0 5px 5px;
+	border: #ddd;
+}
+
+.separator{
+    width:2px;
+    height: 52px;
+    background: url('/images/reviewer/separator.png');
+    float:left;
+}

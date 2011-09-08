@@ -1,4 +1,4 @@
-<% @page_specific_scripts_js = ["parser", "progressbar"] %>
+<% @page_specific_scripts_js = ["parser"] %>
 
 <%#*if, reviewing full tag, make sure review.js is included%>
 <% if controller.controller_name == 'tags' %>
@@ -67,12 +67,16 @@
     </tr>
   </table>
   
-  <div id="progress_bar_container">
+  <div id="nav_container">
     <button id="back_button"></button>
-    <span id="progress_bar"></span>&nbsp;&nbsp;&nbsp;
-    <span id="progress_fraction"></span>
+    <div class="separator"></div>
+    <button id="card_show" class="spacebar">Show (space bar)</button>
+    <div class="separator"></div>
     <button id="next_button"></button>
+    <div class="cl"></div>
   </div>
+
+  <div id="progress_fraction"></div>
   <div class="clr"></div>
 </div>
 
