@@ -76,7 +76,7 @@ class Tag < ActiveRecord::Base
   end
 
   POPULAR_TAGS = [
-                  [1869, "Companion to Applied Psychology (10th Edition)"]
+                  [2011, "Companion to Applied Psychology (10th Edition)"]
                  ]
 
 end
