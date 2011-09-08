@@ -130,6 +130,7 @@ h1#logo a { background: url(../images/home/logo-small.gif) no-repeat 0 0; height
 
 .whitebg p { padding-bottom: 20px; }
 #content ul { list-style: none; margin-left: 20px; padding-bottom: 20px; }
+ul.funfacts li { background: url(../images/home/tiny-egg.png) no-repeat; padding: 3px 0 5px 22px; }
 
 #footer { background: #004578; border-top: 2px solid #218dd2; -moz-box-shadow: 0 0 5px #666; -webkit-box-shadow: 0 0 5px #666; box-shadow: 0 0 5px #666; behavior: url(ie-css3.htc); clear: both; position: relative; height: 110px; margin-top: -110px; }
 #footer .shell { padding: 15px 0 10px 0; width: 971px; }
