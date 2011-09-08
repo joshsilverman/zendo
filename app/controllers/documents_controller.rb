@@ -46,7 +46,7 @@ class DocumentsController < ApplicationController
                                   :owner => false)
     end
     if (@usership.nil? || @document.nil?) && !current_user.try(:admin?)
-      redirect_to '/explore', :notice => "Error accessing that document."
+      redirect_to '/my_eggs', :notice => "Error accessing that document."
       return
     end
     # redirect if public, not owner, and trying to edit

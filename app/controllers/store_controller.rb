@@ -4,7 +4,7 @@ class StoreController < ApplicationController
     @pop_docs = Document.joins(:userships).select('documents.*, count(userships.document_id) as doc_count').where("public").group('documents.id').order('doc_count desc').limit(50)
     eggs = []
     @pop_docs.each do |p|
-      unless eggs.include? p.tag_id || eggs.size >=5
+      if not eggs.include? p.tag_id && eggs.size <=5
         eggs << p.tag_id
       end
     end

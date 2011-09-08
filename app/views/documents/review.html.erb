@@ -9,9 +9,9 @@
 <div id="title">
   <div class="breadcrumbs">
   <% if @document.nil? %>
-    /<%= link_to @tag.name, '/explore' %>
+    /<%= link_to @tag.name, '/my_eggs' %>
   <% else %>
-    <%= link_to @document.tag.name, '/explore' %>
+    <%= link_to @document.tag.name, '/my_eggs' %>
     >> <%= link_to @document.name, '/documents/%i/edit' % @document.id %>
   <% end %>
   
