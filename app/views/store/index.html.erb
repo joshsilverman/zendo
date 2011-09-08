@@ -4,7 +4,6 @@
 <div id="search_json" style="display:none;">
   <%= Document::ICON_TYPES.to_json %>
 </div>
-<% i = 4 %>
 <div  style="margin:10px auto; padding:10px; width: 800px;">
   <div id="search">
       <div id="loader" style="width:32px; height:32px; display: block; float:left; margin:4px;"><img id="mag" src="../../images/nounproject/magnifying-glass.png" />
@@ -20,11 +19,14 @@
       <strong>Sorry, there are no public documents right now</strong>
     <% else %>
       <ul style="margin-left: -20px;">
+      <%i = 0%>
       <% @recent_public_eggs.each do |e| %>
+        <%if i<5%>
         <li><div class="egg-box"><a href='store/egg_details/<%= e.id %>' ><div class="egg">
                 <img src="../../images/nounproject/<%= Document::ICON_TYPES[e.icon_id] %>" class="icon"></div></a><%= e.name %></div></li>
 
                 <%i+=1%>
+                <%end %>
       <% end %>
       </ul>
       <div style="clear:both"></div>
@@ -33,14 +35,17 @@
 
   <h4>Popular Eggs</h4>
   <div id="popular_eggs">
+    <%i = 0%>
     <% unless @popular_public_eggs %>
       <strong>Sorry, there are no public documents right now</strong>
     <% else %>
       <ul style="margin-left: -20px;">
       <% @popular_public_eggs.each do |e| %>
+        <%if i<5%>
         <li><div class="egg-box"><a href='store/egg_details/<%= e.id %>' ><div class="egg">
                 <img src="../../images/nounproject/<%= Document::ICON_TYPES[e.icon_id] %>" class="icon"></div></a><%= e.name %></div></li>
       <%i+=1%>
+      <% end %>
       <% end %>
       </ul>
       <div style="clear:both"></div>

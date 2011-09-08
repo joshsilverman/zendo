@@ -73,8 +73,9 @@ td {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     -moz-border-radius:0px 0px 5px 5px;
-    height:200px;
+    height:270px;
     padding-bottom: 25px;
+    overflow: hidden;
 }
 
 #card_front_text {
