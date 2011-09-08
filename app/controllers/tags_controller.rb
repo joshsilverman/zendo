@@ -175,12 +175,8 @@ class TagsController < ApplicationController
     if @base_egg.nil?
       render :nothing => true, :status => 400
     else
-#      @new_egg = Tag.create(:name => @base_egg.name, :user_id => current_user.id)
       @base_egg.documents.each do |doc|
-        if doc.public?
-          puts "public doc found!"
-          puts doc.id
-          ##TODO Check if userships already exists!!!
+        if doc.public? && Usership.all(:conditions => { :user_id => current_user.id, :document_id => doc.id }).empty?
           Usership.create(:user_id => current_user.id, :document_id => doc.id, :push_enabled => false, :owner => false)
         end
       end
