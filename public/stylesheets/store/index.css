@@ -65,6 +65,11 @@ input[type="search"]::-webkit-search-results-decoration {
 
 #carousel-1{margin:0 auto;}
 
-.egg-head{margin: 20px 0;}
+.egg-head{font-size: 30px; margin: 20px 0;}
 .detail-float{float:left; width:400px;}
-.detail-float li{margin-left:-20px;}
+.detail-float li{margin-left:-20px; }
+.detail-float li a{text-decoration: underline;}
+
+#breadcrumbs{font-size: 12px; color: #828282; margin-bottom: 15px;}
+#breadcrumbs a{color:  #828282;}
+#breadcrumbs a:hover{text-decoration: underline;}

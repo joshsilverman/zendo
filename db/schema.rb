@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110830184751) do
+ActiveRecord::Schema.define(:version => 20110907190710) do
 
   create_table "alternatives", :force => true do |t|
     t.integer "experiment_id"
@@ -122,6 +122,7 @@ ActiveRecord::Schema.define(:version => 20110830184751) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "icon_id",                  :default => 0
   end
 
   add_index "tags", ["user_id"], :name => "index_tags_on_user_id"
@@ -129,7 +130,6 @@ ActiveRecord::Schema.define(:version => 20110830184751) do
   create_table "users", :force => true do |t|
     t.string   "email",                               :default => "",    :null => false
     t.string   "encrypted_password",   :limit => 128, :default => "",    :null => false
-    t.string   "password_salt",                       :default => "",    :null => false
     t.string   "reset_password_token"
     t.string   "remember_token"
     t.datetime "remember_created_at"

@@ -21,7 +21,7 @@ body {
     margin:0;
     height:100%;
     background: url(../images/shared/thatch-bg.jpg) repeat 0 0;
-    font-size: 14px;
+    font-size: 12px;
     line-height: 20px;
     font-family: Helvetica, arial, sans-serif;
     color: #333333;
@@ -109,6 +109,11 @@ h1#logo a { background: url(../images/home/logo-small.gif) no-repeat 0 0; height
 .dd .cnt input#check { margin: 10px 5px 0 5px; }
 .dd .cnt p { text-align: center; padding: 10px 0 0 0; }
 .dd .cnt a.dd-link { color: #333; }
+
+.cols { padding: 40px 0; }
+.cols .col { width: 283px; padding: 0 20px; float: left; display: inline; }
+.col .col-head h4 { font-size: 18px; text-align: center; }
+.col .col-head p { padding: 10px 0 0 0; font-size: 14px; text-align: center; }
 
 #head .row .left { padding: 4px 0 0 0; }
 #head .row .right { padding: 8px 17px 0 0; width: 222px; }

@@ -1,45 +1,11 @@
-<%= javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/prototype/1/prototype.js', :cache => false %>
+<% @page_specific_scripts_js = ["/javascripts/store/details.js"] %>
+<% @page_specific_scripts_css = ["/stylesheets/store/index.css"]%>
 
-  <% if @page_specific_scripts_js %> <%= javascript_include_tag @page_specific_scripts_js, :cache => '/cache/' + auto_js_css %> <% end %>
-    <script type="text/javascript" src="../../javascripts/store/details.js"></script>
-<style>
-  .buy{
-    cursor: pointer;
-    text-decoration: underline;
-    color: blue;
-  }
-  #recent_eggs li, #popular_eggs li {
-    list-style-type: none;
-    list-style-position: inside;
-    float:left;
-}
-  .egg{
-    display: block;
-    width: 83px;
-    height: 115px;
-    overflow: hidden;
-    background: url("../../images/nounproject/egg.png");
-    position: relative;
-    float: left;
-}
 
-.egg-box{
-    display: block;
-    width: 85px;
-    margin: 0 25px 15px 0;
-}
-
-  .icon{
-    position: relative;
-    top: 30px;
-    left:15px;
-    display:block;
-}
-
-</style>
-    <h2>EggStore</h2>
-<div class="rounded_border" style="margin:10px auto; padding:10px; width: 600px;">
-<h1><%= @tag.name %></h1>
+<div style="margin:10px auto; padding:10px; width: 600px;">
+  <div class="egg-box" style="float:left;"><div class="egg"><img src="../../images/nounproject/book1.png" class="icon"></div></div>
+  <div class="detail-float">
+<h1 class="egg-head"><%= @tag.name %></h1>
 <% i=0 %>
 <ul>
   <% @documents.each do |d| %>
@@ -52,4 +18,5 @@
   <% end %>
 </ul>
     
+</div>
 </div>

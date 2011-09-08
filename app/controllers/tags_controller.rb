@@ -185,4 +185,13 @@ class TagsController < ApplicationController
       render :nothing => true, :status => 200
     end
   end
+
+  def update_icon
+    if @tag = current_user.tags.find(params[:doc_id], :readonly => false)
+      @tag.update_attribute(:icon_id, params[:icon_id])
+    else
+      render :nothing => true, :status => 403
+    end
+    render :nothing => true
+  end
 end

@@ -21,11 +21,12 @@ class StoreController < ApplicationController
 
   def details
     @document = Document.find_by_id(params[:id])
+    @tag = Tag.find_by_id(@document.tag_id)
     @userships = Usership.select(['document_id']).where("user_id = ?", current_user.id )
   end
 
   def choose_icon
-    @doc = Document.find_by_id(params[:doc_id])
+    @tag = Tag.find_by_id(params[:doc_id])
     render :layout => false
   end
 end
