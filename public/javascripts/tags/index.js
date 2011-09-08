@@ -100,9 +100,15 @@ var cDoc = Class.create({
         });
         if(isEmpty) {
             this.render();
-            $('documents').update("<div style='text-align: center; color:#d22b21; margin-top:150px;'><h2>Looks like you don't have any StudyEggs right now.</h2> <h4 style='color:#595448;'>Check out the <a href='/store'>EggStore</a> and snag yourself some knowledge!</h4>");
-
+            $('documents').update("<div style='text-align: center; color:#d22b21; margin-top:150px;'>\
+                                    <h1>Looks like you don't have any StudyEggs right now.</h1>\
+                                    <h2 style='color:#595448; margin-top:15px;'>Check out the <a href='/store'>EggStore</a> and snag yourself some knowledge!</h2>\
+                                     <p style='color:#595448; margin-top:15px;'>(Overachiever? You can also <a href='/documents/create/0'>create your own StudyEgg</a> from scratch. )</p>");
+            $('left_container').setStyle({"display":"none"});
+            $('documents').setStyle({"width":"100%"});
         } else {
+            $('left_container').setStyle({"display":"block"});
+            $('documents').setStyle({"width":"70%"});
             this.render();
         }
     },
@@ -457,6 +463,8 @@ var cDoc = Class.create({
          console.log('Rename Folder Start');
         /* request params */
         new Dialog.Box('rename_folder_modal');
+        $('update_icon').writeAttribute({"href":"/choose_icon/"+event.target.getAttribute('id').substring(5)});
+        console.log('update icon!');
         $('rename_folder_modal').show();
 
         $('submit_rename').observe('click', function(){
@@ -596,22 +604,22 @@ var cDoc = Class.create({
             if(event.target.getAttribute('class')=='doc_item active' || event.target.getAttribute('class')=='doc_item inactive'){
             if(this.activeItemId==''){ //if nothing is open
                 console.log($(this.activeItemId)+" 1");
-                event.target.down(2).setStyle({display:'block'});
+                event.target.down(1).setStyle({display:'block'});
                 this.activeItemId = event.target.id;
                 event.target.removeClassName('inactive');
                 event.target.addClassName('active');
                 event.stop();
             } else if(this.activeItemId==event.target.id) { //if you reclick an open item
                 console.log($(this.activeItemId).id+" 2");
-                event.target.down(2).setStyle({display:'none'});
+                event.target.down(1).setStyle({display:'none'});
                 this.activeItemId = '';
                 event.target.removeClassName('active');
                 event.target.addClassName('inactive');
                 event.stop();
             } else { //if you switch open items
                 console.log($(this.activeItemId)+" 3");
-                $(this.activeItemId).down(2).setStyle({display:'none'});
-                event.target.down(2).setStyle({display:'block'});
+                $(this.activeItemId).down(1).setStyle({display:'none'});
+                event.target.down(1).setStyle({display:'block'});
                 event.target.removeClassName('inactive');
                 event.target.addClassName('active');
                 $(this.activeItemId).removeClassName('active');

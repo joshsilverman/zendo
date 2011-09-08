@@ -22,7 +22,7 @@
       <ul style="margin-left: -20px;">
       <% @recent_public_eggs.each do |e| %>
         <li><div class="egg-box"><a href='store/egg_details/<%= e.id %>' ><div class="egg">
-                <img src="../../images/nounproject/book1.png" class="icon"></div></a><%= e.name %></div></li>
+                <img src="../../images/nounproject/<%= Document::ICON_TYPES[e.icon_id] %>" class="icon"></div></a><%= e.name %></div></li>
 
                 <%i+=1%>
       <% end %>
@@ -39,7 +39,7 @@
       <ul style="margin-left: -20px;">
       <% @popular_public_eggs.each do |e| %>
         <li><div class="egg-box"><a href='store/egg_details/<%= e.id %>' ><div class="egg">
-                <img src="../../images/nounproject/beaker.png" class="icon"></div></a><%= e.name %></div></li>
+                <img src="../../images/nounproject/<%= Document::ICON_TYPES[e.icon_id] %>" class="icon"></div></a><%= e.name %></div></li>
       <%i+=1%>
       <% end %>
       </ul>

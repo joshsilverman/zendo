@@ -31,7 +31,7 @@ class Tag < ActiveRecord::Base
       if tags[doc.tag_id.to_s].nil?
         tag = Tag.find_by_id doc.tag_id
         next unless tag
-        tags[doc.tag_id.to_s] = Tag.new(:name => tag.name, :user_id => tag.user_id, :created_at => tag.created_at, :misc => tag.misc, :updated_at => tag.updated_at)
+        tags[doc.tag_id.to_s] = Tag.new(:name => tag.name, :icon_id => tag.icon_id, :user_id => tag.user_id, :created_at => tag.created_at, :misc => tag.misc, :updated_at => tag.updated_at)
         tags[doc.tag_id.to_s].id = tag.id
       end
       tags[doc.tag_id.to_s].documents << doc
@@ -44,8 +44,10 @@ class Tag < ActiveRecord::Base
       next if tags[tag.id.to_s]
       tags[tag.id.to_s] = tag
     end
-
+    puts "RUN IT"
+    puts tags
     tags = tags.map {|id, tag| tag}
+    puts tags
     return tags.to_json(:include => {:documents => {:only => [:id, :name, :updated_at, :created_at, :tag_id], :include => {:userships => {:only => [:push_enabled] }}}})
   end
 

@@ -156,7 +156,7 @@ var cDoc = Class.create({
         cardContainer.show();
 
         /* calculations */
-        var bottomMargin = 50;
+        var bottomMargin = 22;
         var editorVerticalSpaceHeight = document.viewport.getDimensions()['height']
             - editorContainer.cumulativeOffset().top - bottomMargin;
         var editorWhitespace = $('editor_tbl');

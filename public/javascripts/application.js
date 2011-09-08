@@ -18,6 +18,8 @@ var cAppUtilities = Class.create({
         this.Cookies = new this.cCookies;
         this.Dom = new this.cDom;
 
+        console.log('TEST');
+
         document.observe('app:loaded', function() {this.loadVendorScripts.bind(this).defer()}.bind(this));
     },
 
@@ -26,7 +28,7 @@ var cAppUtilities = Class.create({
         /* calculations */
         var footer = $('footer');
         console.log(footer);
-        var footerY = footer.getHeight();
+        var footerY = 68;//footer.getHeight();
         var viewportY = document.viewport.getHeight();
         var footerOffsetY = footer.cumulativeOffset()[1];
 

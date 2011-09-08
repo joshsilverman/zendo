@@ -1,38 +1,51 @@
 <div style="width:710px; margin:0 auto 15px auto;">
 
 <div class="form_container">
-  <h2>Edit <%= resource_name.to_s.humanize %></h2>
+  <h2 style="margin-bottom:10px;">Edit <%= resource_name.to_s.humanize %></h2>
 
   <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f| %>
     <%= devise_error_messages! %>
+    <div style="width:350px;">
+      <div class="left"><%= f.label :first_name %></div>
+      <div class="right"><%= f.text_field :first_name %></div>
+      <div class="cl"></div>
 
-    <p><%= f.label :first_name %><br />
-    <%= f.text_field :first_name %></p>
+      <div class="left"><%= f.label :last_name %></div>
+      <div class="right"><%= f.text_field :last_name %></div>
+      <div class="cl"></div>
 
-    <p><%= f.label :last_name %><br />
-    <%= f.text_field :last_name %></p>
+      <div class="left"><%= f.label :username %></div>
+      <div class="right"><%= f.text_field :username %></div>
+      <div class="cl"></div>
 
-    <p><%= f.label :username %><br />
-    <%= f.text_field :username %></p>
+      <div class="left"><%= f.label :email %></div>
+      <div class="right"><%= f.text_field :email %></div>
+      <div class="cl"></div>
 
-    <p><%= f.label :email %><br />
-    <%= f.text_field :email %></p>
+      <div class="rounded_border password" style="padding:10px;">
+        <div class="left"><%= f.label :password %> <br /></div>
+        <div class="right"><%= f.password_field :password %></div>
+        <div class="cl"></div>
 
-    <p><%= f.label :password %> <br /><i>(leave blank if you don't want to change it)</i><br />
-    <%= f.password_field :password %></p>
-
-    <p><%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation %></p>
-
-    <p><%= f.label :current_password %> <br /><i>(we need your current password to confirm your changes)</i><br />
-    <%= f.password_field :current_password %></p>
-
-    <p><%= f.submit "Update" %></p>
+        <div class="left"><%= f.label :password_confirmation %></div>
+        <div class="right"><%= f.password_field :password_confirmation %></div>
+        <div class="cl"></div>
+        <i style="font-size: 10px;" >(leave blank if you don't want to change it)</i><br/>
+      </div>
+      
+      <div class="left"><%= f.label :current_password %> <br /></div>
+      <div class="right"><%= f.password_field :current_password %></div>
+      <div class="cl"></div>
+      <i style="font-size: 10px;">(we need your current password to confirm your changes)</i>
+      <br/>
+      <p><%= f.submit "Update" %></p>
+    </div>
   <% end %>
 
   <p><%= link_to "Cancel my account", registration_path(resource_name), :confirm => "Are you sure?", :method => :delete %>.</p>
 
   <%= link_to "Back", :back %>
+
 
 </div>
 

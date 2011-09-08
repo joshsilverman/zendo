@@ -13,6 +13,9 @@ var cDoc = Class.create({
            }.bind(this));
         }.bind(this));
 
+        window.onresize = AppUtilities.resizeContents;
+        AppUtilities.resizeContents();
+
     },
 
     purchase: function(id){
@@ -26,7 +29,7 @@ var cDoc = Class.create({
                if( transport.status == 200){
                    $$('.buy').each(function(e){
                        if(e.id == id){
-                           e.innerHTML = "Purchased";
+                           e.innerHTML = "<img src='../../images/home/purchased.png' />";
                            e.removeClassName('buy');
                            e.addClassName('purchased');
                            e.stopObserving('click');

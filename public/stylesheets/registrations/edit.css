@@ -17,6 +17,18 @@
     width: 300px;
 }
 
+.form_container input{width:200px;}
+
+.form_container .left, .form_container .right{margin-bottom: 10px;}
+
+.form_container .left{width:150px; float: left;}
+
+.form_container .right{width:200px; float: right;}
+
+.password input, .password .right, .password .left{width:150px;}
+
+.password { width:348px; margin:0 0 10px -10px}
+
 .authentications {
   margin-bottom: 30px;
 }

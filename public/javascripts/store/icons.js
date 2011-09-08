@@ -28,7 +28,7 @@ var cDoc = Class.create({
         var parameters = {};
         parameters['doc_id'] = this.doc_id;
         parameters['icon_id'] = icon_id;
-        new Ajax.Request('/documents/update_icon', {
+        new Ajax.Request('/tags/update_icon', {
            method: 'post',
            parameters: parameters,
            onComplete: function(transport) {

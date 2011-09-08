@@ -3,8 +3,11 @@
     display: inline;
 }
 
-body{
-    background-color: #fafafa;
+body {
+font-size: 12px;
+line-height: 18px;
+font-family: Helvetica, arial, sans-serif;
+color: #333;
 }
 
 #contents a{
@@ -27,7 +30,7 @@ Vertical Accordions
     text-decoration: none;
     outline: none;
     font-size: 18px;
-    color: #d22b21;
+    color:  #d22b21;
     /*border-bottom: #9a9a9a 1px solid;*/
     cursor: pointer;
     margin: 5px 0 0 0;
@@ -38,13 +41,13 @@ Vertical Accordions
 .expand{
     background-image: url('../../images/organizer/expand.png');
     background-repeat: no-repeat;
-    background-position: 8px 7px;
+    background-position: 5px 5px;
 }
 
 .collapse{
     background-image: url('../../images/organizer/collapse.png');
     background-repeat: no-repeat;
-    background-position: 8px 13px;
+    background-position: 5px 5px;
 }
 
 .accordion_toggle_active {
@@ -102,31 +105,31 @@ Vertical Accordions
 
 .doc_item{
     margin:5px 0 0 20px;
-    padding:1px;
+    padding:1px 1px 1px 10px;
     line-height: 21px;
     position: relative;
 }
 
 .doc_item:hover{
     border: #d0dae3 solid 1px;
-    padding:0;
+    padding:0 0 0 10px;
 }
 
 .active{
     border:solid 1px #007AC7;
-    padding:0;
+    padding:0 0 0 10px;
     background-color: #f2f9ff;
     
 }
 
 .active:hover{
     border:solid 1px #007AC7;
-    padding:0;
+    padding:0 0 0 10px;
 }
 
 .inactive{
     border:none;
-    padding:1px;
+    padding: 1px 1px 1px 11px;
 }
 
 .doc_title{

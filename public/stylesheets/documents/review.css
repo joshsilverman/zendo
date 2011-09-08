@@ -258,3 +258,7 @@ td {
    border-top-color: #1b435e;
    background: #1b435e;
    }
+
+.breadcrumbs{font-size: 12px; color: #828282; margin:0 0 15px -50px;}
+.breadcrumbs a{color:  #828282;}
+.breadcrumbs a:hover{text-decoration: underline;}
