@@ -83,7 +83,20 @@ var cReviewer = Class.create({
     next: function(grade) {
 
         /* grade current */
-        if (grade) this.cards[this.currentCardIndex].grade(grade);
+        if (grade) {
+            this.cards[this.currentCardIndex].grade(grade);
+        /* If no grade, card was skipped => post high confidence / zero importance for now */
+        } else {
+            var requestUrl = '/mems/update/'+this.cards[this.currentCardIndex].memId+'/9/0';
+            new Ajax.Request(requestUrl, {
+                onSuccess: function() {},
+
+                onFailure: function() {},
+
+                onComplete: function() {}
+//                onComplete: function(transport) {}//$('log').update(transport.responseText);}
+            });
+        }
         if (this.cards.length >= (this.currentCardIndex)) this.currentCardIndex++;
 
         /* advance */
@@ -243,6 +256,14 @@ var cReviewHandlers = Class.create({
     },
 
     onRight: function(event) {
+//        var requestUrl = '/mems/update/'+this.memId+'/'+this.confidence+'/'+this.importance;
+//        new Ajax.Request(requestUrl, {
+//            onSuccess: function() {},
+//
+//            onFailure: function() {},
+//
+//            onComplete: function(transport) {}//$('log').update(transport.responseText);}
+//        });
         console.log('sup hombro?');
         doc.reviewer.next();
         event.stop();
