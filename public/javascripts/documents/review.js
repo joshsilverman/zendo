@@ -238,6 +238,7 @@ var cReviewHandlers = Class.create({
     },
 
     onRight: function(event) {
+        console.log('sup hombro?');
         doc.reviewer.next();
         event.stop();
     },
