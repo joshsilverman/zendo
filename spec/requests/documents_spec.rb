@@ -25,10 +25,11 @@ describe "document" do
       @user = Factory.create(:user)
       @user.save!
       fill_in "Email", :with => @user.email
+      sleep 10
       fill_in "Password", :with => @user.password
       click_button "Sign in"
-      visit "/dashboard"
-      visit "/explore"
+      sleep 10
+      visit "/my_eggs"
     end
 
     describe "options" do
@@ -62,7 +63,7 @@ describe "document" do
     end
 
     it "creates new document" do
-      visit "/explore"
+      visit "/my_eggs"
       click_link('Create A New Document')
       wait_until{ page.has_content?('Saved')}
     end
