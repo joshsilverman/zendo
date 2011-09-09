@@ -1,67 +1,10 @@
-<div id="sign_up_inline">
-  <div class="restrictions">
-<!--
-    <p><strong>Sign up through one of these services:</strong></p>
-
-    <a href="/auth/twitter" class="auth_provider">
-      <%#= image_tag "logos/twitter_32.png", :size => "32x32", :alt => "Twitter" %>
-    </a>
-    <a href="/auth/open_id" class="auth_provider">
-      <%#= image_tag "logos/openid_32.png", :size => "32x32", :alt => "OpenID" %>
-    </a>
-    <a href="/auth/facebook" class="auth_provider">
-      <%= image_tag "logos/facebook_32.png", :size => "32x32", :alt => "Facebook" %>
-    </a>
-    <a href="/auth/open_id?openid_url=gmail.com" class="auth_provider">
-      <%= image_tag "logos/google_32.png", :size => "32x32", :alt => "Google" %>
-    </a>-->
-
-    <div class="clr"></div>
-
-    <strong>We're beta! So far we support:</strong>
-    <ul>
-      <li>Firefox 3</li>
-      <li>Chrome</li>
-      <li>Safari 5</li>
-      <li>Opera 11</li>
-      <li>IE 8</li>
-    </ul>
-  </div>
-
-  <div class="form_container">
-    <h2>Sign up!</h2>
-    
     <%= error_messages_for @resource %>
-    <%#<div class="error_messages"><h2>Invalid Fields</h2><p>Correct the following errors and try again.</p><ul><li>Email has already been taken</li></ul></div>%>
 
     <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
       <%= devise_error_messages! rescue "" %>
 
-      <p><%= f.label :first_name %><br />
-      <%= f.text_field :first_name %></p>
+      <%= f.text_field :email, :class => "field blink", :value => "Email", :title => "Email"%>
+      <%= f.password_field :password, :class => "field blink", :value => "Password", :title => "Password"%>
+      <%= f.submit "Sign up", :class=>"button notext" %>
 
-      <p><%= f.label :last_name %><br />
-      <%= f.text_field :last_name %></p>
-
-      <p><%= f.label :username %><br />
-      <%= f.text_field :username %></p>
-
-      <p><%= f.label :email %><br />
-      <%= f.text_field :email %></p>
-
-      <p><%= f.label :password %><br />
-      <%= f.password_field :password %></p>
-
-      <p><%= f.label :password_confirmation %><br />
-      <%= f.password_field :password_confirmation %></p
-
-      <p><%= f.submit "Sign up" %></p>
     <% end %>
-
-    <%#= link_to "Didn't receive confirmation link?", new_confirmation_path(resource_name) %><br />
-    <a href="/users/password/new">Reset password?</a>
-
-  </div>
-
-  <div class="clr"></div>
-</div>

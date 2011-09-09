@@ -19,7 +19,7 @@
         <tr>
           <% @tag.documents.each do |document| %>
             <td id="cell_<%=document.id%>" cellpadding="0">
-              <%= link_to "", edit_document_path(document), :target => "editor" %>
+              <%= link_to ">", edit_document_path(document), :target => "editor" %>
             </td>
           <% end %>
         </tr>

@@ -18,19 +18,21 @@ var cAppUtilities = Class.create({
         this.Cookies = new this.cCookies;
         this.Dom = new this.cDom;
 
+        console.log('TEST');
+
         document.observe('app:loaded', function() {this.loadVendorScripts.bind(this).defer()}.bind(this));
     },
 
     resizeContents: function() {
         
         /* calculations */
-        var footer = $$('.footer')[0];
+        var footer = $('footer');
         console.log(footer);
-        var footerY = footer.getHeight();
+        var footerY = 68;//footer.getHeight();
         var viewportY = document.viewport.getHeight();
         var footerOffsetY = footer.cumulativeOffset()[1];
 
-        var contents = $$('.contents')[0];
+        var contents = $('content');
         var contentsY = contents.getHeight();
 
         var difference = viewportY - footerOffsetY - footerY;
@@ -150,3 +152,42 @@ var cAppUtilities = Class.create({
 
 /* global vars */
 var AppUtilities = new cAppUtilities;
+
+/* global objects */
+document.observe('dom:loaded', function() {
+    /* Drop Down */
+        if($('login-link')){
+            $('login-link').observe('click', function () {
+                    console.log('test');
+                    $('dd').setStyle({'display':'block'});
+                    console.log('test');
+            });
+            $('login-link-hr').observe('click', function(){
+                    $('dd').hide();
+                    return false;
+            });
+            console.log('test');
+            $$('.blink')[0].observe('focus', function(){
+		if( $(this).getAttribute('title') == $(this).value ) {
+			$(this).value = "";
+		}
+            });
+            $$('.blink')[0].observe('blur', function(){
+		if( $(this).value == '' ) {
+			$(this).value = $(this).getAttribute('title');
+		}
+            });
+
+            $$('.blink')[1].observe('focus', function(){
+		if( $(this).getAttribute('title') == $(this).value ) {
+			$(this).value = "";
+		}
+            });
+            $$('.blink')[1].observe('blur', function(){
+		if( $(this).value == '' ) {
+			$(this).value = $(this).getAttribute('title');
+		}
+            });
+        }
+	/* End Drop Down */
+});

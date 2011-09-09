@@ -4,16 +4,13 @@
 
 <%= stylesheet_link_tag '/stylesheets/store/pluit-carousel.css', :cache => false %>
 <%= stylesheet_link_tag '/stylesheets/store/pluit-carousel-skins.css', :cache => false %>
+<%= stylesheet_link_tag '/stylesheets/store/index.css', :cache => false %>
 <script type="text/javascript" src="../../javascripts/store/icons.js"></script>
 
 
 <style>
   .egg{
-    display: block;
-    width: 83px;
-    height: 115px;
-    overflow: hidden;
-    background: url("../../images/nounproject/egg.png") no-repeat;
+    background: url("../../images/home/egg.png") no-repeat;
     position: relative;
     cursor: pointer;
     padding: 2px;
@@ -22,17 +19,10 @@
   border: #0000FF 2px solid;
   padding: 0px;
 }
-
-  .icon{
-    position: relative;
-    top: 30px;
-    left:15px;
-    display:block;
-}
 </style>
 
 <div id="carousel-1" class="pluit-carousel">
-  <div class="viewport" id="<%= @doc.id %>">
+  <div class="viewport" id="<%= @tag.id %>">
     <ul>
     <%  i = 0
     Document::ICON_TYPES.each do |icon|
@@ -41,7 +31,7 @@
         <ul>
       <% end %>
           <li><div id="<%= i %>" class="egg
-                   <% if @doc.icon_id == i %>
+                   <% if @tag.icon_id == i %>
                       selected
                    <%end%>
                       "><img src="../../images/nounproject/<%= icon %> " class="icon"></div></li>

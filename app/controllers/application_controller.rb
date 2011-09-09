@@ -34,7 +34,7 @@ class ApplicationController < ActionController::Base
   end
   
   def check_admin
-    redirect_to "/dashboard" unless current_user.try(:admin?)
+    redirect_to "/my_eggs" unless current_user.try(:admin?)
   end
 
   

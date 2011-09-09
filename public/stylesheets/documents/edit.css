@@ -1,5 +1,18 @@
 body {
-    background: #FAFAFA;
+    background: url(../../images/shared/thatch-bg.jpg) repeat 0 0;
+}
+
+.shell{ width:960px;}
+
+#contents{
+    color:black;
+}
+
+#shadow_wrapper{
+    width:960px;
+    height: 0;
+    /*box-shadow:2px 2px 3px #b6ae9a;*/
+    margin: -20px -30px -30px -30px;
 }
 
 .doc_options {
@@ -33,6 +46,11 @@ body {
 
 .loading span, .loading button, .loading img {
     display:none;
+}
+
+#doc_options button{
+    padding: 1px;
+    margin: 1px 5px 0 0 ;
 }
 
 #save_button {
@@ -279,3 +297,7 @@ img.sync:active {
 #new_folder_menu {
     width:330px;
 }
+
+/* #footer{
+    display:none;
+}*/

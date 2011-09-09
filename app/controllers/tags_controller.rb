@@ -14,6 +14,7 @@ class TagsController < ApplicationController
     end
     @tags_json = Tag.tags_json(current_user)
     @recent_json = Tag.recent_json(current_user)
+    @username = current_user.username.nil?
   end
 
   def get_tags_json
@@ -68,6 +69,7 @@ class TagsController < ApplicationController
     # get and split index contents
     index = params[:create_with_index][:index].tempfile.readlines.join "\n"
     pages = index.split /<\/ul>/
+    pages.shift
 
     # create tag
     @tag = current_user.tags.find_by_name(params[:create_with_index][:name])
@@ -76,7 +78,7 @@ class TagsController < ApplicationController
 
     # create documents
     pages.each_with_index do |page, i|
-      @tag.documents << current_user.documents.create(:html => page, :name => (i + 1).to_s)
+      @tag.documents << current_user.documents.create(:html => page, :name => "Chapter #{(i + 1).to_s}")
     end
     @tag.save
 
@@ -182,5 +184,14 @@ class TagsController < ApplicationController
       end
       render :nothing => true, :status => 200
     end
+  end
+
+  def update_icon
+    if @tag = current_user.tags.find(params[:doc_id], :readonly => false)
+      @tag.update_attribute(:icon_id, params[:icon_id])
+    else
+      render :nothing => true, :status => 403
+    end
+    render :nothing => true
   end
 end

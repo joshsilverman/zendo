@@ -95,7 +95,7 @@ var cDoc = Class.create({
         var html = '<br/>';
         var results = [];
         $('search_json').innerHTML.evalJSON().collect(function(doc) {
-            if(doc['document']!=null) results.push(doc['document']);
+            if(doc['tag']!=null) results.push(doc['tag']);
         });
         console.log(results.length);
         if(results.length === 0){
@@ -108,7 +108,7 @@ var cDoc = Class.create({
                 if(i%5 ==0){
                     html += '<li><ul>';
                 }
-                html+='<li><div class="egg-box"><a href="store/details/'+doc['id']+'"><div class="egg"><img src="../../images/nounproject/'+this.icons[doc['icon_id']]+'" class="icon"></div></a>'+doc['name']+'<br /></div><li>';
+                html+='<li><div class="egg-box"><a href="store/egg_details/'+doc['id']+'"><div class="egg"></div></a>'+doc['name']+'<br /></div><li>';
                 if(i%5 ==4){
                     html += '</ul></li>';
                 }

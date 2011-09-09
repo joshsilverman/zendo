@@ -62,12 +62,12 @@ Zendo::Application.routes.draw do
   # match ':controller(/:action(/:id(.:format)))'
   
   #devise
-  devise_for :users, # :timeout_in => 5.seconds, #7.days,
+  devise_for :users, :remember_for => 4.weeks,
     :controllers => {:registrations => 'registrations', :sessions => 'sessions'}
 
   #tags
   get "tag/index" # ???
-  match "/explore" => "tags#index" #** public **#
+  match "/my_eggs" => "tags#index" #** public **#
   match "/tags/create" => "tags#create"
   match "/tags/create_and_assign" => "tags#create"
   match "/tags/update_tags_name"
@@ -96,6 +96,8 @@ Zendo::Application.routes.draw do
   match "/review/:id" => "documents#review" #** public **#
   match "/review/dir/:id" => "tags#review" #** public **#
   match "/mems/update/:id/:confidence/:importance" => "mems#update"
+  match "/demo/review/:id" => "demo#review"
+  match "/demo/egg_details/:id" => "demo#egg_details"
   resources :lines, :only => [:update]
   
   # organizer
@@ -104,6 +106,7 @@ Zendo::Application.routes.draw do
   match "/tags/get_popular_json" => "tags#get_popular_json"
   match "/tags/get_recent_json" => "tags#get_recent_json"
   match "/tags/claim_tag/:id" => "tags#claim_tag"
+  match "/tags/update_icon" => "tags#update_icon"
 
   # home page
   match "/users/welcome" => "users#home"
@@ -123,7 +126,7 @@ Zendo::Application.routes.draw do
   match "/users/update_username" => "users#update_username"
 
   # search
-  match "/dashboard" => "search#index"
+  #match "/dashboard" => "search#index"
   match "/search/query/:page" => "search#query"
   match "/search/full_query" => "search#full_query"
   match "/search/is_username_available" => "search#is_username_available"
@@ -134,6 +137,7 @@ Zendo::Application.routes.draw do
   #store
   match '/store' => 'store#index'
   match '/store/details/:id' => 'store#details'
+  match '/store/egg_details/:id' => 'store#egg_details'
   match '/choose_icon/:doc_id' => 'store#choose_icon'
 
   #static
@@ -144,7 +148,7 @@ Zendo::Application.routes.draw do
   match "/contact" => "static#contact"
 
   namespace :user do
-    root :controller => 'search', :action => 'index'
+    root :controller => 'tags', :action => 'index'
   end
 
   # catch-all route for static pages
