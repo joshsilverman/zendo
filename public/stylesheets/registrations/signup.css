@@ -6,3 +6,4 @@ input#user_submit { background: url(../../images/home/signup-button.png) no-repe
 .form_container label { margin-left: 5px; }
 .form_container p { clear: both; margin: 50px 0 0 0; text-align: center; }
 .form_container .reg-links {display: block; text-align: center; margin-top:15px;}
+.header-login { background: url(../../images/home/signin-button.png);}

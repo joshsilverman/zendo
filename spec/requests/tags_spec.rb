@@ -25,7 +25,7 @@ describe "tags", :js => true do
       fill_in "Email", :with => @user.email
       fill_in "Password", :with => @user.password
       click_button "Sign in"
-      visit "/explore"
+      visit "/my_eggs"
     end
 
     it "start Misc. collapsed and click expands it" do
@@ -61,10 +61,11 @@ describe "tags", :js => true do
 
         @tag_count = @user2.tags.all.count
         visit "/users/sign_out"
+        visit "/users/sign_in"
         fill_in "Email", :with => @user2.email
         fill_in "Password", :with => @user2.password
         click_button "Sign in"
-        visit "/explore"
+        visit "/my_eggs"
       end
 
       it "is displayed" do
@@ -105,7 +106,7 @@ describe "tags", :js => true do
     end
 
     it "deletes doc from Recent Docs" do
-      visit "/explore"
+      visit "/my_eggs"
       wait_until{ page.has_content?('Recent Documents')}
       wait_until{ page.has_content?('my tag2')}
       find('div.expand', :text => 'my tag2').click

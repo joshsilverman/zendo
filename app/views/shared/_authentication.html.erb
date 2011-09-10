@@ -1,4 +1,5 @@
 <% unless user_signed_in? %>
+    <% unless controller.controller_name == "sessions" || controller.controller_name == "registrations"%>
 <div class="login">
         <a href="#" class="login-link" id="login-link">Login</a>
 
@@ -15,7 +16,7 @@
 
                                           <%= f.text_field :email, :class => "field blink", :value => "Email", :title => "Email"%>
                                           <%= f.password_field :password, :class => "field blink", :value => "Password", :title => "Password"%>
-                                          <%= f.submit "Sign in", :class=>"button notext" %>
+                                          <%= f.submit "Sign in", :class=>"button notext header-login" %>
                                           <% if devise_mapping.rememberable? -%>
                                             <%= f.check_box :remember_me, :id => "check" %> <%= f.label :remember_me, :for => "check" %>
                                           <% end %>
@@ -34,6 +35,7 @@
         <!-- End DropDown -->
 
 </div>
+    <%end%>
 <% else %>
   <div class="usernav">
           <ul>
