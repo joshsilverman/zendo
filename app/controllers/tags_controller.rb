@@ -25,16 +25,21 @@ class TagsController < ApplicationController
     render :text => Tag.recent_json(current_user)
   end
 
+  # Returns an array with the tag id, tag name, and a boolean indicating if the
+  # current user has userships for all of the public docs in the tag
   def get_popular_json
-    #within each tag, if the user is missing a usership for any doc, return false
-    
+    #within each tag, if the user is missing a usership for any public doc, return false
     Tag::POPULAR_TAGS.each do |tag|
-      @owner = true
-      #should check public?
-      Document.all(:conditions => {:tag_id => tag[0]}).each do |doc|
-        if Usership.find_by_document_id_and_user_id(doc.id, current_user.id).nil?
-          @owner = false
-          break
+      @documents = Document.all(:conditions => {:tag_id => tag[0], :public => true})
+      if @documents.empty?
+        @owner = false
+      else
+        @owner = true
+        @documents.each do |doc|
+          if Usership.find_by_document_id_and_user_id(doc.id, current_user.id).nil?
+            @owner = false
+            break
+          end
         end
       end
       tag << @owner
@@ -42,6 +47,18 @@ class TagsController < ApplicationController
     popular = Tag::POPULAR_TAGS.to_json
     render :text => popular
   end
+
+#      @owner = true
+#      #should check public?
+#      Document.all(:conditions => {:tag_id => tag[0]}).each do |doc|
+#        if Usership.find_by_document_id_and_user_id(doc.id, current_user.id).nil?
+#          @owner = false
+#          break
+#        end
+#      end
+#      tag << @owner
+#    end
+
 
   def create
     #params

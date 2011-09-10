@@ -44,10 +44,7 @@ class Tag < ActiveRecord::Base
       next if tags[tag.id.to_s]
       tags[tag.id.to_s] = tag
     end
-    puts "RUN IT"
-    puts tags
     tags = tags.map {|id, tag| tag}
-    puts tags
     return tags.to_json(:include => {:documents => {:only => [:id, :name, :updated_at, :created_at, :tag_id], :include => {:userships => {:only => [:push_enabled] }}}})
   end
 
@@ -59,10 +56,6 @@ class Tag < ActiveRecord::Base
       recent_edit = Document.joins(:userships).select(['documents.name', 'documents.id', 'documents.tag_id', 'documents.edited_at', 'userships.reviewed_at', 'userships.push_enabled']).where("documents.edited_at >= ?  AND userships.user_id = ?", Date.yesterday - 7, current_user.id).limit(10)
       recent_review = Document.joins(:userships).select(['documents.name', 'documents.id', 'documents.tag_id', 'documents.edited_at', 'userships.reviewed_at', 'userships.push_enabled']).where("userships.reviewed_at >= ?  AND userships.user_id = ?", Date.yesterday - 14, current_user.id).limit(10)
       recent = recent_edit|recent_review
-      puts recent_edit.inspect
-      puts recent_review.inspect
-      puts recent.inspect
-
       recent.map! do |doc|
         doc_attributes = doc.attributes
         push_enabled = doc_attributes.delete("push_enabled")

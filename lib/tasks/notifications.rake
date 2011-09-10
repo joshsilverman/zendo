@@ -11,7 +11,7 @@ namespace :notifications do
             end
           end
         end
-        APN::Notification.create(:device => APN::Device.where('user_id = ?', user.id).first, :badge => Mem.all(:conditions => {:user_id => user.id, :pushed => true}).length, :sound => false, :alert => "You have new cards to review!", :user_id => user.id)
+        APN::Notification.create(:device => APN::Device.where('user_id = ?', user.id).last, :badge => Mem.all(:conditions => {:user_id => user.id, :pushed => true}).length, :sound => false, :alert => "You have new cards to review!", :user_id => user.id)
       rescue
         puts "Error during notifications rake!"
       end
