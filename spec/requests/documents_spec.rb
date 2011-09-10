@@ -27,8 +27,7 @@ describe "document" do
       fill_in "Email", :with => @user.email
       fill_in "Password", :with => @user.password
       click_button "Sign in"
-      visit "/dashboard"
-      visit "/explore"
+      visit "/my_eggs"
     end
 
     describe "options" do
@@ -62,8 +61,8 @@ describe "document" do
     end
 
     it "creates new document" do
-      visit "/explore"
-      click_link('Create A New Document')
+      visit "/my_eggs"
+      click_link('create your own StudyEgg')
       wait_until{ page.has_content?('Saved')}
     end
 
@@ -302,6 +301,7 @@ describe "document" do
           visit "/users/sign_out"
           @user2 = Factory.create(:user)
           @user2.save!
+          visit "/users/sign_in"
           fill_in "Email", :with => @user2.email
           fill_in "Password", :with => @user2.password
           click_button "Sign in"
@@ -378,6 +378,7 @@ describe "document" do
 
         before :each do
           visit "/users/sign_out"
+          visit "/users/sign_in"
           fill_in "Email", :with => @user2.email
           fill_in "Password", :with => @user2.password
           click_button "Sign in"

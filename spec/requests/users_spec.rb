@@ -20,23 +20,11 @@ describe "user", :js => true do
     it "signs up with correct info" do
       visit "/users/sign_up"
       fill_in "Email", :with => "asdf@asdfasf.com"
-      fill_in "Username", :with => "asdf1234"
 
       fill_in "Password", :with => @user.password
-      fill_in "Password confirmation", :with => @user.password
       click_button "Sign up"
-      current_path.should == "/dashboard"
+      current_path.should == "/my_eggs"
       page.should have_content("Welcome! You have signed up successfully.")
-    end
-
-    it "signs up with incorrect info" do
-      visit "/users/sign_up"
-      fill_in "Email", :with => "asdf@asdfasf.com"
-
-      fill_in "Password", :with => @user.password
-      click_button "Sign up"
-      current_path.should == "/users"
-      page.should have_content("Password doesn't match confirmation")
     end
 
 #    it "signs up from homepage" do
@@ -70,7 +58,7 @@ describe "user", :js => true do
       fill_in "Email", :with => @user.email
       fill_in "Password", :with => @user.password
       click_button "Sign in"
-      current_path.should == "/dashboard"
+      current_path.should == "/my_eggs"
     end
 
     it "uses incorrect username/password (redirect)" do
