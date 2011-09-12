@@ -1,16 +1,20 @@
 namespace :notifications do
   task :deliver => :environment do
     User.all( :include => :userships, :conditions => { :userships => { :push_enabled => true }}).each do |user|
-      @push_userships = user.userships.all(:conditions => { :userships => { :push_enabled => true }})
-      @push_userships.each do |usership|
-        if Mem.all(:conditions => { :user_id => user.id, :pushed => true, :document_id => usership.document_id }).length < 6
-          Mem.where('document_id = ? AND pushed = false AND user_id = ?', usership.document_id, user.id).order('strength asc').limit(3).each do |mem|
-            mem.pushed = true
-            mem.save
+      begin
+        @push_userships = user.userships.all(:conditions => { :userships => { :push_enabled => true }})
+        @push_userships.each do |usership|
+          if Mem.all(:conditions => { :user_id => user.id, :pushed => true, :document_id => usership.document_id }).length < 6
+            Mem.where('document_id = ? AND pushed = false AND user_id = ?', usership.document_id, user.id).order('strength asc').limit(3).each do |mem|
+              mem.pushed = true
+              mem.save
+            end
           end
         end
+        APN::Notification.create(:device => APN::Device.where('user_id = ?', user.id).last, :badge => Mem.all(:conditions => {:user_id => user.id, :pushed => true}).length, :sound => false, :alert => "You have new cards to review!", :user_id => user.id)
+      rescue
+        puts "Error during notifications rake!"
       end
-      APN::Notification.create(:device => APN::Device.where('user_id = ?', user.id).first, :badge => Mem.all(:conditions => {:user_id => user.id, :pushed => true}).length, :sound => false, :alert => "You have new cards to review!", :user_id => user.id)
     end
     APN::Notification.send_notifications
   end
