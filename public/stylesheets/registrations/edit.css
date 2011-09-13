@@ -17,7 +17,7 @@
     width: 300px;
 }
 
-.form_container input{width:200px;}
+.form_container input{width:200px; color: #595448;}
 
 .form_container .left, .form_container .right{margin-bottom: 10px;}
 

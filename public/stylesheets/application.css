@@ -148,7 +148,7 @@ ul.funfacts li { background: url(../images/home/tiny-egg.png) no-repeat; padding
 #footer .bottom { margin-top: -20px; }
 #footer .bottom p { text-align: right; font-size: 12px; color: #0066b2; }
 
-#sign-up .input { line-height: 24px; color: #cccccc; font-size: 15px; }
+#sign-up .input { line-height: 24px; color: #595448; font-size: 15px; }
 #sign-up input.field { background: url(../images/home/head-input.jpg) no-repeat 0 0; width: 202px; height: 31px; display: block; margin-bottom: 2px; padding: 0 10px; }
 #sign-up input.button { background: url(../images/home/head-button.jpg) no-repeat 0 0; width: 157px; height: 40px; cursor: pointer; float:right; display: block; margin-top: 5px; }
 
