@@ -164,9 +164,10 @@ document.observe('dom:loaded', function() {
             });
             $('login-link-hr').observe('click', function(){
                     $('dd').hide();
-                    return false;
+                    return false;console.log('test');
             });
-            console.log('test');
+        }
+        if($('Email')){
             $$('.blink')[0].observe('focus', function(){
 		if( $(this).getAttribute('title') == $(this).value ) {
 			$(this).value = "";
