@@ -31,6 +31,7 @@ class TagsController < ApplicationController
   # Returns an array with the tag id, tag name, and a boolean indicating if the
   # current user has userships for all of the public docs in the tag
   def get_popular_json
+    @popular = []
     #within each tag, if the user is missing a usership for any public doc, return false
     Tag::POPULAR_TAGS.each do |tag|
       @documents = Document.all(:conditions => {:tag_id => tag[0], :public => true})
@@ -46,9 +47,11 @@ class TagsController < ApplicationController
         end
       end
       tag << @owner
+      @popular << tag
     end
-    popular = Tag::POPULAR_TAGS.to_json
-    render :text => popular
+    render :json => @popular
+#    popular = Tag::POPULAR_TAGS.to_json
+#    render :text => popular
   end
 
 #      @owner = true
