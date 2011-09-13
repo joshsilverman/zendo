@@ -15,6 +15,9 @@ class TagsController < ApplicationController
     @tags_json = Tag.tags_json(current_user)
     @recent_json = Tag.recent_json(current_user)
     @username = current_user.username.nil?
+#    if mobile_device?
+#      render :nothing => true
+#    end
   end
 
   def get_tags_json
