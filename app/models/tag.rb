@@ -31,7 +31,7 @@ class Tag < ActiveRecord::Base
       if tags[doc.tag_id.to_s].nil?
         tag = Tag.find_by_id doc.tag_id
         next unless tag
-        tags[doc.tag_id.to_s] = Tag.new(:name => tag.name, :user_id => tag.user_id, :created_at => tag.created_at, :misc => tag.misc, :updated_at => tag.updated_at)
+        tags[doc.tag_id.to_s] = Tag.new(:name => tag.name, :icon_id => tag.icon_id, :user_id => tag.user_id, :created_at => tag.created_at, :misc => tag.misc, :updated_at => tag.updated_at)
         tags[doc.tag_id.to_s].id = tag.id
       end
       tags[doc.tag_id.to_s].documents << doc
@@ -44,7 +44,6 @@ class Tag < ActiveRecord::Base
       next if tags[tag.id.to_s]
       tags[tag.id.to_s] = tag
     end
-
     tags = tags.map {|id, tag| tag}
     return tags.to_json(:include => {:documents => {:only => [:id, :name, :updated_at, :created_at, :tag_id], :include => {:userships => {:only => [:push_enabled] }}}})
   end
@@ -57,10 +56,6 @@ class Tag < ActiveRecord::Base
       recent_edit = Document.joins(:userships).select(['documents.name', 'documents.id', 'documents.tag_id', 'documents.edited_at', 'userships.reviewed_at', 'userships.push_enabled']).where("documents.edited_at >= ?  AND userships.user_id = ?", Date.yesterday - 7, current_user.id).limit(10)
       recent_review = Document.joins(:userships).select(['documents.name', 'documents.id', 'documents.tag_id', 'documents.edited_at', 'userships.reviewed_at', 'userships.push_enabled']).where("userships.reviewed_at >= ?  AND userships.user_id = ?", Date.yesterday - 14, current_user.id).limit(10)
       recent = recent_edit|recent_review
-      puts recent_edit.inspect
-      puts recent_review.inspect
-      puts recent.inspect
-
       recent.map! do |doc|
         doc_attributes = doc.attributes
         push_enabled = doc_attributes.delete("push_enabled")
@@ -76,14 +71,8 @@ class Tag < ActiveRecord::Base
   end
 
   POPULAR_TAGS = [
-                  [573, "Companion to Biological Science (Freeman)"],
-                  [43, "Companion to Biology with MasteringBiology (Campbell & Reece)"],
-                  [573, "Companion to Psychology Applied to Modern Life (Weiten)"],
-                  [43, "Companion to Organic Chemistry (Solomons & Fryhle)"],
-                  [573, "Companion to Chemistry: The Central Science (Brown)"],
-                  [573, "Companion to Psychology (Myers)"],
-#                  [14, "IT Security"]
-                  [43, "ITE"]
+                  [2011, "Companion to Applied Psychology (10th Edition)"],
+                  [2061, "Companion to Cognitive Neuroscience w/ Gazzinga (3rd Edition)"]
                  ]
 
 end

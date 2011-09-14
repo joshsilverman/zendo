@@ -14,6 +14,10 @@ class TagsController < ApplicationController
     end
     @tags_json = Tag.tags_json(current_user)
     @recent_json = Tag.recent_json(current_user)
+    @username = current_user.username.nil?
+#    if mobile_device?
+#      render :nothing => true
+#    end
   end
 
   def get_tags_json
@@ -24,23 +28,44 @@ class TagsController < ApplicationController
     render :text => Tag.recent_json(current_user)
   end
 
+  # Returns an array with the tag id, tag name, and a boolean indicating if the
+  # current user has userships for all of the public docs in the tag
   def get_popular_json
-    #within each tag, if the user is missing a usership for any doc, return false
-    
+    @popular_tags = []
+    #within each tag, if the user is missing a usership for any public doc, return false
     Tag::POPULAR_TAGS.each do |tag|
-      @owner = true
-      #should check public?
-      Document.all(:conditions => {:tag_id => tag[0]}).each do |doc|
-        if Usership.find_by_document_id_and_user_id(doc.id, current_user.id).nil?
-          @owner = false
-          break
+      @tag_container = []
+      @tag_container << tag[0]
+      @tag_container << tag[1]
+      @documents = Document.all(:conditions => {:tag_id => tag[0], :public => true})
+      if @documents.empty?
+        @owner = false
+      else
+        @owner = true
+        @documents.each do |doc|
+          if Usership.find_by_document_id_and_user_id(doc.id, current_user.id).nil?
+            @owner = false
+            break
+          end
         end
       end
-      tag << @owner
+      @tag_container << @owner
+      @popular_tags << @tag_container
     end
-    popular = Tag::POPULAR_TAGS.to_json
-    render :text => popular
+    render :json => @popular_tags
   end
+
+#      @owner = true
+#      #should check public?
+#      Document.all(:conditions => {:tag_id => tag[0]}).each do |doc|
+#        if Usership.find_by_document_id_and_user_id(doc.id, current_user.id).nil?
+#          @owner = false
+#          break
+#        end
+#      end
+#      tag << @owner
+#    end
+
 
   def create
     #params
@@ -176,16 +201,21 @@ class TagsController < ApplicationController
     if @base_egg.nil?
       render :nothing => true, :status => 400
     else
-#      @new_egg = Tag.create(:name => @base_egg.name, :user_id => current_user.id)
       @base_egg.documents.each do |doc|
-        if doc.public?
-          puts "public doc found!"
-          puts doc.id
-          ##TODO Check if userships already exists!!!
+        if doc.public? && Usership.all(:conditions => { :user_id => current_user.id, :document_id => doc.id }).empty?
           Usership.create(:user_id => current_user.id, :document_id => doc.id, :push_enabled => false, :owner => false)
         end
       end
       render :nothing => true, :status => 200
     end
+  end
+
+  def update_icon
+    if @tag = current_user.tags.find(params[:doc_id], :readonly => false)
+      @tag.update_attribute(:icon_id, params[:icon_id])
+    else
+      render :nothing => true, :status => 403
+    end
+    render :nothing => true
   end
 end

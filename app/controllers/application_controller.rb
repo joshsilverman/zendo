@@ -1,11 +1,23 @@
 class ApplicationController < ActionController::Base
   before_filter :check_uri
   before_filter :authenticate_user!
+  # before_filter :check_headers
 
   helper :all
 
   protect_from_forgery
-  include ApplicationHelper  
+  include ApplicationHelper
+
+#  def check_headers
+#    puts request.env
+#    @headers |= request.env.inject({}) { |h, (k, v)|
+#      if k =~ /^(HTTP|CONTENT)_/ then
+#        h[k.sub(/^HTTP_/, '').dasherize.gsub(/([^\-]+)/) { $1.capitalize }] = v
+#      end
+#      h    
+#    }
+#  end
+
   def check_uri
 
     if /^www\./.match(request.host_with_port)
@@ -22,10 +34,13 @@ class ApplicationController < ActionController::Base
   end
   
   def check_admin
-    redirect_to "/dashboard" unless current_user.try(:admin?)
+    redirect_to "/my_eggs" unless current_user.try(:admin?)
   end
 
+  
   private
+
+
   def set_abingo_identity
     if request.user_agent =~ /\b(Baidu|Gigabot|Googlebot|libwww-perl|lwp-trivial|msnbot|SiteUptime|Slurp|WordPress|ZIBB|ZyBorg)\b/i
       Abingo.identity = "robot"
@@ -40,6 +55,7 @@ class ApplicationController < ActionController::Base
   def mobile_device?
     return request.user_agent.include? 'iPhone'
   end
+
   helper_method :mobile_device?
   
 end

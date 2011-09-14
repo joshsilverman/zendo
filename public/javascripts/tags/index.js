@@ -13,6 +13,8 @@ var cDoc = Class.create({
     activeTags: null,
     activeItemId: '',
     h: null,
+    typingTimer: setTimeout('', 100),                //timer identifier
+    doneTypingInterval: 1000,  //time in ms, 2 second for example
 
     initialize: function() {
     	console.log("Initialize");
@@ -24,6 +26,29 @@ var cDoc = Class.create({
         this.classSelector = new cClassSelector(true);
         //new Dialog.Box('rename_folder_modal');
         //$('rename_folder_modal').show();
+
+        if(document.getElementById('userfield')!=null){
+            $('userfield').observe('keydown', function(){
+                clearTimeout(this.typingTimer);
+                $('submit').setStyle({'display': 'none'});
+                $('taken').setStyle({'display': 'none'});
+                $('available').setStyle({'display': 'none'});
+                $('validate').setStyle({'display':'none'});
+            }.bind(this));
+
+            $('userfield').observe('keyup', function(){
+                if($('userfield').value.length != 0){
+                    console.log("interval "+this.doneTypingInterval);
+                    this.typingTimer = setTimeout(function(){this.checkUsername($('userfield').value);}.bind(this), this.doneTypingInterval);
+                }
+            }.bind(this));
+
+            $('submit').observe('click', function(){
+                if($('userfield').value.length != 0){
+                    this.setUsername($('userfield').value);
+                }
+            }.bind(this));
+        }
     },
 
     prepareData: function() {
@@ -68,7 +93,24 @@ var cDoc = Class.create({
     },
 
     onChange: function(){
-        this.render();
+        console.log('THIS DOT DOCS');
+        var isEmpty = true;
+        this.docs.each(function(d){
+            isEmpty = false;
+        });
+        if(isEmpty) {
+            this.render();
+            $('documents').update("<div style='text-align: center; color:#d22b21; margin-top:150px;'>\
+                                    <h1>Looks like you don't have any StudyEggs right now.</h1>\
+                                    <h2 style='color:#595448; margin-top:15px;'>Check out the <a href='/store'>EggStore</a> and snag yourself some knowledge!</h2>\
+                                     <p style='color:#595448; margin-top:15px;'>(Overachiever? You can also <a href='/documents/create/0'>create your own StudyEgg</a> from scratch. )</p>");
+            $('left_container').setStyle({"display":"none"});
+            $('documents').setStyle({"width":"100%"});
+        } else {
+            $('left_container').setStyle({"display":"block"});
+            $('documents').setStyle({"width":"70%"});
+            this.render();
+        }
     },
 
     _buildFolders: function(){
@@ -106,7 +148,7 @@ var cDoc = Class.create({
             //if($(this.activeItemId)){
             if((doc['id']+'_recent')==this.activeItemId){
                   html+= '<div class="doc_item active" doc_id="'+doc['id']+'" id="'+doc['id']+'_recent">\
-                    <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
+                    <!--<input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>-->\
                     <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+' </span> ('+tName+')\
                     <div class="doc_actions" style="display:block;">\
                     <ul><li><a href="/documents/'+doc['id']+'/edit"><img class="doc_action_img" src="../../images/organizer/edit-icon-15x15.png">edit</a></li>\
@@ -117,7 +159,7 @@ var cDoc = Class.create({
               //}
                 } else {
                   html += '<div class="doc_item inactive" doc_id="'+doc['id']+'" id="'+doc['id']+'_recent">\
-                    <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
+                    <!--<input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>-->\
                     <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+' </span> ('+tName+')\
                     <div class="doc_actions">\
                     <ul><li><a href="/documents/'+doc['id']+'/edit"><img class="doc_action_img" src="../../images/organizer/edit-icon-15x15.png">edit</a></li>\
@@ -139,7 +181,7 @@ var cDoc = Class.create({
               ///if($(this.activeItemId)){
               if(doc['id']==this.activeItemId){
                   html+= '<div id="'+doc['id']+'" class="doc_item active" doc_id="'+doc['id']+'">\
-                    <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
+                    <!--<input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>-->\
                     <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+'</span>\
                     <div class="doc_actions" style="display:block;">\
                     <ul><li><a href="/documents/'+doc['id']+'/edit"><img class="doc_action_img" src="../../images/organizer/edit-icon-15x15.png">edit</a></li>\
@@ -150,7 +192,7 @@ var cDoc = Class.create({
               //}
                 } else {
               html += '<div id="'+doc['id']+'" class="doc_item inactive" doc_id="'+doc['id']+'">\
-                    <input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>\
+                    <!--<input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>-->\
                     <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+'</span>\
                     <div class="doc_actions">\
                     <ul><li><a href="/documents/'+doc['id']+'/edit"><img class="doc_action_img" src="../../images/organizer/edit-icon-15x15.png">edit</a></li>\
@@ -178,7 +220,7 @@ var cDoc = Class.create({
            }
         });
         if(checkedList[0] == null && this.activeItemId==''){
-            html += '<span id="create_folder">Create New Folder</span>\
+            html += '<span id="create_folder">Create New StudyEgg</span>\
                     <span style="text-align:center; display:block; margin:10px 0">- OR -</span>\
                     <em style="text-align:center; display:block;" >Select a document to view details...</em>';
         } else if((checkedList[0] == null && this.activeItemId!='')||(checkedList[1] == null && this.activeItemId!='')){
@@ -421,6 +463,8 @@ var cDoc = Class.create({
          console.log('Rename Folder Start');
         /* request params */
         new Dialog.Box('rename_folder_modal');
+        $('update_icon').writeAttribute({"href":"/choose_icon/"+event.target.getAttribute('id').substring(5)});
+        console.log('update icon!');
         $('rename_folder_modal').show();
 
         $('submit_rename').observe('click', function(){
@@ -439,7 +483,7 @@ var cDoc = Class.create({
             parameters: parameters,
             onFailure: function() {
                 console.log('FAIL');
-                alert('There was an error renaming the folder. Please try again');
+                alert('There was an error renaming the StudyEgg. Please try again');
             },
             onSuccess: function() {
                 console.log('SUCCESS');
@@ -462,6 +506,73 @@ var cDoc = Class.create({
             }.bind(this)
         });
         }.bind(this));
+    },
+
+    checkUsername: function(username){
+        var u = $('userfield').value;
+        if(u.length === 0) {
+            $('validate').setStyle({'display':'block'});
+            $('taken').setStyle({'display': 'none'});
+            $('available').setStyle({'display': 'none'});
+            $('submit').setStyle({'display': 'none'});
+            return
+        };
+        var regex = /^\w+[^\s]\w+$/.test(u);
+        console.log(u);
+        if(u.length<3 || u.length>20 || !regex ){
+            $('validate').setStyle({'display':'block'});
+            $('taken').setStyle({'display': 'none'});
+            $('available').setStyle({'display': 'none'});
+            $('submit').setStyle({'display': 'none'});
+        } else {
+            var parameters = {};
+            parameters['u'] = u;
+            new Ajax.Request('/search/is_username_available', {
+               method: 'post',
+               parameters: parameters,
+               onComplete: function(transport) {
+                   console.log("Is it available? "+transport.responseText);
+                   if(transport.responseText=='true'){
+                        console.log('evaluated as true');
+                        $('validate').setStyle({'display':'none'});
+                        $('taken').setStyle({'display': 'none'});
+                        $('available').setStyle({'display': 'inline'});
+                        $('submit').setStyle({'display': 'inline'});
+                   } else {
+                        console.log('false');
+                        $('validate').setStyle({'display':'none'});
+                        $('taken').setStyle({'display': 'inline'});
+                        $('available').setStyle({'display': 'none'});
+                        $('submit').setStyle({'display': 'none'});
+                   }
+                   console.log('success2');
+               }
+            });
+        }
+    },
+
+    setUsername: function(username){
+        var u = $('userfield').value;
+        if(u.length === 0) {
+            $('taken').setStyle({'display': 'none'});
+            $('available').setStyle({'display': 'none'});
+            $('submit').setStyle({'display': 'none'});
+            return
+        };
+        var parameters = {};
+        parameters['u'] = u;
+        new Ajax.Request('/users/update_username', {
+           method: 'post',
+           parameters: parameters,
+           onComplete: function(transport) {
+               if(transport.status == 200){
+                Lightview.hide();
+                console.log('success2');
+               } else {
+                   alert('there was an error with your screen name');
+               }
+           }
+        });
     },
 
     render: function(){
@@ -493,22 +604,22 @@ var cDoc = Class.create({
             if(event.target.getAttribute('class')=='doc_item active' || event.target.getAttribute('class')=='doc_item inactive'){
             if(this.activeItemId==''){ //if nothing is open
                 console.log($(this.activeItemId)+" 1");
-                event.target.down(2).setStyle({display:'block'});
+                event.target.down(1).setStyle({display:'block'});
                 this.activeItemId = event.target.id;
                 event.target.removeClassName('inactive');
                 event.target.addClassName('active');
                 event.stop();
             } else if(this.activeItemId==event.target.id) { //if you reclick an open item
                 console.log($(this.activeItemId).id+" 2");
-                event.target.down(2).setStyle({display:'none'});
+                event.target.down(1).setStyle({display:'none'});
                 this.activeItemId = '';
                 event.target.removeClassName('active');
                 event.target.addClassName('inactive');
                 event.stop();
             } else { //if you switch open items
                 console.log($(this.activeItemId)+" 3");
-                $(this.activeItemId).down(2).setStyle({display:'none'});
-                event.target.down(2).setStyle({display:'block'});
+                $(this.activeItemId).down(1).setStyle({display:'none'});
+                event.target.down(1).setStyle({display:'block'});
                 event.target.removeClassName('inactive');
                 event.target.addClassName('active');
                 $(this.activeItemId).removeClassName('active');
@@ -655,4 +766,22 @@ document.observe('dom:loaded', function() {
 
     /* fire app:loaded */
     document.fire('app:loaded');
+});
+
+document.observe('lightview:loaded', function() {
+
+    if(document.getElementById('userfield')!=null){
+      Lightview.show({
+        href: 'username',
+        rel: 'inline',
+    //    title: 'Choose a Username',
+    //    caption: 'Don\'t worry, you can always change it later',
+        options: {
+          width: 400,
+          height: 220,
+          overlayClose: false,
+          closeButton: false
+        }
+      });
+    }
 });

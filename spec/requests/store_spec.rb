@@ -42,7 +42,7 @@ describe "store", :js => true do
       wait_until{ page.has_content?('Popular Eggs')}
       fill_in "search-box", :with => 'ten'
       page.find('#mag').click
-      wait_until{ page.has_content?('title ten')}
+      wait_until{ page.has_content?('my tag2')}
     end
 
   end
@@ -76,12 +76,12 @@ describe "store", :js => true do
     it "a document" do
       visit "/store"
       wait_until{ page.has_content?('Popular Eggs')}
-      wait_until{ page.has_content?('title one')}
-      page.find('.egg').click
-      wait_until{ page.has_content?('Preview')}
+      wait_until{ page.has_content?('my tag2')}
+      visit "/store/egg_details/1"
+      wait_until{ page.has_content?('my tag1')}
       page.find('.buy').click
-      wait_until{ page.has_content?('Purchased')}
-      visit "/explore"
+      sleep 1
+      visit "/my_eggs"
       wait_until{ page.has_content?('title one')}
     end
 

@@ -36,41 +36,11 @@ describe "dashboard", :js => true do
     end
 
     it "has working public documents as popular" do
-      wait_until{ page.has_content?('Popular Now')}
-      wait_until{ page.has_content?('Bio')}
     end
 
     it "searches and finds relevant working docs" do
-      wait_until{ page.has_content?('Popular Now')}
-      fill_in "search_bar", :with => 'eleven'
-      click_button "Search"
-      #wait_until{ find('a', :text => 'title eleven')}
-      wait_until{ page.has_content?('title eleven')}
     end
 
-  end
-
-  describe "links" do
-    before(:each) do
-      @user = Factory.create(:user)
-      @user.save!
-      visit "/users/sign_in"
-      fill_in "Email", :with => @user.email
-      fill_in "Password", :with => @user.password
-      click_button "Sign in"
-    end
-
-    it "clicks on create a new study guide" do
-      wait_until{ page.has_content?('Popular Now')}
-      click_link('Create A New Study Guide')
-      wait_until{ page.has_content?('Quick Tips')}
-    end
-
-    it "clicks on organizer link" do
-      wait_until{ page.has_content?('Popular Now')}
-      click_link('Organize Your Study Guides')
-      wait_until{ find('div', :text => 'Recent Documents')}
-    end
   end
 
   describe "has username" do

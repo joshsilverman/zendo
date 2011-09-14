@@ -1,46 +1,15 @@
+<% @page_specific_scripts_js = ["/javascripts/store/details.js"] %>
 <%= javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/prototype/1/prototype.js', :cache => false %>
+<% @page_specific_scripts_css = ["/stylesheets/store/index.css"]%>
+<div style="margin:10px auto; padding:10px; width: 600px;">
+  <div id="breadcrumbs">
+    <a href="/store">Egg Store</a> >> <a href="/store/egg_details/<%= @tag.id %>"><%= @tag.name %></a> >> <a href="#"><%= @document.name %></a>
+  </div>
+  <div style="float:left; margin-top: 15px;"><img src="../../images/home/document.png"/></div>
+  <div class="detail-float">
 
-  <% if @page_specific_scripts_js %> <%= javascript_include_tag @page_specific_scripts_js, :cache => '/cache/' + auto_js_css %> <% end %>
-    <script type="text/javascript" src="../../javascripts/store/details.js"></script>
-<style>
-  .buy{
-    cursor: pointer;
-    text-decoration: underline;
-    color: blue;
-  }
-  #recent_eggs li, #popular_eggs li {
-    list-style-type: none;
-    list-style-position: inside;
-    float:left;
-}
-  .egg{
-    display: block;
-    width: 83px;
-    height: 115px;
-    overflow: hidden;
-    background: url("../../images/nounproject/egg.png");
-    position: relative;
-    float: left;
-}
 
-.egg-box{
-    display: block;
-    width: 85px;
-    margin: 0 25px 15px 0;
-}
-
-  .icon{
-    position: relative;
-    top: 30px;
-    left:15px;
-    display:block;
-}
-
-</style>
-    <h2>EggStore</h2>
-<div class="rounded_border" style="margin:10px auto; padding:10px; width: 600px;">
-<div class="egg"><img src="../../images/nounproject/<%= Document::ICON_TYPES[@document.icon_id] %> " class="icon"></div>
-<h1><%= @document.name %></h1>
+<h1 class="egg-head"><%= @document.name %></h1>
 
 <% purchased = false %>
 <% @userships.each do |u| %>
@@ -50,13 +19,13 @@
 <% end %>
 
 <% if purchased %>
-  <h2 class="purchased">Purchased</h2>
+<span class="purchased"><img src="../../images/home/purchased.png" /></span>
 <% else %>
-  <h2 id="<%= @document.id%>" class="buy">Get It Now</h2>
+  <span id="<%= @document.id%>" class="buy"><img src="../../images/home/get-it-now.png" /></span>
 <% end %>
 
   <div id="content" style="display:block; clear: both; height:220px; overflow: hidden; margin-top:15px;">
-    <h3 style="margin-bottom: 10px;">Preview</h3>
+    <h4>Preview</h4>
     <% html =  @document.html.split(/[<>]/) %>
     <% i = 0 %>
     <% html.each do |h| %>
@@ -66,4 +35,6 @@
       <% i+=1 %>
     <% end %>
   </div>
+</div>
+  <div class="cl"></div>
 </div>

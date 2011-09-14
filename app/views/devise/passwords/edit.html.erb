@@ -1,6 +1,6 @@
 <% @page_specific_scripts_css = '/stylesheets/static/devise' %>
 
-<div class="modal rounded_border">
+<div style="width:350px; margin:0 auto 15px auto; padding: 10px;">
   <h2>Change your password</h2>
 
   <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put }) do |f| %>

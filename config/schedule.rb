@@ -1,5 +1,6 @@
-set :environment, "development"
+#set :environment, "development"
+set :environment, "production"
 
-every 1.hour do
-  rake "notifications:collect"
+every 3.hours do
+  rake "notifications:deliver"
 end

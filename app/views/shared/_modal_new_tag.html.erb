@@ -1,15 +1,20 @@
 <div id="new_folder_menu" class="modal" style="display:none; width:330px;">
   <div class="title">
-    Create Folder
+    Create StudyEgg
   </div>
   <div class="content">
 
     <div class="clr-thin"></div>
     <div>
+      <div style="float:left;"><img src="../images/home/egg.png"/></div>
+      <div style="float:left; width:150px;">
       <span class="option">Title:</span>
         <input id="tag_name" name="tag[name]" size="30" type="text" maxlength="40"></input>
         <%= submit_tag "Create", :id => "create_tag_submit" %>
         <%= image_tag "shared/fb-loader.gif", :alt => 'loading', :style => "margin-right:5px;visibility:hidden;", :id => "new_tag_loading" %>
+    
+      </div>
+      <div class="cl"></div>
     </div>
   </div>
 </div>

@@ -5,9 +5,10 @@ class SearchController < ApplicationController
     @popular += Document.joins(:tag).select(['documents.name', 'documents.id', 'tags.name AS tag_name']).where("public AND documents.name LIKE ?", '%1.1%').limit(1)
     @popular += Document.joins(:tag).select(['documents.name', 'documents.id', 'tags.name AS tag_name']).where("public AND documents.name LIKE ?", '%1.2%').limit(1)
     @popular += Document.joins(:tag).select(['documents.name', 'documents.id', 'tags.name AS tag_name']).where("public AND documents.name LIKE ?", '%2.1%').limit(1)
-    
     @username = current_user.username.nil?
-    puts @username
+    if mobile_device? 
+      render :nothing => true
+    end
   end
 
   def query
@@ -26,7 +27,11 @@ class SearchController < ApplicationController
 
   def full_query
     q = params[:q]
-    query = Document.joins(:tag).select(['documents.name', 'documents.id', 'documents.icon_id', 'tags.name AS tag_name']).where("(tags.name LIKE ? OR documents.name LIKE ?) AND public", '%'+q+'%', '%'+q+'%').limit(50)
+    if mobile_device?
+      query = Document.joins(:tag).select(['documents.name', 'documents.id', 'documents.icon_id', 'tags.name AS tag_name']).where("(tags.name LIKE ? OR documents.name LIKE ?) AND public", '%'+q+'%', '%'+q+'%').limit(50)
+    else
+      query = Tag.joins(:documents).select(['tags.name', 'tags.id']).where("(tags.name LIKE ? OR documents.name LIKE ?)", '%'+q+'%', '%'+q+'%').group('tags.id').limit(50)
+    end
     query = query.to_json()
     render :text => query
   end

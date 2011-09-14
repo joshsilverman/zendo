@@ -31,12 +31,8 @@ class DocumentsController < ApplicationController
   def edit
     # check id posted
     id = params[:id]
-    puts id
-    puts params[:read_only]
+    get_document(params[:id])
     @read_only = params[:read_only]
-    puts @read_only
-    puts get_document(params[:id])
-    puts @document
     @usership = Usership.find_by_document_id_and_user_id(params[:id], current_user.id)
     if @document.public && @usership.nil?
       @usership = Usership.create(:user_id => current_user.id,
@@ -46,7 +42,7 @@ class DocumentsController < ApplicationController
                                   :owner => false)
     end
     if (@usership.nil? || @document.nil?) && !current_user.try(:admin?)
-      redirect_to '/explore', :notice => "Error accessing that document."
+      redirect_to '/my_eggs', :notice => "Error accessing that document."
       return
     end
     # redirect if public, not owner, and trying to edit
