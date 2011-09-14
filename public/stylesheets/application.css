@@ -84,7 +84,7 @@ textarea { overflow: auto; }
 
 .shell { width:971px; margin: 0 auto; }
 
-#header { background: #218dd2; border-bottom: 1px solid #0066b2; }
+#header { background: #218dd2; border-bottom: 1px solid #0066b2;}
 #head { padding: 10px 0; position: relative; }
 #head .row { padding: 0 0 19px 0; }
 
