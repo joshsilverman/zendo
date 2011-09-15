@@ -171,8 +171,7 @@ var cDoc = Class.create({
             editorIfrHeight += 28;
             rightRailHeight += 28;
             rightRail.setStyle({marginTop: '0px'});
-            editorContainer.setStyle({'margin-left':'-176px'})
-            helperContainer.hide();
+            //helperContainer.hide();
         }
 //        editorWhitespace.setStyle({height: editorIfrHeight + 10 + 'px'});
         rightRail.setStyle({height: rightRailHeight - 20 + 'px'});
