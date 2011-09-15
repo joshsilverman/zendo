@@ -329,7 +329,8 @@ class DocumentsController < ApplicationController
   def purchase_doc
     @user = current_user
     @document = Document.find(params['doc_id'])
-    if @user and @document and @document.public
+    @usership = Usership.find_by_document_id_and_user_id(params['doc_id'],@user.id)
+    if @user and @document and @document.public and @usership.nil?
       begin
       	Usership.create(:user_id => @user.id,
       				    :document_id => @document.id,
