@@ -53,7 +53,16 @@ class ApplicationController < ActionController::Base
   end
 
   def mobile_device?
-    return request.user_agent.include? 'iPhone'
+    @mobile = false
+    ## Check if iPhone
+    if request.user_agent.include? 'iPhone'
+      @mobile = true
+      end
+    ## Check if Android
+    if request.user_agent.include? 'android-app'
+      @mobile = true
+    end
+    return @mobile
   end
 
   helper_method :mobile_device?

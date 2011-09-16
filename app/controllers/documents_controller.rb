@@ -407,7 +407,6 @@ class DocumentsController < ApplicationController
   end
 
   def get_permission(document)
-    puts document.to_json
     @w = @r = false
     return if document.nil?
     if Usership.find_by_document_id(document.id).user_id == current_user.id

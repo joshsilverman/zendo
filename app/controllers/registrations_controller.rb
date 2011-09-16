@@ -20,11 +20,18 @@ class RegistrationsController < Devise::RegistrationsController
       end
     else
       clean_up_passwords(resource)
-      render_with_scope :new
+      if mobile_device?
+	    render :nothing => true
+	  else
+	    render_with_scope :new
+	  end
+      
     end
 
     session[:omniauth] = nil unless @user.new_record?
+    
 
+	
   end
 
   def build_resource(*args)
