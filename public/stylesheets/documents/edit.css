@@ -68,7 +68,12 @@ button.saving {
     background-color:#fff;
 }
 
-#editor_container, #editor {
+#editor_container{
+    float:left;
+    width:659px;
+}
+
+#editor {
     float:left;
     width:659px;
 }
