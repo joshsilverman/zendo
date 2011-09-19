@@ -331,7 +331,7 @@ class DocumentsController < ApplicationController
   def purchase_doc
     @user = current_user
     @document = Document.find(params['doc_id'])
-#    @usership = Usership.find_by_document_id_and_user_id(params['doc_id'], current_user.id)
+    @usership = Usership.find_by_document_id_and_user_id(params['doc_id'],@user.id)
     if @user and @document and @document.public and @usership.nil?
       begin
       	Usership.create(:user_id => @user.id,
@@ -407,7 +407,6 @@ class DocumentsController < ApplicationController
   end
 
   def get_permission(document)
-    puts document.to_json
     @w = @r = false
     return if document.nil?
     if Usership.find_by_document_id(document.id).user_id == current_user.id

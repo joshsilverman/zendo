@@ -156,7 +156,7 @@ var cDoc = Class.create({
         cardContainer.show();
 
         /* calculations */
-        var bottomMargin = 22;
+        var bottomMargin = 0; //22;
         var editorVerticalSpaceHeight = document.viewport.getDimensions()['height']
             - editorContainer.cumulativeOffset().top - bottomMargin;
         var editorWhitespace = $('editor_tbl');
@@ -171,7 +171,6 @@ var cDoc = Class.create({
             editorIfrHeight += 28;
             rightRailHeight += 28;
             rightRail.setStyle({marginTop: '0px'});
-            editorContainer.setStyle({'margin-left':'-176px'})
             helperContainer.hide();
         }
 //        editorWhitespace.setStyle({height: editorIfrHeight + 10 + 'px'});
@@ -179,7 +178,7 @@ var cDoc = Class.create({
         helperContainer.setStyle({height: rightRailHeight - 20+ 'px'});
         cardContainer.setStyle({height: rightRailHeight - 30 + 'px'});
         $("editor_ifr").setStyle({height: editorIfrHeight - 20 + 'px'});
-        $('shadow_wrapper').setStyle({height : editorVerticalSpaceHeight +18 + 'px'});
+        $('shadow_wrapper').setStyle({height : editorIfrHeight - 80 + 'px'});         //{height : editorVerticalSpaceHeight +18 + 'px'});
         
 
         /* set widths */

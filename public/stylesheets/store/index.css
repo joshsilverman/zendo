@@ -65,7 +65,7 @@ input[type="search"]::-webkit-search-results-decoration {
 
 #carousel-1{margin:0 auto;}
 
-.egg-head{font-size: 30px; margin: 20px 0;}
+.egg-head{font-size: 30px; margin: 20px 0; line-height: 30px;}
 .detail-float{float:left; width:400px;}
 .detail-float li{margin-left:-20px; }
 .detail-float li a{text-decoration: underline;}
