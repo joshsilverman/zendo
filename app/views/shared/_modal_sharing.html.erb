@@ -15,10 +15,12 @@
     <div class="user-tokens" id="viewers">
       <span class="option" style="float:left; padding: 2px 2px 2px 0; margin: 2px 2px 2px 0;">Sharing with:</span>	  
       <% @document.userships.where('owner = 0').all.each do |viewer| %>
-        <span class="token removable" viewer_id="<%= viewer.user_id %>">
-          <%= viewer.user.username %>
-          <span class="remove" >X</span>
-        </span>
+        <% unless viewer.nil? %>
+          <span class="token removable" viewer_id="<%= viewer.user_id %>">
+            <%= viewer.user.username %>
+            <span class="remove" >X</span>
+          </span>
+        <% end %>
       <% end %>
     </div>
     <div class="clr-thin"></div>
@@ -47,9 +49,9 @@
     <div class="icon-view">
       Icon
       <div class="egg">
-        <img src="../../images/nounproject/<%= Document::ICON_TYPES[@document.icon_id] %>" class="icon">
+        <img src="../../images/nounproject/<%= #Document::ICON_TYPES[@document.icon_id] %>" class="icon">
       </div>
-      <a href='../../choose_icon/<%= @document.id %>' class='lightview' title=" :: :: width: 520, height: 170">Change Icon</a>
+      <a href='../../choose_icon/<%= #@document.id %>' class='lightview' title=" :: :: width: 520, height: 170">Change Icon</a>
     </div>-->
   </div>
 </div>
