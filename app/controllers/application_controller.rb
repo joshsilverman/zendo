@@ -27,6 +27,11 @@ class ApplicationController < ActionController::Base
 
       redirect_to redirect_loc
     end
+
+    if request.path == "/user"
+      redirect_loc = request.protocol + request.host_with_port + "/my_eggs"
+      redirect_to redirect_loc
+    end
   end
 
   def redirect_logger
