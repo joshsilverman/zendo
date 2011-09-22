@@ -27,6 +27,11 @@ class ApplicationController < ActionController::Base
 
       redirect_to redirect_loc
     end
+
+    if request.path == "/user"
+      redirect_loc = request.protocol + request.host_with_port + "/my_eggs"
+      redirect_to redirect_loc
+    end
   end
 
   def redirect_logger
@@ -53,7 +58,16 @@ class ApplicationController < ActionController::Base
   end
 
   def mobile_device?
-    return request.user_agent.include? 'iPhone'
+    @mobile = false
+    ## Check if iPhone
+    if request.user_agent.include? 'iPhone'
+      @mobile = true
+      end
+    ## Check if Android
+    if request.user_agent.include? 'android-app'
+      @mobile = true
+    end
+    return @mobile
   end
 
   helper_method :mobile_device?

@@ -1,7 +1,3 @@
-body {
-    background: url(../../images/shared/thatch-bg.jpg) repeat 0 0;
-}
-
 .shell{ width:960px;}
 
 #contents{
@@ -72,7 +68,12 @@ button.saving {
     background-color:#fff;
 }
 
-#editor_container, #editor {
+#editor_container{
+    float:left;
+    width:659px;
+}
+
+#editor {
     float:left;
     width:659px;
 }
@@ -298,6 +299,6 @@ img.sync:active {
     width:330px;
 }
 
-/* #footer{
+#footer{
     display:none;
-}*/
+}

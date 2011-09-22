@@ -6,7 +6,7 @@
   
   <span>
     <% if @read_only %>
-      <div style="padding:2px 0 2px 3px; float:left;">
+      <div style="padding:0; float:left;">
         <em><%=@document.name%></em>
         (<em><%= @tag.name %></em>)
         <input id="document_name" value="<%=@document.name%>" style="display:none;"></input>
@@ -39,6 +39,7 @@
     <button id="save_button" style="float:right;" class="saving">Saved</button>
   <% end %>
 </div>
+    <div class="cl"></div>
 
 <div id="editor_container">
   <textarea id="editor" name="editor" style="display:none"><%=@document.html%></textarea>
