@@ -568,6 +568,7 @@ var cDoc = Class.create({
                if(transport.status == 200){
                 Lightview.hide();
                 console.log('success2');
+                $('username').id = "username_chosen";
                } else {
                    alert('there was an error with your screen name');
                }
