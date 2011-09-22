@@ -71,6 +71,8 @@ class Tag < ActiveRecord::Base
   end
 
   POPULAR_TAGS = [
+#                  [7, "Misc"],
+#                  [43, "ITE"],
                   [2011, "Companion to Applied Psychology (10th Edition)"],
                   [2061, "Companion to Cognitive Neuroscience w/ Gazzinga (3rd Edition)"],
                   [2135, "Companion to Essentials of Psych (5e)"]
