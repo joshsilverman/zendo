@@ -1,5 +1,4 @@
 class DocumentsController < ApplicationController
-  
   # Look for existing documents (by name for now)
   # If exists, use this document, otherwise set document html and construct Line objects
   def create
@@ -65,6 +64,8 @@ class DocumentsController < ApplicationController
   end
   
   def update
+    puts "UPdainggg"
+    puts params.to_json
     # update document
     @document = Document.update(params, current_user.id)
 #    logger.debug("This is the updated doc #{@document.inspect}")
@@ -355,41 +356,44 @@ class DocumentsController < ApplicationController
       return
     end
     #If document has been updated since last cache, regenerate the cards hash and recache, otherwise serve the cache
-    @cache = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
-    if @cache.nil? || @document.updated_at > @cache["updated_at"]
+#    @cache = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
+#    if @cache.nil? || @document.updated_at > @cache["updated_at"]
       @hash = Hash.new
       @hash["cards"] = []
       Document.update({:id => params[:id], :html => @document.html, :delete_nodes => [], :name => @document.name, :edited_at => @document.edited_at}, current_user.id)
-      @html = "<wrapper>" + @document.html.gsub("<em>", "").gsub("<\/em>", "") + "</wrapper>"
+      @html = "<wrapper>" + @document.html.gsub(/<\/?em>/, "").gsub(/<\/?span[^>]*>/, " ").gsub(/<\/?a[^>]*>/, " ").gsub(/<\/?sup[^>]*>/, " ").gsub(/\s+/," ").gsub(/ ,/, ",").gsub(/ \./, ".").gsub(/ \)/, ")") + "</wrapper>"
+      puts @html
+      @xml = Nokogiri::XML(@html)
       Line.all(:conditions => {:document_id => params[:id]}).each do |line|
+        puts line.to_json
         begin
           #If there if a <def> tag, create a card using its contents as the answer, otherwise split on the "-"
           if !Nokogiri::XML(@html).xpath("//*[@def and @id='" + line.domid + "']").empty?
             @result = Nokogiri::XML(@html).xpath("//*[@def and @id='" + line.domid + "']")
+            ## TODO This mem search always returning the correct one (proper owner)?
             @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @result.first.attribute("def").to_s, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
           else
-            @node = Nokogiri::XML(@html).xpath("//*[@id='" + line.domid + "']")
-            @result = @node.first.children.first.text
-            @result = @result.split(' -')
-            if @result.length < 2
-              @result = @result[0].split('- ')
-            end
+            @search = "//*[@id='" + line.domid + "']"
+            @match = @xml.xpath(@search).first.children.first.text.split(' -')
+            @match = @match[0].split('- ') unless @match.length > 1
+            #Creates a mem for the given line id if one does not exist
             if Mem.all(:conditions => {:line_id => line.id, :user_id => current_user.id}).empty?
               @mem = Mem.create(:line_id => line.id, :user_id => current_user.id, :document_id => params[:id], :pushed => false)
-              @hash["cards"] << {"prompt" => @result[0].strip, "answer" => @result[1].strip, "mem" => @mem.id}
+              @hash["cards"] << {"prompt" => @match[0].strip, "answer" => @match[1].strip, "mem" => @mem.id}
             else
-              @hash["cards"] << {"prompt" => @result[0].strip, "answer" => @result[1].strip, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
+              @hash["cards"] << {"prompt" => @match[0].strip, "answer" => @match[1].strip, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
             end
           end
-        rescue
+        rescue Exception => e
+          puts e.message
           next
         end
       end
-      Rails.cache.write("#{params[:controller]}_#{params[:action]}_#{params[:id]}", {"cards" => @hash["cards"], "updated_at" => Time.now})
+#      Rails.cache.write("#{params[:controller]}_#{params[:action]}_#{params[:id]}", {"cards" => @hash["cards"], "updated_at" => Time.now})
       render :json => @hash
-    else
-      render :json => Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
-    end
+#    else
+#      render :json => Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
+#    end
   end
 
   def get_public_documents
