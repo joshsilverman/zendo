@@ -769,19 +769,21 @@ document.observe('dom:loaded', function() {
 });
 
 document.observe('lightview:loaded', function() {
-
-    if(document.getElementById('userfield')!=null){
-      Lightview.show({
-        href: 'username',
-        rel: 'inline',
-    //    title: 'Choose a Username',
-    //    caption: 'Don\'t worry, you can always change it later',
-        options: {
-          width: 400,
-          height: 220,
-          overlayClose: false,
-          closeButton: false
-        }
-      });
-    }
+    new Ajax.Request('/users/has_username', {
+                   onSuccess: function(transport) {
+                       console.log(transport.responseText);
+                       if(transport.responseText == "false"){
+                             Lightview.show({
+                                href: 'username',
+                                rel: 'inline',
+                                options: {
+                                  width: 400,
+                                  height: 220,
+                                  overlayClose: false,
+                                  closeButton: false
+                                }
+                              });
+                       }
+                   }.bind(this)
+                });
 });

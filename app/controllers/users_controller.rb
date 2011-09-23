@@ -18,6 +18,14 @@ class UsersController < ApplicationController
   def get_email
   end
 
+  def has_username
+    if current_user.username.nil?
+      render :text => "false"
+    else
+      render :text => "true"
+    end
+  end
+
   def simple_sign_in
     render "/users/simple_sign_in", :layout => "blank"
   end

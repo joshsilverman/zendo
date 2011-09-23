@@ -73,9 +73,8 @@ td {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     -moz-border-radius:0px 0px 5px 5px;
-    height:270px;
+    min-height:270px;
     padding-bottom: 25px;
-    overflow: hidden;
 }
 
 #card_front_text {
@@ -172,9 +171,9 @@ td {
 }
 
 #nav_container {
-    width:500px;
+    width:530px;
     margin:0 auto;
-    padding:0 15px;
+    padding:0;
     text-align: center;
     position: relative;
     border-radius: 0 0 5px 5px;
@@ -209,9 +208,8 @@ td {
 #back_button, #next_button {
     background-repeat: no-repeat;
     background: transparent;
-    margin-top:15px;
-    width:16px;
-    height: 17px;
+    width:46px;
+    height: 52px;
     border:none;
     position: relative;
     float: left;
@@ -219,12 +217,14 @@ td {
 
 #back_button {
     background-image: url('/images/reviewer/back.png');
-    margin-right:15px;
+    background-repeat: no-repeat;
+    background-position: 15px 16px;
 }
 
 #next_button {
     background-image: url('/images/reviewer/next.png');
-    margin-left: 15px;
+    background-repeat: no-repeat;
+    background-position: 15px 16px;
 }
 
 #progress_fraction{text-align: center; margin:5px;}
