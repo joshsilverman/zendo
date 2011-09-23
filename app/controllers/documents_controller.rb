@@ -141,19 +141,18 @@ class DocumentsController < ApplicationController
   
   def enable_mobile
   	if params[:bool] == "1"
-  		logger.debug("Enable mobile!")
       if APN::Device.all(:conditions => {:user_id => current_user.id}).empty?
-        render :text => "fail"
+        render :text => "fail", :status => 400
       else
         if Usership.all(:conditions => {:user_id => current_user.id, :document_id => params[:id]}).empty?
-          @new_usership = Usership.new
-          @new_usership.document_id = params[:id]
-          @new_usership.user_id = current_user.id
-          @new_usership.created_at = Time.now
-          @new_usership.owner = false
-          @new_usership.push_enabled = false
-          @new_usership.save
-        else
+          Usership.create(:document_id => params[:id], :user_id => current_user.id, :created_at => Time.now, :owner => false, :push_enabled => false)
+#          @new_usership = Usership.new
+#          @new_usership.document_id = params[:id]
+#          @new_usership.user_id = current_user.id
+#          @new_usership.created_at = Time.now
+#          @new_usership.owner = false
+#          @new_usership.push_enabled = false
+#          @new_usership.save
         end
         owner_lines = Line.includes(:mems).where("lines.document_id = ?
                             AND mems.status = true",
@@ -175,14 +174,14 @@ class DocumentsController < ApplicationController
         render :text => "pass"
       end
   	else
-  		logger.debug("Disable mobile!")
   		@usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
-      @usership.first.update_attribute(:push_enabled, false)
-      Mem.all(:conditions => {:document_id => params[:id], :user_id => current_user.id, :pushed => true}).each do |mem|
-        mem.update_attribute(:pushed, false)
-        mem.save
+      if @usership
+        @usership.first.update_attribute(:push_enabled, false)
+        Mem.all(:conditions => {:document_id => params[:id], :user_id => current_user.id, :pushed => true}).each do |mem|
+          mem.update_attribute(:pushed, false)
+          mem.save
+        end
       end
-  		#Delete all pending notifications for the usership
       render :nothing => true, :status => 200
   	end
     
@@ -351,37 +350,34 @@ class DocumentsController < ApplicationController
   #Returns a hash of all of the cards belonging to a given document
   def cards
     get_document(params[:id])
-    if @document.nil?
+    if @document.nil? || @document.html.nil?
       render :nothing => true, :status => 400
       return
     end
     #If document has been updated since last cache, regenerate the cards hash and recache, otherwise serve the cache
-#    @cache = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
-#    if @cache.nil? || @document.updated_at > @cache["updated_at"]
+    @cache = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
+    if @cache.nil? || @document.updated_at > @cache["updated_at"]
       @hash = Hash.new
       @hash["cards"] = []
       Document.update({:id => params[:id], :html => @document.html, :delete_nodes => [], :name => @document.name, :edited_at => @document.edited_at}, current_user.id)
-      @html = "<wrapper>" + @document.html.gsub(/<\/?em>/, "").gsub(/<\/?span[^>]*>/, " ").gsub(/<\/?a[^>]*>/, " ").gsub(/<\/?sup[^>]*>/, " ").gsub(/\s+/," ").gsub(/ ,/, ",").gsub(/ \./, ".").gsub(/ \)/, ")") + "</wrapper>"
-      puts @html
-      @xml = Nokogiri::XML(@html)
+      @html = Nokogiri::HTML("<wrapper>" + @document.html.gsub(/<\/?em>/, "").gsub(/<\/?span[^>]*>/, " ").gsub(/<\/?a[^>]*>/, " ").gsub(/<\/?sup[^>]*>/, " ").gsub(/\s+/," ").gsub(/ ,/, ",").gsub(/ \./, ".").gsub(/ \)/, ")") + "</wrapper>")
       Line.all(:conditions => {:document_id => params[:id]}).each do |line|
-        puts line.to_json
         begin
+          @def_search = "//*[@def and @id='" + line.domid + "']"
+          @search = "//*[@id='" + line.domid + "']"
           #If there if a <def> tag, create a card using its contents as the answer, otherwise split on the "-"
-          if !Nokogiri::XML(@html).xpath("//*[@def and @id='" + line.domid + "']").empty?
-            @result = Nokogiri::XML(@html).xpath("//*[@def and @id='" + line.domid + "']")
-            ## TODO This mem search always returning the correct one (proper owner)?
-            @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @result.first.attribute("def").to_s, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
+          if !@html.xpath(@def_search).empty?
+            @match = @html.xpath(@def_search)
+            @hash["cards"] << {"prompt" => @match.first.children.first.text, "answer" => @match.first.attribute("def").to_s, "mem" => Mem.all(:conditions => {:line_id => line.id, :user_id => current_user.id}).first.id}
           else
-            @search = "//*[@id='" + line.domid + "']"
-            @match = @xml.xpath(@search).first.children.first.text.split(' -')
+            @match = @html.xpath(@search).first.children.first.text.split(' -')
             @match = @match[0].split('- ') unless @match.length > 1
             #Creates a mem for the given line id if one does not exist
             if Mem.all(:conditions => {:line_id => line.id, :user_id => current_user.id}).empty?
               @mem = Mem.create(:line_id => line.id, :user_id => current_user.id, :document_id => params[:id], :pushed => false)
               @hash["cards"] << {"prompt" => @match[0].strip, "answer" => @match[1].strip, "mem" => @mem.id}
             else
-              @hash["cards"] << {"prompt" => @match[0].strip, "answer" => @match[1].strip, "mem" => Mem.all(:conditions => {:line_id => line.id}).first.id}
+              @hash["cards"] << {"prompt" => @match[0].strip, "answer" => @match[1].strip, "mem" => Mem.all(:conditions => {:line_id => line.id, :user_id => current_user.id}).first.id}
             end
           end
         rescue Exception => e
@@ -389,11 +385,11 @@ class DocumentsController < ApplicationController
           next
         end
       end
-#      Rails.cache.write("#{params[:controller]}_#{params[:action]}_#{params[:id]}", {"cards" => @hash["cards"], "updated_at" => Time.now})
+      Rails.cache.write("#{params[:controller]}_#{params[:action]}_#{params[:id]}", {"cards" => @hash["cards"], "updated_at" => Time.now})
       render :json => @hash
-#    else
-#      render :json => Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
-#    end
+    else
+      render :json => Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
+    end
   end
 
   def get_public_documents
