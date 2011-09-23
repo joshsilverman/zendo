@@ -19,13 +19,13 @@ class RegistrationsController < Devise::RegistrationsController
         redirect_to '/my_eggs'
       end
     else
-      puts 'starting session create'
-      old_user = User.find_by_email(resource[:email])
-      puts old_user
-      if old_user
-        sign_in(resource_name, old_user)
-        #redirect_to '/my_eggs'
-      else
+#      puts 'starting session create'
+#      old_user = User.find_by_email(resource[:email])
+#      puts old_user
+#      if old_user
+#        puts sign_in(resource_name, old_user)
+#        redirect_to '/my_eggs'
+#      else
 
         clean_up_passwords(resource)
         if mobile_device?
@@ -34,7 +34,7 @@ class RegistrationsController < Devise::RegistrationsController
           render_with_scope :new
         end
 
-      end
+#      end
       
     end
 
