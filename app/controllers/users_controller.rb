@@ -73,8 +73,8 @@ class UsersController < ApplicationController
 
   def challenge_user
     @user = User.find_by_username(params[:user])
-#    if APN::Device.find_by_user_id(@user.id)
-      @line = Line.find_by_id(Mem.find_by_id(params[:mem]))
+    if APN::Device.find_by_user_id(@user.id)
+      @line = Line.find_by_id(Mem.find_by_id(params[:mem]).line_id)
       @mem = @user.mems.find_by_line_id(@line.id)
       if @mem
         @mem.update_attribute(:pushed, true)
@@ -82,7 +82,7 @@ class UsersController < ApplicationController
       else
         Mem.create(:user_id => @user.id, :line_id => @line.id, :pushed => true)
       end
-#    end
+    end
     render :nothing => true
   end
 

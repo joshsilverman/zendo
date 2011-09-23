@@ -21,7 +21,11 @@ namespace :notifications do
 
   task :challenge => :environment do
     User.all( :include => :mems, :conditions => { :mems => { :pushed => true }}).each do |user|
-      APN::Notification.create(:device => APN::Device.where('user_id = ?', user.id).last, :alert => "You have a challenge!", :user_id => user.id)
+      begin
+        APN::Notification.create(:device => APN::Device.where('user_id = ?', user.id).last, :alert => "You have a new challenge!", :user_id => user.id)
+      rescue
+        puts "Error during challenges rake!"
+      end
     end
     APN::Notification.send_notifications
   end
