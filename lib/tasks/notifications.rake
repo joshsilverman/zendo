@@ -18,6 +18,13 @@ namespace :notifications do
     end
     APN::Notification.send_notifications
   end
+
+  task :challenge => :environment do
+    User.all( :include => :mems, :conditions => { :mems => { :pushed => true }}).each do |user|
+      APN::Notification.create(:device => APN::Device.where('user_id = ?', user.id).last, :alert => "You have a challenge!", :user_id => user.id)
+    end
+    APN::Notification.send_notifications
+  end
 end
 
 #          puts "More than 6 pending mems per doc for this user"

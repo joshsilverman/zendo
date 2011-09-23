@@ -113,6 +113,7 @@ Zendo::Application.routes.draw do
   match "/users/autocomplete"
   match "/users/retrieve_notifications"
   match "/users/add_device/:token" => "users#add_device"
+  match "/users/challenge_user/:user/:mem" => "users#challenge_user"
   root :to => "users#home"
   root :controller => 'users', :action => 'home'
 

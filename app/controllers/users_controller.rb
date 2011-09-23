@@ -53,7 +53,7 @@ class UsersController < ApplicationController
   end
 
   def add_device
-    @device = APN::Device.new
+    @device = APN ::Device.new
     @token = params[:token]
     #Token must be in 8 blocks of 8 lower case alphanumeric characters, this line creates the blocks
     @token = @token.insert(56, " ").insert(48, " ").insert(40, " ").insert(32, " ").insert(24, " ").insert(16, " ").insert(8, " ")
@@ -70,4 +70,20 @@ class UsersController < ApplicationController
     current_user.update_attribute(:username, params[:u])
     render :nothing => true
   end
+
+  def challenge_user
+    @user = User.find_by_username(params[:user])
+#    if APN::Device.find_by_user_id(@user.id)
+      @line = Line.find_by_id(Mem.find_by_id(params[:mem]))
+      @mem = @user.mems.find_by_line_id(@line.id)
+      if @mem
+        @mem.update_attribute(:pushed, true)
+        @mem.save
+      else
+        Mem.create(:user_id => @user.id, :line_id => @line.id, :pushed => true)
+      end
+#    end
+    render :nothing => true
+  end
+
 end
