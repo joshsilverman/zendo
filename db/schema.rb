@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110927160759) do
+ActiveRecord::Schema.define(:version => 20110927222311) do
 
   create_table "alternatives", :force => true do |t|
     t.integer "experiment_id"
@@ -102,6 +102,7 @@ ActiveRecord::Schema.define(:version => 20110927160759) do
     t.datetime "updated_at"
     t.integer  "document_id"
     t.boolean  "pushed",       :default => false
+    t.integer  "term_id"
   end
 
   add_index "mems", ["line_id"], :name => "index_mems_on_line_id"

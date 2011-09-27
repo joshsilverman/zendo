@@ -9,6 +9,7 @@ var cDoc = Class.create({
 
         /* new reviewer */
         var data = $('card_json').innerHTML.evalJSON();
+        console.log(data);
         this.reviewer = new cReviewer(data);
 
         /* resize listener - fire after dom:loaded */
@@ -55,7 +56,7 @@ var cReviewer = Class.create({
 
         /* load cards */
         data.each(function(cardData) {
-            this.cards.push(new cCard(cardData['line']));
+            this.cards.push(new cCard(cardData['term']));
         }.bind(this));
 
         /* show first */
@@ -363,12 +364,15 @@ var cCard = Class.create({
               </div>',
     
     initialize: function(data) {
-        console.log(data['document_id']);
-        this.lineId = data['id'];
-        this.domId = data['domid'];
+        //console.log(data['name']);
+        //console.log(data['definition']);
+        this.lineId = data['line_id'];
+        //this.domId = data['domid'];
         this.memId = data['mems'][0]['id'];
         this.documentId = data['document_id'];
-        this.text = data['text'];
+        this.front = data['name'];
+        this.back = data['definition'];
+        //this.text = data['text'];
 //        console.log(this.text);
 
     },
@@ -376,7 +380,7 @@ var cCard = Class.create({
     cue: function() {
         console.log("TEST");
         /* parse on demand - to avoid latency on initializing reviewer */
-        if (!this.back) parser.parse(this, true);
+        //if (!this.back) parser.parse(this, true);
         
         /* front */
         $('card_front').update("<div id='card_front_text'>"+this.front+"</div>" + this.buttons);
@@ -485,7 +489,7 @@ var cCard = Class.create({
                 var data = transport.responseText.evalJSON();
                 this.text = data['line'];
                 $('document_' + this.documentId).update(data['html']);
-                parser.parse(this, true);
+                //parser.parse(this, true);
             }.bind(this),
 
             onFailure: function() {},
@@ -512,7 +516,7 @@ var cCard = Class.create({
 /* global objects */
 document.observe('dom:loaded', function() {
     
-    parser = new cParser(); //@todo move to doc object
+    //parser = new cParser(); //@todo move to doc object
     doc = new cDoc();
 
     /* fire app:loaded */

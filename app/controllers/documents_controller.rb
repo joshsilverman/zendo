@@ -103,17 +103,17 @@ class DocumentsController < ApplicationController
     end
 
     # get lines
-    owner_lines = Line.includes(:mems).where("lines.document_id = ?
+    owner_terms = Term.joins(:mems).where("terms.document_id = ?
                         AND mems.status = true AND mems.user_id = ?",
                         params[:id], @document.userships(:conditions => {:owner => true}).first.user_id)
- 
+
     if @document.id == current_user.id
-      @lines_json = owner_lines.to_json :include => :mems
+      @lines_json = owner_terms.to_json :include => :mems
     else
       # on demand mem creation
       Mem.transaction do
-        owner_lines.each do |owner_line|
-          mem = Mem.find_or_initialize_by_line_id_and_user_id(owner_line.id, current_user.id);
+        owner_terms.each do |ot|
+          mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
           mem.strength = 0.5 if mem.strength.nil?
           mem.status = 1 if mem.status.nil?
           mem.document_id = @document.id
@@ -121,11 +121,11 @@ class DocumentsController < ApplicationController
         end
       end
 
-      user_lines = Line.includes(:mems).where("lines.document_id = ?
+      user_terms = Term.joins(:mems).where("terms.document_id = ?
                         AND mems.status = true AND mems.user_id = ?",
                         params[:id], current_user.id)
 
-      @lines_json = user_lines.to_json :include => :mems
+      @lines_json = user_terms.to_json :include => :mems
     end
 
     respond_to do |format|
@@ -357,8 +357,6 @@ class DocumentsController < ApplicationController
     #If document has been updated since last cache, regenerate the cards hash and recache, otherwise serve the cache
     @cache = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
     if @cache.nil? || @document.updated_at > @cache["updated_at"]
-      @hash = Hash.new
-      @hash["cards"] = []
       Document.update({:id => params[:id], :html => @document.html, :delete_nodes => [], :name => @document.name, :edited_at => @document.edited_at}, current_user.id)
       @html = "<wrapper>" + @document.html.gsub("<em>", "").gsub("<\/em>", "") + "</wrapper>"
       Line.all(:conditions => {:document_id => params[:id]}).each do |line|
