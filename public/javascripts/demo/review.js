@@ -163,7 +163,7 @@ var cReviewer = Class.create({
 
         /* update progress bar */
         $('progress_fraction').update(this.currentCardIndex+1+"/"+this.cards.length);
-
+        $('summary').setStyle({'display':'none'});
         //this.progressBar.update(this.currentCardIndex, this.cards.length);
     },
 
@@ -344,7 +344,7 @@ var cCard = Class.create({
     cue: function() {
 
         /* parse on demand - to avoid latency on initializing reviewer */
-        parser.parse(this, true);
+         if (!this.back) parser.parse(this, true);
 
         /* front */
         $('card_front').update("<div id='card_front_text'>"+this.front+"</div>" + this.buttons);
