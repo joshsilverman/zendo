@@ -16,6 +16,7 @@ class Line < ActiveRecord::Base
       existing_line = Line.where(:user_id => user_id,
                             :domid => dom_id,
                             :document_id => document_id ).first
+      Term.create_term_from_line(existing_line.id) unless existing_line.nil?
       if line.attr("class") =~ /(.*)active(.*)/
         if (not existing_line.nil?)
           existing_mem = Mem.where(:user_id => user_id,
@@ -37,6 +38,7 @@ class Line < ActiveRecord::Base
           created_line = Line.create( :user_id => user_id,
                                 :domid => dom_id,
                                 :document_id => document_id )
+          Term.create_term_from_line(created_line.id)
           @@document_html.gsub!(
             /((?:<p|<li)[^>]*[^_]id="#{dom_id}"[^>]*line_id=")("[^>]*>)/) \
             {"#{$1}#{created_line.id}#{$2}"}
@@ -51,7 +53,14 @@ class Line < ActiveRecord::Base
                       :review_after => Time.now})
         end
       elsif existing_line
-        existing_line.delete 
+        puts "DELETE THEM ALL BWAHAHAHA"
+        term = Term.find_by_line_id(existing_line.id)
+        puts term.inspect
+        term.delete
+        temp = Term.find_by_line_id(existing_line.id)
+        puts temp.inspect
+        puts existing_line
+        existing_line.delete
         Mem.where(:line_id=>existing_line.id).delete_all
       end
     end

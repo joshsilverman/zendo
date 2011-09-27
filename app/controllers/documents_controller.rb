@@ -396,7 +396,7 @@ class DocumentsController < ApplicationController
     render :json => Document.all(:conditions => {:public => true}).to_json(:only => [:name, :id])
   end
 
-
+  
   private
 
   
