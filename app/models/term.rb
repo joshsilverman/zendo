@@ -1,5 +1,7 @@
 class Term < ActiveRecord::Base
   belongs_to :document
+  belongs_to :line
+  has_many :mems
 
   def self.create_term_from_line(id)
     line = Line.find_by_id(id)
