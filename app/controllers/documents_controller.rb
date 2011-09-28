@@ -146,13 +146,6 @@ class DocumentsController < ApplicationController
       else
         if Usership.all(:conditions => {:user_id => current_user.id, :document_id => params[:id]}).empty?
           Usership.create(:document_id => params[:id], :user_id => current_user.id, :created_at => Time.now, :owner => false, :push_enabled => false)
-#          @new_usership = Usership.new
-#          @new_usership.document_id = params[:id]
-#          @new_usership.user_id = current_user.id
-#          @new_usership.created_at = Time.now
-#          @new_usership.owner = false
-#          @new_usership.push_enabled = false
-#          @new_usership.save
         end
         owner_lines = Line.includes(:mems).where("lines.document_id = ?
                             AND mems.status = true",
@@ -184,56 +177,9 @@ class DocumentsController < ApplicationController
       end
       render :nothing => true, :status => 200
   	end
-    
-
-    #Uncomment for immediate push demo
-#    if params[:bool] == "1"
-#      if APN::Device.all(:conditions => {:user_id => current_user.id}).empty?
-#        render :text => "fail"
-#      else
-#        Mem.all(:conditions => {:document_id => params[:id]}).each do |mem|
-#          mem.pushed = true
-#          mem.save
-#        end
-#        @device = APN::Device.all(:conditions => {:user_id => current_user.id}).first
-#        notification = APN::Notification.new
-#        notification.device = @device
-#        notification.badge = Mem.all(:conditions => {:document_id => params[:id]}).count
-#        notification.sound = false
-#        notification.user_id = current_user.id
-#        notification.alert = "You have new cards to review!"
-#        notification.custom_properties = {:doc => params[:id]}
-#        puts notification.to_json
-#        notification.save
-#        APN::Notification.send_notifications
-#        render :nothing => true, :status => 200
-#      end
-#    else
-#      logger.debug("Disable mobile!")
-#      @usership = current_user.userships.where('document_id = ?', get_document(params[:id]))
-#      @usership.first.update_attribute(:push_enabled, false)
-#      puts @usership.to_json
-#      puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
-#      Mem.all(:conditions => {:document_id => get_document(params[:id]), :pushed => true}).each do |mem|
-#        mem.update_attribute(:pushed, false)
-#        mem.save
-#      end
-#      puts Mem.all(:conditions => {:document_id => get_document(params[:id])}).to_json
-#      #Delete all pending notifications for the usership
-#      render :nothing => true, :status => 200
-#    end
-#  THESE CONFIGURATIONS ARE DEFAULT, IF YOU WANT TO CHANGE UNCOMMENT LINES YOU WANT TO CHANGE
-#	configatron.apn.passphrase  = ''
-#	configatron.apn.port = 2195
-#	configatron.apn.host  = 'gateway.sandbox.push.apple.com'
-#	configatron.apn.cert = File.join(Rails.root, 'config', 'apple_push_notification_development.pem')
-#	THE CONFIGURATIONS BELOW ARE FOR PRODUCTION PUSH SERVICES, IF YOU WANT TO CHANGE UNCOMMENT LINES YOU WANT TO CHANGE
-#	configatron.apn.host = 'gateway.push.apple.com'
-#	configatron.apn.cert = File.join(RAILS_ROOT, 'config', 'apple_push_notification_production.pem')
   end
 
   def update_tag
-#    if @document = current_user.documents.find(params[:doc_id])
     if @document = current_user.documents.find(params[:doc_id], :readonly => false)
       if current_user.tags.find(params[:tag_id])
         @document.update_attribute(:tag_id, params[:tag_id])
