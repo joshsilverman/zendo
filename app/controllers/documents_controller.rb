@@ -180,7 +180,6 @@ class DocumentsController < ApplicationController
   end
 
   def update_tag
-#    if @document = current_user.documents.find(params[:doc_id])
     if @document = current_user.documents.find(params[:doc_id], :readonly => false)
       if current_user.tags.find(params[:tag_id])
         @document.update_attribute(:tag_id, params[:tag_id])
