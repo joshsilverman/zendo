@@ -54,7 +54,7 @@ describe "dashboard", :js => true do
     end
 
     it "does not pop up for set username" do
-      wait_until{ not page.has_content?('Thanks for signing up!')}
+      wait_until{ not page.has_content?('<div id="username" style="display: none;">')}
     end
 
   end

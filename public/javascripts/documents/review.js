@@ -168,11 +168,22 @@ var cReviewer = Class.create({
         /* back */
         this.currentCardIndex--;
         if (this.cards[this.currentCardIndex]) {
-            if (this.cards[this.currentCardIndex].confidence == -1) 
-                this.cards[this.currentCardIndex].cue();
-            else this.cards[this.currentCardIndex].showAll();
+            console.log("1");
+            if (this.cards[this.currentCardIndex].confidence == -1) {
+                console.log("2");
+                var card = this.cards[this.currentCardIndex];
+                console.log(card.back);
+                card.cue();
+            }
+            else {this.cards[this.currentCardIndex].showAll();
+                console.log("3");
+            }
+            $('summary').setStyle({'display':'none'});
         }
-        else if (this.currentCardIndex > 0) this.currentCardIndex++;
+        else if (this.currentCardIndex > 0){
+            this.currentCardIndex++;
+            console.log("1");
+        }
 
         /* update progress bar */
         $('progress_fraction').update(this.currentCardIndex+1+"/"+this.cards.length);
@@ -264,7 +275,6 @@ var cReviewHandlers = Class.create({
 //
 //            onComplete: function(transport) {}//$('log').update(transport.responseText);}
 //        });
-        console.log('sup hombro?');
         doc.reviewer.next();
         event.stop();
     },
@@ -364,16 +374,18 @@ var cCard = Class.create({
     },
 
     cue: function() {
-
+        console.log("TEST");
         /* parse on demand - to avoid latency on initializing reviewer */
-        parser.parse(this, true);
-
+        if (!this.back) parser.parse(this, true);
+        
         /* front */
         $('card_front').update("<div id='card_front_text'>"+this.front+"</div>" + this.buttons);
         $('card_front_text').update(this.front);
 
         /* back */
         $('card_back').update('');
+
+        $('card_show').stopObserving('click', this.showAll);
         $('card_show').observe('click', this.showAll.bind(this));
 
         /* hide grade buttons */
@@ -384,11 +396,8 @@ var cCard = Class.create({
                 button.removeClassName('chosen');
             }
         });
-        console.log('test');
         $('grade_container').setStyle({'display':'none'});
-        console.log('test');
         $('card_show').setStyle({'display':'block'});
-        console.log('test');
 //        $$('.arrows_up_down')[0].hide();
     },
 
@@ -398,6 +407,7 @@ var cCard = Class.create({
         $('card_front').update("<div id='card_front_text'></div>");
 //        $('card_front').update("<div id='card_front_text'></div>" + this.buttons);
         $('card_front_text').update(this.front);
+        console.log(this.back);
         $('card_back').update( "<div id='card_back_text'>"+this.back+"</div>");
 
         /* show grading buttons */

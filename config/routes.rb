@@ -110,6 +110,8 @@ Zendo::Application.routes.draw do
 
   # home page
   match "/users/welcome" => "users#home"
+  match "/users/has_username" => "users#has_username"
+  match "/user" => "tags#index"
   match "/users/autocomplete"
   match "/users/retrieve_notifications"
   match "/users/add_device/:token" => "users#add_device"
