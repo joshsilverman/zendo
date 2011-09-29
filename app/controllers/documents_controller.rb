@@ -104,7 +104,7 @@ class DocumentsController < ApplicationController
     end
 
     # get lines
-    owner_terms = Term.joins(:mems).where("terms.document_id = ?
+    owner_terms = Term.includes(:mems).includes(:questions).where("terms.document_id = ?
                         AND mems.status = true AND mems.user_id = ?",
                         params[:id], @document.userships(:conditions => {:owner => true}).first.user_id)
 
@@ -122,7 +122,7 @@ class DocumentsController < ApplicationController
         end
       end
 
-      user_terms = Term.joins(:mems).where("terms.document_id = ?
+      user_terms = Term.includes(:mems).includes(:questions).where("terms.document_id = ?
                         AND mems.status = true AND mems.user_id = ?",
                         params[:id], current_user.id)
 
