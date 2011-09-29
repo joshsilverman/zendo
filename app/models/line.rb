@@ -29,6 +29,7 @@ class Line < ActiveRecord::Base
             Mem.create({:strength => 0.5,
                         :user_id => user_id,
                         :line_id => existing_line.id,
+                        :term_id => Term.find_by_line_id(existing_line.id).id,
                         :status => true,
                         :document_id => document_id,
                         :review_after => Time.now})
@@ -48,18 +49,14 @@ class Line < ActiveRecord::Base
           Mem.create({:strength => 0.5,
                       :user_id => user_id,
                       :line_id => created_line.id,
+                      :term_id => Term.find_by_line_id(created_line.id).id,
                       :status => true,
                       :document_id => document_id,
                       :review_after => Time.now})
         end
       elsif existing_line
-        puts "DELETE THEM ALL BWAHAHAHA"
         term = Term.find_by_line_id(existing_line.id)
-        puts term.inspect
         term.delete
-        temp = Term.find_by_line_id(existing_line.id)
-        puts temp.inspect
-        puts existing_line
         existing_line.delete
         Mem.where(:line_id=>existing_line.id).delete_all
       end
