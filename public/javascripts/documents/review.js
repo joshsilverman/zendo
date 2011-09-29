@@ -356,6 +356,8 @@ var cCard = Class.create({
     front: '',
     simpleFront: '',
     back: '',
+    question: null,
+    answers: null,
 
     buttons: '<div id="edit_buttons">\
                 <button id="button_edit" class="edit" style="display:none">Edit</button>\
@@ -372,6 +374,12 @@ var cCard = Class.create({
         this.documentId = data['document_id'];
         this.front = data['name'];
         this.back = data['definition'];
+        this.answers = data['answers'];
+        if(data['questions'].length > 0){
+            this.question = data['questions'][0]['question'];
+            console.log(this.question);
+            console.log(this.answers)
+        }
         //this.text = data['text'];
 //        console.log(this.text);
 
