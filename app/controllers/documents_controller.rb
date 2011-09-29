@@ -104,30 +104,26 @@ class DocumentsController < ApplicationController
     end
 
     # get lines
-    owner_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
-                        AND mems.status = true AND mems.user_id = ?",
-                        params[:id], @document.userships(:conditions => {:owner => true}).first.user_id)
+    user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?", params[:id])
 
-    if @document.id == current_user.id
-      @lines_json = owner_terms.to_json :include => [:mems, :questions, :answers]
-    else
-      # on demand mem creation
-      Mem.transaction do
-        owner_terms.each do |ot|
-          mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
-          mem.strength = 0.5 if mem.strength.nil?
-          mem.status = 1 if mem.status.nil?
-          mem.document_id = @document.id
-          mem.save
-        end
+    # on demand mem creation
+    Mem.transaction do
+      user_terms.each do |ot|
+        puts ot.to_json
+        mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
+        mem.strength = 0.5 if mem.strength.nil?
+        mem.status = 1 if mem.status.nil?
+        mem.term_id = ot.id if mem.term_id.nil?
+        mem.document_id = @document.id
+        mem.save
       end
-
-      user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
-                        AND mems.status = true AND mems.user_id = ?",
-                        params[:id], current_user.id)
-
-      @lines_json = user_terms.to_json :include => [:mems, :questions, :answers]
     end
+
+    user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
+                      AND mems.status = true AND mems.user_id = ?",
+                      params[:id], current_user.id)
+
+    @lines_json = user_terms.to_json :include => [:mems, :questions, :answers]
 
     respond_to do |format|
         format.html
@@ -152,11 +148,13 @@ class DocumentsController < ApplicationController
                             params[:id])                          
         Mem.transaction do
           owner_lines.each do |owner_line|
+            term = Term.find_by_line_id(owner_line.id)
             mem = Mem.find_or_initialize_by_line_id_and_user_id(owner_line.id, current_user.id);
             mem.strength = 0.5 if mem.strength.nil?
             mem.status = 1 if mem.status.nil?
             mem.document_id = params[:id] if mem.document_id.nil?
             mem.line_id = owner_line.id if mem.line_id.nil?
+            mem.term_id = term.id if mem.term_id.nil? and not term.nil?
             mem.user_id = current_user.id if mem.user_id.nil?
             mem.created_at = Time.now if mem.created_at.nil?
             mem.save
