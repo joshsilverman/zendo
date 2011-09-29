@@ -314,7 +314,12 @@ class DocumentsController < ApplicationController
           #If there if a <def> tag, create a card using its contents as the answer, otherwise split on the "-"
           if !@html.xpath(@def_search).empty?
             @match = @html.xpath(@def_search)
-            @hash["cards"] << {"prompt" => @match.first.children.first.text, "answer" => @match.first.attribute("def").to_s, "mem" => Mem.all(:conditions => {:line_id => line.id, :user_id => current_user.id}).first.id}
+            if Mem.all(:conditions => {:line_id => line.id, :user_id => current_user.id}).empty?
+              @mem = Mem.create(:line_id => line.id, :user_id => current_user.id, :document_id => params[:id], :pushed => false)
+              @hash["cards"] << {"prompt" => @match.first.children.first.text, "answer" => @match.first.attribute("def").to_s, "mem" => @mem.id}
+            else
+              @hash["cards"] << {"prompt" => @match.first.children.first.text, "answer" => @match.first.attribute("def").to_s, "mem" => Mem.all(:conditions => {:line_id => line.id, :user_id => current_user.id}).first.id}
+            end
           else
             @match = @html.xpath(@search).first.children.first.text.split(' -')
             @match = @match[0].split('- ') unless @match.length > 1
