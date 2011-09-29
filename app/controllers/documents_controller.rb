@@ -103,12 +103,12 @@ class DocumentsController < ApplicationController
     end
 
     # get lines
-    owner_terms = Term.includes(:mems).includes(:questions).where("terms.document_id = ?
+    owner_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
                         AND mems.status = true AND mems.user_id = ?",
                         params[:id], @document.userships(:conditions => {:owner => true}).first.user_id)
 
     if @document.id == current_user.id
-      @lines_json = owner_terms.to_json :include => :mems
+      @lines_json = owner_terms.to_json :include => [:mems, :questions, :answers]
     else
       # on demand mem creation
       Mem.transaction do
@@ -121,11 +121,11 @@ class DocumentsController < ApplicationController
         end
       end
 
-      user_terms = Term.includes(:mems).includes(:questions).where("terms.document_id = ?
+      user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
                         AND mems.status = true AND mems.user_id = ?",
                         params[:id], current_user.id)
 
-      @lines_json = user_terms.to_json :include => :mems
+      @lines_json = user_terms.to_json :include => [:mems, :questions, :answers]
     end
 
     respond_to do |format|

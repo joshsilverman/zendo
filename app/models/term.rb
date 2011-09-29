@@ -3,6 +3,7 @@ class Term < ActiveRecord::Base
   belongs_to :line
   has_many :mems
   has_many :questions
+  has_many :answers, :through => :questions
 
   def self.create_term_from_line(id)
     line = Line.find_by_id(id)
