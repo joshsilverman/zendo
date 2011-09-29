@@ -64,7 +64,7 @@ class ApplicationController < ActionController::Base
       @mobile = true
       end
     ## Check if Android
-    if request.user_agent.include? 'android-app'
+    if request.user_agent.include? 'android'
       @mobile = true
     end
     return @mobile

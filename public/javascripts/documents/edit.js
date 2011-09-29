@@ -384,6 +384,7 @@ var cOutline = Class.create({
                     this.unsavedChanges = this.unsavedChanges.uniq();
                     this.unsavedChanges.each(function(domId) {
                         if (domId && this.iDoc.getElementById(domId)) {
+                            console.log(this.iDoc.getElementById(domId));
                             Element.writeAttribute(this.iDoc.getElementById(domId), {'changed': '0'});
                             Element.removeClassName(this.iDoc.getElementById(domId), 'changed');
                         }

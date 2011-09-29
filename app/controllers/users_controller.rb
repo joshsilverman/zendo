@@ -18,6 +18,14 @@ class UsersController < ApplicationController
   def get_email
   end
 
+  def has_username
+    if current_user.username.nil?
+      render :text => "false"
+    else
+      render :text => "true"
+    end
+  end
+
   def simple_sign_in
     render "/users/simple_sign_in", :layout => "blank"
   end
@@ -34,24 +42,19 @@ class UsersController < ApplicationController
     @hash["cards"] = []
     #Iterates through all pushed mems the user owns
     Mem.where('user_id = ? AND pushed = true', current_user.id).all.each do |mem|
-      @docid = Line.find_by_id(mem.line_id).document_id
       @domid = Line.find_by_id(mem.line_id).domid
+      @document = Document.find_by_id(Line.find_by_id(mem.line_id).document_id)
+      @html = Nokogiri::HTML("<wrapper>" + @document.html.gsub(/<\/?em>/, "").gsub(/<\/?span[^>]*>/, " ").gsub(/<\/?a[^>]*>/, " ").gsub(/<\/?sup[^>]*>/, " ").gsub(/\s+/," ").gsub(/ ,/, ",").gsub(/ \./, ".").gsub(/ \)/, ")") + "</wrapper>")
+      @def_search = "//*[@def and @id='" + @domid + "']"
+      @search = "//*[@id='" + @domid + "']"
       #If there is a <def> tag, creates a card using it, otherwise splits on the "-"
-      if !Nokogiri::XML("<wrapper>" + Document.find_by_id(@docid).html + "</wrapper>").xpath("//*[@def and @id='" + @domid + "']").empty?
-        @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(@docid).html + "</wrapper>").xpath("//*[@def and @id='" + @domid + "']")
-        @def = @result.first.attribute("def").to_s
-#        if @hash["cards"].length < 3
-        @hash["cards"] << {"prompt" => @result.first.children.first.text, "answer" => @def, "mem" => mem.id}
-#        end
+      if !@html.xpath(@def_search).empty?
+        @match = @html.xpath(@def_search)
+        @hash["cards"] << {"prompt" => @match.first.children.first.text, "answer" => @match.first.attribute("def").to_s, "mem" => mem.id}
       else
-        @result = Nokogiri::XML("<wrapper>" + Document.find_by_id(@docid).html + "</wrapper>").xpath("//*[@id='" + @domid + "']").first.children.first.text
-        @result = @result.split(' -')
-        if @result.length < 2
-          @result = @result[0].split('- ')
-        end
-#        if @hash["cards"].length < 3
-        @hash["cards"] << {"prompt" => @result[0], "answer" => @result[1], "mem" => mem.id}
-#        end
+        @match = @html.xpath(@search).first.children.first.text.split(' -')
+        @match = @match[0].split('- ') unless @match.length > 1
+        @hash["cards"] << {"prompt" => @match[0].strip, "answer" => @match[1].strip, "mem" => mem.id}
       end
     end
     render :json => @hash
