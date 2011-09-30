@@ -300,7 +300,7 @@ td {
 #grade_container{display:none; width:433px; padding:5px 0 0 0; float: left;}
 #mc_container{width:433px;margin: 0 auto;}
 
-#mc_a, #mc_b, #mc_c, #mc_d{width:200px; min-height: 75px; border: 1px solid grey; margin-bottom: 33px;}
+#mc_a, #mc_b, #mc_c, #mc_d{width:200px; min-height: 75px; border: 1px solid grey; margin-bottom: 33px; cursor: pointer;}
 
 #mc_a{float:left;}
 #mc_b{float:right; }
