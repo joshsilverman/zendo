@@ -90,7 +90,11 @@ var cReviewer = Class.create({
 
         /* grade current */
         if (grade) {
-            this.cards[this.currentCardIndex].grade(grade);
+            var card = this.cards[this.currentCardIndex];
+            card.grade(grade);
+            if(card.response==null){
+                card.response = grade;
+            }
         /* If no grade, card was skipped => post high confidence / zero importance for now */
         } else {
             var requestUrl = '/mems/update/'+this.cards[this.currentCardIndex].memId+'/9/0';
@@ -174,12 +178,20 @@ var cReviewer = Class.create({
         /* back */
         this.currentCardIndex--;
         if (this.cards[this.currentCardIndex]) {
-            if (this.cards[this.currentCardIndex].confidence == -1) {
-                var card = this.cards[this.currentCardIndex];
+            var card = this.cards[this.currentCardIndex];
+            if(card.response == null){
                 card.cue();
-            }
-            else {this.cards[this.currentCardIndex].showAll();
-            }
+            } else if(card.phase==2){
+                if(card.mc){card.mc_show();}
+                else if(card.fita){card.fita_show();}
+                else {card.showAll();}
+            } else if(card.phase==3){
+                if(card.fita){card.fita_show();}
+                else{card.showAll();}
+            } else {card.showAll();}
+
+            console.log("response:" + card.response);
+
             $('summary').setStyle({'display':'none'});
         }
         else if (this.currentCardIndex > 0){
@@ -350,17 +362,13 @@ var cCard = Class.create({
     confidence: -1,
     phase: null,
     memId: null,
-    lineId: null,
-    domId: null,
-    documentId: null,
-    text: '',
     front: '',
-    simpleFront: '',
     back: '',
     question: null,
     answers: null,
     mc: false,
     fita: false,
+    response: null,
 
     buttons: '<div id="edit_buttons">\
                 <button id="button_edit" class="edit" style="display:none">Edit</button>\
@@ -369,10 +377,7 @@ var cCard = Class.create({
               </div>',
     
     initialize: function(data) {
-        this.lineId = data['line_id'];
-        //this.domId = data['domid'];
         this.memId = data['mems'][0]['id'];
-        this.documentId = data['document_id'];
         this.front = data['name'];
         this.back = data['definition'];
         if(data['questions'].length > 0){
@@ -413,8 +418,6 @@ var cCard = Class.create({
         
         //HARD CODE THE PHASE FOR TESTING PURPOSES//
         this.phase = 2;
-        //this.text = data['text'];
-//        console.log(this.text);
 
     },
 
@@ -522,14 +525,14 @@ var cCard = Class.create({
         //if (!this.back) parser.parse(this, true);
 
         /* front */
-        $('card_front').update("<div id='card_front_text'>"+this.front+"</div>" + this.buttons);
-        $('card_front_text').update(this.front);
+        $('card_front').update("<div id='card_front_text'>"+this.question+"</div>" + this.buttons);
+        $('card_front_text').update(this.question);
 
         /* back */
-        $('card_back').update('');
+        $('card_back').update('___________');
 
-        $('card_show').stopObserving('click', this.showAll);
-        $('card_show').observe('click', this.showAll.bind(this));
+        $('card_show').stopObserving('click');
+        $('card_show').update("Fill in the Answer");
 
         /* hide grade buttons */
         $$('.button_container, .grade_yourself').each(function (buttonContainer) {
@@ -573,7 +576,6 @@ var cCard = Class.create({
     },
 
     showAll: function() {
-
         /* show */
         $('card_front').update("<div id='card_front_text'></div>");
 //        $('card_front').update("<div id='card_front_text'></div>" + this.buttons);
@@ -588,10 +590,18 @@ var cCard = Class.create({
 
         /*hide show bar*/
         $('card_show').setStyle({'display':'none'});
-
         /* set grade associated with current card */
         doc.reviewer.displayGrade(doc.reviewer.cards[doc.reviewer.currentCardIndex].confidence);
 
+        $('grade_4').setStyle({'background':'url("../../images/reviewer/got-it.png")'});
+        $('grade_3').setStyle({'background':'url("../../images/reviewer/kinda.png")'});
+        $('grade_2').setStyle({'background':'url("../../images/reviewer/barely.png")'});
+        $('grade_1').setStyle({'background':'url("../../images/reviewer/no-clue.png")'});
+
+        if(this.confidence==9){$('grade_4').setStyle({'background':'url("../../images/reviewer/got-it-hover.png")'});}
+        if(this.confidence==6){$('grade_3').setStyle({'background':'url("../../images/reviewer/kinda-hover.png")'});}
+        if(this.confidence==4){$('grade_2').setStyle({'background':'url("../../images/reviewer/barely-hover.png")'});}
+        if(this.confidence==1){$('grade_1').setStyle({'background':'url("../../images/reviewer/no-clue-hover.png")'});}
         /* edit button and listener */
 //        $('button_edit').observe('click', this.makeEditable.bind(this));
 //        $('button_edit').show();
@@ -614,10 +624,10 @@ var cCard = Class.create({
     },
 
     mc_grade: function(choice){
-        
+
         console.log(choice);
         console.log(this.front);
-
+        this.response = choice.innerHTML;
         $('mc_a').stopObserving('click');
         $('mc_b').stopObserving('click');
         $('mc_c').stopObserving('click');
@@ -645,56 +655,67 @@ var cCard = Class.create({
 
     },
 
-    makeEditable: function() {
+    mc_show: function(){
+        /* Multiple Choice */
 
-        /* buttons */
-        $('button_done').show();
-        $('button_cancel').show();
-        $('button_edit').hide();
+        /* front */
+        $('card_front').update("<div id='card_front_text'>"+this.question+"</div>" + this.buttons);
+        $('card_front_text').update(this.question);
 
-        /* inputs */
+        /* back */
 
-        //front
-        var input = "<textarea id='input_front'>"+this.simpleFront+"</textarea>";
-        $('card_front_text').remove();
-        $('edit_buttons').insert({'after': input});
-        $('input_front').focus();
+        $('card_back').update("<div id='mc_container'><div id='mc_a'>"+this.answers[0]+"</div>\
+                                <div id='mc_b'>"+this.answers[1]+"</div>\
+                                <div id='mc_c'>"+this.answers[2]+"</div>\
+                                <div id='mc_d'>"+this.answers[3]+"</div>\
+                                </div>");
 
-        //back
-        var input = "<textarea id='input_back'>"+this.back+"</textarea>";
-        $('card_back_text').remove();
-        $('card_back').update(input);
+        $('card_show').stopObserving('click');
+        $('card_show').update("Click or Press Letter to Choose An Answer");
 
-        /* listeners */
-        $('button_done').observe('click', this.update.bind(this));
-        $('button_cancel').observe('click', this.showAll.bind(this));
+        /* hide grade buttons */
+        $$('.button_container, .grade_yourself').each(function (buttonContainer) {
+            buttonContainer.addClassName('grade_hide');
+            var button = buttonContainer.down("button");
+            if (button) {
+                button.removeClassName('chosen');
+            }
+        });
+        $('grade_container').setStyle({'display':'none'});
+        $('card_show').setStyle({'display':'block'});
+        console.log(this.response);
+        var choice;
+        if($('mc_a').innerHTML == this.response){choice = $('mc_a');}
+        else if($('mc_b').innerHTML == this.response){choice = $('mc_b');}
+        else if($('mc_c').innerHTML == this.response){choice = $('mc_c');}
+        else {choice = $('mc_d');}
+
+        if(this.response == this.front){
+            choice.setStyle({'background-color':'green'});
+        }else{
+            choice.setStyle({'background-color':'red'});
+            if($('mc_a').innerHTML == this.front){
+                $('mc_a').setStyle({'background-color':'green'});
+            }
+            if($('mc_b').innerHTML == this.front){
+                $('mc_b').setStyle({'background-color':'green'});
+            }
+            if($('mc_c').innerHTML == this.front){
+                $('mc_c').setStyle({'background-color':'green'});
+            }
+            if($('mc_d').innerHTML == this.front){
+                $('mc_d').setStyle({'background-color':'green'});
+            }
+        }
+
+    },
+    
+    fita_grade: function(){
+        console.log("fita_grade called");
     },
 
-    update: function() {
-
-        /* text */
-        var text = $('input_front').value + ' - ' + $('input_back').value;
-        text = text.escapeHTML();
-
-        /* save */
-        var requestUrl = '/lines/'+this.lineId;
-        new Ajax.Request(requestUrl, {
-            method: 'put',
-            parameters: {"line[text]": text, "line[id]": this.lineId},
-            
-            onSuccess: function(transport) {
-
-                /* reparse and update card */
-                var data = transport.responseText.evalJSON();
-                this.text = data['line'];
-                $('document_' + this.documentId).update(data['html']);
-                //parser.parse(this, true);
-            }.bind(this),
-
-            onFailure: function() {},
-
-            onComplete: function(transport) {this.showAll();}.bind(this)
-        });
+    fita_show: function() {
+        console.log("fita_show called");
     },
 
     increment: function() {
