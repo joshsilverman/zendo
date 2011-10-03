@@ -86,6 +86,11 @@ describe "document" do
         @document.name.should == "title two"
       end
 
+      it "creates a usership for that user" do
+          @us = Usership.find_by_document_id_and_user_id(@document.id, @user.id)
+          @us.nil?.should == false
+        end
+
       describe "while editing" do
 
         describe "by bolding" do
@@ -410,6 +415,11 @@ describe "document" do
             visit "/documents/#{@document.id}/edit"
             wait_until{ page.has_content?("Review") }
             page.find("#save_button").visible?.should == false
+        end
+
+        it "creates a usership for that user" do
+          @us = Usership.find_by_document_id_and_user_id(@document.id, @user2.id)
+          @us.nil?.should == false
         end
       end
     end
