@@ -1,5 +1,6 @@
 class CreateTerms < ActiveRecord::Migration
   def self.up
+    drop_table :terms
     create_table :terms do |t|
       t.integer :document_id
       t.integer :user_id
