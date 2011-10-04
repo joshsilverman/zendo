@@ -380,6 +380,7 @@ var cCard = Class.create({
         this.memId = data['mems'][0]['id'];
         this.front = data['name'];
         this.back = data['definition'];
+        this.phase = data['phase'];
         if(data['questions'].length > 0){
             this.question = data['questions'][0]['question'];
             //this.fita = true;     //keep false always until we've tested MC'
@@ -406,18 +407,18 @@ var cCard = Class.create({
                 }
             }
         }
-        if(data['mems'][0]['strength']<20){
-            this.phase = 3;
-            if(data['mems'][0]['strength']<10){
-                this.phase = 2;
-                if(data['mems'][0]['strength']<5){
-                    this.phase = 1;
-                }
-            }
-        }else{this.phase = 4;}
-        
-        //HARD CODE THE PHASE FOR TESTING PURPOSES//
-        this.phase = 2;
+//        if(data['mems'][0]['strength']<20){
+//            this.phase = 3;
+//            if(data['mems'][0]['strength']<10){
+//                this.phase = 2;
+//                if(data['mems'][0]['strength']<5){
+//                    this.phase = 1;
+//                }
+//            }
+//        }else{this.phase = 4;}
+//
+//        //HARD CODE THE PHASE FOR TESTING PURPOSES//
+//        this.phase = 2;
 
     },
 
