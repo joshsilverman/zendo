@@ -18,6 +18,11 @@ namespace :notifications do
     end
     APN::Notification.send_notifications
   end
+
+  task :android => :environment do
+    require 'rubygems'
+    require 'c2dm'
+  end
 end
 
 #          puts "More than 6 pending mems per doc for this user"
