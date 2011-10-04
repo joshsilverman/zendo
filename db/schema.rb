@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110907190710) do
+ActiveRecord::Schema.define(:version => 20110929181934) do
 
   create_table "alternatives", :force => true do |t|
     t.integer "experiment_id"
@@ -23,6 +23,13 @@ ActiveRecord::Schema.define(:version => 20110907190710) do
 
   add_index "alternatives", ["experiment_id"], :name => "index_alternatives_on_experiment_id"
   add_index "alternatives", ["lookup"], :name => "index_alternatives_on_lookup"
+
+  create_table "answers", :force => true do |t|
+    t.text     "answer"
+    t.integer  "question_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "apn_devices", :force => true do |t|
     t.string   "token",              :default => "", :null => false
@@ -102,9 +109,17 @@ ActiveRecord::Schema.define(:version => 20110907190710) do
     t.datetime "updated_at"
     t.integer  "document_id"
     t.boolean  "pushed",       :default => false
+    t.integer  "term_id"
   end
 
   add_index "mems", ["line_id"], :name => "index_mems_on_line_id"
+
+  create_table "questions", :force => true do |t|
+    t.text     "question"
+    t.integer  "term_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "reps", :force => true do |t|
     t.integer  "user_id"
@@ -126,6 +141,16 @@ ActiveRecord::Schema.define(:version => 20110907190710) do
   end
 
   add_index "tags", ["user_id"], :name => "index_tags_on_user_id"
+
+  create_table "terms", :force => true do |t|
+    t.integer  "document_id"
+    t.integer  "user_id"
+    t.integer  "line_id"
+    t.text     "name"
+    t.text     "definition"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "users", :force => true do |t|
     t.string   "email",                               :default => "",    :null => false

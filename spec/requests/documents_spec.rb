@@ -138,6 +138,7 @@ describe "document" do
             @document.html.should == html
             @document.lines.count.should == 1
             @user.mems.count.should == 1
+            @user.terms.count.should == 1
           end
         end
 
@@ -178,6 +179,7 @@ describe "document" do
             end
             @document.lines.count.should == @nodes.length
             @user.mems.count.should == @nodes.length
+            @user.terms.count.should == @nodes.length
           end
 
           it "is reviewable" do
@@ -257,6 +259,7 @@ describe "document" do
             count = (@nodes.length/2).ceil
             @document.lines.count.should == count
             @user.mems.count.should == count
+            @user.terms.count.should == count
           end
         end
       end

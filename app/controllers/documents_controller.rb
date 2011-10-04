@@ -103,31 +103,7 @@ class DocumentsController < ApplicationController
       return
     end
 
-    # get lines
-    owner_lines = Line.includes(:mems).where("lines.document_id = ?
-                        AND mems.status = true AND mems.user_id = ?",
-                        params[:id], @document.userships(:conditions => {:owner => true}).first.user_id)
- 
-    if @document.id == current_user.id
-      @lines_json = owner_lines.to_json :include => :mems
-    else
-      # on demand mem creation
-      Mem.transaction do
-        owner_lines.each do |owner_line|
-          mem = Mem.find_or_initialize_by_line_id_and_user_id(owner_line.id, current_user.id);
-          mem.strength = 0.5 if mem.strength.nil?
-          mem.status = 1 if mem.status.nil?
-          mem.document_id = @document.id
-          mem.save
-        end
-      end
-
-      user_lines = Line.includes(:mems).where("lines.document_id = ?
-                        AND mems.status = true AND mems.user_id = ?",
-                        params[:id], current_user.id)
-
-      @lines_json = user_lines.to_json :include => :mems
-    end
+    get_all_cards(params[:id])
 
     respond_to do |format|
         format.html
@@ -137,7 +113,52 @@ class DocumentsController < ApplicationController
             render :text => json
         }
     end
-  end  
+  end
+
+  def review_session
+    get_document(params[:id])
+    if @document.nil?
+      redirect_to '/', :notice => "Error accessing that document."
+      return
+    end
+
+    # get lines
+    user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?", params[:id])
+
+    # on demand mem creation
+    Mem.transaction do
+      user_terms.each do |ot|
+        puts ot.to_json
+        mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
+        mem.strength = 0.5 if mem.strength.nil?
+        mem.status = 1 if mem.status.nil?
+        mem.term_id = ot.id if mem.term_id.nil?
+        mem.document_id = @document.id
+        mem.save
+      end
+    end
+
+    user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
+                      AND mems.status = true AND mems.user_id = ? AND mems.review_after <= ?",
+                      params[:id], current_user.id, Date.today)
+
+    session_terms = []
+
+    userterms.each do |ut|
+      
+    end
+
+    @lines_json = user_terms.to_json :include => [:mems, :questions, :answers]
+
+    respond_to do |format|
+        format.html
+   	    format.json {
+            doc_json = @document.to_json
+            json = "{\"document\":#{doc_json}, \"lines\":#{@lines_json}}"
+            render :text => json
+        }
+    end
+  end
   
   def enable_mobile
   	if params[:bool] == "1"
@@ -152,11 +173,13 @@ class DocumentsController < ApplicationController
                             params[:id])                          
         Mem.transaction do
           owner_lines.each do |owner_line|
+            term = Term.find_by_line_id(owner_line.id)
             mem = Mem.find_or_initialize_by_line_id_and_user_id(owner_line.id, current_user.id);
             mem.strength = 0.5 if mem.strength.nil?
             mem.status = 1 if mem.status.nil?
             mem.document_id = params[:id] if mem.document_id.nil?
             mem.line_id = owner_line.id if mem.line_id.nil?
+            mem.term_id = term.id if mem.term_id.nil? and not term.nil?
             mem.user_id = current_user.id if mem.user_id.nil?
             mem.created_at = Time.now if mem.created_at.nil?
             mem.save
@@ -303,8 +326,6 @@ class DocumentsController < ApplicationController
     #If document has been updated since last cache, regenerate the cards hash and recache, otherwise serve the cache
     @cache = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
     if @cache.nil? || @document.updated_at > @cache["updated_at"]
-      @hash = Hash.new
-      @hash["cards"] = []
       Document.update({:id => params[:id], :html => @document.html, :delete_nodes => [], :name => @document.name, :edited_at => @document.edited_at}, current_user.id)
       @html = Nokogiri::HTML("<wrapper>" + @document.html.gsub(/<\/?em>/, "").gsub(/<\/?span[^>]*>/, " ").gsub(/<\/?a[^>]*>/, " ").gsub(/<\/?sup[^>]*>/, " ").gsub(/\s+/," ").gsub(/ ,/, ",").gsub(/ \./, ".").gsub(/ \)/, ")") + "</wrapper>")
       Line.all(:conditions => {:document_id => params[:id]}).each do |line|
@@ -343,11 +364,35 @@ class DocumentsController < ApplicationController
     end
   end
 
+  def review_all_cards
+    get_document(params[:id])
+    if @document.nil?
+      redirect_to '/', :notice => "Error accessing that document."
+      return
+    end
+
+    get_all_cards(params[:id])
+
+    render :json => @lines_json
+  end
+
+  def review_adaptive_cards
+    get_document(params[:id])
+    if @document.nil?
+      redirect_to '/', :notice => "Error accessing that document."
+      return
+    end
+
+    get_adaptive_cards(params[:id])
+
+    render :json => @lines_json
+  end
+
   def get_public_documents
     render :json => Document.all(:conditions => {:public => true}).to_json(:only => [:name, :id])
   end
 
-
+  
   private
 
   
@@ -370,4 +415,80 @@ class DocumentsController < ApplicationController
       @r = true
     end
   end
+
+  def get_all_cards(doc_id)
+
+    user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
+
+    # on demand mem creation
+    Mem.transaction do
+      user_terms.each do |ot|
+        mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
+        mem.strength = 0.5 if mem.strength.nil?
+        mem.status = 1 if mem.status.nil?
+        mem.term_id = ot.id if mem.term_id.nil?
+        mem.document_id = @document.id
+        mem.save
+      end
+    end
+
+    user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
+                      AND mems.status = true AND mems.user_id = ?",
+                      doc_id, current_user.id)
+    json = []
+    user_terms.each do |t|
+      jsonArray = JSON.parse(t.to_json :include => [:mems, :questions, :answers])
+      get_phase(jsonArray['term']['mems'][0]['strength'].to_f)
+      jsonArray['term']['phase'] = @phase
+      json << jsonArray
+    end
+
+    @lines_json = json.to_json
+  end
+
+  def get_adaptive_cards(doc_id)
+    user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
+
+    # on demand mem creation
+    Mem.transaction do
+      user_terms.each do |ot|
+        puts ot.to_json
+        mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
+        mem.strength = 0.5 if mem.strength.nil?
+        mem.status = 1 if mem.status.nil?
+        mem.term_id = ot.id if mem.term_id.nil?
+        mem.document_id = @document.id
+        mem.save
+      end
+    end
+
+    user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
+                      AND mems.status = true AND mems.user_id = ? AND mems.review_after <= ?",
+                      doc_id, current_user.id, Date.today)
+
+    json = []
+    user_terms.each do |t|
+      jsonArray = JSON.parse(t.to_json :include => [:mems, :questions, :answers])
+      get_phase(jsonArray['term']['mems'][0]['strength'].to_f)
+      jsonArray['term']['phase'] = @phase
+      json << jsonArray
+    end
+
+    @lines_json = json.to_json
+  end
+
+  def get_phase(strength)
+    if strength < 1000000  # 1/2 a week
+      @phase = 3
+      if strength < 300000   #1 day
+        @phase = 2
+        if strength <12000   #1 hour
+          @phase = 1
+        end
+      end
+    else
+      @phase = 4
+    end
+  end
+
 end

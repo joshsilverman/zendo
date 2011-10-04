@@ -38,4 +38,5 @@ class TermsController < ApplicationController
     end
   end
 
+  
 end
