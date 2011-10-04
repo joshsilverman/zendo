@@ -103,6 +103,25 @@ class DocumentsController < ApplicationController
       return
     end
 
+    get_all_cards(params[:id])
+
+    respond_to do |format|
+        format.html
+   	    format.json { 
+            doc_json = @document.to_json
+            json = "{\"document\":#{doc_json}, \"lines\":#{@lines_json}}"
+            render :text => json
+        }
+    end
+  end
+
+  def review_session
+    get_document(params[:id])
+    if @document.nil?
+      redirect_to '/', :notice => "Error accessing that document."
+      return
+    end
+
     # get lines
     user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?", params[:id])
 
@@ -120,20 +139,26 @@ class DocumentsController < ApplicationController
     end
 
     user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
-                      AND mems.status = true AND mems.user_id = ?",
-                      params[:id], current_user.id)
+                      AND mems.status = true AND mems.user_id = ? AND mems.review_after <= ?",
+                      params[:id], current_user.id, Date.today)
+
+    session_terms = []
+
+    userterms.each do |ut|
+      
+    end
 
     @lines_json = user_terms.to_json :include => [:mems, :questions, :answers]
 
     respond_to do |format|
         format.html
-   	    format.json { 
+   	    format.json {
             doc_json = @document.to_json
             json = "{\"document\":#{doc_json}, \"lines\":#{@lines_json}}"
             render :text => json
         }
     end
-  end  
+  end
   
   def enable_mobile
   	if params[:bool] == "1"
@@ -339,6 +364,30 @@ class DocumentsController < ApplicationController
     end
   end
 
+  def review_all_cards
+    get_document(params[:id])
+    if @document.nil?
+      redirect_to '/', :notice => "Error accessing that document."
+      return
+    end
+
+    get_all_cards(params[:id])
+
+    render :json => @lines_json
+  end
+
+  def review_adaptive_cards
+    get_document(params[:id])
+    if @document.nil?
+      redirect_to '/', :notice => "Error accessing that document."
+      return
+    end
+
+    get_adaptive_cards(params[:id])
+
+    render :json => @lines_json
+  end
+
   def get_public_documents
     render :json => Document.all(:conditions => {:public => true}).to_json(:only => [:name, :id])
   end
@@ -365,5 +414,52 @@ class DocumentsController < ApplicationController
     elsif current_user.try(:admin?)
       @r = true
     end
+  end
+
+  def get_all_cards(doc_id)
+
+    user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
+
+    # on demand mem creation
+    Mem.transaction do
+      user_terms.each do |ot|
+        puts ot.to_json
+        mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
+        mem.strength = 0.5 if mem.strength.nil?
+        mem.status = 1 if mem.status.nil?
+        mem.term_id = ot.id if mem.term_id.nil?
+        mem.document_id = @document.id
+        mem.save
+      end
+    end
+
+    user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
+                      AND mems.status = true AND mems.user_id = ?",
+                      doc_id, current_user.id)
+
+    @lines_json = user_terms.to_json :include => [:mems, :questions, :answers]
+  end
+
+  def get_adaptive_cards(doc_id)
+    user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
+
+    # on demand mem creation
+    Mem.transaction do
+      user_terms.each do |ot|
+        puts ot.to_json
+        mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
+        mem.strength = 0.5 if mem.strength.nil?
+        mem.status = 1 if mem.status.nil?
+        mem.term_id = ot.id if mem.term_id.nil?
+        mem.document_id = @document.id
+        mem.save
+      end
+    end
+
+    user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
+                      AND mems.status = true AND mems.user_id = ? AND mems.review_after <= ?",
+                      doc_id, current_user.id, Date.today)
+
+    @lines_json = user_terms.to_json :include => [:mems, :questions, :answers]
   end
 end
