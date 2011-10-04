@@ -472,7 +472,6 @@ class DocumentsController < ApplicationController
     # on demand mem creation
     Mem.transaction do
       user_terms.each do |ot|
-        puts ot.to_json
         mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
         mem.strength = 0.5 if mem.strength.nil?
         mem.status = 1 if mem.status.nil?
@@ -485,8 +484,15 @@ class DocumentsController < ApplicationController
     user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
                       AND mems.status = true AND mems.user_id = ?",
                       doc_id, current_user.id)
+    json = []
+    user_terms.each do |t|
+      jsonArray = JSON.parse(t.to_json :include => [:mems, :questions, :answers])
+      get_phase(jsonArray['term']['mems'][0]['strength'].to_f)
+      jsonArray['term']['phase'] = @phase
+      json << jsonArray
+    end
 
-    @lines_json = user_terms.to_json :include => [:mems, :questions, :answers]
+    @lines_json = json.to_json
   end
 
   def get_adaptive_cards(doc_id)
@@ -509,6 +515,29 @@ class DocumentsController < ApplicationController
                       AND mems.status = true AND mems.user_id = ? AND mems.review_after <= ?",
                       doc_id, current_user.id, Date.today)
 
-    @lines_json = user_terms.to_json :include => [:mems, :questions, :answers]
+    json = []
+    user_terms.each do |t|
+      jsonArray = JSON.parse(t.to_json :include => [:mems, :questions, :answers])
+      get_phase(jsonArray['term']['mems'][0]['strength'].to_f)
+      jsonArray['term']['phase'] = @phase
+      json << jsonArray
+    end
+
+    @lines_json = json.to_json
   end
+
+  def get_phase(strength)
+    if strength < 1000000  # 1/2 a week
+      @phase = 3
+      if strength < 300000   #1 day
+        @phase = 2
+        if strength <12000   #1 hour
+          @phase = 1
+        end
+      end
+    else
+      @phase = 4
+    end
+  end
+
 end
