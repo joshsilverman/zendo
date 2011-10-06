@@ -469,7 +469,7 @@ class DocumentsController < ApplicationController
     json = []
     user_terms.each do |t|
       jsonArray = JSON.parse(t.to_json :include => [:mems, :questions, :answers])
-      get_phase(jsonArray['term']['mems'][0]['strength'].to_f)
+      get_phase(jsonArray['term']['mems'][0]['strength'].to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
       jsonArray['term']['phase'] = @phase
       json << jsonArray
     end
@@ -477,18 +477,41 @@ class DocumentsController < ApplicationController
     @lines_json = json.to_json
   end
 
-  def get_phase(strength)
-    if strength < 1000000  # 1/2 a week
-      @phase = 3
-      if strength < 300000   #1 day
-        @phase = 2
-        if strength <12000   #1 hour
-          @phase = 1
+  def get_phase(strength, mc, fita)
+    phase = 1
+    if strength > 120000 # 1/2 a week
+      phase = 2
+      if strength > 300000   #1 day
+        phase = 3
+        if strength > 1000000   #1 hour
+          phase = 4
         end
       end
-    else
-      @phase = 4
     end
+
+    case phase
+    when 1
+      @phase = 1
+    when 2
+      if mc.size > 2
+        @phase = 2
+      elsif not fita.empty?
+        @phase = 3
+      else
+        @phase = 4
+      end
+    when 3
+      if not fita.empty?
+        @phase = 3
+      else
+        @phase = 4
+      end
+    when 4
+      @phase = 4
+    else
+      puts "There was an error with the phase"
+    end
+
   end
 
 end
