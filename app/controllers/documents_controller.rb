@@ -417,33 +417,40 @@ class DocumentsController < ApplicationController
   end
 
   def get_all_cards(doc_id)
+    @cache = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
+    if @cache.nil? || @document.updated_at > @cache["updated_at"]
+      puts "Regenerating!"
+      user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
 
-    user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
-
-    # on demand mem creation
-    Mem.transaction do
-      user_terms.each do |ot|
-        mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
-        mem.strength = 0.5 if mem.strength.nil?
-        mem.status = 1 if mem.status.nil?
-        mem.term_id = ot.id if mem.term_id.nil?
-        mem.document_id = @document.id
-        mem.save
+      # on demand mem creation
+      Mem.transaction do
+        user_terms.each do |ot|
+          mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
+          mem.strength = 0.5 if mem.strength.nil?
+          mem.status = 1 if mem.status.nil?
+          mem.term_id = ot.id if mem.term_id.nil?
+          mem.document_id = @document.id
+          mem.save
+        end
       end
-    end
 
-    user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
-                      AND mems.status = true AND mems.user_id = ?",
-                      doc_id, current_user.id)
-    json = []
-    user_terms.each do |t|
-      jsonArray = JSON.parse(t.to_json :include => [:mems, :questions, :answers])
-      get_phase(jsonArray['term']['mems'][0]['strength'].to_f)
-      jsonArray['term']['phase'] = @phase
-      json << jsonArray
-    end
+      user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
+                        AND mems.status = true AND mems.user_id = ?",
+                        doc_id, current_user.id)
+      json = []
+      user_terms.each do |t|
+        jsonArray = JSON.parse(t.to_json :include => [:mems, :questions, :answers])
+        get_phase(jsonArray['term']['mems'][0]['strength'].to_f)
+        jsonArray['term']['phase'] = @phase
+        json << jsonArray
+      end
 
-    @lines_json = json.to_json
+      @lines_json = {"terms" => json.to_json}
+      Rails.cache.write("#{params[:controller]}_#{params[:action]}_#{params[:id]}", {"terms" => @lines_json, "updated_at" => Time.now})
+    else
+      puts "Serving cache!"
+      @lines_json = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
+    end
   end
 
   def get_adaptive_cards(doc_id)
