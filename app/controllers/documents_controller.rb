@@ -530,7 +530,13 @@ class DocumentsController < ApplicationController
     else
       puts "There was an error with the phase"
     end
-
+    puts "TERM PHASE DATA:"
+    puts strength
+    puts phase
+    puts (mc.size > 2)
+    puts (not fita.empty?)
+    puts @phase
+    puts " "
   end
 
 end
