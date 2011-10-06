@@ -495,17 +495,17 @@ class DocumentsController < ApplicationController
     when 2
       if mc.size > 2
         @phase = 2
-      elsif not fita.empty?
-        @phase = 3
+      #elsif not fita.empty?
+      #  @phase = 3
       else
         @phase = 4
       end
     when 3
-      if not fita.empty?
-        @phase = 3
-      else
+      #if not fita.empty?
+      #  @phase = 3
+      #else
         @phase = 4
-      end
+      #end
     when 4
       @phase = 4
     else
