@@ -503,10 +503,10 @@ var cCard = Class.create({
 
         /* back */
         
-        $('card_back').update("<div id='mc_container'><div id='mc_a'>"+this.answers[0]+"</div>\
-                                <div id='mc_b'>"+this.answers[1]+"</div>\
-                                <div id='mc_c'>"+this.answers[2]+"</div>\
-                                <div id='mc_d'>"+this.answers[3]+"</div>\
+        $('card_back').update("<div id='mc_container'><div id='mc_a' class='mc_selection'>"+this.answers[0]+"</div>\
+                                <div id='mc_b' class='mc_selection'>"+this.answers[1]+"</div>\
+                                <div id='mc_c' class='mc_selection'>"+this.answers[2]+"</div>\
+                                <div id='mc_d' class='mc_selection'>"+this.answers[3]+"</div>\
                                 </div>");
 
         $('card_show').stopObserving('click');
@@ -645,24 +645,32 @@ var cCard = Class.create({
         $('mc_b').stopObserving('click');
         $('mc_c').stopObserving('click');
         $('mc_d').stopObserving('click');
+        $('mc_a').removeClassName('mc_selection');
+        $('mc_a').addClassName('mc_answered');
+        $('mc_b').removeClassName('mc_selection');
+        $('mc_b').addClassName('mc_answered');
+        $('mc_c').removeClassName('mc_selection');
+        $('mc_c').addClassName('mc_answered');
+        $('mc_d').removeClassName('mc_selection');
+        $('mc_d').addClassName('mc_answered');
 
         if(choice.innerHTML == this.front){
-            choice.setStyle({'background-color':'green'});
+            choice.addClassName('mc_correct');
             this.grade(9);
         }else{
             this.grade(1);
-            choice.setStyle({'background-color':'red'});
+            choice.addClassName('mc_incorrect');
             if($('mc_a').innerHTML == this.front){
-                $('mc_a').setStyle({'background-color':'green'});
+                $('mc_a').addClassName('mc_correct');
             }
             if($('mc_b').innerHTML == this.front){
-                $('mc_b').setStyle({'background-color':'green'});
+                $('mc_b').addClassName('mc_correct');
             }
             if($('mc_c').innerHTML == this.front){
-                $('mc_c').setStyle({'background-color':'green'});
+                $('mc_c').addClassName('mc_correct');
             }
             if($('mc_d').innerHTML == this.front){
-                $('mc_d').setStyle({'background-color':'green'});
+                $('mc_d').addClassName('mc_correct');
             }
         }
 
@@ -677,10 +685,10 @@ var cCard = Class.create({
 
         /* back */
 
-        $('card_back').update("<div id='mc_container'><div id='mc_a'>"+this.answers[0]+"</div>\
-                                <div id='mc_b'>"+this.answers[1]+"</div>\
-                                <div id='mc_c'>"+this.answers[2]+"</div>\
-                                <div id='mc_d'>"+this.answers[3]+"</div>\
+        $('card_back').update("<div id='mc_container'><div id='mc_a' class='mc_answered'>"+this.answers[0]+"</div>\
+                                <div id='mc_b' class='mc_answered'>"+this.answers[1]+"</div>\
+                                <div id='mc_c' class='mc_answered'>"+this.answers[2]+"</div>\
+                                <div id='mc_d' class='mc_answered'>"+this.answers[3]+"</div>\
                                 </div>");
 
         $('card_show').stopObserving('click');
@@ -703,21 +711,22 @@ var cCard = Class.create({
         else if($('mc_c').innerHTML == this.response){choice = $('mc_c');}
         else {choice = $('mc_d');}
 
-        if(this.response == this.front){
-            choice.setStyle({'background-color':'green'});
+        if(choice.innerHTML == this.front){
+            choice.addClassName('mc_correct');
         }else{
-            choice.setStyle({'background-color':'red'});
+            this.grade(1);
+            choice.addClassName('mc_incorrect');
             if($('mc_a').innerHTML == this.front){
-                $('mc_a').setStyle({'background-color':'green'});
+                $('mc_a').addClassName('mc_correct');
             }
             if($('mc_b').innerHTML == this.front){
-                $('mc_b').setStyle({'background-color':'green'});
+                $('mc_b').addClassName('mc_correct');
             }
             if($('mc_c').innerHTML == this.front){
-                $('mc_c').setStyle({'background-color':'green'});
+                $('mc_c').addClassName('mc_correct');
             }
             if($('mc_d').innerHTML == this.front){
-                $('mc_d').setStyle({'background-color':'green'});
+                $('mc_d').addClassName('mc_correct');
             }
         }
 
