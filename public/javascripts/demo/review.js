@@ -15,6 +15,27 @@ var cDoc = Class.create({
         window.onresize = this.onResize;
         this.onResize();
         AppUtilities.resizeContents.delay(.01);
+
+        $$('.blink')[0].observe('focus', function(){
+            if( $(this).getAttribute('title') == $(this).value ) {
+                    $(this).value = "";
+            }
+        });
+        $$('.blink')[0].observe('blur', function(){
+            if( $(this).value == '' ) {
+                    $(this).value = $(this).getAttribute('title');
+            }
+        });
+        $$('.blink')[1].observe('focus', function(){
+            if( $(this).getAttribute('title') == $(this).value ) {
+                    $(this).value = "";
+            }
+        });
+        $$('.blink')[1].observe('blur', function(){
+            if( $(this).value == '' ) {
+                    $(this).value = $(this).getAttribute('title');
+            }
+        });
     },
 
     onResize: function() {
@@ -214,16 +235,16 @@ var cReviewHandlers = Class.create({
 //                this.onDown(event);
 //                break;
             case (52):
-                this.on4(event);
+                //this.on4(event);
                 break;
             case (51):
-                this.on3(event);
+                //this.on3(event);
                 break;
             case (50):
-                this.on2(event);
+                //this.on2(event);
                 break;
             case (49):
-                this.on1(event);
+                //this.on1(event);
                 break;
 
             default:
@@ -494,6 +515,8 @@ document.observe('dom:loaded', function() {
             }
         });
     }.bind(this));
+
+
 });
 
 

@@ -7,9 +7,10 @@ class Term < ActiveRecord::Base
 
   def self.create_term_from_line(id)
     line = Line.find_by_id(id)
+
     unless line.nil?
       @document = Document.find_by_id(line.document_id)
-      if @document.nil?
+      if @document.nil? || @document.html.nil?
         puts "Line_id #{id}: Document #{line.document_id} nil.  Returning..."
         return
       end
@@ -21,12 +22,18 @@ class Term < ActiveRecord::Base
           Term.find_or_create_by_line_id(line.id).update_attributes(:document_id => line.document_id, :user_id => line.user_id, :name => @result.first.children.first.text, :definition => @result.first.attribute("def").to_s, :line_id => line.id)
         else
           @node = Nokogiri::XML(@html).xpath("//*[@id='" + line.domid + "']")
-          @result = @node.first.children.first.text
-          @result = @result.split(' -')
-          if @result.length < 2
-            @result = @result[0].split('- ')
+          active = @node.first.to_s.include? "outline_node active"
+          unless active
+            active = @node.first.to_s.include? 'active="true"'
           end
-          Term.find_or_create_by_line_id(line.id).update_attributes(:document_id => line.document_id, :user_id => line.user_id, :name => @result[0].strip, :definition => @result[1].strip, :line_id => line.id)
+          if active
+            @result = @node.first.children.first.text
+            @result = @result.split(' -')
+            if @result.length < 2
+              @result = @result[0].split('- ')
+            end
+            Term.find_or_create_by_line_id(line.id).update_attributes(:document_id => line.document_id, :user_id => line.user_id, :name => @result[0].strip, :definition => @result[1].strip, :line_id => line.id)
+          end
         end
       rescue
         puts "There was an error with line id #{id}"
