@@ -71,10 +71,10 @@ var cReviewer = Class.create({
 
         /* nav listeners */
         $('back_button').observe('click', this.back.bind(this, false));
-        $('next_button').observe('click', this.next.bind(this, false));
+//        $('next_button').observe('click', this.next.bind(this, false));
         $('next_button').observe('click',function(){
-            if(this.cards[this.currentCardIndex].phase == 1){
-                this.next.bind(this, 6);
+            if(doc.reviewer.cards[doc.reviewer.currentCardIndex].phase == 1){
+                doc.reviewer.next(9);
             }
         }.bind(this));
 
@@ -290,7 +290,7 @@ var cReviewHandlers = Class.create({
 //
 //            onComplete: function(transport) {}//$('log').update(transport.responseText);}
 //        });
-        if(doc.reviewer.cards[doc.reviewer.currentCardIndex].phase == 4){
+        if(doc.reviewer.cards[doc.reviewer.currentCardIndex].phase == 1){
             doc.reviewer.next(9);
             event.stop();
         } else {
