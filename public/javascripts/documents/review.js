@@ -270,7 +270,9 @@ var cReviewHandlers = Class.create({
 
     onSpace: function(event) {
         /* show card sides */
-        doc.reviewer.cards[doc.reviewer.currentCardIndex].showAll();
+        if(doc.reviewer.cards[doc.reviewer.currentCardIndex].phase == 4){
+            doc.reviewer.cards[doc.reviewer.currentCardIndex].showAll();
+        }
         event.stop();
     },
 
@@ -288,8 +290,13 @@ var cReviewHandlers = Class.create({
 //
 //            onComplete: function(transport) {}//$('log').update(transport.responseText);}
 //        });
-        doc.reviewer.next();
-        event.stop();
+        if(doc.reviewer.cards[doc.reviewer.currentCardIndex].phase == 4){
+            doc.reviewer.next(9);
+            event.stop();
+        } else {
+            doc.reviewer.next();
+            event.stop();
+        }
     },
 
     onUp: function(event) {
@@ -317,41 +324,47 @@ var cReviewHandlers = Class.create({
     },
 
     on4: function() {
-        doc.reviewer.displayGrade(doc.reviewer.grade_4);
-        (function () {
-            $$('.button_container, .grade_yourself').each(function (buttonContainer) {buttonContainer.addClassName('grade_hide')});
-            doc.reviewer.displayGrade(-1);
-            doc.reviewer.next(doc.reviewer.grade_4);
-        }).delay(.4);
+        if(doc.reviewer.cards[doc.reviewer.currentCardIndex].phase == 4){
+            doc.reviewer.displayGrade(doc.reviewer.grade_4);
+            (function () {
+                $$('.button_container, .grade_yourself').each(function (buttonContainer) {buttonContainer.addClassName('grade_hide')});
+                doc.reviewer.displayGrade(-1);
+                doc.reviewer.next(doc.reviewer.grade_4);
+            }).delay(.4);
+        }
     },
 
     on3: function() {
-        doc.reviewer.displayGrade(doc.reviewer.grade_3);
-        (function () {
-            $$('.button_container, .grade_yourself').each(function (buttonContainer) {buttonContainer.addClassName('grade_hide')});
-            doc.reviewer.displayGrade(-1);
-            doc.reviewer.next(doc.reviewer.grade_3);
-        }).delay(.4);
+        if(doc.reviewer.cards[doc.reviewer.currentCardIndex].phase == 4){
+            doc.reviewer.displayGrade(doc.reviewer.grade_3);
+            (function () {
+                $$('.button_container, .grade_yourself').each(function (buttonContainer) {buttonContainer.addClassName('grade_hide')});
+                doc.reviewer.displayGrade(-1);
+                doc.reviewer.next(doc.reviewer.grade_3);
+            }).delay(.4);
+        }
     },
 
     on2: function() {
-
-        doc.reviewer.displayGrade(doc.reviewer.grade_2);
-        (function () {
-            $$('.button_container, .grade_yourself').each(function (buttonContainer) {buttonContainer.addClassName('grade_hide')});
-            doc.reviewer.displayGrade(-1);
-            doc.reviewer.next(doc.reviewer.grade_2);
-        }).delay(.4);
+        if(doc.reviewer.cards[doc.reviewer.currentCardIndex].phase == 4){
+            doc.reviewer.displayGrade(doc.reviewer.grade_2);
+            (function () {
+                $$('.button_container, .grade_yourself').each(function (buttonContainer) {buttonContainer.addClassName('grade_hide')});
+                doc.reviewer.displayGrade(-1);
+                doc.reviewer.next(doc.reviewer.grade_2);
+            }).delay(.4);
+        }
     },
 
     on1: function() {
-
-        doc.reviewer.displayGrade(doc.reviewer.grade_1);
-        (function () {
-            doc.reviewer.displayGrade(-1);
-            $$('.button_container, .grade_yourself').each(function (buttonContainer) {buttonContainer.addClassName('grade_hide')});
-            doc.reviewer.next(doc.reviewer.grade_1);
-        }).delay(.4);
+        if(doc.reviewer.cards[doc.reviewer.currentCardIndex].phase == 4){
+            doc.reviewer.displayGrade(doc.reviewer.grade_1);
+            (function () {
+                doc.reviewer.displayGrade(-1);
+                $$('.button_container, .grade_yourself').each(function (buttonContainer) {buttonContainer.addClassName('grade_hide')});
+                doc.reviewer.next(doc.reviewer.grade_1);
+            }).delay(.4);
+        }
     }
 });
 
@@ -361,6 +374,7 @@ var cCard = Class.create({
     importance: 8,
     confidence: -1,
     phase: null,
+    level: null,
     memId: null,
     front: '',
     back: '',
@@ -418,7 +432,7 @@ var cCard = Class.create({
 //        }else{this.phase = 4;}
 //
 //        //HARD CODE THE PHASE FOR TESTING PURPOSES//
-//        this.phase = 2;
+        this.phase = 2;
 
     },
 
@@ -522,8 +536,7 @@ var cCard = Class.create({
     },
 
     cue_p3: function() {
-        /* parse on demand - to avoid latency on initializing reviewer */
-        //if (!this.back) parser.parse(this, true);
+        /* Fill in the Answer */
 
         /* front */
         $('card_front').update("<div id='card_front_text'>"+this.question+"</div>" + this.buttons);
@@ -549,8 +562,7 @@ var cCard = Class.create({
     },
 
     cue_p4: function() {
-        /* parse on demand - to avoid latency on initializing reviewer */
-        //if (!this.back) parser.parse(this, true);
+        /* Flash card*/
         
         /* front */
         $('card_front').update("<div id='card_front_text'>"+this.front+"</div>" + this.buttons);
