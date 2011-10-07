@@ -416,6 +416,7 @@ class DocumentsController < ApplicationController
 
   def get_all_cards(doc_id)
     @cache = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
+    @cache = nil
     if @cache.nil? || @document.updated_at > @cache["updated_at"]
       puts "Regenerating!"
       user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
@@ -445,11 +446,11 @@ class DocumentsController < ApplicationController
         json << jsonArray
       end
 
-      @lines_json = {"terms" => json}
+      @lines_json = {"terms" => json}.to_json
       Rails.cache.write("#{params[:controller]}_#{params[:action]}_#{params[:id]}", {"terms" => json, "updated_at" => Time.now})
     else
       puts "Serving cache!"
-      @lines_json = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
+      @lines_json = JSON.parse(Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")).to_json
     end
   end
 
