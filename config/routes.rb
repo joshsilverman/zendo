@@ -1,5 +1,5 @@
 Zendo::Application.routes.draw do
-
+  
   get "usership/update"
 
   resources :authentications
