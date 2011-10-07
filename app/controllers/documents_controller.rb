@@ -98,8 +98,11 @@ class DocumentsController < ApplicationController
       redirect_to '/', :notice => "Error accessing that document."
       return
     end
-
+    puts "GETTING CARDS"
     get_all_cards(params[:id])
+    puts "REVIEWER DONE"
+    puts @lines_json
+
 
     respond_to do |format|
         format.html
