@@ -445,11 +445,13 @@ class DocumentsController < ApplicationController
         mem.status = 1 if mem.status.nil?
         mem.term_id = ot.id if mem.term_id.nil?
         mem.document_id = @document.id
-        mem.save
+        mem.sav
+      end
+    end
 
       user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
-                        AND mems.status = true AND mems.user_id = ?",
-                        doc_id, current_user.id)
+                      AND mems.status = true AND mems.user_id = ?",
+                      doc_id, current_user.id)
       json = []
       user_terms.each do |t|
         jsonArray = JSON.parse(t.to_json :include => [:mems, :questions, :answers])
@@ -458,8 +460,8 @@ class DocumentsController < ApplicationController
         json << jsonArray
       end
 
-      @lines_json = {"terms" => json.to_json}
-      Rails.cache.write("#{params[:controller]}_#{params[:action]}_#{params[:id]}", {"terms" => @lines_json, "updated_at" => Time.now})
+      @lines_json = {"terms" => json}
+      Rails.cache.write("#{params[:controller]}_#{params[:action]}_#{params[:id]}", {"terms" => json, "updated_at" => Time.now})
     else
       puts "Serving cache!"
       @lines_json = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
@@ -493,7 +495,7 @@ class DocumentsController < ApplicationController
       json << jsonArray
     end
 
-    @lines_json = json.to_json
+    @lines_json = {"terms" => json}
   end
 
   def get_phase(strength, mc, fita)
