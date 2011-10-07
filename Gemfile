@@ -15,6 +15,7 @@ gem 'postmark-rails', '0.4.0'
 gem 'kaminari'
 gem 'braintree'
 gem 'whenever'
+gem 'json'
 
 gem 'apn_on_rails', :git => 'https://github.com/natescherer/apn_on_rails.git', :branch => 'rails3'
 

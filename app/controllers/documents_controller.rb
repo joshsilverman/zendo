@@ -503,23 +503,29 @@ class DocumentsController < ApplicationController
     when 2
       if mc.size > 2
         @phase = 2
-      elsif not fita.empty?
-        @phase = 3
+      #elsif not fita.empty?
+      #  @phase = 3
       else
         @phase = 4
       end
     when 3
-      if not fita.empty?
-        @phase = 3
-      else
+      #if not fita.empty?
+      #  @phase = 3
+      #else
         @phase = 4
-      end
+      #end
     when 4
       @phase = 4
     else
       puts "There was an error with the phase"
     end
-
+    puts "TERM PHASE DATA:"
+    puts strength
+    puts phase
+    puts (mc.size > 2)
+    puts (not fita.empty?)
+    puts @phase
+    puts " "
   end
 
 end
