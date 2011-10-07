@@ -57,6 +57,7 @@ var cReviewer = Class.create({
         /* load cards */
         data.each(function(cardData) {
             this.cards.push(new cCard(cardData['term']));
+            console.log(cardData['term']);
         }.bind(this));
 
         /* show first */
