@@ -35,42 +35,42 @@ class UsersController < ApplicationController
     render :layout => false
   end
 
+
+  # terms : { term : {name : _____, definition : ____, mems : { id : ____ }} }
+
   #Returns a hash of the top x most needed cards for a given user
   def retrieve_notifications
-    @payload = Array.new
-    @hash = Hash.new
-    @hash["cards"] = []
-    #Iterates through all pushed mems the user owns
+    json = []
     Mem.where('user_id = ? AND pushed = true', current_user.id).all.each do |mem|
-      @domid = Line.find_by_id(mem.line_id).domid
-      @document = Document.find_by_id(Line.find_by_id(mem.line_id).document_id)
-      @html = Nokogiri::HTML("<wrapper>" + @document.html.gsub(/<\/?em>/, "").gsub(/<\/?span[^>]*>/, " ").gsub(/<\/?a[^>]*>/, " ").gsub(/<\/?sup[^>]*>/, " ").gsub(/\s+/," ").gsub(/ ,/, ",").gsub(/ \./, ".").gsub(/ \)/, ")") + "</wrapper>")
-      @def_search = "//*[@def and @id='" + @domid + "']"
-      @search = "//*[@id='" + @domid + "']"
-      #If there is a <def> tag, creates a card using it, otherwise splits on the "-"
-      if !@html.xpath(@def_search).empty?
-        @match = @html.xpath(@def_search)
-        @hash["cards"] << {"prompt" => @match.first.children.first.text, "answer" => @match.first.attribute("def").to_s, "mem" => mem.id}
-      else
-        @match = @html.xpath(@search).first.children.first.text.split(' -')
-        @match = @match[0].split('- ') unless @match.length > 1
-        @hash["cards"] << {"prompt" => @match[0].strip, "answer" => @match[1].strip, "mem" => mem.id}
-      end
+      jsonArray = JSON.parse(mem.term.to_json :include => [:questions, :answers])
+      get_phase(mem.strength.to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
+      jsonArray['term']['phase'] = @phase
+      jsonArray['term']['mem'] = mem.id
+      json << jsonArray
     end
-    render :json => @hash
+    render :json => {"terms" => json}
   end
 
   def add_device
-    @device = APN::Device.new
     @token = params[:token]
-    #Token must be in 8 blocks of 8 lower case alphanumeric characters, this line creates the blocks
+    #Token must be in the form of 8 blocks of 8 lower case alphanumeric characters, this line creates the blocks    
     @token = @token.insert(56, " ").insert(48, " ").insert(40, " ").insert(32, " ").insert(24, " ").insert(16, " ").insert(8, " ")
-    @device.token = @token
-    @device.user_id = current_user.id
-    @device.last_registered_at = Time.now
-    @device.created_at = Time.now
-    @device.updated_at = Time.now
-    @device.save
+    @device = APN::Device.all(:conditions => {:token => @token}).first
+    puts @device.user_id
+    #Check if device already exists, if so, reassign it's user_id. Otherwise create new
+    if @device
+      @device.user_id = current_user.id
+      @device.save
+    else
+      @device = APN::Device.new
+      @device.token = @token
+      @device.user_id = current_user.id
+      @device.last_registered_at = Time.now
+      @device.created_at = Time.now
+      @device.updated_at = Time.now
+      @device.save        
+    end
+    puts @device.user_id
     render :nothing => true
   end
 
