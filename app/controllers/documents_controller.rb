@@ -64,11 +64,7 @@ class DocumentsController < ApplicationController
   end
   
   def update
-    puts "UPdainggg"
-    puts params.to_json
-    # update document
     @document = Document.update(params, current_user.id)
-#    logger.debug("This is the updated doc #{@document.inspect}")
 	
     if @document.nil?
       render :nothing => true, :status => 400
@@ -144,9 +140,9 @@ class DocumentsController < ApplicationController
 
     session_terms = []
 
-    userterms.each do |ut|
+    # userterms.each do |ut|
       
-    end
+    # end
 
     @lines_json = user_terms.to_json :include => [:mems, :questions, :answers]
 
@@ -162,7 +158,9 @@ class DocumentsController < ApplicationController
   
   def enable_mobile
   	if params[:bool] == "1"
+      puts current_user.id
       if APN::Device.all(:conditions => {:user_id => current_user.id}).empty?
+        puts "tpppp"
         render :text => "fail", :status => 400
       else
         if Usership.all(:conditions => {:user_id => current_user.id, :document_id => params[:id]}).empty?
@@ -420,7 +418,7 @@ class DocumentsController < ApplicationController
     @cache = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
     if @cache.nil? || @document.updated_at > @cache["updated_at"]
       puts "Regenerating!"
-      user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
+      user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
 
       # on demand mem creation
       Mem.transaction do
@@ -439,10 +437,11 @@ class DocumentsController < ApplicationController
                       doc_id, current_user.id)
 
       json = []
-      user_terms.each do |t|
-        jsonArray = JSON.parse(t.to_json :include => [:mems, :questions, :answers])
-        get_phase(jsonArray['term']['mems'][0]['strength'].to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
+      user_terms.each do |term|
+        jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
+        get_phase(term.mems.where('user_id = ?', current_user.id).first.strength.to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
         jsonArray['term']['phase'] = @phase
+        jsonArray['term']['mem'] = term.mems.where('user_id = ?', current_user.id).first.id
         json << jsonArray
       end
 
@@ -455,77 +454,36 @@ class DocumentsController < ApplicationController
   end
 
   def get_adaptive_cards(doc_id)
-    user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
-
+    user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
     # on demand mem creation
     Mem.transaction do
       user_terms.each do |ot|
-        puts ot.to_json
         mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
         mem.strength = 0.5 if mem.strength.nil?
         mem.status = 1 if mem.status.nil?
         mem.term_id = ot.id if mem.term_id.nil?
         mem.document_id = @document.id
         mem.save
+        puts mem.to_json
       end
     end
 
+    #Changed mem check to Time.now from Date.today
     user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
                       AND mems.status = true AND mems.user_id = ? AND mems.review_after <= ?",
-                      doc_id, current_user.id, Date.today)
+                      doc_id, current_user.id, Time.now)
 
     json = []
-    user_terms.each do |t|
-      jsonArray = JSON.parse(t.to_json :include => [:mems, :questions, :answers])
-      get_phase(jsonArray['term']['mems'][0]['strength'].to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
+    user_terms.each do |term|
+      puts term
+      jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
+      get_phase(term.mems.where('user_id = ?', current_user.id).first.strength.to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
       jsonArray['term']['phase'] = @phase
+      jsonArray['term']['mem'] = term.mems.where('user_id = ?', current_user.id).first.id
       json << jsonArray
     end
 
     @lines_json = {"terms" => json}
-  end
-
-  def get_phase(strength, mc, fita)
-    phase = 1
-    if strength > 120000 # 1/2 a week
-      phase = 2
-      if strength > 300000   #1 day
-        phase = 3
-        if strength > 1000000   #1 hour
-          phase = 4
-        end
-      end
-    end
-
-    case phase
-    when 1
-      @phase = 1
-    when 2
-      if mc.size > 2
-        @phase = 2
-      #elsif not fita.empty?
-      #  @phase = 3
-      else
-        @phase = 4
-      end
-    when 3
-      #if not fita.empty?
-      #  @phase = 3
-      #else
-        @phase = 4
-      #end
-    when 4
-      @phase = 4
-    else
-      puts "There was an error with the phase"
-    end
-    puts "TERM PHASE DATA:"
-    puts strength
-    puts phase
-    puts (mc.size > 2)
-    puts (not fita.empty?)
-    puts @phase
-    puts " "
   end
 
 end
