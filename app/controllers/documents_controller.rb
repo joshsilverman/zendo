@@ -98,8 +98,11 @@ class DocumentsController < ApplicationController
       redirect_to '/', :notice => "Error accessing that document."
       return
     end
-
+    puts "GETTING CARDS"
     get_all_cards(params[:id])
+    puts "REVIEWER DONE"
+    puts @lines_json
+
 
     respond_to do |format|
         format.html
@@ -416,6 +419,7 @@ class DocumentsController < ApplicationController
 
   def get_all_cards(doc_id)
     @cache = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
+    @cache = nil
     if @cache.nil? || @document.updated_at > @cache["updated_at"]
       puts "Regenerating!"
       user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
@@ -449,7 +453,7 @@ class DocumentsController < ApplicationController
       Rails.cache.write("#{params[:controller]}_#{params[:action]}_#{params[:id]}", {"terms" => json, "updated_at" => Time.now})
     else
       puts "Serving cache!"
-      @lines_json = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}").to_json
+      @lines_json = JSON.parse(Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")).to_json
     end
   end
 

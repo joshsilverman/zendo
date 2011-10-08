@@ -9,8 +9,8 @@ var cDoc = Class.create({
 
         /* new reviewer */
         var data = $('card_json').innerHTML.evalJSON();
-        console.log(data);
-        this.reviewer = new cReviewer(data);
+        console.log(data['terms']);
+        this.reviewer = new cReviewer(data['terms']);
 
         /* resize listener - fire after dom:loaded */
         window.onresize = this.onResize;
@@ -57,6 +57,7 @@ var cReviewer = Class.create({
         /* load cards */
         data.each(function(cardData) {
             this.cards.push(new cCard(cardData['term']));
+            console.log(cardData['term']);
         }.bind(this));
 
         /* show first */
@@ -391,7 +392,7 @@ var cCard = Class.create({
               </div>',
     
     initialize: function(data) {
-        this.memId = data['mems'][0]['id'];
+        this.memId = data['mem'];
         this.front = data['name'];
         this.back = data['definition'];
         this.phase = data['phase'];
