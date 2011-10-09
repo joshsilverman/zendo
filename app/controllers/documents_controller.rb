@@ -423,23 +423,30 @@ class DocumentsController < ApplicationController
     if @cache.nil? || @document.updated_at > @cache["updated_at"]
       puts "Regenerating!"
       user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
+      puts "test 1"
+      puts user_terms
 
       # on demand mem creation
       Mem.transaction do
+        puts "Mem Transaction"
         user_terms.each do |ot|
+          puts "find mem"
           mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
+          puts mem
           mem.strength = 0.5 if mem.strength.nil?
           mem.status = 1 if mem.status.nil?
           mem.term_id = ot.id if mem.term_id.nil?
           mem.document_id = @document.id
           mem.save
+          puts "mem saves"
         end
       end
-
+      puts "test 3"
       user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
                       AND mems.status = true AND mems.user_id = ?",
                       doc_id, current_user.id)
-
+      puts "User Terms"
+      puts user_terms
       json = []
       user_terms.each do |term|
         jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
