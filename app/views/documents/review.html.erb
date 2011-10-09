@@ -1,11 +1,3 @@
-<% @page_specific_scripts_js = ["parser"] %>
-
-<%#*if, reviewing full tag, make sure review.js is included%>
-<% if controller.controller_name == 'tags' %>
-  <% @page_specific_scripts_js += ["documents/review"] %>
-  <% @page_specific_scripts_css = "documents/review" %>
-<% end %>
-
 <div id="title">
   <div class="breadcrumbs">
   <% if @document.nil? %>

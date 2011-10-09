@@ -101,7 +101,6 @@ class DocumentsController < ApplicationController
     puts "GETTING CARDS"
     get_all_cards(params[:id])
     puts "REVIEWER DONE"
-    puts @lines_json
 
 
     respond_to do |format|
@@ -430,7 +429,6 @@ class DocumentsController < ApplicationController
       Mem.transaction do
         puts "Mem Transaction"
         user_terms.each do |ot|
-          puts "find mem"
           mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
           puts mem
           mem.strength = 0.5 if mem.strength.nil?
@@ -438,7 +436,6 @@ class DocumentsController < ApplicationController
           mem.term_id = ot.id if mem.term_id.nil?
           mem.document_id = @document.id
           mem.save
-          puts "mem saves"
         end
       end
       puts "test 3"
@@ -454,6 +451,7 @@ class DocumentsController < ApplicationController
         jsonArray['term']['phase'] = @phase
         jsonArray['term']['mem'] = term.mems.where('user_id = ?', current_user.id).first.id
         json << jsonArray
+        puts jsonArray['term']['name']
       end
 
       @lines_json = {"terms" => json}.to_json
