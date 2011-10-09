@@ -56,7 +56,6 @@ class UsersController < ApplicationController
     #Token must be in the form of 8 blocks of 8 lower case alphanumeric characters, this line creates the blocks    
     @token = @token.insert(56, " ").insert(48, " ").insert(40, " ").insert(32, " ").insert(24, " ").insert(16, " ").insert(8, " ")
     @device = APN::Device.all(:conditions => {:token => @token}).first
-    puts @device.user_id
     #Check if device already exists, if so, reassign it's user_id. Otherwise create new
     if @device
       @device.user_id = current_user.id
@@ -70,7 +69,6 @@ class UsersController < ApplicationController
       @device.updated_at = Time.now
       @device.save        
     end
-    puts @device.user_id
     render :nothing => true
   end
 

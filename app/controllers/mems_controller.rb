@@ -14,9 +14,8 @@ class MemsController < ApplicationController
       mem = current_user.mems.find(params[:id])
     end
     mem.update_reviewed(params[:confidence], params[:importance], mobile_device?)
-    line = Line.find(mem.line_id)
-    user = Usership.where("document_id = ? AND user_id = ?", line.document_id, current_user.id).limit(1).first
-    user.update_attribute(:reviewed_at, Date.today)
+    usership = Usership.find_or_initialize_by_document_id_and_user_id(mem.document_id, current_user.id)
+    usership.update_attribute(:reviewed_at, Date.today)
     mem.update_attribute(:pushed, false)
     render :nothing => true
   end
