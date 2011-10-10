@@ -421,7 +421,7 @@ class DocumentsController < ApplicationController
     @cache = nil
     if @cache.nil? || @document.updated_at > @cache["updated_at"]
       puts "Regenerating!"
-      user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
+      user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ? AND terms.user_id = ?", doc_id, current_user.id)
       puts "test 1"
       puts user_terms
 
@@ -429,13 +429,14 @@ class DocumentsController < ApplicationController
       Mem.transaction do
         puts "Mem Transaction"
         user_terms.each do |ot|
-          mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
-          puts mem
+          mem = Mem.find_or_initialize_by_term_id_and_user_id(ot.id, current_user.id);
+          puts mem.inspect
           mem.strength = 0.5 if mem.strength.nil?
           mem.status = 1 if mem.status.nil?
-          mem.term_id = ot.id if mem.term_id.nil?
+          mem.line_id = ot.line_id if mem.line_id.nil?
           mem.document_id = @document.id
           mem.save
+          puts mem.inspect
         end
       end
 
@@ -457,17 +458,13 @@ class DocumentsController < ApplicationController
       user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
                       AND mems.status = true AND mems.user_id = ?",
                       doc_id, current_user.id)
+
       json = []
       user_terms.each do |term|
-        puts "each term start"
         jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
-        puts "parsed JSON"
         get_phase(term.mems.where('user_id = ?', current_user.id).first.strength.to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
-        puts "got phase"
         jsonArray['term']['phase'] = @phase
-        puts "set phase"
         jsonArray['term']['mem'] = term.mems.where('user_id = ?', current_user.id).first.id
-        puts "set mem"
         json << jsonArray
         puts jsonArray['term']['name']
       end
