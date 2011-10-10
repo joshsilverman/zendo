@@ -8,10 +8,24 @@ class Term < ActiveRecord::Base
   def self.create_term_from_line(id)
     line = Line.find_by_id(id)
 
+    lines = Line.where("document_id = ? AND domid = ?",line.document_id, line.domid)
+    if lines.size>1
+      newest = Time.construct(2000, 1, 1, 0, 0, 0)
+      puts newest
+      lines.each do |l|
+        puts l.id
+        puts l.updated_at
+        if l.updated_at > newest
+          line = l
+        end
+      end
+      puts line.id
+    end
+
     unless line.nil?
       @document = Document.find_by_id(line.document_id)
       if @document.nil? || @document.html.nil?
-        puts "Line_id #{id}: Document #{line.document_id} nil.  Returning..."
+        puts "Line_id #{line.id}: Document #{line.document_id} nil.  Returning..."
         return
       end
       @html = "<wrapper>" + @document.html.gsub("<em>", "").gsub("<\/em>", "") + "</wrapper>"
