@@ -443,7 +443,6 @@ class DocumentsController < ApplicationController
                       AND mems.status = true AND mems.user_id = ?",
                       doc_id, current_user.id)
       puts "User Terms"
-      puts user_terms
       json = []
       user_terms.each do |term|
         jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
