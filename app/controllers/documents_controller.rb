@@ -445,10 +445,15 @@ class DocumentsController < ApplicationController
       puts "User Terms"
       json = []
       user_terms.each do |term|
+        puts "each term start"
         jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
+        puts "parsed JSON"
         get_phase(term.mems.where('user_id = ?', current_user.id).first.strength.to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
+        puts "got phase"
         jsonArray['term']['phase'] = @phase
+        puts "set phase"
         jsonArray['term']['mem'] = term.mems.where('user_id = ?', current_user.id).first.id
+        puts "set mem"
         json << jsonArray
         puts jsonArray['term']['name']
       end
