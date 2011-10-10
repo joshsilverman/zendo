@@ -457,7 +457,6 @@ class DocumentsController < ApplicationController
       user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
                       AND mems.status = true AND mems.user_id = ?",
                       doc_id, current_user.id)
-
       json = []
       user_terms.each do |term|
         jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
