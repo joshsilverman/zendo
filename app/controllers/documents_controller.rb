@@ -64,8 +64,6 @@ class DocumentsController < ApplicationController
   end
   
   def update
-    puts "UPdainggg"
-    puts params.to_json
     # update document
     @document = Document.update(params, current_user.id)
 #    logger.debug("This is the updated doc #{@document.inspect}")
