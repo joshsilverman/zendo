@@ -39,7 +39,7 @@ class UsersController < ApplicationController
   def retrieve_notifications
     @payload = Array.new
     @hash = Hash.new
-    @hash["cards"] = []
+    @hash["terms"] = []
     #Iterates through all pushed mems the user owns
     Mem.where('user_id = ? AND pushed = true', current_user.id).all.each do |mem|
       @domid = Line.find_by_id(mem.line_id).domid
@@ -50,11 +50,11 @@ class UsersController < ApplicationController
       #If there is a <def> tag, creates a card using it, otherwise splits on the "-"
       if !@html.xpath(@def_search).empty?
         @match = @html.xpath(@def_search)
-        @hash["cards"] << {"prompt" => @match.first.children.first.text, "answer" => @match.first.attribute("def").to_s, "mem" => mem.id}
+        @hash["terms"] << {"name" => @match.first.children.first.text, "definition" => @match.first.attribute("def").to_s, "mem" => mem.id}
       else
         @match = @html.xpath(@search).first.children.first.text.split(' -')
         @match = @match[0].split('- ') unless @match.length > 1
-        @hash["cards"] << {"prompt" => @match[0].strip, "answer" => @match[1].strip, "mem" => mem.id}
+        @hash["terms"] << {"term" => {"name" => @match[0].strip, "definition" => @match[1].strip, "mem" => mem.id}}
       end
     end
     render :json => @hash

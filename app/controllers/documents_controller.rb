@@ -436,32 +436,35 @@ class DocumentsController < ApplicationController
   end
 
   def get_adaptive_cards(doc_id)
-    user_terms = Line.all(:conditions => {:document_id => doc_id, :user_id => current_user.id})
+    user_terms = Line.all(:conditions => {:document_id => doc_id})
     @lines_json = {}
     @lines_json["terms"] = []
     @html = Nokogiri::HTML("<wrapper>" + @document.html.gsub(/<\/?em>/, "").gsub(/<\/?span[^>]*>/, " ").gsub(/<\/?a[^>]*>/, " ").gsub(/<\/?sup[^>]*>/, " ").gsub(/\s+/," ").gsub(/ ,/, ",").gsub(/ \./, ".").gsub(/ \)/, ")") + "</wrapper>")
     Mem.transaction do
       user_terms.each do |term|
-        puts term.to_json
-        @def_search = "//*[@def and @id='" + term.domid + "']"
-        @search = "//*[@id='" + term.domid + "']"
-        mem = Mem.find_or_initialize_by_line_id_and_user_id(term.id, current_user.id)
-        mem.strength = 0.5 if mem.strength.nil?
-        mem.status = 1 if mem.status.nil?
-        mem.line_id = term.id if mem.line_id.nil?
-        mem.review_after = Time.now if mem.review_after.nil?
-        mem.document_id = @document.id
-        mem.save
-        if mem.review_after <= Time.now
-          puts term.to_json
-          if !@html.xpath(@def_search).empty?
-            @match = @html.xpath(@def_search)
-            @lines_json["terms"] << {"term" => {"name" => @match.first.children.first.text, "definition" => @match.first.attribute("def").to_s, "mem" => @mem.id}}
-          else
-            @match = @html.xpath(@search).first.children.first.text.split(' -')
-            @match = @match[0].split('- ') unless @match.length > 1
-            @lines_json["terms"] << {"term" => {"name" => @match[0], "definition" => @match[1], "mem" => mem.id}}
+        begin
+          @def_search = "//*[@def and @id='" + term.domid + "']"
+          @search = "//*[@id='" + term.domid + "']"
+          mem = Mem.find_or_initialize_by_line_id_and_user_id(term.id, current_user.id)
+          mem.strength = 0.5 if mem.strength.nil?
+          mem.status = 1 if mem.status.nil?
+          mem.line_id = term.id if mem.line_id.nil?
+          mem.review_after = Time.now if mem.review_after.nil?
+          mem.document_id = @document.id
+          mem.save
+          if mem.review_after <= Time.now
+            if !@html.xpath(@def_search).empty?
+              @match = @html.xpath(@def_search)
+              @lines_json["terms"] << {"term" => {"name" => @match.first.children.first.text, "definition" => @match.first.attribute("def").to_s, "mem" => mem.id}}
+            else
+              @match = @html.xpath(@search).first.children.first.text.split(' -')
+              @match = @match[0].split('- ') unless @match.length > 1
+              @lines_json["terms"] << {"term" => {"name" => @match[0], "definition" => @match[1], "mem" => mem.id}}
+            end
           end
+        rescue Exception => e
+          puts e.message
+          next
         end
       end
     end
