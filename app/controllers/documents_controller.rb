@@ -347,7 +347,55 @@ class DocumentsController < ApplicationController
     render :json => Document.all(:conditions => {:public => true}).to_json(:only => [:name, :id])
   end
 
-   def get_all_cards(doc_id)
+  def review_all_cards
+    get_document(params[:id])
+    if @document.nil?
+      redirect_to '/', :notice => "Error accessing that document."
+      return
+    end
+
+    get_all_cards(params[:id])
+
+    render :json => @lines_json
+  end
+
+  def review_adaptive_cards
+    get_document(params[:id])
+    if @document.nil?
+      redirect_to '/', :notice => "Error accessing that document."
+      return
+    end
+
+    get_adaptive_cards(params[:id])
+
+    render :json => @lines_json
+  end
+
+
+  private
+
+  
+  def get_document(id)
+    document = Document.find_by_id(id)
+    get_permission(document)
+    @document = document if @w or @r
+  end
+
+  def get_permission(document)
+    @w = @r = false
+    return if document.nil?
+    if Usership.find_by_document_id(document.id).user_id == current_user.id
+      @w = @r = true
+    elsif document.public
+      @r = true
+    elsif !document.userships.find_by_user_id(current_user.id).nil?
+      @r = true
+    elsif current_user.try(:admin?)
+      @r = true
+    end
+  end
+
+  def get_all_cards(doc_id)
     @cache = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
     @cache = nil
     if @cache.nil? || @document.updated_at > @cache["updated_at"]
@@ -445,29 +493,5 @@ class DocumentsController < ApplicationController
 
     @lines_json = {"terms" => json}.to_json
 
-  end
-
-
-  private
-
-  
-  def get_document(id)
-    document = Document.find_by_id(id)
-    get_permission(document)
-    @document = document if @w or @r
-  end
-
-  def get_permission(document)
-    @w = @r = false
-    return if document.nil?
-    if Usership.find_by_document_id(document.id).user_id == current_user.id
-      @w = @r = true
-    elsif document.public
-      @r = true
-    elsif !document.userships.find_by_user_id(current_user.id).nil?
-      @r = true
-    elsif current_user.try(:admin?)
-      @r = true
-    end
   end
 end
