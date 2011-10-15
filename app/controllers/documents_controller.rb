@@ -396,104 +396,76 @@ class DocumentsController < ApplicationController
   end
 
   def get_all_cards(doc_id)
-    @cache = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
-    @cache = nil
+    @cache = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{doc_id}")
     if @cache.nil? || @document.updated_at > @cache["updated_at"]
-      puts "Regenerating!"
-      user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
-
-      # on demand mem creation
-      Mem.transaction do
-        user_terms.each do |ot|
-          mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
-          mem.strength = 0.5 if mem.strength.nil?
-          mem.status = 1 if mem.status.nil?
-          mem.term_id = ot.id if mem.term_id.nil?
-          mem.document_id = @document.id
-          mem.save
+      @lines_json = {}
+      @lines_json["terms"] = []
+      Document.update({:id => doc_id, :html => @document.html, :delete_nodes => [], :name => @document.name, :edited_at => @document.edited_at}, current_user.id)
+      @html = Nokogiri::HTML("<wrapper>" + @document.html.gsub(/<\/?em>/, "").gsub(/<\/?span[^>]*>/, " ").gsub(/<\/?a[^>]*>/, " ").gsub(/<\/?sup[^>]*>/, " ").gsub(/\s+/," ").gsub(/ ,/, ",").gsub(/ \./, ".").gsub(/ \)/, ")") + "</wrapper>")
+      Line.all(:conditions => {:document_id => doc_id}).each do |line|
+        begin
+          @def_search = "//*[@def and @id='" + line.domid + "']"
+          @search = "//*[@id='" + line.domid + "']"
+          #If there if a <def> tag, create a card using its contents as the answer, otherwise split on the "-"
+          if !@html.xpath(@def_search).empty?
+            @match = @html.xpath(@def_search)
+            if Mem.all(:conditions => {:line_id => line.id, :user_id => current_user.id}).empty?
+              @mem = Mem.create(:line_id => line.id, :user_id => current_user.id, :document_id => doc_id, :pushed => false)
+              @lines_json["terms"] << {"term" => {"name" => @match.first.children.first.text, "definition" => @match.first.attribute("def").to_s, "mem" => @mem.id}}
+            else
+              @lines_json["terms"] << {"term" => {"name" => @match.first.children.first.text, "definition" => @match.first.attribute("def").to_s, "mem" => Mem.all(:conditions => {:line_id => line.id, :user_id => current_user.id}).first.id}}
+            end
+          else
+            @match = @html.xpath(@search).first.children.first.text.split(' -')
+            @match = @match[0].split('- ') unless @match.length > 1
+            #Creates a mem for the given line id if one does not exist
+            if Mem.all(:conditions => {:line_id => line.id, :user_id => current_user.id}).empty?
+              @mem = Mem.create(:line_id => line.id, :user_id => current_user.id, :document_id => doc_id, :pushed => false)
+              @lines_json["terms"] << {"term" => {"name" => @match[0].strip, "definition" => @match[1].strip, "mem" => @mem.id}}
+            else
+              @lines_json["terms"] << {"term" => {"name" => @match[0].strip, "definition" => @match[1].strip, "mem" => Mem.all(:conditions => {:line_id => line.id, :user_id => current_user.id}).first.id}}
+            end
+          end
+        rescue Exception => e
+          puts e.message
+          next
         end
       end
-      
-      user_terms =
-
-      user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
-                      AND mems.status = true AND mems.user_id = ?",
-                      doc_id, current_user.id)
-
-      json = []
-      user_terms.each do |term|
-        jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
-        get_phase(term.mems.where('user_id = ?', current_user.id).first.strength.to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
-        jsonArray['term']['phase'] = @phase
-        jsonArray['term']['mem'] = term.mems.where('user_id = ?', current_user.id).first.id
-        json << jsonArray
-      end
-
-      @lines_json = {"terms" => json}.to_json
-      Rails.cache.write("#{params[:controller]}_#{params[:action]}_#{params[:id]}", {"terms" => json, "updated_at" => Time.now})
+      Rails.cache.write("#{params[:controller]}_#{params[:action]}_#{doc_id}", {"terms" => @lines_json["terms"], "updated_at" => Time.now})
     else
-      puts "Serving cache!"
-      @lines_json = JSON.parse(Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")).to_json
+      @lines_json = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
     end
   end
 
   def get_adaptive_cards(doc_id)
-    # user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
-    # # on demand mem creation
-    # Mem.transaction do
-    #   user_terms.each do |ot|
-    #     mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
-    #     mem.strength = 0.5 if mem.strength.nil?
-    #     mem.status = 1 if mem.status.nil?
-    #     mem.term_id = ot.id if mem.term_id.nil?
-    #     mem.document_id = @document.id
-    #     if mem.review_after.nil?
-    #       mem.review_after = Time.now
-    #     end
-    #     mem.save
-    #   end
-    # end
-
-    # user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ? AND mems.status = true AND mems.user_id = ?  AND mems.review_after <= ?", doc_id, current_user.id, Time.now)
-
-    # json = []
-    # user_terms.each do |term|
-    #   jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
-    #   # get_phase(term.mems.where('user_id = ?', current_user.id).first.strength.to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
-    #   # jsonArray['term']['phase'] = @phase
-    #   # jsonArray['term']['mem'] = term.mems.where('user_id = ?', current_user.id).first.id
-    #   json << jsonArray
-    # end
-
-    # @lines_json = {"terms" => json}.to_json
-
-    user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
-
-    json = []
-
-    # on demand mem creation
+    user_terms = Line.all(:conditions => {:document_id => doc_id, :user_id => current_user.id})
+    @lines_json = {}
+    @lines_json["terms"] = []
+    @html = Nokogiri::HTML("<wrapper>" + @document.html.gsub(/<\/?em>/, "").gsub(/<\/?span[^>]*>/, " ").gsub(/<\/?a[^>]*>/, " ").gsub(/<\/?sup[^>]*>/, " ").gsub(/\s+/," ").gsub(/ ,/, ",").gsub(/ \./, ".").gsub(/ \)/, ")") + "</wrapper>")
     Mem.transaction do
       user_terms.each do |term|
-        mem = Mem.find_or_initialize_by_line_id_and_user_id(term.line_id, current_user.id);
+        puts term.to_json
+        @def_search = "//*[@def and @id='" + term.domid + "']"
+        @search = "//*[@id='" + term.domid + "']"
+        mem = Mem.find_or_initialize_by_line_id_and_user_id(term.id, current_user.id)
         mem.strength = 0.5 if mem.strength.nil?
         mem.status = 1 if mem.status.nil?
         mem.term_id = term.id if mem.term_id.nil?
         mem.review_after = Time.now if mem.review_after.nil?
         mem.document_id = @document.id
         mem.save
-        puts mem.review_after
-        puts Time.now
         if mem.review_after <= Time.now
-          jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
-          get_phase(mem.strength.to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
-          jsonArray['term']['phase'] = @phase
-          jsonArray['term']['mem'] = mem.id
-          json << jsonArray
+          puts term.to_json
+          if !@html.xpath(@def_search).empty?
+            @match = @html.xpath(@def_search)
+            @lines_json["terms"] << {"term" => {"name" => @match.first.children.first.text, "definition" => @match.first.attribute("def").to_s, "mem" => @mem.id}}
+          else
+            @match = @html.xpath(@search).first.children.first.text.split(' -')
+            @match = @match[0].split('- ') unless @match.length > 1
+            @lines_json["terms"] << {"term" => {"name" => @match[0], "definition" => @match[1], "mem" => mem.id}}
+          end
         end
       end
     end
-
-    @lines_json = {"terms" => json}.to_json
-
   end
 end
