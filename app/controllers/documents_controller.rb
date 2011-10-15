@@ -448,7 +448,7 @@ class DocumentsController < ApplicationController
         mem = Mem.find_or_initialize_by_line_id_and_user_id(term.id, current_user.id)
         mem.strength = 0.5 if mem.strength.nil?
         mem.status = 1 if mem.status.nil?
-        mem.term_id = term.id if mem.term_id.nil?
+        mem.line_id = term.id if mem.line_id.nil?
         mem.review_after = Time.now if mem.review_after.nil?
         mem.document_id = @document.id
         mem.save
