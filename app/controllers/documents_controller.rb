@@ -347,6 +347,106 @@ class DocumentsController < ApplicationController
     render :json => Document.all(:conditions => {:public => true}).to_json(:only => [:name, :id])
   end
 
+   def get_all_cards(doc_id)
+    @cache = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
+    @cache = nil
+    if @cache.nil? || @document.updated_at > @cache["updated_at"]
+      puts "Regenerating!"
+      user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
+
+      # on demand mem creation
+      Mem.transaction do
+        user_terms.each do |ot|
+          mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
+          mem.strength = 0.5 if mem.strength.nil?
+          mem.status = 1 if mem.status.nil?
+          mem.term_id = ot.id if mem.term_id.nil?
+          mem.document_id = @document.id
+          mem.save
+        end
+      end
+
+      user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
+                      AND mems.status = true AND mems.user_id = ?",
+                      doc_id, current_user.id)
+
+      json = []
+      user_terms.each do |term|
+        jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
+        get_phase(term.mems.where('user_id = ?', current_user.id).first.strength.to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
+        jsonArray['term']['phase'] = @phase
+        jsonArray['term']['mem'] = term.mems.where('user_id = ?', current_user.id).first.id
+        json << jsonArray
+      end
+
+      @lines_json = {"terms" => json}.to_json
+      Rails.cache.write("#{params[:controller]}_#{params[:action]}_#{params[:id]}", {"terms" => json, "updated_at" => Time.now})
+    else
+      puts "Serving cache!"
+      @lines_json = JSON.parse(Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")).to_json
+    end
+  end
+
+  def get_adaptive_cards(doc_id)
+    # user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
+    # # on demand mem creation
+    # Mem.transaction do
+    #   user_terms.each do |ot|
+    #     mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
+    #     mem.strength = 0.5 if mem.strength.nil?
+    #     mem.status = 1 if mem.status.nil?
+    #     mem.term_id = ot.id if mem.term_id.nil?
+    #     mem.document_id = @document.id
+    #     if mem.review_after.nil?
+    #       mem.review_after = Time.now
+    #     end
+    #     mem.save
+    #   end
+    # end
+
+    # user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ? AND mems.status = true AND mems.user_id = ?  AND mems.review_after <= ?", doc_id, current_user.id, Time.now)
+
+    # json = []
+    # user_terms.each do |term|
+    #   jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
+    #   # get_phase(term.mems.where('user_id = ?', current_user.id).first.strength.to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
+    #   # jsonArray['term']['phase'] = @phase
+    #   # jsonArray['term']['mem'] = term.mems.where('user_id = ?', current_user.id).first.id
+    #   json << jsonArray
+    # end
+
+    # @lines_json = {"terms" => json}.to_json
+
+    user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
+
+    json = []
+
+    # on demand mem creation
+    Mem.transaction do
+      user_terms.each do |term|
+        mem = Mem.find_or_initialize_by_line_id_and_user_id(term.line_id, current_user.id);
+        mem.strength = 0.5 if mem.strength.nil?
+        mem.status = 1 if mem.status.nil?
+        mem.term_id = term.id if mem.term_id.nil?
+        mem.review_after = Time.now if mem.review_after.nil?
+        mem.document_id = @document.id
+        mem.save
+        puts mem.review_after
+        puts Time.now
+        if mem.review_after <= Time.now
+          jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
+          get_phase(mem.strength.to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
+          jsonArray['term']['phase'] = @phase
+          jsonArray['term']['mem'] = mem.id
+          json << jsonArray
+        end
+      end
+    end
+
+    @lines_json = {"terms" => json}.to_json
+
+  end
+
 
   private
 
