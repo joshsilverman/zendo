@@ -464,7 +464,7 @@ class DocumentsController < ApplicationController
   end
 
   def get_all_cards(doc_id)
-      user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ? AND terms.user_id = ?", doc_id, current_user.id)
+      user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
 
       # on demand mem creation
       Mem.transaction do
