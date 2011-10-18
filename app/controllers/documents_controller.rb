@@ -491,7 +491,7 @@ class DocumentsController < ApplicationController
         mem.status = 1 if mem.status.nil?
         mem.term_id = ot.id if mem.term_id.nil?
         mem.document_id = @document.id
-        mem.sav
+        mem.save
       end
     end
 
