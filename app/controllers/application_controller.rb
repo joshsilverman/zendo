@@ -71,11 +71,7 @@ class ApplicationController < ActionController::Base
   end
 
   helper_method :mobile_device?
-<<<<<<< HEAD
-  
-=======
 
->>>>>>> e9211532d5e18c681fcbbd12e23050502b6c63cc
   def get_phase(strength, mc, fita)
     phase = 1
     if strength > 120000 # 1/2 a week
@@ -105,9 +101,4 @@ class ApplicationController < ActionController::Base
       puts "There was an error with the phase"
     end
   end
-<<<<<<< HEAD
-  
-=======
-
->>>>>>> e9211532d5e18c681fcbbd12e23050502b6c63cc
 end
