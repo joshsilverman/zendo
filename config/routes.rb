@@ -74,7 +74,8 @@ Zendo::Application.routes.draw do
   match "/tags/create_with_index"
 
   # documents
-  match "/create_from_csv/:file_name" => "documents#create_from_csv"
+  match "/create_from_csv" => "documents#create_from_csv"
+  match "/upload_csv" => "documents#upload_csv"
   match "/documents/create/:tag_id" => "documents#create"
   match "/documents/update_tag"
   match "/documents/share"

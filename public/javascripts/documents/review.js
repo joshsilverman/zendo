@@ -57,19 +57,16 @@ var cReviewer = Class.create({
         /* load cards */
         data.each(function(cardData) {
             this.cards.push(new cCard(cardData['term']));
-            console.log(this.cards.length);
         }.bind(this));
 
         /* show first */
         if (this.cards[0]) this.cards[0].cue();
         else $('card_front').update("<i>No cards to review</i>");
-        console.log(this.cards.length);
         /* next listeners */
         $('grade_4').observe('click', this.next.bind(this, this.grade_4));
         $('grade_3').observe('click', this.next.bind(this, this.grade_3));
         $('grade_2').observe('click', this.next.bind(this, this.grade_2));
         $('grade_1').observe('click', this.next.bind(this, this.grade_1));
-        console.log(this.cards.length);
         /* nav listeners */
         $('back_button').observe('click', this.back.bind(this, false));
 //        $('next_button').observe('click', this.next.bind(this, false));
@@ -79,13 +76,10 @@ var cReviewer = Class.create({
             } else {doc.reviewer.next();
             }
         }.bind(this));
-        console.log(this.cards.length);
         /* review handlers */
         this.reviewHandlers = new cReviewHandlers();
-        console.log(this.cards.length);
         /* progress bar */
         //this.progressBar = new cProgressBar();
-        console.log(this.cards.length);
         $('progress_fraction').update("1/"+this.cards.length);
     },
 
@@ -435,7 +429,7 @@ var cCard = Class.create({
 //        }else{this.phase = 4;}
 //
 //        //HARD CODE THE PHASE FOR TESTING PURPOSES//
-        this.phase = 2;
+//        this.phase = 2;
 
     },
 
