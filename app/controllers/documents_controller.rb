@@ -64,6 +64,10 @@ class DocumentsController < ApplicationController
   end
   
   def update
+<<<<<<< HEAD
+=======
+    # update document
+>>>>>>> e9211532d5e18c681fcbbd12e23050502b6c63cc
     @document = Document.update(params, current_user.id)
 	
     if @document.nil?
@@ -392,6 +396,7 @@ class DocumentsController < ApplicationController
     render :json => Document.all(:conditions => {:public => true}).to_json(:only => [:name, :id])
   end
 
+<<<<<<< HEAD
   def create_from_csv
     puts "CREATE FROM CSV"
     @tag = current_user.tags.find_by_misc(true)
@@ -399,6 +404,32 @@ class DocumentsController < ApplicationController
     if @tag.blank?
       @tag = current_user.tags.create(:misc => true, :name => 'Misc')
     end
+=======
+  def review_all_cards
+    get_document(params[:id])
+    if @document.nil?
+      redirect_to '/', :notice => "Error accessing that document."
+      return
+    end
+
+    get_all_cards(params[:id])
+
+    render :json => @lines_json
+  end
+
+  def review_adaptive_cards
+    get_document(params[:id])
+    if @document.nil?
+      redirect_to '/', :notice => "Error accessing that document."
+      return
+    end
+
+    get_adaptive_cards(params[:id])
+
+    render :json => @lines_json
+  end
+
+>>>>>>> e9211532d5e18c681fcbbd12e23050502b6c63cc
 
     #Create a new document and usership
     Document.transaction do
@@ -456,6 +487,7 @@ class DocumentsController < ApplicationController
   end
 
   def get_all_cards(doc_id)
+<<<<<<< HEAD
     @cache = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
     @cache = nil
     if @cache.nil? || @document.updated_at > @cache["updated_at"]
@@ -513,10 +545,51 @@ class DocumentsController < ApplicationController
     else
       puts "Serving cache!"
       @lines_json = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}").to_json
+=======
+    @cache = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{doc_id}")
+    if @cache.nil? || @document.updated_at > @cache["updated_at"]
+      @lines_json = {}
+      @lines_json["terms"] = []
+      Document.update({:id => doc_id, :html => @document.html, :delete_nodes => [], :name => @document.name, :edited_at => @document.edited_at}, current_user.id)
+      @html = Nokogiri::HTML("<wrapper>" + @document.html.gsub(/<\/?em>/, "").gsub(/<\/?span[^>]*>/, " ").gsub(/<\/?a[^>]*>/, " ").gsub(/<\/?sup[^>]*>/, " ").gsub(/\s+/," ").gsub(/ ,/, ",").gsub(/ \./, ".").gsub(/ \)/, ")") + "</wrapper>")
+      Line.all(:conditions => {:document_id => doc_id}).each do |line|
+        begin
+          @def_search = "//*[@def and @id='" + line.domid + "']"
+          @search = "//*[@id='" + line.domid + "']"
+          #If there if a <def> tag, create a card using its contents as the answer, otherwise split on the "-"
+          if !@html.xpath(@def_search).empty?
+            @match = @html.xpath(@def_search)
+            if Mem.all(:conditions => {:line_id => line.id, :user_id => current_user.id}).empty?
+              @mem = Mem.create(:line_id => line.id, :user_id => current_user.id, :document_id => doc_id, :pushed => false)
+              @lines_json["terms"] << {"term" => {"name" => @match.first.children.first.text, "definition" => @match.first.attribute("def").to_s, "mem" => @mem.id}}
+            else
+              @lines_json["terms"] << {"term" => {"name" => @match.first.children.first.text, "definition" => @match.first.attribute("def").to_s, "mem" => Mem.all(:conditions => {:line_id => line.id, :user_id => current_user.id}).first.id}}
+            end
+          else
+            @match = @html.xpath(@search).first.children.first.text.split(' -')
+            @match = @match[0].split('- ') unless @match.length > 1
+            #Creates a mem for the given line id if one does not exist
+            if Mem.all(:conditions => {:line_id => line.id, :user_id => current_user.id}).empty?
+              @mem = Mem.create(:line_id => line.id, :user_id => current_user.id, :document_id => doc_id, :pushed => false)
+              @lines_json["terms"] << {"term" => {"name" => @match[0].strip, "definition" => @match[1].strip, "mem" => @mem.id}}
+            else
+              @lines_json["terms"] << {"term" => {"name" => @match[0].strip, "definition" => @match[1].strip, "mem" => Mem.all(:conditions => {:line_id => line.id, :user_id => current_user.id}).first.id}}
+            end
+          end
+        rescue Exception => e
+          puts e.message
+          next
+        end
+      end
+      Rails.cache.write("#{params[:controller]}_#{params[:action]}_#{doc_id}", {"terms" => @lines_json["terms"], "updated_at" => Time.now})
+    else
+      @lines_json = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
+>>>>>>> e9211532d5e18c681fcbbd12e23050502b6c63cc
     end
   end
 
   def get_adaptive_cards(doc_id)
+<<<<<<< HEAD
     # user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
     # # on demand mem creation
     # Mem.transaction do
@@ -576,4 +649,39 @@ class DocumentsController < ApplicationController
 
   end
 
+=======
+    user_terms = Line.all(:conditions => {:document_id => doc_id})
+    @lines_json = {}
+    @lines_json["terms"] = []
+    @html = Nokogiri::HTML("<wrapper>" + @document.html.gsub(/<\/?em>/, "").gsub(/<\/?span[^>]*>/, " ").gsub(/<\/?a[^>]*>/, " ").gsub(/<\/?sup[^>]*>/, " ").gsub(/\s+/," ").gsub(/ ,/, ",").gsub(/ \./, ".").gsub(/ \)/, ")") + "</wrapper>")
+    Mem.transaction do
+      user_terms.each do |term|
+        begin
+          @def_search = "//*[@def and @id='" + term.domid + "']"
+          @search = "//*[@id='" + term.domid + "']"
+          mem = Mem.find_or_initialize_by_line_id_and_user_id(term.id, current_user.id)
+          mem.strength = 0.5 if mem.strength.nil?
+          mem.status = 1 if mem.status.nil?
+          mem.line_id = term.id if mem.line_id.nil?
+          mem.review_after = Time.now if mem.review_after.nil?
+          mem.document_id = @document.id
+          mem.save
+          if mem.review_after <= Time.now
+            if !@html.xpath(@def_search).empty?
+              @match = @html.xpath(@def_search)
+              @lines_json["terms"] << {"term" => {"name" => @match.first.children.first.text, "definition" => @match.first.attribute("def").to_s, "mem" => mem.id}}
+            else
+              @match = @html.xpath(@search).first.children.first.text.split(' -')
+              @match = @match[0].split('- ') unless @match.length > 1
+              @lines_json["terms"] << {"term" => {"name" => @match[0], "definition" => @match[1], "mem" => mem.id}}
+            end
+          end
+        rescue Exception => e
+          puts e.message
+          next
+        end
+      end
+    end
+  end
+>>>>>>> e9211532d5e18c681fcbbd12e23050502b6c63cc
 end
