@@ -273,9 +273,9 @@ var cReviewHandlers = Class.create({
 
     onSpace: function(event) {
         /* show card sides */
-        if(doc.reviewer.cards[doc.reviewer.currentCardIndex].phase == 4){
+        //if(doc.reviewer.cards[doc.reviewer.currentCardIndex].level == 4){
             doc.reviewer.cards[doc.reviewer.currentCardIndex].showAll();
-        }
+        //}
         event.stop();
     },
 
@@ -767,7 +767,7 @@ document.observe('dom:loaded', function() {
     /* fire app:loaded */
     document.fire('app:loaded');
 
-    /* observe push enable */
+    /* observe push enable
     Event.observe($("mobile_review"), "click", function(e) {
         var requestUrl = "/documents/enable_mobile/" + $('card_json').innerHTML.evalJSON()[0]['line']['document_id'] + "/" + (($("mobile_review").checked)?1:0);
         //TODO fill callback parameters
@@ -784,7 +784,7 @@ document.observe('dom:loaded', function() {
                 }
             }
         });
-    }.bind(this));
+    }.bind(this));*/
 });
 
 

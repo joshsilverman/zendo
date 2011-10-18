@@ -12,12 +12,13 @@ class Line < ActiveRecord::Base
   def self.save_all(doc,document_id,user_id)
     puts "START SAVE"
     doc.css("li").each do |line|
+      puts line
       next if not line.attr('class') =~ /(.*)changed(.*)/
       dom_id = line.attr("id")
       existing_line = Line.where(:user_id => user_id,
                             :domid => dom_id,
                             :document_id => document_id ).first
-      puts existing_line
+      puts existing_line.inspect
       Term.create_term_from_line(existing_line.id) unless existing_line.nil?
       if line.attr("class") =~ /(.*)active(.*)/
         puts "active"
@@ -25,7 +26,7 @@ class Line < ActiveRecord::Base
           puts "check existing mem"
           existing_mem = Mem.where(:user_id => user_id,
                                    :line_id => existing_line.id).first
-          puts existing_mem
+          puts existing_mem.inspect
           # legacy support for mems that can have status set to 0
           if (existing_mem)
             puts "EXISTS"

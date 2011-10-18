@@ -392,6 +392,45 @@ class DocumentsController < ApplicationController
     render :json => Document.all(:conditions => {:public => true}).to_json(:only => [:name, :id])
   end
 
+  def create_from_csv
+    puts "CREATE FROM CSV"
+    @tag = current_user.tags.find_by_misc(true)
+    #generate miscellaneous tag if none
+    if @tag.blank?
+      @tag = current_user.tags.create(:misc => true, :name => 'Misc')
+    end
+
+    #Create a new document and usership
+    Document.transaction do
+      Usership.transaction do
+        @document = Document.create(:name => params[:file_name], :tag_id => @tag.id, :public => false, :icon_id => 0)
+        Usership.create(:user_id => current_user.id, :document_id => @document.id, :push_enabled => false, :owner => true)
+      end
+    end
+
+    return if params[:file_name].nil?
+
+    url = "http://localhost:3000/#{params[:file_name]}.csv"
+    open(url) do |f|
+      f.each_line do |line|
+        FasterCSV.parse(line) do |row|
+          term = Term.create(:name => row[0], :definition => row[1], :document_id => @document.id, :user_id => current_user.id)
+          unless row[2].nil?
+            question = Question.create(:question => row[2], :term_id => term)
+            i = 3
+            while not row[i].nil?
+              Answer.create(:answer => row[i], :question_id => question)
+              i+=1
+            end
+          end
+        end
+      end
+    end
+
+    redirect_to :action => 'review', :id => @document.id
+
+  end
+
   
   private
 

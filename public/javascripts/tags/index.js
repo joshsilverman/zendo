@@ -102,8 +102,7 @@ var cDoc = Class.create({
             this.render();
             $('documents').update("<div style='text-align: center; color:#d22b21; margin-top:150px;'>\
                                     <h1>Looks like you don't have any StudyEggs right now.</h1>\
-                                    <h2 style='color:#595448; margin-top:15px;'>Check out the <a href='/store'>EggStore</a> and snag yourself some knowledge!</h2>\
-                                     <p style='color:#595448; margin-top:15px;'>(Overachiever? You can also <a href='/documents/create/0'>create your own StudyEgg</a> from scratch. )</p>");
+                                    <h2 style='color:#595448; margin-top:15px;'>Check out the <a href='/store'>EggStore</a> and snag yourself some knowledge!</h2>");
             $('left_container').setStyle({"display":"none"});
             $('documents').setStyle({"width":"100%"});
         } else {
@@ -125,8 +124,7 @@ var cDoc = Class.create({
               style = 'style= "display:none;"';
           }
           html += '<div class="accordion_toggle rounded_border '+icon+'" tag_id="'+tag[1]['id']+'">'+tag[1]['name']+'\
-              <img id="delete_'+tag[1]['id']+'" class="remove_folder_icon" src="../../images/organizer/remove-icon-bw-15x15.png" style="display:none;"/>\
-              <img id="edit_'+tag[1]['id']+'" class="edit_folder_icon" src="../../images/organizer/edit-icon-bw-15x15.png" style="display:none;"/></div><div style="clear:both;"></div>\
+              </div><div style="clear:both;"></div>\
               <div id="accordion_content_'+tag[1]['id']+'" class="accordion_content" tag_id="'+tag[1]['id']+'" '+style+'></div>';
         }.bind(this));
         $('documents').update(html);
@@ -150,10 +148,8 @@ var cDoc = Class.create({
                   html+= '<div class="doc_item active" doc_id="'+doc['id']+'" id="'+doc['id']+'_recent">\
                     <!--<input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>-->\
                     <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+' </span> ('+tName+')\
-                    <div class="doc_actions" style="display:block;">\
-                    <ul><li><a href="/documents/'+doc['id']+'/edit"><img class="doc_action_img" src="../../images/organizer/edit-icon-15x15.png">edit</a></li>\
-                    <li><a href="/review/'+doc['id']+'"><img class="doc_action_img" src="../../images/organizer/review-icon.png">review</a></li>\
-                    <li><span class="remove_doc" doc_id="'+doc['id']+'"><img class="doc_action_img" doc_id="'+doc['id']+'" src="../../images/organizer/remove-icon-15x15.png">delete</span></li></ul>\
+                    <div class="doc_actions">\
+                    <!--<span class="remove_doc" doc_id="'+doc['id']+'"><img class="doc_action_img" doc_id="'+doc['id']+'" src="../../images/organizer/remove-icon-15x15.png"></span>-->\
                     </div>\
                     </div>';
               //}
@@ -162,9 +158,7 @@ var cDoc = Class.create({
                     <!--<input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>-->\
                     <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+' </span> ('+tName+')\
                     <div class="doc_actions">\
-                    <ul><li><a href="/documents/'+doc['id']+'/edit"><img class="doc_action_img" src="../../images/organizer/edit-icon-15x15.png">edit</a></li>\
-                    <li><a href="/review/'+doc['id']+'"><img class="doc_action_img" src="../../images/organizer/review-icon.png">review</a></li>\
-                    <li><span class="remove_doc" doc_id="'+doc['id']+'"><img class="doc_action_img" doc_id="'+doc['id']+'" src="../../images/organizer/remove-icon-15x15.png">delete</span></li></ul>\
+                    <!--<span class="remove_doc" doc_id="'+doc['id']+'"><img class="doc_action_img" doc_id="'+doc['id']+'" src="../../images/organizer/remove-icon-15x15.png"></span>-->\
                     </div>\
                     </div>';
               }
@@ -183,10 +177,8 @@ var cDoc = Class.create({
                   html+= '<div id="'+doc['id']+'" class="doc_item active" doc_id="'+doc['id']+'">\
                     <!--<input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>-->\
                     <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+'</span>\
-                    <div class="doc_actions" style="display:block;">\
-                    <ul><li><a href="/documents/'+doc['id']+'/edit"><img class="doc_action_img" src="../../images/organizer/edit-icon-15x15.png">edit</a></li>\
-                    <li><a href="/review/'+doc['id']+'"><img class="doc_action_img" src="../../images/organizer/review-icon.png">review</a></li>\
-                    <li><span class="remove_doc" doc_id="'+doc['id']+'"><img class="doc_action_img" doc_id="'+doc['id']+'" src="../../images/organizer/remove-icon-15x15.png">delete</span></li></ul>\
+                    <div class="doc_actions">\
+                    <!--<span class="remove_doc" doc_id="'+doc['id']+'"><img class="doc_action_img" doc_id="'+doc['id']+'" src="../../images/organizer/remove-icon-15x15.png"></span>-->\
                     </div>\
                     </div>';
               //}
@@ -195,9 +187,7 @@ var cDoc = Class.create({
                     <!--<input type="checkbox" class="chbox" doc_id="'+doc['id']+'"/>-->\
                     <span class="doc_title" doc_id="'+doc['id']+'">'+doc['name']+'</span>\
                     <div class="doc_actions">\
-                    <ul><li><a href="/documents/'+doc['id']+'/edit"><img class="doc_action_img" src="../../images/organizer/edit-icon-15x15.png">edit</a></li>\
-                    <li><a href="/review/'+doc['id']+'"><img class="doc_action_img" src="../../images/organizer/review-icon.png">review</a></li>\
-                    <li><span class="remove_doc" doc_id="'+doc['id']+'"><img class="doc_action_img" doc_id="'+doc['id']+'" src="../../images/organizer/remove-icon-15x15.png">delete</span></li></ul>\
+                    <!--<span class="remove_doc" doc_id="'+doc['id']+'"><img class="doc_action_img" doc_id="'+doc['id']+'" src="../../images/organizer/remove-icon-15x15.png"></span>-->\
                     </div>\
                     </div>';
               }
@@ -210,7 +200,7 @@ var cDoc = Class.create({
     },
 
     _buildDetails: function(){
-        console.log("BUILDDEETS aiID: "+this.activeItemId);
+        /*console.log("BUILDDEETS aiID: "+this.activeItemId);
         var html = '';
         var checkedList = [];
         $$('.chbox').each(function(ele){
@@ -220,9 +210,7 @@ var cDoc = Class.create({
            }
         });
         if(checkedList[0] == null && this.activeItemId==''){
-            html += '<span id="create_folder">Create New StudyEgg</span>\
-                    <span style="text-align:center; display:block; margin:10px 0">- OR -</span>\
-                    <em style="text-align:center; display:block;" >Select a document to view details...</em>';
+            html += "<h2 style='color:#595448; margin-top:15px text-align:center;'>Check out the <a href='/store'>EggStore</a> for more!</h2>";
         } else if((checkedList[0] == null && this.activeItemId!='')||(checkedList[1] == null && this.activeItemId!='')){
             var singleDoc = this.docs.get($(this.activeItemId).readAttribute('doc_id'));
             var d = singleDoc['created_at'].split('-');
@@ -274,9 +262,10 @@ var cDoc = Class.create({
             }.bind(this)); 
         }
 
-        this.resizeDetails();
+        this.resizeDetails();*/
 
         /* load class selecter widget */
+        /*
         this.classSelector = new cClassSelector(true);
 
         //listener for doc name change
@@ -340,7 +329,7 @@ var cDoc = Class.create({
                     }.bind(this));
                 }.bind(this));
             }.bind(this));
-        }.bind(this));
+        }.bind(this));*/
     },
 
     resizeDetails: function(){
@@ -583,6 +572,7 @@ var cDoc = Class.create({
         this._buildDetails();
         this.resizeDetails();
         //Add Listeners
+        //
         //click doc name link
         $$('.doc_title').each(function(element) {
             element.observe('click', function(event) {
@@ -596,49 +586,6 @@ var cDoc = Class.create({
         //remove document
         $$('.remove_doc').each(function(element) {
             element.observe('click', this.destroyDocument.bind(this));
-        }.bind(this));
-
-        //click doc item to reveal actions and highlight with css
-            console.log('PRELISTENER');
-        $$('.doc_item').each(function(element) {
-            element.observe('click', function(event) {
-            if(event.target.getAttribute('class')=='doc_item active' || event.target.getAttribute('class')=='doc_item inactive'){
-            if(this.activeItemId==''){ //if nothing is open
-                console.log($(this.activeItemId)+" 1");
-                event.target.down(1).setStyle({display:'block'});
-                this.activeItemId = event.target.id;
-                event.target.removeClassName('inactive');
-                event.target.addClassName('active');
-                event.stop();
-            } else if(this.activeItemId==event.target.id) { //if you reclick an open item
-                console.log($(this.activeItemId).id+" 2");
-                event.target.down(1).setStyle({display:'none'});
-                this.activeItemId = '';
-                event.target.removeClassName('active');
-                event.target.addClassName('inactive');
-                event.stop();
-            } else { //if you switch open items
-                console.log($(this.activeItemId)+" 3");
-                $(this.activeItemId).down(1).setStyle({display:'none'});
-                event.target.down(1).setStyle({display:'block'});
-                event.target.removeClassName('inactive');
-                event.target.addClassName('active');
-                $(this.activeItemId).removeClassName('active');
-                $(this.activeItemId).addClassName('inactive');
-                console.log(event.target.id);
-                this.activeItemId = event.target.id;
-                event.stop();
-            }
-            }
-            this._buildDetails();
-            }.bind(this));
-        }.bind(this));
-
-        //listen for checkboxes
-        $$('.chbox').each(function(element) {
-            element.observe('click', function(event) {
-                this._buildDetails();
-                }.bind(this));
         }.bind(this));
 
         //listen for folder actions
@@ -659,47 +606,8 @@ var cDoc = Class.create({
                     }
                 }
             }.bind(this));
-            element.observe('mouseenter', function(event){
-                if(event.target.getAttribute('tag_id') != 'recent'){
-                    event.target.down(0).setStyle({display:'inline'});
-                    event.target.down(0).next(0).setStyle({display:'inline'});
-                }
-            });
-
-            element.observe('mouseleave', function(event){
-                if(event.target.getAttribute('tag_id') != 'recent'){
-                    event.target.down(0).setStyle({display:'none'});
-                    event.target.down(0).next(0).setStyle({display:'none'});
-                }
-            });
-
+           
             this.activeTags = activeT;
-        }.bind(this));
-
-        //listen for delete-icon actions
-        $$('.remove_folder_icon').each(function(element){
-            element.observe('click', function(event){
-                this.destroyFolder(event);
-            }.bind(this));
-            element.observe('mouseenter', function(event){
-                event.target.writeAttribute("src", "../../images/organizer/remove-icon-15x15.png" );
-            });
-            element.observe('mouseleave', function(event){
-                event.target.writeAttribute("src", "../../images/organizer/remove-icon-bw-15x15.png" );
-            });
-
-        }.bind(this));
-
-        $$('.edit_folder_icon').each(function(element){
-            element.observe('click', function(event){
-                this.renameFolder(event);
-            }.bind(this));
-            element.observe('mouseenter', function(event){
-                event.target.writeAttribute("src", "../../images/organizer/edit-icon-15x15.png" );
-            });
-            element.observe('mouseleave', function(event){
-                event.target.writeAttribute("src", "../../images/organizer/edit-icon-bw-15x15.png" );
-            });
         }.bind(this));
 
         //listen for doc folder change
@@ -784,7 +692,8 @@ document.observe('lightview:loaded', function() {
                                   closeButton: false
                                 }
                               });
-                       }
+                              pageTracker._trackPageview("/homepage/new_user");
+                       } else {pageTracker._trackPageview("/homepage/old_user");}
                    }.bind(this)
                 });
 });
