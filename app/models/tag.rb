@@ -71,9 +71,10 @@ class Tag < ActiveRecord::Base
   end
 
   POPULAR_TAGS = [
-                  [2011, "Companion to Applied Psychology (10th Edition)"],
-                  [2061, "Companion to Cognitive Neuroscience w/ Gazzinga (3rd Edition)"],
-                  [2135, "Companion to Essentials of Psych (5e)"]
+                  [2011, "Aligned with Psychology Applied to Modern Life (Weiten, Dunn, Hammer 10e)"],
+                  [2545, "Aligned with Biological Science (Freeman 4e)"],
+                  [2546, "Aligned with Cognitive Neuroscience (Gazzinga 3e)"],
+                  [2547, "Aligned with Biology (Campbell 9e)"],
+                  [2548, "Aligned with Essentials of Psychology (Bernstein 5e)"]
                  ]
-
 end
