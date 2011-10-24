@@ -73,7 +73,7 @@ GEM
     faraday (0.6.1)
       addressable (~> 2.2.4)
       multipart-post (~> 1.1.0)
-      rack (< 2, >= 1.1.0)
+      rack (>= 1.1.0, < 2)
     fastercsv (1.5.4)
     ffi (1.0.9)
     guard (0.5.1)
@@ -223,7 +223,7 @@ PLATFORMS
 DEPENDENCIES
   apn_on_rails!
   braintree
-  bundler (= 1.0.10)
+  bundler
   capybara
   database_cleaner
   devise

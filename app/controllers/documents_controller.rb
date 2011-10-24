@@ -439,7 +439,29 @@ class DocumentsController < ApplicationController
 
   end
 
-  
+  def update_from_csv
+    get_document(params[:dump][:doc_id])
+    return if params[:dump][:file].nil? || params[:dump][:doc_id].nil? || @document.nil?
+    @document.terms.each do |term|
+      term.questions.each { |question| question.answers.delete_all }
+      term.delete
+    end
+    file = params[:dump][:file]
+    FasterCSV.new(file.tempfile, :headers => true).each do |row|
+      term = Term.create(:name => row[0], :definition => row[1], :document_id => @document.id, :user_id => current_user.id)
+      unless row[2].nil?
+        question = Question.create(:question => row[2], :term_id => term.id)
+        i = 3
+        while not row[i].nil?
+          Answer.create(:answer => row[i], :question_id => question.id)
+          i+=1
+        end
+      end
+    end  
+    redirect_to :action => 'review', :id => @document.id
+  end
+
+
   private
 
   
