@@ -9,11 +9,7 @@ class DemoController < ApplicationController
       return
     end
 
-    # get lines
-      user_lines = Line.where("lines.document_id = ?",
-                        doc.id)
-
-      @lines_json = user_lines.to_json
+    get_all_cards(@document.id)
 
     respond_to do |format|
         format.html
@@ -31,6 +27,20 @@ class DemoController < ApplicationController
     puts document
     @document = document if document.public
   end
+  
+  def get_all_cards(doc_id)
+      user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
+
+      json = []
+      user_terms.each do |term|
+        jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
+        jsonArray['term']['phase'] = 2
+        json << jsonArray
+      end
+
+      @lines_json = {"terms" => json}.to_json
+  end
+
 
   def egg_details
     @tag = Tag.find_by_id(params[:id])

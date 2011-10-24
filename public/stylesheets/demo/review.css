@@ -351,3 +351,11 @@ td {
 .kinda:hover{background: url('../../images/reviewer/kinda-hover.png');}
 .barely:hover{background: url('../../images/reviewer/barely-hover.png');}
 .no_clue:hover{background: url('../../images/reviewer/no-clue-hover.png');}
+
+#mc_container{width:499px;margin: 0 auto;}
+
+.mc_selection, .mc_answered{background:url('../../images/reviewer/mc-disc.png') no-repeat 10px center #eceef0; border:1px solid #c9d7e2; border-radius:5px; margin-bottom:10px; padding:10px 10px 10px 50px; text-align:left; width:435px;}
+.mc_selection{cursor:pointer;}
+.mc_selection:hover{background: url('../../images/reviewer/mc-hover.png') no-repeat 10px center #d3dfe7; border: 1px solid #96a4af;}
+.mc_correct, .mc_correct:hover{background: url('../../images/reviewer/mc-correct.png') no-repeat 10px center #eceef0; border:1px solid #c9d7e2;}
+.mc_incorrect, .mc_incorrect:hover{background: url('../../images/reviewer/mc-incorrect.png') no-repeat 10px center #eceef0; border:1px solid #c9d7e2;}
