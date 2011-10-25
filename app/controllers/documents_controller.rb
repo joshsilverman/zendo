@@ -27,42 +27,6 @@ class DocumentsController < ApplicationController
     redirect_to :action => 'edit', :id => @document.id
   end
   
-  def edit
-    # check id posted
-    id = params[:id]
-    get_document(params[:id])
-    @read_only = params[:read_only]
-    @usership = Usership.find_by_document_id_and_user_id(params[:id], current_user.id)
-    if @document.public && @usership.nil?
-      @usership = Usership.create(:user_id => current_user.id,
-                                  :document_id => @document.id,
-                                  :push_enabled => false,
-                                  :created_at => Time.now,
-                                  :owner => false)
-    end
-    if (@usership.nil? || @document.nil?) && !current_user.try(:admin?)
-      redirect_to '/my_eggs', :notice => "Error accessing that document."
-      return
-    end
-    # redirect if public, not owner, and trying to edit
-    if not @read_only and not @w
-      redirect_to "/documents/#{id}"
-      return
-    end
-    @tag = Tag.find_by_id(@document.tag_id)
-    @line_ids = Hash[*@document.lines.map {|line| [line.id, line.domid]}.flatten].to_json
-
-    # new document?
-    @new_doc = (@document.html.blank?) ? true : false
-
-    # doc count
-    if @read_only
-      @doc_count = 100;
-    else
-      @doc_count = current_user.documents.size
-    end
-  end
-  
   def update
     # update document
     @document = Document.update(params, current_user.id)
