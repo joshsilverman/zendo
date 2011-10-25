@@ -34,14 +34,6 @@ describe "tags", :js => true do
       wait_until{ find('div.collapse', :text => 'Misc.')}
     end
 
-    it "finds doc details" do
-      wait_until{ page.has_content?('my tag1')}
-      find('div.expand', :text => 'my tag1').click
-      wait_until{ find('div.collapse', :text => 'my tag1')}
-      find('div.doc_item', :text => 'title one').click
-      wait_until{ find('span#detail_name',  :text => 'title one')}
-    end
-
     describe "shared doc" do
 
       before(:each) do
@@ -83,39 +75,5 @@ describe "tags", :js => true do
 
     end
 
-#    it "edits doc name" do
-#      wait_until{ page.has_content?('my tag1')}
-#      find('div.expand', :text => 'my tag1').click
-#      wait_until{ find('div.collapse', :text => 'my tag1')}
-#      find('div.doc_item', :text => 'title one').click
-#      find('span#detail_name',  :text => 'title one').click
-#      fill_in "edt", :with => 'new title'
-#      find('#edt').native.send_keys(:enter)
-#      wait_until{find('div.doc_item', :text => 'new title')}
-#    end
-
-    it "deletes doc" do
-      wait_until{ page.has_content?('my tag1')}
-      find('div.expand', :text => 'my tag1').click
-      wait_until{ find('div.collapse', :text => 'my tag1')}
-      find('div.doc_item', :text => 'title one').click
-      wait_until{ page.has_content?('delete')}
-      page.evaluate_script('window.confirm = function() { return true; }')
-      find('span.remove_doc',  :text => 'delete').click
-      wait_until{not page.has_content?('title one')}
-    end
-
-    it "deletes doc from Recent Docs" do
-      visit "/my_eggs"
-      wait_until{ page.has_content?('Recent Documents')}
-      wait_until{ page.has_content?('my tag2')}
-      find('div.expand', :text => 'my tag2').click
-      wait_until{ find('div.collapse', :text => 'my tag2')}
-      find('div.doc_item', :text => 'title two (my tag2)').click
-      wait_until{ page.has_content?('delete')}
-      page.evaluate_script('window.confirm = function() { return true; }')
-      find('span.remove_doc',  :text => 'delete').click
-      wait_until{not page.has_content?('title two')}
-    end
   end
 end
