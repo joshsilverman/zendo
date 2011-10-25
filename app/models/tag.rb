@@ -67,7 +67,7 @@ class Tag < ActiveRecord::Base
       end
       recent.to_json(:only => ["name","tag_id","id","push_enabled","edited_at"], :include => {:userships => {:only => [:push_enabled, :reviewed_at]}})
     end
-    rescue: ['error']
+    rescue ['error']
   end
 
   POPULAR_TAGS = [
