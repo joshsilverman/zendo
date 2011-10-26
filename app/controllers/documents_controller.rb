@@ -107,10 +107,6 @@ class DocumentsController < ApplicationController
 
     session_terms = []
 
-    # userterms.each do |ut|
-      
-    # end
-
     @lines_json = user_terms.to_json :include => [:mems, :questions, :answers]
 
     respond_to do |format|
