@@ -67,11 +67,11 @@ class Tag < ActiveRecord::Base
       end
       recent.to_json(:only => ["name","tag_id","id","push_enabled","edited_at"], :include => {:userships => {:only => [:push_enabled, :reviewed_at]}})
     end
-    rescue: ['error']
+    rescue ['error']
   end
 
   POPULAR_TAGS = [
-                  [2544, "Aligned with Psychology Applied to Modern Life (Weiten, Dunn, Hammer 10e)"],
+                  [2544, "Aligned with Psychology Applied... (Weiten 10e)"],
                   [2545, "Aligned with Biological Science (Freeman 4e)"],
                   [2546, "Aligned with Cognitive Neuroscience (Gazzinga 3e)"],
                   [2547, "Aligned with Biology (Campbell 9e)"],
