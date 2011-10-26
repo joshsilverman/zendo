@@ -358,18 +358,18 @@ class DocumentsController < ApplicationController
   end
 
   def create_from_csv
-    puts "CREATE FROM CSV"
     return if params[:dump][:file].nil?
-    @tag = current_user.tags.find_by_misc(true)
-    #generate miscellaneous tag if none
-    if @tag.blank?
-      @tag = current_user.tags.create(:misc => true, :name => 'Misc')
-    end
+    tag = Tag.find_by_id_and_user_id(params[:tag][:id], current_user.id)
+#     @tag = current_user.tags.find_by_misc(true)
+#     #generate miscellaneous tag if none
+#     if @tag.blank?
+#       @tag = current_user.tags.create(:misc => true, :name => 'Misc')
+#     end
 
     #Create a new document and usership
     Document.transaction do
       Usership.transaction do
-        @document = Document.create!(:name => params[:dump][:name], :tag_id => @tag.id, :public => false, :icon_id => 0)
+        @document = Document.create!(:name => params[:dump][:name], :tag_id => tag.id, :public => false, :icon_id => 0)
         Usership.create!(:user_id => current_user.id, :document_id => @document.id, :push_enabled => false, :owner => true)
       end
     end

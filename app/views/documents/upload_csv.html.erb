@@ -12,6 +12,7 @@
        <%= f.file_field :file %>
      </td>
    </tr>
+  
    <tr>
      <td>
        <label for="name">
@@ -22,6 +23,16 @@
        <%=  f.text_field :name%>
      </td>
    </tr>
+   <tr>
+     <td>
+       <label for="tag">
+         Place in folder:
+       </label>
+     </td>
+     <td>
+       <%= collection_select("tag", "id", Tag.all(:conditions => {:user_id => current_user.id}), :id, :name) %>
+     </td>
+   </tr>    
    <tr>
      <td colspan='2'>
        <%= submit_tag 'Upload' %>
