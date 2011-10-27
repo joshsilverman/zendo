@@ -370,30 +370,32 @@ class DocumentsController < ApplicationController
     Document.transaction do
       Usership.transaction do
         @document = Document.create!(:name => params[:dump][:name], :tag_id => tag.id, :public => true, :icon_id => 0)
-        Usership.create!(:user_id => current_user.id, :document_id => @document.id, :push_enabled => false, :owner => true)
+        @usership = Usership.create!(:user_id => current_user.id, :document_id => @document.id, :push_enabled => false, :owner => true)
       end
     end
 
     return if params[:dump][:name].nil?
 
    file = params[:dump][:file]
-
-#    csv_str do |f|
-#      f.each_line do |line|
-#        puts line
-        FasterCSV.new(file.tempfile, :headers => true).each do |row|
-          term = Term.create(:name => row[0], :definition => row[1], :document_id => @document.id, :user_id => current_user.id)
-          unless row[2].nil?
-            question = Question.create(:question => row[2], :term_id => term.id)
-            i = 3
-            while not row[i].nil?
-              Answer.create(:answer => row[i], :question_id => question.id)
-              i+=1
-            end
-          end
+   begin
+    FasterCSV.new(file.tempfile, :headers => true, :encoding => 'U').each do |row|
+      term = Term.create(:name => row[0], :definition => row[1], :document_id => @document.id, :user_id => current_user.id)
+      puts term.name
+      unless row[2].nil?
+        question = Question.create(:question => row[2], :term_id => term.id)
+        i = 3
+        while not row[i].nil?
+          Answer.create(:answer => row[i], :question_id => question.id)
+          i+=1
         end
-#      end
-#    end
+      end
+    end
+   rescue FasterCSV::MalformedCSVError => e
+      puts "ERROR:"
+      puts e.message
+      @document.destroy
+      @usership.destroy
+    end
 
     redirect_to :action => 'review', :id => @document.id
 
