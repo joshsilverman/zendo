@@ -369,7 +369,7 @@ class DocumentsController < ApplicationController
     #Create a new document and usership
     Document.transaction do
       Usership.transaction do
-        @document = Document.create!(:name => params[:dump][:name], :tag_id => tag.id, :public => false, :icon_id => 0)
+        @document = Document.create!(:name => params[:dump][:name], :tag_id => tag.id, :public => true, :icon_id => 0)
         Usership.create!(:user_id => current_user.id, :document_id => @document.id, :push_enabled => false, :owner => true)
       end
     end
