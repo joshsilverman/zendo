@@ -400,10 +400,15 @@ class DocumentsController < ApplicationController
   end
 
   def update_from_csv
+    return if params[:dump][:file].nil? || params[:dump][:doc_id].nil?
     get_document(params[:dump][:doc_id])
-    return if params[:dump][:file].nil? || params[:dump][:doc_id].nil? || @document.nil?
+    return if @document.nil?
+    puts @document.to_json
     @document.terms.each do |term|
-      term.questions.each { |question| question.answers.delete_all }
+      term.questions.each do |question|
+        question.answers.delete_all
+        question.delete
+      end
       term.delete
     end
     file = params[:dump][:file]
