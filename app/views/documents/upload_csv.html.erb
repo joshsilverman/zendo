@@ -40,7 +40,9 @@
    </tr>
  </table>
 <% end %>
+
 <br /><br />
+
 <h1>Update existing</h1>
 <br />
 <% form_for :dump, :url=>{:controller=>"documents", :action=>"update_from_csv"}, :html => { :multipart => true } do |f| -%>
@@ -71,4 +73,17 @@
      </td>
    </tr>
  </table>
+ <br />
+<% end %>
+
+<br /><br />
+
+<h1>Delete document</h1>
+<br />
+
+
+<%= form_tag(:controller => "documents", :action => "remove_document") do %>
+  <%= label_tag(:doc_id, "Delete document #:") %>
+  <%= text_field_tag(:doc_id) %>
+  <%= submit_tag("Delete") %>
 <% end %>

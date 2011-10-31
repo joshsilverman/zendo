@@ -1,4 +1,7 @@
 class DocumentsController < ApplicationController
+
+  # before_filter :check_admin, :only => [:upload_csv, :create_from_csv, :update_from_csv]
+  
   # Look for existing documents (by name for now)
   # If exists, use this document, otherwise set document html and construct Line objects
   def create
@@ -360,43 +363,26 @@ class DocumentsController < ApplicationController
   def create_from_csv
     return if params[:dump][:file].nil?
     tag = Tag.find_by_id_and_user_id(params[:tag][:id], current_user.id)
-#     @tag = current_user.tags.find_by_misc(true)
-#     #generate miscellaneous tag if none
-#     if @tag.blank?
-#       @tag = current_user.tags.create(:misc => true, :name => 'Misc')
-#     end
-
-    #Create a new document and usership
     Document.transaction do
       Usership.transaction do
         @document = Document.create!(:name => params[:dump][:name], :tag_id => tag.id, :public => true, :icon_id => 0)
         Usership.create!(:user_id => current_user.id, :document_id => @document.id, :push_enabled => false, :owner => true)
       end
     end
-
     return if params[:dump][:name].nil?
-
-   file = params[:dump][:file]
-
-#    csv_str do |f|
-#      f.each_line do |line|
-#        puts line
-        FasterCSV.new(file.tempfile, :headers => true).each do |row|
-          term = Term.create(:name => row[0], :definition => row[1], :document_id => @document.id, :user_id => current_user.id)
-          unless row[2].nil?
-            question = Question.create(:question => row[2], :term_id => term.id)
-            i = 3
-            while not row[i].nil?
-              Answer.create(:answer => row[i], :question_id => question.id)
-              i+=1
-            end
-          end
+    file = params[:dump][:file]
+    FasterCSV.new(file.tempfile, :headers => true).each do |row|
+      term = Term.create(:name => row[0], :definition => row[1], :document_id => @document.id, :user_id => current_user.id)
+      unless row[2].nil?
+        question = Question.create(:question => row[2], :term_id => term.id)
+        i = 3
+        while not row[i].nil?
+          Answer.create(:answer => row[i], :question_id => question.id)
+          i+=1
         end
-#      end
-#    end
-
+      end
+    end
     redirect_to :action => 'review', :id => @document.id
-
   end
 
   def update_from_csv
@@ -424,6 +410,22 @@ class DocumentsController < ApplicationController
       end
     end  
     redirect_to :action => 'review', :id => @document.id
+  end
+
+  def remove_document
+    get_document(params[:doc_id])
+    @document.terms.each do |term|
+      puts term.to_json
+      term.questions.each do |question|
+        puts question.to_json
+        question.answers.delete_all
+        question.delete
+      end
+      term.delete
+    end   
+    @document.userships.delete_all
+    @document.delete
+    redirect_to :root
   end
 
 
