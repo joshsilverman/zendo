@@ -73,7 +73,7 @@ class Tag < ActiveRecord::Base
   POPULAR_TAGS = [
                   [2544, "Aligned with Psychology Applied... (Weiten 10e)"],
                   [2545, "Aligned with Biological Science (Freeman 4e)"],
-                  [2546, "Aligned with Cognitive Neuroscience (Gazzinga 3e)"],
+                  [2546, "Aligned with Cognitive Neuroscience (Gazzaniga 3e)"],
                   [2547, "Aligned with Biology (Campbell 9e)"],
                   [2548, "Aligned with Essentials of Psychology (Bernstein 5e)"]
                  ]

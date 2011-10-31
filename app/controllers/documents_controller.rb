@@ -1,6 +1,6 @@
 class DocumentsController < ApplicationController
 
-  # before_filter :check_admin, :only => [:upload_csv, :create_from_csv, :update_from_csv]
+  before_filter :check_admin, :only => [:upload_csv, :create_from_csv, :update_from_csv]
   
   # Look for existing documents (by name for now)
   # If exists, use this document, otherwise set document html and construct Line objects
@@ -366,12 +366,13 @@ class DocumentsController < ApplicationController
     Document.transaction do
       Usership.transaction do
         @document = Document.create!(:name => params[:dump][:name], :tag_id => tag.id, :public => true, :icon_id => 0)
-        Usership.create!(:user_id => current_user.id, :document_id => @document.id, :push_enabled => false, :owner => true)
+        @usership = Usership.create!(:user_id => current_user.id, :document_id => @document.id, :push_enabled => false, :owner => true)
       end
     end
     return if params[:dump][:name].nil?
     file = params[:dump][:file]
-    FasterCSV.new(file.tempfile, :headers => true).each do |row|
+    begin
+    FasterCSV.new(file.tempfile, :headers => true, :encoding => 'U').each do |row|
       term = Term.create(:name => row[0], :definition => row[1], :document_id => @document.id, :user_id => current_user.id)
       unless row[2].nil?
         question = Question.create(:question => row[2], :term_id => term.id)
@@ -381,6 +382,12 @@ class DocumentsController < ApplicationController
           i+=1
         end
       end
+    end
+    rescue FasterCSV::MalformedCSVError => e
+      puts "ERROR:"
+      puts e.message
+      @document.destroy
+      @usership.destroy
     end
     redirect_to :action => 'review', :id => @document.id
   end

@@ -26,13 +26,20 @@
 
   <div id="content" style="display:block; clear: both; height:220px; overflow: hidden; margin-top:15px;">
     <h4>Preview</h4>
-    <% html =  @document.html.split(/[<>]/) %>
-    <% i = 0 %>
-    <% html.each do |h| %>
-      <% if i%2 == 0 && h.size>1%>
-        <%= h.gsub('&nbsp;','') %><br/>
-      <%end%>
-      <% i+=1 %>
+    <% unless @document.html.nil? %>
+      <% html =  @document.html.split(/[<>]/) %>
+      <% i = 0 %>
+      <% html.each do |h| %>
+        <% if i%2 == 0 && h.size>1%>
+          <%= h.gsub('&nbsp;','') %><br/>
+        <%end%>
+        <% i+=1 %>
+      <% end %>
+    <% else %>
+      <% terms = Term.where("document_id = ?", @document.id).limit(10) %>
+      <% terms.each do |t| %>
+         <%=t.name  %><br />
+      <% end %>   
     <% end %>
   </div>
 </div>
