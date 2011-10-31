@@ -83,9 +83,6 @@ class ApplicationController < ActionController::Base
         end
       end
     end
-
-    puts strength
-
     case phase
     when 1
       @phase = 2 #will be set back to 1 when chunked learning is introduced

@@ -66,11 +66,7 @@ class DocumentsController < ApplicationController
       redirect_to '/', :notice => "Error accessing that document."
       return
     end
-    puts "GETTING CARDS"
     get_all_cards(params[:id])
-    puts "REVIEWER DONE"
-
-
     respond_to do |format|
         format.html
    	    format.json { 
@@ -460,37 +456,36 @@ class DocumentsController < ApplicationController
   end
 
   def get_all_cards(doc_id)
-      user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
-
-      # on demand mem creation
-      Mem.transaction do
-        puts "Mem Transaction"
-        user_terms.each do |ot|
-          mem = Mem.find_or_initialize_by_term_id_and_user_id(ot.id, current_user.id);
-          mem.strength = 0.5 if mem.strength.nil?
-          mem.status = 1 if mem.status.nil?
-          mem.line_id = ot.line_id if mem.line_id.nil?
-          mem.document_id = @document.id
-          mem.save
-        end
-      end
-
-      user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
-                      AND mems.status = true AND mems.user_id = ?",
-                      doc_id, current_user.id)
-
-      json = []
+    user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
+    json = []
+    Mem.transaction do
       user_terms.each do |term|
+        mem = Mem.find_or_initialize_by_term_id_and_user_id(term.id, current_user.id)
+        mem.strength = 0.5 if mem.strength.nil?
+        mem.status = 1 if mem.status.nil?
+        mem.line_id = term.line_id if mem.line_id.nil?
+        mem.document_id = @document.id
+        mem.save
         jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
-        puts term.name
-        get_phase(term.mems.where('user_id = ?', current_user.id).first.strength.to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
-        puts @phase
+        get_phase(mem.strength.to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
         jsonArray['term']['phase'] = @phase
-        jsonArray['term']['mem'] = term.mems.where('user_id = ?', current_user.id).first.id
+        jsonArray['term']['mem'] = mem.id
         json << jsonArray
       end
-
-      @lines_json = {"terms" => json}.to_json
+    end
+    @lines_json = {"terms" => json}.to_json
+    # user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
+    #                 AND mems.status = true AND mems.user_id = ?",
+    #                 doc_id, current_user.id)
+    #
+    # json = []
+    # user_terms.each do |term|
+    #   jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
+    #   get_phase(term.mems.where('user_id = ?', current_user.id).first.strength.to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
+    #   jsonArray['term']['phase'] = @phase
+    #   jsonArray['term']['mem'] = term.mems.where('user_id = ?', current_user.id).first.id
+    #   json << jsonArray
+    # end
   end
 
   def get_adaptive_cards(doc_id)
