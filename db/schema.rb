@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110929181934) do
+ActiveRecord::Schema.define(:version => 20111101221535) do
 
   create_table "alternatives", :force => true do |t|
     t.integer "experiment_id"
@@ -131,6 +131,13 @@ ActiveRecord::Schema.define(:version => 20110929181934) do
     t.boolean  "mobile",     :default => false
   end
 
+  create_table "resourcerequests", :force => true do |t|
+    t.string   "email"
+    t.text     "resource"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "tags", :force => true do |t|
     t.string   "name",       :limit => 45
     t.boolean  "misc"
@@ -152,10 +159,14 @@ ActiveRecord::Schema.define(:version => 20110929181934) do
     t.datetime "updated_at"
   end
 
+  create_table "user_collections", :force => true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "users", :force => true do |t|
     t.string   "email",                               :default => "",    :null => false
     t.string   "encrypted_password",   :limit => 128, :default => "",    :null => false
-    t.string   "password_salt",                       :default => "",    :null => false
     t.string   "reset_password_token"
     t.string   "remember_token"
     t.datetime "remember_created_at"
@@ -189,10 +200,10 @@ ActiveRecord::Schema.define(:version => 20110929181934) do
   create_table "userships", :force => true do |t|
     t.integer  "user_id"
     t.integer  "document_id"
-    t.boolean  "push_enabled"
+    t.boolean  "push_enabled", :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "owner"
+    t.boolean  "owner",        :default => true
     t.datetime "reviewed_at"
   end
 

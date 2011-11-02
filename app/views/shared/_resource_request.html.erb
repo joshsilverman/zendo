@@ -1,0 +1,10 @@
+  <p><strong>Can't find the resource you're looking for?</strong>
+    Let us know what book or topic you want to learn and we'll let you know when 
+    it's available!</p>
+  <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
+
+    <%= f.text_field :email, :class => "", :value => "Email", :title => "Email"%>
+    <%= f.text_field :resourceName, :class => "", :value => "Resource Name", :title => "ResourceName"%>
+    <div class="autocomplete"></div>
+    <%= f.submit "Submit", :value => "Submit" %>
+  <% end %>
