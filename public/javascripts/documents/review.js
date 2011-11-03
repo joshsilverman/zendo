@@ -429,8 +429,10 @@ var cCard = Class.create({
 //        }else{this.phase = 4;}
 //
 //        //HARD CODE THE PHASE FOR TESTING PURPOSES//
-//        this.phase = 2;
-
+        if(this.back==null){
+            console.log("QB question! Set phasers to STUN (2)!")
+            this.phase = 2;
+        }
     },
 
     cue: function(){
