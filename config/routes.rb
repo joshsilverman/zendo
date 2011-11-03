@@ -76,6 +76,8 @@ Zendo::Application.routes.draw do
   # documents
   match "/create_from_csv" => "documents#create_from_csv"
   match "/update_from_csv" => "documents#update_from_csv"
+  match "/create_from_qb_csv" => "documents#create_from_qb_csv"
+  match "/update_from_qb_csv" => "documents#update_from_qb_csv"
   match "/remove_document" => "documents#remove_document"
   match "/upload_csv" => "documents#upload_csv"
   match "/documents/create/:tag_id" => "documents#create"

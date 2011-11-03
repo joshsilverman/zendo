@@ -20,7 +20,11 @@ class Document < ActiveRecord::Base
   has_many :userships
   has_many :users, :through => :userships, :uniq => true
   #has_many :users, :through => :userships, :uniq => true
-
+  
+  def name_with_tag_name
+    tag = Tag.find_by_id(tag_id)
+    "#{name} (#{tag.name})"
+  end
 
   #scope :recent_edit, where("updated_at < ? AND user_id = ?", Date.today, current_user.id)
   #scope :recent_review, where("reviewed_at between ? and ?", Date.today, (Date.today - 30))

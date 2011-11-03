@@ -1,6 +1,97 @@
+<%#*<h1>Create new</h1>%>
+<%#*<br />%>
+<%# form_for :dump, :url=>{:controller=>"documents", :action=>"create_from_csv"}, :html => { :multipart => true } do |f| -%>
+ <%#*<table>%>
+   <%#*<tr>%>
+     <%#*<td>%>
+      <%#*<label for="dump_file">%>
+        <%#*Select a CSV File :%>
+      <%#*</label>%>
+     <%#*</td>%>
+     <%#*<td >%>
+       <%#= f.file_field :file %>
+     <%#*</td>%>
+   <%#*</tr>%>
+  
+   <%#*<tr>%>
+     <%#*<td>%>
+       <%#*<label for="name">%>
+         <%#*Name your document%>
+       <%#*</label>%>
+     <%#*</td>%>
+     <%#*<td>%>
+       <%#=  f.text_field :name%>
+     <%#*</td>%>
+   <%#*</tr>%>
+   <%#*<tr>%>
+     <%#*<td>%>
+       <%#*<label for="tag">%>
+         <%#*Place in folder:%>
+       <%#*</label>%>
+     <%#*</td>%>
+     <%#*<td>%>
+       <%#= collection_select("tag", "id", Tag.all(:conditions => {:user_id => current_user.id}), :id, :name) %>
+     <%#*</td>%>
+   <%#*</tr>%>    
+   <%#*<tr>%>
+     <%#*<td colspan='2'>%>
+       <%#= submit_tag 'Upload' %>
+     <%#*</td>%>
+   <%#*</tr>%>
+ <%#*</table>%>
+<%# end %>
+
+<%#*<br /><br />%>
+
+<%#*<h1>Update existing</h1>%>
+<%#*<br />%>
+<%# form_for :dump, :url=>{:controller=>"documents", :action=>"update_from_csv"}, :html => { :multipart => true } do |f| -%>
+ <%#*<table>%>
+   <%#*<tr>%>
+     <%#*<td>%>
+      <%#*<label for="dump_file">%>
+        <%#*Select a CSV File :%>
+      <%#*</label>%>
+     <%#*</td>%>
+     <%#*<td >%>
+       <%#= f.file_field :file %>
+     <%#*</td>%>
+   <%#*</tr>%>
+   <%#*<tr>%>
+     <%#*<td>%>
+       <%#*<label for="name">%>
+         <%#*ID of document to update%>
+       <%#*</label>%>
+     <%#*</td>%>
+     <%#*<td>%>
+       <%#=  f.text_field :doc_id%>
+     <%#*</td>%>
+   <%#*</tr>%>
+   <%#*<tr>%>
+     <%#*<td colspan='2'>%>
+       <%#= submit_tag 'Upload' %>
+     <%#*</td>%>
+   <%#*</tr>%>
+ <%#*</table>%>
+ <%#*<br />%>
+<%# end %>
+
+<%#*<br /><br />%>
+
+<%#*<h1>Delete document</h1>%>
+<%#*<br />%>
+
+
+<%#= form_tag(:controller => "documents", :action => "remove_document") do %>
+  <%#= label_tag(:doc_id, "Delete document #:") %>
+  <%#= text_field_tag(:doc_id) %>
+  <%#= submit_tag("Delete") %>
+<%# end %>
+
+
 <h1>Create new</h1>
 <br />
-<% form_for :dump, :url=>{:controller=>"documents", :action=>"create_from_csv"}, :html => { :multipart => true } do |f| -%>
+<% form_for :dump, :url=>{:controller=>"documents", :action=>"create_from_qb_csv"}, :html => { :multipart => true } do |f| -%>
  <table>
    <tr>
      <td>
@@ -45,7 +136,7 @@
 
 <h1>Update existing</h1>
 <br />
-<% form_for :dump, :url=>{:controller=>"documents", :action=>"update_from_csv"}, :html => { :multipart => true } do |f| -%>
+<% form_for :dump, :url=>{:controller=>"documents", :action=>"update_from_qb_csv"}, :html => { :multipart => true } do |f| -%>
  <table>
    <tr>
      <td>
@@ -64,7 +155,7 @@
        </label>
      </td>
      <td>
-       <%=  f.text_field :doc_id%>
+       <%= collection_select("doc", "doc_id", Document.joins(:userships).where("userships.user_id =? ", current_user.id), :id, :name_with_tag_name) %>
      </td>
    </tr>
    <tr>
@@ -84,6 +175,6 @@
 
 <%= form_tag(:controller => "documents", :action => "remove_document") do %>
   <%= label_tag(:doc_id, "Delete document #:") %>
-  <%= text_field_tag(:doc_id) %>
+  <%= collection_select("doc", "doc_id", Document.joins(:userships).where("userships.user_id =? ", current_user.id), :id, :name_with_tag_name) %>
   <%= submit_tag("Delete") %>
 <% end %>

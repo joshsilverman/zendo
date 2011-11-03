@@ -1,6 +1,6 @@
 class DocumentsController < ApplicationController
 
-  before_filter :check_admin, :only => [:upload_csv, :create_from_csv, :update_from_csv]
+  before_filter :check_admin, :only => [:upload_csv, :create_from_csv, :update_from_csv, :create_from_qb_csv, :update_from_qb_csv]
   
   # Look for existing documents (by name for now)
   # If exists, use this document, otherwise set document html and construct Line objects
@@ -415,8 +415,80 @@ class DocumentsController < ApplicationController
     redirect_to :action => 'review', :id => @document.id
   end
 
+  def create_from_qb_csv
+    return if params[:dump][:file].nil?
+    return if params[:dump][:name].nil?
+    tag = Tag.find_by_id_and_user_id(params[:tag][:id], current_user.id)
+    Document.transaction do
+      Usership.transaction do
+        @document = Document.create!(:name => params[:dump][:name], :tag_id => tag.id, :public => true, :icon_id => 0)
+        @usership = Usership.create!(:user_id => current_user.id, :document_id => @document.id, :push_enabled => false, :owner => true)
+      end
+    end
+    file = params[:dump][:file]
+    begin
+    FasterCSV.new(file.tempfile, :headers => true, :encoding => 'U').each do |row|
+      term = Term.create(:name => row[2], :document_id => @document.id, :user_id => current_user.id)
+      question = Question.create(:question => row[1], :term_id => term.id, :qb_id => row[0], :topic => row[6])
+      i = 3
+      while (i != 6 and not row[i].nil?)
+        Answer.create(:answer => row[i], :question_id => question.id)
+        i+=1
+      end
+    end
+    rescue FasterCSV::MalformedCSVError => e
+      puts "ERROR:"
+      puts e.message
+      @document.destroy
+      @usership.destroy
+    end
+    redirect_to :action => 'review', :id => @document.id
+  end
+
+  def update_from_qb_csv
+    return if params[:dump][:file].nil? || params[:doc][:doc_id].nil?
+    get_document(params[:doc][:doc_id])
+    return if @document.nil?
+    puts @document.to_json
+    file = params[:dump][:file]
+    FasterCSV.new(file.tempfile, :headers => true).each do |row|
+      question = Question.find_by_qb_id(row[0])
+      if question.nil?
+        term = Term.create(:name => row[2], :document_id => @document.id, :user_id => current_user.id)
+        question = Question.create(:question => row[1], :term_id => term.id, :qb_id => row[0], :topic => row[6])
+        i = 3
+        while (i != 6 and not row[i].nil?)
+          Answer.create(:answer => row[i], :question_id => question.id)
+          i+=1
+        end
+      else
+        question.update_attributes(:question => row[1], :topic => row[6])
+        answers = Answer.where("question_id = ?", question.id)
+        i = 3
+        answers.each do |a|
+          a.update_attribute(:answer, row[i])
+          i += 1
+        end
+        puts "PRE TERM"
+        term = Term.find_by_id(question.term_id)
+        puts "POST TERM"
+        term.update_attribute(:name, row[2])
+        puts "UPDATED TERM"
+      end
+    end  
+    redirect_to :action => 'review', :id => @document.id
+  end
+
   def remove_document
-    get_document(params[:doc_id])
+    if params[:doc_id].nil?
+      puts "nil"
+      doc_id = params[:doc][:doc_id]
+    else
+      puts "not so nil"
+      doc_id = params[:doc_id]
+    end
+    puts "REMOVE! #{doc_id}"
+    get_document(doc_id)
     @document.terms.each do |term|
       puts term.to_json
       term.questions.each do |question|
