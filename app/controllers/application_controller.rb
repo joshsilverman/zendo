@@ -1,8 +1,10 @@
 class ApplicationController < ActionController::Base
   before_filter :check_uri
   before_filter :authenticate_user!
+  before_filter :prepare_for_mobile
   # before_filter :check_headers
-
+  Mime::Type.register "mobile", :mobile
+  
   helper :all
 
   protect_from_forgery
@@ -58,19 +60,19 @@ class ApplicationController < ActionController::Base
   end
 
   def mobile_device?
-    @mobile = false
-    ## Check if iPhone
-    if request.user_agent.include? 'iPhone'
-      @mobile = true
-      end
-    ## Check if Android
-    if request.user_agent.include? 'android'
-      @mobile = true
+    if session[:mobile_param]
+      session[:mobile_param] == "1"
+    else 
+      request.user_agent =~ /Mobile|webOS/
     end
-    return @mobile
   end
 
   helper_method :mobile_device?
+
+  def prepare_for_mobile
+    session[:mobile_param] = params[:mobile] if params[:mobile]
+    request.format = :mobile if mobile_device?
+  end
 
   def get_phase(strength, mc, fita)
     phase = 1

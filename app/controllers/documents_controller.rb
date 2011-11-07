@@ -466,8 +466,10 @@ class DocumentsController < ApplicationController
         mem.line_id = term.line_id if mem.line_id.nil?
         mem.document_id = @document.id
         mem.save
+        puts mem.strength
         jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
         get_phase(mem.strength.to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
+        puts @phase.to_json
         jsonArray['term']['phase'] = @phase
         jsonArray['term']['mem'] = mem.id
         json << jsonArray

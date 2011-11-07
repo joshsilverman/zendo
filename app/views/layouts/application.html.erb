@@ -4,6 +4,7 @@
   <title>StudyEgg | passionate learners</title>
 
   <%= stylesheet_link_tag 'application' %>
+
   <meta name="description" content="StudyEgg automatically creates study guides from your notes and tracks how much you know. Spend less time studying and know your material better with StudyEgg!" />
   <%= csrf_meta_tag %>
   <% auto_js_css =  controller.controller_name + '/' + controller.action_name  %>
@@ -34,30 +35,20 @@
 
     <div class="clr-zero"></div>
 
-    <!-- Main -->
 <div id="main">
-	<!-- Shell -->
 	<div class="shell">
-		<!-- Content -->
 		<div id="content" class="whitebg">
-                  <!--flash messages-->
-                  <% unless flash[:notice].blank? && flash[:error].blank? && flash[:alert].blank? %>
-                    <div class="flash_container">
-                      <% unless flash[:alert].blank? %><div class="error"><p><%= flash[:alert] %></p></div><% end %>
-                      <% unless flash[:notice].blank? %><div class="notice"><p><%= flash[:notice] %></p></div><% end %>
-                      <% unless flash[:error].blank? %><<div class="error"><p><%= flash[:error] %></p></div><% end %>
-                    </div>
-                  <% end %>
-
-                    <%= yield %>
-                </div>
-		<!-- End Content -->
-
+      <% unless flash[:notice].blank? && flash[:error].blank? && flash[:alert].blank? %>
+        <div class="flash_container">
+          <% unless flash[:alert].blank? %><div class="error"><p><%= flash[:alert] %></p></div><% end %>
+          <% unless flash[:notice].blank? %><div class="notice"><p><%= flash[:notice] %></p></div><% end %>
+          <% unless flash[:error].blank? %><<div class="error"><p><%= flash[:error] %></p></div><% end %>
+        </div>
+      <% end %>
+      <%= yield %>
+    </div>
 	</div>
-	<!-- End Shell -->
-
 </div>
-<!-- End Main -->
 
     <div class="clr-zero"></div>
     <%= render 'layouts/footer' %>
