@@ -86,6 +86,7 @@ var cReviewer = Class.create({
     next: function(grade) {
 
         /* grade current */
+        
         if (grade) {
             var card = this.cards[this.currentCardIndex];
             card.grade(grade);
@@ -108,9 +109,17 @@ var cReviewer = Class.create({
 
         /* advance */
         if (this.cards[this.currentCardIndex]) {
-            if (this.cards[this.currentCardIndex].confidence == -1)
-                this.cards[this.currentCardIndex].cue();
-            else this.cards[this.currentCardIndex].showAll();
+            var card = this.cards[this.currentCardIndex];
+            if(card.response == null){
+                card.cue();
+            } else if(card.phase==2){
+                if(card.mc){card.mc_show();}
+                else if(card.fita){card.fita_show();}
+                else {card.showAll();}
+            } else if(card.phase==3){
+                if(card.fita){card.fita_show();}
+                else{card.showAll();}
+            } else {card.showAll();}
             //this.progressBar.update(this.currentCardIndex, this.cards.length);
 
             /* update progress bar */
@@ -395,7 +404,9 @@ var cCard = Class.create({
         if(data['questions'].length > 0){
             this.question = data['questions'][0]['question'];
             //this.fita = true;     //keep false always until we've tested MC'
-            if(data['answers'].length>2){
+            console.log(this.front.toUpperCase());
+            if(data['answers'].length>2 && this.front.toUpperCase() != "TRUE" && this.front.toUpperCase() != "FALSE"){
+                console.log("non MC");
                 this.mc = true;
 
                 var randomArray = [];
@@ -416,6 +427,12 @@ var cCard = Class.create({
                         i++;
                     }
                 }
+            } else {
+                this.mc = true;
+                this.answers=[];
+                console.log("MultipleChoice!!!");
+                this.answers[0] = "True";
+                this.answers[1] = "False";
             }
         }
 //        if(data['mems'][0]['strength']<20){
@@ -501,12 +518,19 @@ var cCard = Class.create({
         $('card_front_text').update(this.question);
 
         /* back */
-        
-        $('card_back').update("<div id='mc_container'><div id='mc_a' class='mc_selection'>"+this.answers[0]+"</div>\
-                                <div id='mc_b' class='mc_selection'>"+this.answers[1]+"</div>\
-                                <div id='mc_c' class='mc_selection'>"+this.answers[2]+"</div>\
-                                <div id='mc_d' class='mc_selection'>"+this.answers[3]+"</div>\
-                                </div>");
+        if(this.answers[2] != null){
+            $('card_back').update("<div id='mc_container'><div id='mc_a' class='mc_selection'>"+this.answers[0]+"</div>\
+                                    <div id='mc_b' class='mc_selection'>"+this.answers[1]+"</div>\
+                                    <div id='mc_c' class='mc_selection'>"+this.answers[2]+"</div>\
+                                    <div id='mc_d' class='mc_selection'>"+this.answers[3]+"</div>\
+                                    </div>");
+        } else {
+            $('card_back').update("<div id='mc_container'><div id='mc_a' class='mc_selection'>True</div>\
+                                    <div id='mc_b' class='mc_selection'>False</div>\
+                                    <div id='mc_c' class='mc_selection' style='display:none;'></div>\
+                                    <div id='mc_d' class='mc_selection' style='display:none;'></div>\
+                                    </div>");
+        }
 
         $('card_show').stopObserving('click');
         $('card_show').update("Click or Press Letter to Choose An Answer");
@@ -653,22 +677,22 @@ var cCard = Class.create({
         $('mc_d').removeClassName('mc_selection');
         $('mc_d').addClassName('mc_answered');
 
-        if(choice.innerHTML == this.front){
+        if(choice.innerHTML.toUpperCase() == this.front.toUpperCase()){
             choice.addClassName('mc_correct');
             this.grade(9);
         }else{
             this.grade(1);
             choice.addClassName('mc_incorrect');
-            if($('mc_a').innerHTML == this.front){
+            if($('mc_a').innerHTML.toUpperCase() == this.front.toUpperCase()){
                 $('mc_a').addClassName('mc_correct');
             }
-            if($('mc_b').innerHTML == this.front){
+            if($('mc_b').innerHTML.toUpperCase() == this.front.toUpperCase()){
                 $('mc_b').addClassName('mc_correct');
             }
-            if($('mc_c').innerHTML == this.front){
+            if($('mc_c').innerHTML.toUpperCase() == this.front.toUpperCase()){
                 $('mc_c').addClassName('mc_correct');
             }
-            if($('mc_d').innerHTML == this.front){
+            if($('mc_d').innerHTML.toUpperCase() == this.front.toUpperCase()){
                 $('mc_d').addClassName('mc_correct');
             }
         }
@@ -684,11 +708,19 @@ var cCard = Class.create({
 
         /* back */
 
-        $('card_back').update("<div id='mc_container'><div id='mc_a' class='mc_answered'>"+this.answers[0]+"</div>\
-                                <div id='mc_b' class='mc_answered'>"+this.answers[1]+"</div>\
-                                <div id='mc_c' class='mc_answered'>"+this.answers[2]+"</div>\
-                                <div id='mc_d' class='mc_answered'>"+this.answers[3]+"</div>\
-                                </div>");
+        if(this.answers[2] != null){
+            $('card_back').update("<div id='mc_container'><div id='mc_a' class='mc_selection'>"+this.answers[0]+"</div>\
+                                    <div id='mc_b' class='mc_selection'>"+this.answers[1]+"</div>\
+                                    <div id='mc_c' class='mc_selection'>"+this.answers[2]+"</div>\
+                                    <div id='mc_d' class='mc_selection'>"+this.answers[3]+"</div>\
+                                    </div>");
+        } else {
+            $('card_back').update("<div id='mc_container'><div id='mc_a' class='mc_selection'>True</div>\
+                                    <div id='mc_b' class='mc_selection'>False</div>\
+                                    <div id='mc_c' class='mc_selection' style='display:none;'></div>\
+                                    <div id='mc_d' class='mc_selection' style='display:none;'></div>\
+                                    </div>");
+        }
 
         $('card_show').stopObserving('click');
         $('card_show').update("Click or Press Letter to Choose An Answer");
@@ -705,12 +737,12 @@ var cCard = Class.create({
         $('card_show').setStyle({'display':'block'});
         console.log(this.response);
         var choice;
-        if($('mc_a').innerHTML == this.response){choice = $('mc_a');}
-        else if($('mc_b').innerHTML == this.response){choice = $('mc_b');}
-        else if($('mc_c').innerHTML == this.response){choice = $('mc_c');}
+        if($('mc_a').innerHTML.toUpperCase() == this.response.toUpperCase()){choice = $('mc_a');}
+        else if($('mc_b').innerHTML.toUpperCase() == this.response.toUpperCase()){choice = $('mc_b');}
+        else if($('mc_c').innerHTML.toUpperCase() == this.response.toUpperCase()){choice = $('mc_c');}
         else {choice = $('mc_d');}
 
-        if(choice.innerHTML == this.front){
+        if(choice.innerHTML.toUpperCase() == this.front.toUpperCase()){
             choice.addClassName('mc_correct');
         }else{
             this.grade(1);
