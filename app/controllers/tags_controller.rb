@@ -16,7 +16,7 @@ class TagsController < ApplicationController
     @recent_json = Tag.recent_json(current_user)
     @username = current_user.username.nil?
     if mobile_device?
-      render :nothing => true
+      @tags = Tag.all(:conditions => {:user_id => current_user.id})
     end
   end
 
@@ -66,6 +66,9 @@ class TagsController < ApplicationController
 #      tag << @owner
 #    end
 
+  def show
+    @documents = Document.all(:conditions => {:tag_id => params[:id]})
+  end
 
   def create
     #params

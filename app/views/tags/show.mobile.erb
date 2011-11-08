@@ -10,13 +10,13 @@
                 <%= link_to "Full site", root_url(:mobile => 0), :class => "button", :rel => "external" %>
                 <h1>StudyEgg</h1>
             </div>
-            <div class="home">
+            <div class="notes">
                 <ul>
-                    <li class="arrow"><%= link_to "Log in", "/users/simple_sign_in" %></li>
-                    <li class="arrow"><%= link_to "Sign up", "/users/simple_sign_in" %></li>
+                    <% @documents.each do |document| %>
+                        <li class="arrow"><%= link_to document.name, "/review/#{document.id}" %></li>
+                    <% end %>
                 </ul>
-            </div>            
+            </div>          
         </div>
     </body>
 </html>
-

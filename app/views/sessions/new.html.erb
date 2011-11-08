@@ -6,14 +6,13 @@
 
     <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
 
-                                          <%= f.text_field :email, :class => "field blink", :value => "Email", :title => "Email", :id => "Email"%>
-                                          <%= f.password_field :password, :class => "field blink", :value => "Password", :title => "Password", :id => "Password"%>
-                                          <%= f.submit "Sign in", :class=>"button notext header-login" %>
-                                          <% if devise_mapping.rememberable? -%>
-                                            <%= f.check_box :remember_me, :id => "check" %> <%= f.label :remember_me, :for => "check" %>
-                                          <% end %>
-
-                                        <% end %>
+        <%= f.text_field :email, :class => "field blink", :value => "Email", :title => "Email", :id => "Email"%>
+        <%= f.password_field :password, :class => "field blink", :value => "Password", :title => "Password", :id => "Password"%>
+        <%= f.submit "Sign in", :class=>"button notext header-login" %>
+        <% if devise_mapping.rememberable? -%>
+          <%= f.check_box :remember_me, :id => "check" %> <%= f.label :remember_me, :for => "check" %>
+        <% end %>
+      <% end %>
     <br/>
     <div class="reg-links">
       <%= render :partial => "devise/shared/links" %>

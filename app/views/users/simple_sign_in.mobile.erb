@@ -9,14 +9,17 @@
             <div class="toolbar">
                 <%= link_to "Full site", root_url(:mobile => 0), :class => "button", :rel => "external" %>
                 <h1>StudyEgg</h1>
+                <a class="back">Back</a>
             </div>
             <div class="home">
-                <ul>
-                    <li class="arrow"><%= link_to "Log in", "/users/simple_sign_in" %></li>
-                    <li class="arrow"><%= link_to "Sign up", "/users/simple_sign_in" %></li>
-                </ul>
+                <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+                    <ul>
+                        <li><%= f.text_field :email, :placeholder => "Email" %></li>
+                        <li><%= f.password_field :password, :placeholder => "Password" %></li>
+                    </ul>
+                    <center><%= f.submit "Sign in", :float => "right" %></center>
+                <% end %>
             </div>            
         </div>
     </body>
 </html>
-

@@ -74,6 +74,7 @@ class DocumentsController < ApplicationController
             json = "{\"document\":#{doc_json}, \"lines\":#{@lines_json}}"
             render :text => json
         }
+        format.mobile
     end
   end
 

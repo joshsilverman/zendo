@@ -9,14 +9,16 @@
             <div class="toolbar">
                 <%= link_to "Full site", root_url(:mobile => 0), :class => "button", :rel => "external" %>
                 <h1>StudyEgg</h1>
+                <%= button_to "Log Out", "/users/sign_out", :method => "GET" %>
             </div>
-            <div class="home">
+            <div class="classes">
                 <ul>
-                    <li class="arrow"><%= link_to "Log in", "/users/simple_sign_in" %></li>
-                    <li class="arrow"><%= link_to "Sign up", "/users/simple_sign_in" %></li>
+                    <% @tags.each do |tag| %>
+                        <% puts "/tags/show/#{tag.id}" %>
+                        <li class="arrow"><%= link_to tag.name, "/tags/show/#{tag.id}" %></li>
+                    <% end %>
                 </ul>
-            </div>            
+            </div>          
         </div>
     </body>
 </html>
-

@@ -4,19 +4,11 @@
         <%= javascript_include_tag "/jqtouch/jquery-1.4.2.min.js", "/jqtouch/jqtouch.js", "mobile" %>
     </head>
     <body>
-        <!-- <%= link_to "Full site", :mobile => 0 %> -->
         <div class="current">
             <div class="toolbar">
                 <%= link_to "Full site", root_url(:mobile => 0), :class => "button", :rel => "external" %>
                 <h1>StudyEgg</h1>
-            </div>
-            <div class="home">
-                <ul>
-                    <li class="arrow"><%= link_to "Log in", "/users/simple_sign_in" %></li>
-                    <li class="arrow"><%= link_to "Sign up", "/users/simple_sign_in" %></li>
-                </ul>
-            </div>            
+            </div>        
         </div>
     </body>
 </html>
-

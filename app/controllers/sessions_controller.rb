@@ -14,4 +14,8 @@ class SessionsController < Devise::SessionsController
 #    respond_with resource, :location => redirect_location(resource_name, resource)
   end
 
+  def new
+    redirect_to "/" if mobile_device?
+  end
+
 end

@@ -113,6 +113,7 @@ Zendo::Application.routes.draw do
   match "/tags/get_recent_json" => "tags#get_recent_json"
   match "/tags/claim_tag/:id" => "tags#claim_tag"
   match "/tags/update_icon" => "tags#update_icon"
+  match "/tags/show/:id" => "tags#show"
 
   # home page
   match "/users/welcome" => "users#home"
