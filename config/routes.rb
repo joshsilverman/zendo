@@ -122,6 +122,7 @@ Zendo::Application.routes.draw do
   match "/user" => "tags#index"
   match "/users/autocomplete"
   match "/users/retrieve_notifications"
+  match "/users/add_resource_request"
   match "/users/add_device/:token" => "users#add_device"
   root :to => "users#home"
   root :controller => 'users', :action => 'home'

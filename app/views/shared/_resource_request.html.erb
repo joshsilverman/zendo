@@ -1,10 +1,12 @@
-  <p><strong>Can't find the resource you're looking for?</strong>
+  <p><strong>Can't find the book or other resource you're looking for?</strong>
     Let us know what book or topic you want to learn and we'll let you know when 
     it's available!</p>
-  <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
-
-    <%= f.text_field :email, :class => "", :value => "Email", :title => "Email"%>
-    <%= f.text_field :resourceName, :class => "", :value => "Resource Name", :title => "ResourceName"%>
-    <div class="autocomplete"></div>
-    <%= f.submit "Submit", :value => "Submit" %>
-  <% end %>
+  <%= form_tag({:controller => 'users', :action => 'add_resource_request' }, :method => 'get') %>
+    <% if current_user %>
+      Email address: <%= text_field_tag :email, current_user.email%><br />
+    <% else %>
+      Email address: <%= text_field_tag :email%><br/>
+    <% end %>
+    Book or Resource: <%= text_field_tag :resourceName%><br />
+    <%= hidden_field_tag :path, request.path %>
+    <%= submit_tag "Submit", :value => "Submit" %>
