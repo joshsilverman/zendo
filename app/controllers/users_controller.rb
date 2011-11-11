@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_filter :authenticate_user!, :except => [:home, :get_email, :simple_sign_in]
+  before_filter :authenticate_user!, :except => [:home, :get_email, :simple_sign_in, :add_resource_request]
 
   def index
     render :text => "index"
@@ -33,6 +33,23 @@ class UsersController < ApplicationController
   def autocomplete
     @users = User.where("users.username LIKE ?", "%" + params['username'] + "%" ).limit(10)
     render :layout => false
+  end
+  
+  def add_resource_request
+    if params[:email].size<3 or params[:resourceName].size<3
+      flash[:error] = "You didn't properly fill out one or more of the form fields"
+      redirect_to params[:path]
+      return
+    end
+    begin
+      resource_request = Resourcerequest.create!(:email => params[:email], :resource => params[:resourceName])
+      flash[:error] = "Thanks for letting us know!  We will email you when this resouce becomes available."
+      redirect_to params[:path]
+    rescue
+      puts "ERROR ADDING RESOURCE!"
+      flash[:error] = "There was an error processing your request.  Smart people have been notified."
+      redirect_to params[:path]
+    end
   end
 
 
