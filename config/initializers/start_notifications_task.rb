@@ -1,1 +1,1 @@
-system 'whenever --update-crontab studyegg'
+# system 'whenever --update-crontab studyegg'

@@ -71,5 +71,33 @@ class ApplicationController < ActionController::Base
   end
 
   helper_method :mobile_device?
-  
+
+  def get_phase(strength, mc, fita)
+    phase = 1
+    if strength > 120000 # 1/2 a week
+      phase = 2
+      if strength > 300000   #1 day
+        phase = 3
+        if strength > 1000000   #1 hour
+          phase = 4
+        end
+      end
+    end
+    case phase
+    when 1
+      @phase = 2 #will be set back to 1 when chunked learning is introduced
+    when 2
+      if mc.size > 2
+        @phase = 2
+      else
+        @phase = 4
+      end
+    when 3
+        @phase = 4
+    when 4
+      @phase = 4
+    else
+      puts "There was an error with the phase"
+    end
+  end
 end

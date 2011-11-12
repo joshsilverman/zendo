@@ -1,5 +1,8 @@
 <% unless user_signed_in? %>
-    <% unless controller.controller_name == "sessions" || controller.controller_name == "registrations" || controller.controller_name == "passwords"%>
+    <% unless controller.controller_name == "sessions" ||
+              controller.controller_name == "registrations" ||
+              controller.controller_name == "passwords" ||
+              controller.controller_name == "demo" %>
 <div class="login">
         <a href="#" class="login-link" id="login-link">Login</a>
 

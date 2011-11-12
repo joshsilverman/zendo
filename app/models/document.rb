@@ -9,6 +9,7 @@ class Document < ActiveRecord::Base
   include DocumentsHelper
 
   has_many :lines, :dependent => :destroy
+  has_many :terms, :dependent => :destroy
 
   belongs_to :tag
   belongs_to :user
@@ -19,7 +20,11 @@ class Document < ActiveRecord::Base
   has_many :userships
   has_many :users, :through => :userships, :uniq => true
   #has_many :users, :through => :userships, :uniq => true
-
+  
+  def name_with_tag_name
+    tag = Tag.find_by_id(tag_id)
+    "#{name} (#{tag.name})"
+  end
 
   #scope :recent_edit, where("updated_at < ? AND user_id = ?", Date.today, current_user.id)
   #scope :recent_review, where("reviewed_at between ? and ?", Date.today, (Date.today - 30))
@@ -79,16 +84,17 @@ class Document < ActiveRecord::Base
 
       doc = Nokogiri::XML(html_safe)
       Line.document_html = html
+      document.update_attributes(:html => Line.document_html)
       Line.save_all(doc,document.id, user_id)
 
       # delete lines/mems (don't use destory_all with dependencies) - half as many queries; tracks whether deleted
       unless delete_nodes == '[]' || delete_nodes.nil? || delete_nodes == ''
+        Term.delete_all(["line_id IN (?) AND document_id = ? AND user_id = ?", delete_nodes.split(','), document.id, user_id])
         Line.delete_all(["id IN (?) AND document_id = ? AND user_id = ?", delete_nodes.split(','), document.id, user_id])
         Mem.delete_all(["line_id IN (?) AND user_id = ?", delete_nodes.split(','), user_id]) # belongs in model but I think before_delete would delete mems individually
       end
     end
 
-    document.update_attributes(:html => Line.document_html)
     document.update_attributes(:name => params[:name])
     document.update_attributes(:edited_at => params[:edited_at])
     return document

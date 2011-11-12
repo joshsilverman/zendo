@@ -1,4 +1,4 @@
-<% @page_specific_scripts_js = ["parser", "class_selector", "vendors/modal.js", "/javascripts/vendors/lightview/js/lightview.js"] %>
+<% @page_specific_scripts_js = ["class_selector", "vendors/modal.js", "/javascripts/vendors/lightview/js/lightview.js"] %>
 <% @page_specific_scripts_css = ["/javascripts/vendors/lightview/css/lightview"] %>
 
 <div id="tags_json" style="display: none;"><%= @tags_json %></div>
@@ -7,10 +7,11 @@
 </div>
 <div id="recent_json" style="display: none;"><%= @recent_json %></div>
 
-<div id="left_container">
-<div class="new_guide_button">
-   <a href="/documents/create/0" class="button">New Document</a>
-</div>
+<div id="left_container" style="text-align:center;">
+  <h2 style='color:#595448; margin-top:15px;'>Check out the <a href='/store'>EggStore</a> for more!</h2>
+<%#*<div class="new_guide_button">%>
+   <%#*<a href="/documents/create/0" class="button">New Document</a>%>
+<%#*</div>%>
 
 <div id="details">
     <!--<div id="metainfo">

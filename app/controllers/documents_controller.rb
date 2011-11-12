@@ -1,4 +1,7 @@
 class DocumentsController < ApplicationController
+
+  before_filter :check_admin, :only => [:upload_csv, :create_from_csv, :update_from_csv, :create_from_qb_csv, :update_from_qb_csv]
+  
   # Look for existing documents (by name for now)
   # If exists, use this document, otherwise set document html and construct Line objects
   def create
@@ -27,48 +30,9 @@ class DocumentsController < ApplicationController
     redirect_to :action => 'edit', :id => @document.id
   end
   
-  def edit
-    # check id posted
-    id = params[:id]
-    get_document(params[:id])
-    @read_only = params[:read_only]
-    @usership = Usership.find_by_document_id_and_user_id(params[:id], current_user.id)
-    if @document.public && @usership.nil?
-      @usership = Usership.create(:user_id => current_user.id,
-                                  :document_id => @document.id,
-                                  :push_enabled => false,
-                                  :created_at => Time.now,
-                                  :owner => false)
-    end
-    if (@usership.nil? || @document.nil?) && !current_user.try(:admin?)
-      redirect_to '/my_eggs', :notice => "Error accessing that document."
-      return
-    end
-    # redirect if public, not owner, and trying to edit
-    if not @read_only and not @w
-      redirect_to "/documents/#{id}"
-      return
-    end
-    @tag = Tag.find_by_id(@document.tag_id)
-    @line_ids = Hash[*@document.lines.map {|line| [line.id, line.domid]}.flatten].to_json
-
-    # new document?
-    @new_doc = (@document.html.blank?) ? true : false
-
-    # doc count
-    if @read_only
-      @doc_count = 100;
-    else
-      @doc_count = current_user.documents.size
-    end
-  end
-  
   def update
-    puts "UPdainggg"
-    puts params.to_json
     # update document
     @document = Document.update(params, current_user.id)
-#    logger.debug("This is the updated doc #{@document.inspect}")
 	
     if @document.nil?
       render :nothing => true, :status => 400
@@ -102,33 +66,7 @@ class DocumentsController < ApplicationController
       redirect_to '/', :notice => "Error accessing that document."
       return
     end
-
-    # get lines
-    owner_lines = Line.includes(:mems).where("lines.document_id = ?
-                        AND mems.status = true AND mems.user_id = ?",
-                        params[:id], @document.userships(:conditions => {:owner => true}).first.user_id)
- 
-    if @document.id == current_user.id
-      @lines_json = owner_lines.to_json :include => :mems
-    else
-      # on demand mem creation
-      Mem.transaction do
-        owner_lines.each do |owner_line|
-          mem = Mem.find_or_initialize_by_line_id_and_user_id(owner_line.id, current_user.id);
-          mem.strength = 0.5 if mem.strength.nil?
-          mem.status = 1 if mem.status.nil?
-          mem.document_id = @document.id
-          mem.save
-        end
-      end
-
-      user_lines = Line.includes(:mems).where("lines.document_id = ?
-                        AND mems.status = true AND mems.user_id = ?",
-                        params[:id], current_user.id)
-
-      @lines_json = user_lines.to_json :include => :mems
-    end
-
+    get_all_cards(params[:id])
     respond_to do |format|
         format.html
    	    format.json { 
@@ -137,11 +75,54 @@ class DocumentsController < ApplicationController
             render :text => json
         }
     end
-  end  
+  end
+
+  def review_session
+    get_document(params[:id])
+    if @document.nil?
+      redirect_to '/', :notice => "Error accessing that document."
+      return
+    end
+
+    # get lines
+    user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?", params[:id])
+
+    # on demand mem creation
+    Mem.transaction do
+      user_terms.each do |ot|
+        puts ot.to_json
+        mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
+        mem.strength = 0.5 if mem.strength.nil?
+        mem.status = 1 if mem.status.nil?
+        mem.term_id = ot.id if mem.term_id.nil?
+        mem.document_id = @document.id
+        mem.save
+      end
+    end
+
+    user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
+                      AND mems.status = true AND mems.user_id = ? AND mems.review_after <= ?",
+                      params[:id], current_user.id, Date.today)
+
+    session_terms = []
+
+    @lines_json = user_terms.to_json :include => [:mems, :questions, :answers]
+
+    respond_to do |format|
+        format.html
+   	    format.json {
+            doc_json = @document.to_json
+            json = "{\"document\":#{doc_json}, \"lines\":#{@lines_json}}"
+            render :text => json
+        }
+    end
+  end
   
   def enable_mobile
   	if params[:bool] == "1"
+      puts current_user.id
       if APN::Device.all(:conditions => {:user_id => current_user.id}).empty?
+        puts "tpppp"
         render :text => "fail", :status => 400
       else
         if Usership.all(:conditions => {:user_id => current_user.id, :document_id => params[:id]}).empty?
@@ -152,11 +133,13 @@ class DocumentsController < ApplicationController
                             params[:id])                          
         Mem.transaction do
           owner_lines.each do |owner_line|
+            term = Term.find_by_line_id(owner_line.id)
             mem = Mem.find_or_initialize_by_line_id_and_user_id(owner_line.id, current_user.id);
             mem.strength = 0.5 if mem.strength.nil?
             mem.status = 1 if mem.status.nil?
             mem.document_id = params[:id] if mem.document_id.nil?
             mem.line_id = owner_line.id if mem.line_id.nil?
+            mem.term_id = term.id if mem.term_id.nil? and not term.nil?
             mem.user_id = current_user.id if mem.user_id.nil?
             mem.created_at = Time.now if mem.created_at.nil?
             mem.save
@@ -303,8 +286,6 @@ class DocumentsController < ApplicationController
     #If document has been updated since last cache, regenerate the cards hash and recache, otherwise serve the cache
     @cache = Rails.cache.read("#{params[:controller]}_#{params[:action]}_#{params[:id]}")
     if @cache.nil? || @document.updated_at > @cache["updated_at"]
-      @hash = Hash.new
-      @hash["cards"] = []
       Document.update({:id => params[:id], :html => @document.html, :delete_nodes => [], :name => @document.name, :edited_at => @document.edited_at}, current_user.id)
       @html = Nokogiri::HTML("<wrapper>" + @document.html.gsub(/<\/?em>/, "").gsub(/<\/?span[^>]*>/, " ").gsub(/<\/?a[^>]*>/, " ").gsub(/<\/?sup[^>]*>/, " ").gsub(/\s+/," ").gsub(/ ,/, ",").gsub(/ \./, ".").gsub(/ \)/, ")") + "</wrapper>")
       Line.all(:conditions => {:document_id => params[:id]}).each do |line|
@@ -343,8 +324,183 @@ class DocumentsController < ApplicationController
     end
   end
 
+  def review_all_cards
+    get_document(params[:id])
+    if @document.nil?
+      redirect_to '/', :notice => "Error accessing that document."
+      return
+    end
+
+    get_all_cards(params[:id])
+
+    render :json => @lines_json
+  end
+
+  def review_adaptive_cards
+    get_document(params[:id])
+    if @document.nil?
+      redirect_to '/', :notice => "Error accessing that document."
+      return
+    end
+
+    get_adaptive_cards(params[:id])
+
+    render :json => @lines_json
+  end
+
   def get_public_documents
     render :json => Document.all(:conditions => {:public => true}).to_json(:only => [:name, :id])
+  end
+
+  def upload_csv
+    
+  end
+
+  def create_from_csv
+    return if params[:dump][:file].nil?
+    tag = Tag.find_by_id_and_user_id(params[:tag][:id], current_user.id)
+    Document.transaction do
+      Usership.transaction do
+        @document = Document.create!(:name => params[:dump][:name], :tag_id => tag.id, :public => true, :icon_id => 0)
+        @usership = Usership.create!(:user_id => current_user.id, :document_id => @document.id, :push_enabled => false, :owner => true)
+      end
+    end
+    return if params[:dump][:name].nil?
+    file = params[:dump][:file]
+    begin
+    FasterCSV.new(file.tempfile, :headers => true, :encoding => 'U').each do |row|
+      term = Term.create(:name => row[0], :definition => row[1], :document_id => @document.id, :user_id => current_user.id)
+      unless row[2].nil?
+        question = Question.create(:question => row[2], :term_id => term.id)
+        i = 3
+        while not row[i].nil?
+          Answer.create(:answer => row[i], :question_id => question.id)
+          i+=1
+        end
+      end
+    end
+    rescue FasterCSV::MalformedCSVError => e
+      puts "ERROR:"
+      puts e.message
+      @document.destroy
+      @usership.destroy
+    end
+    redirect_to :action => 'review', :id => @document.id
+  end
+
+  def update_from_csv
+    return if params[:dump][:file].nil? || params[:dump][:doc_id].nil?
+    get_document(params[:dump][:doc_id])
+    return if @document.nil?
+    puts @document.to_json
+    @document.terms.each do |term|
+      term.questions.each do |question|
+        question.answers.delete_all
+        question.delete
+      end
+      term.delete
+    end
+    file = params[:dump][:file]
+    FasterCSV.new(file.tempfile, :headers => true).each do |row|
+      term = Term.create(:name => row[0], :definition => row[1], :document_id => @document.id, :user_id => current_user.id)
+      unless row[2].nil?
+        question = Question.create(:question => row[2], :term_id => term.id)
+        i = 3
+        while not row[i].nil?
+          Answer.create(:answer => row[i], :question_id => question.id)
+          i+=1
+        end
+      end
+    end  
+    redirect_to :action => 'review', :id => @document.id
+  end
+
+  def create_from_qb_csv
+    return if params[:dump][:file].nil?
+    return if params[:dump][:name].nil?
+    tag = Tag.find_by_id_and_user_id(params[:tag][:id], current_user.id)
+    Document.transaction do
+      Usership.transaction do
+        @document = Document.create!(:name => params[:dump][:name], :tag_id => tag.id, :public => true, :icon_id => 0)
+        @usership = Usership.create!(:user_id => current_user.id, :document_id => @document.id, :push_enabled => false, :owner => true)
+      end
+    end
+    file = params[:dump][:file]
+    begin
+    FasterCSV.new(file.tempfile, :headers => true, :encoding => 'U').each do |row|
+      term = Term.create(:name => row[2], :document_id => @document.id, :user_id => current_user.id)
+      question = Question.create(:question => row[1], :term_id => term.id, :qb_id => row[0], :topic => row[6])
+      i = 3
+      while (i != 6 and not row[i].nil?)
+        Answer.create(:answer => row[i], :question_id => question.id)
+        i+=1
+      end
+    end
+    rescue FasterCSV::MalformedCSVError => e
+      puts "ERROR:"
+      puts e.message
+      @document.destroy
+      @usership.destroy
+    end
+    redirect_to :action => 'review', :id => @document.id
+  end
+
+  def update_from_qb_csv
+    return if params[:dump][:file].nil? || params[:doc][:doc_id].nil?
+    get_document(params[:doc][:doc_id])
+    return if @document.nil?
+    puts @document.to_json
+    file = params[:dump][:file]
+    FasterCSV.new(file.tempfile, :headers => true).each do |row|
+      question = Question.find_by_qb_id(row[0])
+      if question.nil?
+        term = Term.create(:name => row[2], :document_id => @document.id, :user_id => current_user.id)
+        question = Question.create(:question => row[1], :term_id => term.id, :qb_id => row[0], :topic => row[6])
+        i = 3
+        while (i != 6 and not row[i].nil?)
+          Answer.create(:answer => row[i], :question_id => question.id)
+          i+=1
+        end
+      else
+        question.update_attributes(:question => row[1], :topic => row[6])
+        answers = Answer.where("question_id = ?", question.id)
+        i = 3
+        answers.each do |a|
+          a.update_attribute(:answer, row[i])
+          i += 1
+        end
+        puts "PRE TERM"
+        term = Term.find_by_id(question.term_id)
+        puts "POST TERM"
+        term.update_attribute(:name, row[2])
+        puts "UPDATED TERM"
+      end
+    end  
+    redirect_to :action => 'review', :id => @document.id
+  end
+
+  def remove_document
+    if params[:doc_id].nil?
+      puts "nil"
+      doc_id = params[:doc][:doc_id]
+    else
+      puts "not so nil"
+      doc_id = params[:doc_id]
+    end
+    puts "REMOVE! #{doc_id}"
+    get_document(doc_id)
+    @document.terms.each do |term|
+      puts term.to_json
+      term.questions.each do |question|
+        puts question.to_json
+        question.answers.delete_all
+        question.delete
+      end
+      term.delete
+    end   
+    @document.userships.delete_all
+    @document.delete
+    redirect_to :root
   end
 
 
@@ -369,5 +525,98 @@ class DocumentsController < ApplicationController
     elsif current_user.try(:admin?)
       @r = true
     end
+  end
+
+  def get_all_cards(doc_id)
+    user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
+    json = []
+    Mem.transaction do
+      user_terms.each do |term|
+        mem = Mem.find_or_initialize_by_term_id_and_user_id(term.id, current_user.id)
+        mem.strength = 0.5 if mem.strength.nil?
+        mem.status = 1 if mem.status.nil?
+        mem.line_id = term.line_id if mem.line_id.nil?
+        mem.document_id = @document.id
+        mem.save
+        jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
+        get_phase(mem.strength.to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
+        jsonArray['term']['phase'] = @phase
+        jsonArray['term']['mem'] = mem.id
+        json << jsonArray
+      end
+    end
+    @lines_json = {"terms" => json}.to_json
+    # user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ?
+    #                 AND mems.status = true AND mems.user_id = ?",
+    #                 doc_id, current_user.id)
+    #
+    # json = []
+    # user_terms.each do |term|
+    #   jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
+    #   get_phase(term.mems.where('user_id = ?', current_user.id).first.strength.to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
+    #   jsonArray['term']['phase'] = @phase
+    #   jsonArray['term']['mem'] = term.mems.where('user_id = ?', current_user.id).first.id
+    #   json << jsonArray
+    # end
+  end
+
+  def get_adaptive_cards(doc_id)
+    # user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
+    # # on demand mem creation
+    # Mem.transaction do
+    #   user_terms.each do |ot|
+    #     mem = Mem.find_or_initialize_by_line_id_and_user_id(ot.line_id, current_user.id);
+    #     mem.strength = 0.5 if mem.strength.nil?
+    #     mem.status = 1 if mem.status.nil?
+    #     mem.term_id = ot.id if mem.term_id.nil?
+    #     mem.document_id = @document.id
+    #     if mem.review_after.nil?
+    #       mem.review_after = Time.now
+    #     end
+    #     mem.save
+    #   end
+    # end
+
+    # user_terms = Term.includes(:mems).includes(:questions).includes(:answers).where("terms.document_id = ? AND mems.status = true AND mems.user_id = ?  AND mems.review_after <= ?", doc_id, current_user.id, Time.now)
+
+    # json = []
+    # user_terms.each do |term|
+    #   jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
+    #   # get_phase(term.mems.where('user_id = ?', current_user.id).first.strength.to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
+    #   # jsonArray['term']['phase'] = @phase
+    #   # jsonArray['term']['mem'] = term.mems.where('user_id = ?', current_user.id).first.id
+    #   json << jsonArray
+    # end
+
+    # @lines_json = {"terms" => json}.to_json
+
+    user_terms = Term.includes(:questions).includes(:answers).where("terms.document_id = ?", doc_id)
+    
+    json = []
+
+    # on demand mem creation
+    Mem.transaction do
+      user_terms.each do |term|
+        mem = Mem.find_or_initialize_by_line_id_and_user_id(term.line_id, current_user.id);
+        mem.strength = 0.5 if mem.strength.nil?
+        mem.status = 1 if mem.status.nil?
+        mem.term_id = term.id if mem.term_id.nil?
+        mem.review_after = Time.now if mem.review_after.nil?
+        mem.document_id = @document.id
+        mem.save
+        puts mem.review_after
+        puts Time.now
+        if mem.review_after <= Time.now
+          jsonArray = JSON.parse(term.to_json :include => [:questions, :answers])
+          get_phase(mem.strength.to_f, jsonArray['term']['answers'], jsonArray['term']['questions'])
+          jsonArray['term']['phase'] = @phase
+          jsonArray['term']['mem'] = mem.id
+          json << jsonArray        
+        end 
+      end
+    end
+
+    @lines_json = {"terms" => json}.to_json
+
   end
 end

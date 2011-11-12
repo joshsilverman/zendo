@@ -2,7 +2,8 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.0.3'
 gem 'mysql2', '0.2.7'
-gem 'bundler', '1.0.10'
+gem 'bundler'
+#, '1.0.10'
 
 gem 'nokogiri'
 gem 'scrapi', '1.2.0'
@@ -15,6 +16,8 @@ gem 'postmark-rails', '0.4.0'
 gem 'kaminari'
 gem 'braintree'
 gem 'whenever'
+gem 'json'
+gem 'fastercsv'
 
 gem 'apn_on_rails', :git => 'https://github.com/natescherer/apn_on_rails.git', :branch => 'rails3'
 

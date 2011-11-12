@@ -13,11 +13,16 @@ namespace :notifications do
         end
         APN::Notification.create(:device => APN::Device.where('user_id = ?', user.id).last, :badge => Mem.all(:conditions => {:user_id => user.id, :pushed => true}).length, :sound => false, :alert => "You have new cards to review!", :user_id => user.id)
       rescue
-        puts "Error during notifications rake!"
+        puts "Error during notifications rake - most likely cause is a user without a registered device. Add cleanup for this scenario!"
       end
     end
     APN::Notification.send_notifications
   end
+
+  # task :android => :environment do
+  #   require 'rubygems'
+  #   require 'c2dm'
+  # end
 end
 
 #          puts "More than 6 pending mems per doc for this user"

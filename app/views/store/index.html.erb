@@ -6,8 +6,10 @@
 </div>
 <div  style="margin:10px auto; padding:10px; width: 800px;">
   <div id="search">
-      <div id="loader" style="width:32px; height:32px; display: block; float:left; margin:4px;"><img id="mag" src="../../images/nounproject/magnifying-glass.png" />
-                                                                                    <img id="load_search" src="../../images/search/ajax-loader.gif"  style="display:none;" /></div>
+      <div id="loader" style="width:32px; height:32px; display: block; float:left; margin:4px;">
+        <img id="mag" src="../../images/nounproject/magnifying-glass.png" />
+        <img id="load_search" src="../../images/search/ajax-loader.gif"  style="display:none;" />
+      </div>
       <!--<input type="text" id="search_bar" name="search_bar" size="30" value="Search Public Study Guides"/>-->
       <input xmlns="http://www.w3.org/1999/xhtml" type="text" id="search-box" placeholder="Search" />
     </div>
@@ -23,10 +25,10 @@
       <% @recent_public_eggs.each do |e| %>
         <%if i<5%>
         <li><div class="egg-box"><a href='store/egg_details/<%= e.id %>' ><div class="egg">
-                <img src="../../images/nounproject/<%= Document::ICON_TYPES[e.icon_id] %>" class="icon"></div></a><%= e.name %></div></li>
+            <img src="../../images/nounproject/<%= Document::ICON_TYPES[e.icon_id] %>" class="icon"></div></a><%= e.name %></div></li>
 
-                <%i+=1%>
-                <%end %>
+            <%i+=1%>
+            <%end %>
       <% end %>
       </ul>
       <div style="clear:both"></div>

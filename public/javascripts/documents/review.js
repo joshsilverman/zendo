@@ -9,7 +9,8 @@ var cDoc = Class.create({
 
         /* new reviewer */
         var data = $('card_json').innerHTML.evalJSON();
-        this.reviewer = new cReviewer(data);
+        console.log(data['terms']);
+        this.reviewer = new cReviewer(data['terms']);
 
         /* resize listener - fire after dom:loaded */
         window.onresize = this.onResize;
@@ -55,26 +56,28 @@ var cReviewer = Class.create({
 
         /* load cards */
         data.each(function(cardData) {
-            this.cards.push(new cCard(cardData['line']));
+            this.cards.push(new cCard(cardData['term']));
         }.bind(this));
 
         /* show first */
         if (this.cards[0]) this.cards[0].cue();
         else $('card_front').update("<i>No cards to review</i>");
-        
         /* next listeners */
         $('grade_4').observe('click', this.next.bind(this, this.grade_4));
         $('grade_3').observe('click', this.next.bind(this, this.grade_3));
         $('grade_2').observe('click', this.next.bind(this, this.grade_2));
         $('grade_1').observe('click', this.next.bind(this, this.grade_1));
-
         /* nav listeners */
         $('back_button').observe('click', this.back.bind(this, false));
-        $('next_button').observe('click', this.next.bind(this, false));
-
+//        $('next_button').observe('click', this.next.bind(this, false));
+        $('next_button').observe('click',function(){
+            if(doc.reviewer.cards[doc.reviewer.currentCardIndex].phase == 1){
+                doc.reviewer.next(9);
+            } else {doc.reviewer.next();
+            }
+        }.bind(this));
         /* review handlers */
         this.reviewHandlers = new cReviewHandlers();
-
         /* progress bar */
         //this.progressBar = new cProgressBar();
         $('progress_fraction').update("1/"+this.cards.length);
@@ -83,8 +86,13 @@ var cReviewer = Class.create({
     next: function(grade) {
 
         /* grade current */
+        
         if (grade) {
-            this.cards[this.currentCardIndex].grade(grade);
+            var card = this.cards[this.currentCardIndex];
+            card.grade(grade);
+            if(card.response==null){
+                card.response = grade;
+            }
         /* If no grade, card was skipped => post high confidence / zero importance for now */
         } else {
             var requestUrl = '/mems/update/'+this.cards[this.currentCardIndex].memId+'/9/0';
@@ -101,9 +109,17 @@ var cReviewer = Class.create({
 
         /* advance */
         if (this.cards[this.currentCardIndex]) {
-            if (this.cards[this.currentCardIndex].confidence == -1)
-                this.cards[this.currentCardIndex].cue();
-            else this.cards[this.currentCardIndex].showAll();
+            var card = this.cards[this.currentCardIndex];
+            if(card.response == null){
+                card.cue();
+            } else if(card.phase==2){
+                if(card.mc){card.mc_show();}
+                else if(card.fita){card.fita_show();}
+                else {card.showAll();}
+            } else if(card.phase==3){
+                if(card.fita){card.fita_show();}
+                else{card.showAll();}
+            } else {card.showAll();}
             //this.progressBar.update(this.currentCardIndex, this.cards.length);
 
             /* update progress bar */
@@ -168,21 +184,24 @@ var cReviewer = Class.create({
         /* back */
         this.currentCardIndex--;
         if (this.cards[this.currentCardIndex]) {
-            console.log("1");
-            if (this.cards[this.currentCardIndex].confidence == -1) {
-                console.log("2");
-                var card = this.cards[this.currentCardIndex];
-                console.log(card.back);
+            var card = this.cards[this.currentCardIndex];
+            if(card.response == null){
                 card.cue();
-            }
-            else {this.cards[this.currentCardIndex].showAll();
-                console.log("3");
-            }
+            } else if(card.phase==2){
+                if(card.mc){card.mc_show();}
+                else if(card.fita){card.fita_show();}
+                else {card.showAll();}
+            } else if(card.phase==3){
+                if(card.fita){card.fita_show();}
+                else{card.showAll();}
+            } else {card.showAll();}
+
+            console.log("response:" + card.response);
+
             $('summary').setStyle({'display':'none'});
         }
         else if (this.currentCardIndex > 0){
             this.currentCardIndex++;
-            console.log("1");
         }
 
         /* update progress bar */
@@ -257,7 +276,9 @@ var cReviewHandlers = Class.create({
 
     onSpace: function(event) {
         /* show card sides */
-        doc.reviewer.cards[doc.reviewer.currentCardIndex].showAll();
+        //if(doc.reviewer.cards[doc.reviewer.currentCardIndex].level == 4){
+            doc.reviewer.cards[doc.reviewer.currentCardIndex].showAll();
+        //}
         event.stop();
     },
 
@@ -275,8 +296,13 @@ var cReviewHandlers = Class.create({
 //
 //            onComplete: function(transport) {}//$('log').update(transport.responseText);}
 //        });
-        doc.reviewer.next();
-        event.stop();
+        if(doc.reviewer.cards[doc.reviewer.currentCardIndex].phase == 1){
+            doc.reviewer.next(9);
+            event.stop();
+        } else {
+            doc.reviewer.next();
+            event.stop();
+        }
     },
 
     onUp: function(event) {
@@ -304,41 +330,47 @@ var cReviewHandlers = Class.create({
     },
 
     on4: function() {
-        doc.reviewer.displayGrade(doc.reviewer.grade_4);
-        (function () {
-            $$('.button_container, .grade_yourself').each(function (buttonContainer) {buttonContainer.addClassName('grade_hide')});
-            doc.reviewer.displayGrade(-1);
-            doc.reviewer.next(doc.reviewer.grade_4);
-        }).delay(.4);
+        if(doc.reviewer.cards[doc.reviewer.currentCardIndex].phase == 4){
+            doc.reviewer.displayGrade(doc.reviewer.grade_4);
+            (function () {
+                $$('.button_container, .grade_yourself').each(function (buttonContainer) {buttonContainer.addClassName('grade_hide')});
+                doc.reviewer.displayGrade(-1);
+                doc.reviewer.next(doc.reviewer.grade_4);
+            }).delay(.4);
+        }
     },
 
     on3: function() {
-        doc.reviewer.displayGrade(doc.reviewer.grade_3);
-        (function () {
-            $$('.button_container, .grade_yourself').each(function (buttonContainer) {buttonContainer.addClassName('grade_hide')});
-            doc.reviewer.displayGrade(-1);
-            doc.reviewer.next(doc.reviewer.grade_3);
-        }).delay(.4);
+        if(doc.reviewer.cards[doc.reviewer.currentCardIndex].phase == 4){
+            doc.reviewer.displayGrade(doc.reviewer.grade_3);
+            (function () {
+                $$('.button_container, .grade_yourself').each(function (buttonContainer) {buttonContainer.addClassName('grade_hide')});
+                doc.reviewer.displayGrade(-1);
+                doc.reviewer.next(doc.reviewer.grade_3);
+            }).delay(.4);
+        }
     },
 
     on2: function() {
-
-        doc.reviewer.displayGrade(doc.reviewer.grade_2);
-        (function () {
-            $$('.button_container, .grade_yourself').each(function (buttonContainer) {buttonContainer.addClassName('grade_hide')});
-            doc.reviewer.displayGrade(-1);
-            doc.reviewer.next(doc.reviewer.grade_2);
-        }).delay(.4);
+        if(doc.reviewer.cards[doc.reviewer.currentCardIndex].phase == 4){
+            doc.reviewer.displayGrade(doc.reviewer.grade_2);
+            (function () {
+                $$('.button_container, .grade_yourself').each(function (buttonContainer) {buttonContainer.addClassName('grade_hide')});
+                doc.reviewer.displayGrade(-1);
+                doc.reviewer.next(doc.reviewer.grade_2);
+            }).delay(.4);
+        }
     },
 
     on1: function() {
-
-        doc.reviewer.displayGrade(doc.reviewer.grade_1);
-        (function () {
-            doc.reviewer.displayGrade(-1);
-            $$('.button_container, .grade_yourself').each(function (buttonContainer) {buttonContainer.addClassName('grade_hide')});
-            doc.reviewer.next(doc.reviewer.grade_1);
-        }).delay(.4);
+        if(doc.reviewer.cards[doc.reviewer.currentCardIndex].phase == 4){
+            doc.reviewer.displayGrade(doc.reviewer.grade_1);
+            (function () {
+                doc.reviewer.displayGrade(-1);
+                $$('.button_container, .grade_yourself').each(function (buttonContainer) {buttonContainer.addClassName('grade_hide')});
+                doc.reviewer.next(doc.reviewer.grade_1);
+            }).delay(.4);
+        }
     }
 });
 
@@ -347,14 +379,16 @@ var cCard = Class.create({
     /* out of ten for easy url  */
     importance: 8,
     confidence: -1,
+    phase: null,
+    level: null,
     memId: null,
-    lineId: null,
-    domId: null,
-    documentId: null,
-    text: '',
     front: '',
-    simpleFront: '',
     back: '',
+    question: null,
+    answers: null,
+    mc: false,
+    fita: false,
+    response: null,
 
     buttons: '<div id="edit_buttons">\
                 <button id="button_edit" class="edit" style="display:none">Edit</button>\
@@ -363,20 +397,195 @@ var cCard = Class.create({
               </div>',
     
     initialize: function(data) {
-        console.log(data['document_id']);
-        this.lineId = data['id'];
-        this.domId = data['domid'];
-        this.memId = data['mems'][0]['id'];
-        this.documentId = data['document_id'];
-        this.text = data['text'];
-//        console.log(this.text);
+        this.memId = data['mem'];
+        this.front = data['name'];
+        this.back = data['definition'];
+        this.phase = data['phase'];
+        if(data['questions'].length > 0){
+            this.question = data['questions'][0]['question'];
+            //this.fita = true;     //keep false always until we've tested MC'
+            console.log(this.front.toUpperCase());
+            if(data['answers'].length>2 && this.front.toUpperCase() != "TRUE" && this.front.toUpperCase() != "FALSE"){
+                console.log("non MC");
+                this.mc = true;
 
+                var randomArray = [];
+
+                for(var i=0; i<3; i++){
+                    randomArray[i] = data['answers'][i]['answer'];
+                }
+                randomArray[data['answers'].length] = this.front;
+
+                this.answers=[];
+                var i = 0;
+                while(i<4){
+                    var rando = Math.floor(Math.random()*randomArray.length)
+                    var ans = randomArray[rando];
+                    if(ans != null){
+                        this.answers[i] = ans;
+                        randomArray[rando] = null;
+                        i++;
+                    }
+                }
+            } else {
+                this.mc = true;
+                this.answers=[];
+                console.log("MultipleChoice!!!");
+                this.answers[0] = "True";
+                this.answers[1] = "False";
+            }
+        }
+//        if(data['mems'][0]['strength']<20){
+//            this.phase = 3;
+//            if(data['mems'][0]['strength']<10){
+//                this.phase = 2;
+//                if(data['mems'][0]['strength']<5){
+//                    this.phase = 1;
+//                }
+//            }
+//        }else{this.phase = 4;}
+//
+//        //HARD CODE THE PHASE FOR TESTING PURPOSES//
+        if(this.back==null){
+            console.log("QB question! Set phasers to STUN (2)!")
+            this.phase = 2;
+        }
     },
 
-    cue: function() {
-        console.log("TEST");
-        /* parse on demand - to avoid latency on initializing reviewer */
-        if (!this.back) parser.parse(this, true);
+    cue: function(){
+        console.log(this.phase);
+        switch(this.phase){
+            case (1):
+                this.cue_p1();
+                break;
+            case (2):
+                if(this.mc){
+                    this.cue_p2();
+                }else if(this.fita){
+                    this.cue_p3();
+                }else{
+                    this.cue_p4();
+                }
+                break;
+            case (3):
+                if(this.fita){
+                    this.cue_p3();
+                }else{
+                    this.cue_p4();
+                }
+                break;
+            case (4):
+                this.cue_p4();
+                break;
+            default:
+                console.log("There was an error evaluating the phase");
+
+        }
+    },
+
+    cue_p1: function() {
+        /* Learning Card */
+
+        /* front */
+        $('card_front').update("<div id='card_front_text'>"+this.front+"</div>" + this.buttons);
+        $('card_front_text').update(this.front);
+
+        /* back */
+        $('card_back').update("<div id='card_back_text'>"+this.back+"</div>");
+        $('card_back_text').update(this.back);
+
+        $('card_show').stopObserving('click');
+        $('card_show').update("Review This Concept");
+
+        /* hide grade buttons */
+        $$('.button_container, .grade_yourself').each(function (buttonContainer) {
+            buttonContainer.addClassName('grade_hide');
+            var button = buttonContainer.down("button");
+            if (button) {
+                button.removeClassName('chosen');
+            }
+        });
+        $('grade_container').setStyle({'display':'none'});
+        $('card_show').setStyle({'display':'block'});
+//        $$('.arrows_up_down')[0].hide();
+    },
+
+    cue_p2: function() {
+        /* Multiple Choice */
+
+        /* front */
+        $('card_front').update("<div id='card_front_text'>"+this.question+"</div>" + this.buttons);
+        $('card_front_text').update(this.question);
+
+        /* back */
+        if(this.answers[2] != null){
+            $('card_back').update("<div id='mc_container'><div id='mc_a' class='mc_selection'>"+this.answers[0]+"</div>\
+                                    <div id='mc_b' class='mc_selection'>"+this.answers[1]+"</div>\
+                                    <div id='mc_c' class='mc_selection'>"+this.answers[2]+"</div>\
+                                    <div id='mc_d' class='mc_selection'>"+this.answers[3]+"</div>\
+                                    </div>");
+        } else {
+            $('card_back').update("<div id='mc_container'><div id='mc_a' class='mc_selection'>True</div>\
+                                    <div id='mc_b' class='mc_selection'>False</div>\
+                                    <div id='mc_c' class='mc_selection' style='display:none;'></div>\
+                                    <div id='mc_d' class='mc_selection' style='display:none;'></div>\
+                                    </div>");
+        }
+
+        $('card_show').stopObserving('click');
+        $('card_show').update("Click or Press Letter to Choose An Answer");
+
+        /* hide grade buttons */
+        $$('.button_container, .grade_yourself').each(function (buttonContainer) {
+            buttonContainer.addClassName('grade_hide');
+            var button = buttonContainer.down("button");
+            if (button) {
+                button.removeClassName('chosen');
+            }
+        });
+        $('grade_container').setStyle({'display':'none'});
+        $('card_show').setStyle({'display':'block'});
+//        $$('.arrows_up_down')[0].hide();
+
+        $('mc_a').stopObserving('click');
+        $('mc_b').stopObserving('click');
+        $('mc_c').stopObserving('click');
+        $('mc_d').stopObserving('click');
+
+        $('mc_a').observe('click', function(){this.mc_grade($('mc_a'));}.bind(this));
+        $('mc_b').observe('click', function(){this.mc_grade($('mc_b'));}.bind(this));
+        $('mc_c').observe('click', function(){this.mc_grade($('mc_c'));}.bind(this));
+        $('mc_d').observe('click', function(){this.mc_grade($('mc_d'));}.bind(this));
+    },
+
+    cue_p3: function() {
+        /* Fill in the Answer */
+
+        /* front */
+        $('card_front').update("<div id='card_front_text'>"+this.question+"</div>" + this.buttons);
+        $('card_front_text').update(this.question);
+
+        /* back */
+        $('card_back').update('___________');
+
+        $('card_show').stopObserving('click');
+        $('card_show').update("Fill in the Answer");
+
+        /* hide grade buttons */
+        $$('.button_container, .grade_yourself').each(function (buttonContainer) {
+            buttonContainer.addClassName('grade_hide');
+            var button = buttonContainer.down("button");
+            if (button) {
+                button.removeClassName('chosen');
+            }
+        });
+        $('grade_container').setStyle({'display':'none'});
+        $('card_show').setStyle({'display':'block'});
+//        $$('.arrows_up_down')[0].hide();
+    },
+
+    cue_p4: function() {
+        /* Flash card*/
         
         /* front */
         $('card_front').update("<div id='card_front_text'>"+this.front+"</div>" + this.buttons);
@@ -387,6 +596,7 @@ var cCard = Class.create({
 
         $('card_show').stopObserving('click', this.showAll);
         $('card_show').observe('click', this.showAll.bind(this));
+        $('card_show').update("Spacebar or Click Here to Flip");
 
         /* hide grade buttons */
         $$('.button_container, .grade_yourself').each(function (buttonContainer) {
@@ -402,7 +612,6 @@ var cCard = Class.create({
     },
 
     showAll: function() {
-
         /* show */
         $('card_front').update("<div id='card_front_text'></div>");
 //        $('card_front').update("<div id='card_front_text'></div>" + this.buttons);
@@ -417,10 +626,18 @@ var cCard = Class.create({
 
         /*hide show bar*/
         $('card_show').setStyle({'display':'none'});
-
         /* set grade associated with current card */
         doc.reviewer.displayGrade(doc.reviewer.cards[doc.reviewer.currentCardIndex].confidence);
 
+        $('grade_4').setStyle({'background':'url("../../images/reviewer/got-it.png")'});
+        $('grade_3').setStyle({'background':'url("../../images/reviewer/kinda.png")'});
+        $('grade_2').setStyle({'background':'url("../../images/reviewer/barely.png")'});
+        $('grade_1').setStyle({'background':'url("../../images/reviewer/no-clue.png")'});
+
+        if(this.confidence==9){$('grade_4').setStyle({'background':'url("../../images/reviewer/got-it-hover.png")'});}
+        if(this.confidence==6){$('grade_3').setStyle({'background':'url("../../images/reviewer/kinda-hover.png")'});}
+        if(this.confidence==4){$('grade_2').setStyle({'background':'url("../../images/reviewer/barely-hover.png")'});}
+        if(this.confidence==1){$('grade_1').setStyle({'background':'url("../../images/reviewer/no-clue-hover.png")'});}
         /* edit button and listener */
 //        $('button_edit').observe('click', this.makeEditable.bind(this));
 //        $('button_edit').show();
@@ -438,60 +655,120 @@ var cCard = Class.create({
             
             onFailure: function() {},
 
-            onComplete: function(transport) {}//$('log').update(transport.responseText);}
+            onComplete: function(transport) {console.log('mem updated')}//$('log').update(transport.responseText);}
         });
     },
 
-    makeEditable: function() {
+    mc_grade: function(choice){
 
-        /* buttons */
-        $('button_done').show();
-        $('button_cancel').show();
-        $('button_edit').hide();
+        console.log(choice);
+        console.log(this.front);
+        this.response = choice.innerHTML;
+        $('mc_a').stopObserving('click');
+        $('mc_b').stopObserving('click');
+        $('mc_c').stopObserving('click');
+        $('mc_d').stopObserving('click');
+        $('mc_a').removeClassName('mc_selection');
+        $('mc_a').addClassName('mc_answered');
+        $('mc_b').removeClassName('mc_selection');
+        $('mc_b').addClassName('mc_answered');
+        $('mc_c').removeClassName('mc_selection');
+        $('mc_c').addClassName('mc_answered');
+        $('mc_d').removeClassName('mc_selection');
+        $('mc_d').addClassName('mc_answered');
 
-        /* inputs */
+        if(choice.innerHTML.toUpperCase() == this.front.toUpperCase()){
+            choice.addClassName('mc_correct');
+            this.grade(9);
+        }else{
+            this.grade(1);
+            choice.addClassName('mc_incorrect');
+            if($('mc_a').innerHTML.toUpperCase() == this.front.toUpperCase()){
+                $('mc_a').addClassName('mc_correct');
+            }
+            if($('mc_b').innerHTML.toUpperCase() == this.front.toUpperCase()){
+                $('mc_b').addClassName('mc_correct');
+            }
+            if($('mc_c').innerHTML.toUpperCase() == this.front.toUpperCase()){
+                $('mc_c').addClassName('mc_correct');
+            }
+            if($('mc_d').innerHTML.toUpperCase() == this.front.toUpperCase()){
+                $('mc_d').addClassName('mc_correct');
+            }
+        }
 
-        //front
-        var input = "<textarea id='input_front'>"+this.simpleFront+"</textarea>";
-        $('card_front_text').remove();
-        $('edit_buttons').insert({'after': input});
-        $('input_front').focus();
-
-        //back
-        var input = "<textarea id='input_back'>"+this.back+"</textarea>";
-        $('card_back_text').remove();
-        $('card_back').update(input);
-
-        /* listeners */
-        $('button_done').observe('click', this.update.bind(this));
-        $('button_cancel').observe('click', this.showAll.bind(this));
     },
 
-    update: function() {
+    mc_show: function(){
+        /* Multiple Choice */
 
-        /* text */
-        var text = $('input_front').value + ' - ' + $('input_back').value;
-        text = text.escapeHTML();
+        /* front */
+        $('card_front').update("<div id='card_front_text'>"+this.question+"</div>" + this.buttons);
+        $('card_front_text').update(this.question);
 
-        /* save */
-        var requestUrl = '/lines/'+this.lineId;
-        new Ajax.Request(requestUrl, {
-            method: 'put',
-            parameters: {"line[text]": text, "line[id]": this.lineId},
-            
-            onSuccess: function(transport) {
+        /* back */
 
-                /* reparse and update card */
-                var data = transport.responseText.evalJSON();
-                this.text = data['line'];
-                $('document_' + this.documentId).update(data['html']);
-                parser.parse(this, true);
-            }.bind(this),
+        if(this.answers[2] != null){
+            $('card_back').update("<div id='mc_container'><div id='mc_a' class='mc_selection'>"+this.answers[0]+"</div>\
+                                    <div id='mc_b' class='mc_selection'>"+this.answers[1]+"</div>\
+                                    <div id='mc_c' class='mc_selection'>"+this.answers[2]+"</div>\
+                                    <div id='mc_d' class='mc_selection'>"+this.answers[3]+"</div>\
+                                    </div>");
+        } else {
+            $('card_back').update("<div id='mc_container'><div id='mc_a' class='mc_selection'>True</div>\
+                                    <div id='mc_b' class='mc_selection'>False</div>\
+                                    <div id='mc_c' class='mc_selection' style='display:none;'></div>\
+                                    <div id='mc_d' class='mc_selection' style='display:none;'></div>\
+                                    </div>");
+        }
 
-            onFailure: function() {},
+        $('card_show').stopObserving('click');
+        $('card_show').update("Click or Press Letter to Choose An Answer");
 
-            onComplete: function(transport) {this.showAll();}.bind(this)
+        /* hide grade buttons */
+        $$('.button_container, .grade_yourself').each(function (buttonContainer) {
+            buttonContainer.addClassName('grade_hide');
+            var button = buttonContainer.down("button");
+            if (button) {
+                button.removeClassName('chosen');
+            }
         });
+        $('grade_container').setStyle({'display':'none'});
+        $('card_show').setStyle({'display':'block'});
+        console.log(this.response);
+        var choice;
+        if($('mc_a').innerHTML.toUpperCase() == this.response.toUpperCase()){choice = $('mc_a');}
+        else if($('mc_b').innerHTML.toUpperCase() == this.response.toUpperCase()){choice = $('mc_b');}
+        else if($('mc_c').innerHTML.toUpperCase() == this.response.toUpperCase()){choice = $('mc_c');}
+        else {choice = $('mc_d');}
+
+        if(choice.innerHTML.toUpperCase() == this.front.toUpperCase()){
+            choice.addClassName('mc_correct');
+        }else{
+            this.grade(1);
+            choice.addClassName('mc_incorrect');
+            if($('mc_a').innerHTML == this.front){
+                $('mc_a').addClassName('mc_correct');
+            }
+            if($('mc_b').innerHTML == this.front){
+                $('mc_b').addClassName('mc_correct');
+            }
+            if($('mc_c').innerHTML == this.front){
+                $('mc_c').addClassName('mc_correct');
+            }
+            if($('mc_d').innerHTML == this.front){
+                $('mc_d').addClassName('mc_correct');
+            }
+        }
+
+    },
+    
+    fita_grade: function(){
+        console.log("fita_grade called");
+    },
+
+    fita_show: function() {
+        console.log("fita_show called");
     },
 
     increment: function() {
@@ -512,13 +789,13 @@ var cCard = Class.create({
 /* global objects */
 document.observe('dom:loaded', function() {
     
-    parser = new cParser(); //@todo move to doc object
+    //parser = new cParser(); //@todo move to doc object
     doc = new cDoc();
 
     /* fire app:loaded */
     document.fire('app:loaded');
 
-    /* observe push enable */
+    /* observe push enable
     Event.observe($("mobile_review"), "click", function(e) {
         var requestUrl = "/documents/enable_mobile/" + $('card_json').innerHTML.evalJSON()[0]['line']['document_id'] + "/" + (($("mobile_review").checked)?1:0);
         //TODO fill callback parameters
@@ -535,7 +812,7 @@ document.observe('dom:loaded', function() {
                 }
             }
         });
-    }.bind(this));
+    }.bind(this));*/
 });
 
 

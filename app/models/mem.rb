@@ -2,6 +2,7 @@ class Mem < ActiveRecord::Base
   
   belongs_to :line
   belongs_to :user
+  belongs_to :term
 
   has_many :reps
 

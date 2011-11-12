@@ -1,11 +1,14 @@
-<% @page_specific_scripts_js = ["parser"] %>
+<div id="signup">
+  <p><strong>Sign up for free</strong> to start reviewing from lessons
+    <em>customized</em> to your needs and how well you are learning!</p>
+  <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
 
-  <% @page_specific_scripts_css = "documents/review" %>
+    <%= f.text_field :email, :class => "field blink", :value => "Email", :title => "Email"%>
+    <%= f.password_field :password, :class => "field blink", :value => "Password", :title => "Password"%>
+    <%= f.submit "Sign in", :class=>"signup_button", :value => "Sign Up Free" %>
 
-
-<div id="title">
-  <input type="checkbox" name="mobile" id="mobile_review" style="margin-top: 6px; margin-left: 8px; display: none;"/>
-  </div>
+  <% end %>
+</div>
 
 <div class="card_container">
   <div class="rounded_border card_side" id="card_front"></div>
@@ -30,6 +33,7 @@
   <div id="progress_fraction"></div>
   <div class="clr"></div>
 </div>
+<div class="cl"></div>
 
 <div id="card_json" style="display:none;"><%=@lines_json%></div>
 

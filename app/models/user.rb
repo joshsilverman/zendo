@@ -14,6 +14,7 @@ class User < ActiveRecord::Base
   #has_many :documents
   has_many :tags
   has_many :mems
+  has_many :terms
   has_many :reps
   has_many :shares
   #has_and_belongs_to_many :vdocs, :class_name => "Document", :uniq => true

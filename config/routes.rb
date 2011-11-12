@@ -1,5 +1,5 @@
 Zendo::Application.routes.draw do
-
+  
   get "usership/update"
 
   resources :authentications
@@ -74,6 +74,12 @@ Zendo::Application.routes.draw do
   match "/tags/create_with_index"
 
   # documents
+  match "/create_from_csv" => "documents#create_from_csv"
+  match "/update_from_csv" => "documents#update_from_csv"
+  match "/create_from_qb_csv" => "documents#create_from_qb_csv"
+  match "/update_from_qb_csv" => "documents#update_from_qb_csv"
+  match "/remove_document" => "documents#remove_document"
+  match "/upload_csv" => "documents#upload_csv"
   match "/documents/create/:tag_id" => "documents#create"
   match "/documents/update_tag"
   match "/documents/share"
@@ -83,11 +89,13 @@ Zendo::Application.routes.draw do
   match "/documents/update_document_name"
   match "/documents/update_icon"
   match "/documents/:id/cards" => "documents#cards"
+  match "/documents/:id/review_all_cards" => "documents#review_all_cards"
+  match "/documents/:id/review_adaptive_cards" => "documents#review_adaptive_cards"
   match "/documents/get_public_documents" => "documents#get_public_documents"
   match "/documents/:id" => "documents#edit", :via => [:get], :read_only => true
   match "/documents/enable_mobile/:id/:bool" => "documents#enable_mobile"
   match "/documents/add_document/:id" => "documents#add_document"
-  resources :documents, :only => [:edit, :update, :destroy]
+  resources :documents, :only => [:update, :destroy]
 
   # terms
   match "/terms/lookup/:term" => "terms#lookup"
