@@ -43,7 +43,7 @@ class UsersController < ApplicationController
     end
     begin
       resource_request = Resourcerequest.create!(:email => params[:email], :resource => params[:resourceName])
-      flash[:error] = "Thanks for letting us know!  We will email you when this resouce becomes available."
+      flash[:notice] = "Thanks for letting us know!  We will email you when this resouce becomes available."
       redirect_to params[:path]
     rescue
       puts "ERROR ADDING RESOURCE!"
