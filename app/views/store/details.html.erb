@@ -38,7 +38,12 @@
     <% else %>
       <% terms = Term.where("document_id = ?", @document.id).limit(10) %>
       <% terms.each do |t| %>
-         <%=t.name  %><br />
+         <% if t.definition.nil? %>
+            <% question = Question.find_by_term_id(t.id) %>
+            <%= question.question unless question.nil? %><br /><br />
+         <% else %>
+            <%=t.name  %><br />
+         <% end %>
       <% end %>   
     <% end %>
   </div>
