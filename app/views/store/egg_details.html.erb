@@ -1,34 +1,54 @@
 <% @page_specific_scripts_js = ["/javascripts/store/details.js"] %>
-<% @page_specific_scripts_css = ["/stylesheets/store/index.css"]%>
+<% @page_specific_scripts_css = ["/stylesheets/store/egg_details.css"]%>
 
 
-<div style="margin:10px auto; padding:10px; width: 600px;">
-  <div id="breadcrumbs">
-    <a href="/store">Egg Store</a> >> <a href="#"><%= @tag.name %></a>
+<div class="egg_container">
+  <img class="egg_image" src="../../images/home/egg.png" />
+  <div class="egg_info">
+    <h4>Aligned StudyEgg for:</h4>
+    <h2><%= @tag.name%></h2>
+    <div class="review"><img src="../../images/shared/rating-stars.png" /></div>
+    <div class="dashed-line"></div>
+    Egg Price: <span class="egg_price">$29</span> 
+    Lesson Price: <span class="egg_price">$1</span><br />
+    <div class="lesson_list">
+      <span class="header">Lessons</span>
+      <table>
+        <tr class="d0">
+          <td id="title">Title</td>
+          <td id="questions"># of Questions</td>
+          <td id="price">Price</td>
+          <td id="buy"></td>
+        </tr>
+        <% i=0 %>
+        <% @documents.each do |d| %>
+          <% if i%2==0 %>
+            <tr class="d1">
+          <% else %>
+            <tr class="d0">
+          <% end %>
+              <% i+=1 %>
+              <td class="title_col"><a href="/store/details/<%= d.id %>"><%= d.name %></a></td>
+              <td><%=  @question_count[d.id] %></td>
+              <td>$1</td>
+              <td>
+          <% purchased = false %>
+          <% @userships.each do |u| %>
+            <% if d.id == u.document_id.to_i%>
+              <% purchased = true %>
+            <% end %>
+          <% end %>
+
+          <% if purchased %>
+            <span class="purchased"><img src="../../images/home/purchased.png" /></span>
+            <% purchased = false %>
+          <% else %>
+            <span id="<%= d.id%>" class="buy"><img src="../../images/home/get-it-now.png" /></span>
+          <% end %>
+              </td></tr>
+        <% end %>
+      </table>
+    </div>
   </div>
-  <div class="egg-box" style="float:left;"><div class="egg"><img src="../../images/nounproject/<%= Document::ICON_TYPES[@tag.icon_id] %>" class="icon"></div></div>
-  <div class="detail-float">
-<h1 class="egg-head"><%= @tag.name %></h1>
-<ul>
-  <% @documents.each do |d| %>
-  <li><div style="width:250px; float:left;"><a href="/store/details/<%= d.id %>"><%= d.name %></a></div>
-    <% purchased = false %>
-    <% @userships.each do |u| %>
-      <% if d.id == u.document_id.to_i%>
-        <% purchased = true %>
-      <% end %>
-    <% end %>
-
-    <% if purchased %>
-      <div style="width:100px; float:left; margin:-5px 0 5px 10px;"><span class="purchased"><img src="../../images/home/purchased.png" /></span></div>
-      <% purchased = false %>
-    <% else %>
-      <div style="width:100px; float:left; margin:-5px 0 5px 10px;"><span id="<%= d.id%>" class="buy"><img src="../../images/home/get-it-now.png" /></span></div>
-    <% end %>
-    </li>
-  <% end %>
-</ul>
-    
 </div>
-  <div class="cl"></div>
-</div>
+<div class="cl"></div>

@@ -1,0 +1,35 @@
+  .buy{
+    cursor: pointer;
+    text-decoration: underline;
+    color: blue;
+  }
+  
+  .purchased, .buy {height:27px; display: block;}
+
+
+.egg_container{width:661px; margin: 10px auto; color:#606060}
+.egg_container h2{font-size: 28px; font-weight: bold; color: #444444; margin-bottom: 10px;}
+.egg_container h4{font-size: 20px; margin-bottom: 10px;}
+.egg_container .egg_image{float:left;}
+.egg_container .egg_info{float:left; margin: 0; width:550px; padding-top: 20px;}
+.egg_container .egg_price{color: #b00000;}
+.egg_container .review{margin-top:10px;}
+.egg_container .dashed-line{background-image: url("../../images/shared/dashed-line.png"); width:550px; height:10px;}
+.egg_container .lesson_list{
+    margin-top: 10px;
+    background-color: #d8d8d8;
+    padding:10px;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;}
+
+.egg_container .lesson_list .header{font-size: 12px; font-weight: bold; color:#cf7006;}
+.egg_container .lesson_list .table_header{font-size: 12px; font-weight: bold; color:#cf7006;}
+table {width:550px; margin: 0 -10px -10px -10px; border-width: 0px; border-color: #fff; border-spacing: 1px;}
+tr, td {border-width: 0px; border-color: #fff; border-spacing: 1px; text-align: center; font-weight: bold;}
+table tr.d0 td{color:black; background-color: #e4e4e4;}
+table tr.d1 td{color:black; background-color: #f4f4f4;}
+table #title{width:200px; color:#cf7006; font-size: 10px; font-weight: bold; text-align: left; padding-left: 10px;}
+table #questions{width:100px; color:#cf7006; font-size: 10px; font-weight: bold; }
+table #price{width:50px; color:#cf7006; font-size: 10px; font-weight: bold; }
+table #buy{width:105px; color:#cf7006; font-size: 10px; font-weight: bold; }
+table tr td.title_col{text-align: left; padding-left: 10px;}
