@@ -1,6 +1,6 @@
 class StoreController < ApplicationController
   def index
-    @recent_public_eggs = Tag.joins(:documents).where("documents.public").group('tags.id').order('documents.updated_at desc').limit(5)
+    @recent_public_eggs = Tag.joins(:documents).where("documents.public").group('tags.id').order('documents.updated_at desc').limit(9)
     @pop_docs = Document.joins(:userships).select('documents.*, count(userships.document_id) as doc_count').where("public").group('documents.id').order('doc_count desc').limit(50)
     eggs = []
     @pop_docs.each do |p|

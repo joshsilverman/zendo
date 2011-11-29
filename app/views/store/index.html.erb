@@ -14,47 +14,26 @@
       <input xmlns="http://www.w3.org/1999/xhtml" type="text" id="search-box" placeholder="Search" />
     </div>
     <div id="search_results">
-
-  <h4>Recent Eggs</h4>
-  <div id="recent_eggs">
-    <% unless @recent_public_eggs %>
-      <strong>Sorry, there are no public documents right now</strong>
-    <% else %>
-      <ul style="margin-left: -20px;">
-      <%i = 0%>
-      <% @recent_public_eggs.each do |e| %>
-        <%if i<5%>
-        <li><div class="egg-box"><a href='store/egg_details/<%= e.id %>' ><div class="egg">
-            <img src="../../images/nounproject/<%= Document::ICON_TYPES[e.icon_id] %>" class="icon"></div></a><%= e.name %></div></li>
-
-            <%i+=1%>
-            <%end %>
+    <% i=1 %>
+    <% @recent_public_eggs.each do |e| %>
+      <a href="/store/egg_details/<%= e.id%>">
+      <div class="egg_container">
+        <h4>Aligned StudyEgg for:</h4>
+        <h2><%= e.name%></h2>
+        <img class="egg_image" src="../../images/home/egg.png" />
+        <div class="egg_info">
+          <strong>Egg Price: </strong><span class="egg_price">$29</span><br />
+          <strong>Lesson Price: </strong><span class="egg_price">$1</span><br />
+          <div class="review"><img src="../../images/shared/rating-stars.png" /></div>
+        </div>
+      </div>
+      </a>
+      <% if i%3==0 %>
+        <div class='cl'></div>
       <% end %>
-      </ul>
-      <div style="clear:both"></div>
+      <% i+=1 %>
     <% end %>
-  </div><!--End Recent Eggs-->
-
-  <h4>Popular Eggs</h4>
-  <div id="popular_eggs">
-    <%i = 0%>
-    <% unless @popular_public_eggs %>
-      <strong>Sorry, there are no public documents right now</strong>
-    <% else %>
-      <ul style="margin-left: -20px;">
-      <% @popular_public_eggs.each do |e| %>
-        <%if i<5%>
-        <li><div class="egg-box"><a href='store/egg_details/<%= e.id %>' ><div class="egg">
-                <img src="../../images/nounproject/<%= Document::ICON_TYPES[e.icon_id] %>" class="icon"></div></a><%= e.name %></div></li>
-      <%i+=1%>
-      <% end %>
-      <% end %>
-      </ul>
-      <div style="clear:both"></div>
-    <% end %>
-  </div><!--End Recent Eggs-->
-
-  </div><!--End Results-->
+    </div><!--End Results-->
   <div style="clear:both"></div>
 
 
