@@ -102,30 +102,29 @@ var cDoc = Class.create({
             console.log('empty');
             html+='<span style="text-align:center; margin:10px; display:block;">No Search Results Found</span>';
         } else {
-            html+='<div id="carousel-1" class="pluit-carousel big-nav-skin"><div class="viewport"><ul>';
-            i = 0;
+            html+='';
+            i = 1;
             results.each(function(doc){
-                if(i%5 ==0){
-                    html += '<li><ul>';
-                }
-                html+='<li><div class="egg-box"><a href="store/egg_details/'+doc['id']+'"><div class="egg"></div></a>'+doc['name']+'<br /></div><li>';
-                if(i%5 ==4){
-                    html += '</ul></li>';
-                }
-                i++;
-            }.bind(this));
-            if(i%5 !=0){
-                html += '</ul></li>';
+                html+= "<a href='/store/egg_details/"+doc['id']+"'>\
+                <div class='egg_container'>\
+                <h4>Aligned StudyEgg for:</h4>\
+                <h2>"+doc['name']+"</h2>\
+                <img class='egg_image' src='../../images/home/egg.png' />\
+                <div class='egg_info'>\
+                  <strong>Egg Price: </strong><span class='egg_price'>$29</span><br />\
+                  <strong>Lesson Price: </strong><span class='egg_price'>$1</span><br />\
+                  <div class='review'><img src='../../images/shared/rating-stars.png' /></div>\
+                </div>\
+              </div>\
+             </a>";
+            if(i%3==0){
+                html+="<div class='cl'></div>";
             }
-            html +='</ul><br/>';
+            i++;
+            });
         }
         $('search_results').update(html);
-        new Pluit.Carousel('#carousel-1', {
-          circular: true
-        });
     }
-
-
 });
 
 /* global objects */
