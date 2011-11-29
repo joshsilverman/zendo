@@ -6,12 +6,12 @@
 
 
 .egg_container{width:225px; float: left; margin: 25px 20px; color:#606060}
-.egg_container h2{font-size: 14px; font-weight: normal;}
+.egg_container h2{font-size: 14px; font-weight: bold;}
 .egg_container h4{font-size: 10px;}
 .egg_container .egg_image{float:left;}
 .egg_container .egg_info{float:left; margin: 32px 0 0 5px;}
 .egg_container .egg_price{color: #b00000; font-weight: bold;}
-.egg_container .review{margin-top:10px;}
+.egg_container .review{margin-top:10px; margin-left: -10px;}
 
 
 #search{width:360px; margin:0 auto 40px auto;}

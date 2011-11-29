@@ -9,8 +9,21 @@
     <h2><%= @tag.name%></h2>
     <div class="review"><img src="../../images/shared/rating-stars.png" /></div>
     <div class="dashed-line"></div>
-    Egg Price: <span class="egg_price">$29</span> 
-    Lesson Price: <span class="egg_price">$1</span><br />
+    <% if @tag.price.nil? or @tag.price <= 0%>
+      <% e_price = "free" %>
+    <% else %>
+      <% e_price = "$"+@tag.price.to_s %>
+    <% end %>
+    
+    <% if @documents.empty? %>
+      <% l_price = "free" %>
+    <% elsif @documents[0].price.nil? or @documents[0].price <= 0 %>
+      <% l_price = "free" %>
+    <% else %>
+      <% l_price = "$"+@documents[0].price.to_s %>
+    <% end %>
+    Egg Price: <span class="egg_price"><%= e_price %></span> 
+    Lesson Price: <span class="egg_price"><%= l_price %></span><br />
     <div class="lesson_list">
       <span class="header">Lessons</span>
       <table>
@@ -30,7 +43,13 @@
               <% i+=1 %>
               <td class="title_col"><a href="/store/details/<%= d.id %>"><%= d.name %></a></td>
               <td><%=  @question_count[d.id] %></td>
-              <td>$1</td>
+              <td><% if d.price.nil? or d.price <= 0 %>
+                    <%= puts "FREE LOOP #{d.name}: #{d.price}"  %>
+                    free
+                  <% else %>
+                    <%= puts "PRICE LOOP #{d.name}: #{d.price}"  %>
+                    <%= "$"+(d.price/100.0).to_s %>
+                  <% end %></td>
               <td>
           <% purchased = false %>
           <% @userships.each do |u| %>
