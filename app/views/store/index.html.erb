@@ -1,5 +1,5 @@
 <% @page_specific_scripts_js = ["/javascripts/store/effects.js", "/javascripts/store/pluit-carousel.js"] #, "/javascripts/vendors/lightview/js/lightview.js"%>
-<% @page_specific_scripts_css = ["/stylesheets/store/pluit-carousel.css", "/stylesheets/store/pluit-carousel-skins.css", "/stylesheets/store/index.css"] #, "/javascripts/vendors/lightview/css/lightview.css"%>
+<% @page_specific_scripts_css = ["/stylesheets/store/pluit-carousel.css", "/stylesheets/store/pluit-carousel-skins.css"] #, "/javascripts/vendors/lightview/css/lightview.css"%>
 
 <div id="search_json" style="display:none;">
   <%= Document::ICON_TYPES.to_json %>
@@ -22,9 +22,11 @@
         <h2><%= e.name%></h2>
         <img class="egg_image" src="../../images/home/egg.png" />
         <div class="egg_info">
-          <strong>Egg Price: </strong><span class="egg_price">$29</span><br />
-          <strong>Lesson Price: </strong><span class="egg_price">$1</span><br />
-          <div class="review"><img src="../../images/shared/rating-stars.png" /></div>
+          <strong>Egg Price: </strong><span class="egg_price"><%=  @egg_prices[e.id][0] %></span><br />
+          <strong>Lesson Price: </strong><span class="egg_price"><%=  @egg_prices[e.id][1] %></span><br />
+          <div class="review">
+            <img src="../../images/shared/rating-stars.png" />
+          </div>
         </div>
       </div>
       </a>

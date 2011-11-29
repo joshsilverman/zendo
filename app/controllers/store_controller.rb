@@ -1,15 +1,25 @@
 class StoreController < ApplicationController
   def index
     @recent_public_eggs = Tag.joins(:documents).where("documents.public").group('tags.id').order('documents.updated_at desc').limit(9)
-    @pop_docs = Document.joins(:userships).select('documents.*, count(userships.document_id) as doc_count').where("public").group('documents.id').order('doc_count desc').limit(50)
-    eggs = []
-    @pop_docs.each do |p|
-      if not eggs.include? p.tag_id && eggs.size <=5
-        eggs << p.tag_id
+    @egg_prices = Hash.new
+    @recent_public_eggs.each do |e|
+      if e.price.nil? or e.price <= 0
+        e_price = "free"
+      else
+        e_price = "$"+(e.price/100.00).to_s
       end
+      
+      first_doc = Document.find_by_tag_id(e.id)
+      if first_doc.nil?
+        l_price = "free"
+      elsif first_doc.price.nil? or first_doc.price <= 0
+        l_price = "free"
+      else
+        l_price = "$"+(first_doc.price/100.0).to_s
+      end
+      
+      @egg_prices[e.id] = [e_price, l_price]
     end
-
-    @popular_public_eggs = Tag.find_all_by_id(eggs)
     @userships = Usership.select(['document_id']).where("user_id = ?", current_user.id )
   end
 
