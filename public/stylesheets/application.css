@@ -20,12 +20,12 @@ body {
     padding:0;
     margin:0;
     height:100%;
-    background: url(../images/shared/thatch-bg.jpg) repeat 0 0;
+/*    background: url(../images/shared/thatch-bg.jpg) repeat 0 0;*/
     font-size: 12px;
     line-height: 20px;
     font-family: Helvetica, arial, sans-serif;
     color: #333333;
-    background: #dfdacd;
+/*    background: #dfdacd;*/
 }
 
 #wrap { min-height: 100%; }
@@ -85,11 +85,25 @@ textarea { overflow: auto; }
 .shell { width:971px; margin: 0 auto; }
 
 #header { background: #218dd2; border-bottom: 1px solid #0066b2;}
-#head { padding: 10px 0; position: relative; }
+
+#head {
+    padding: 2px 0;
+    position: relative;
+}
+
 #head .row { padding: 0 0 19px 0; }
 
-h1#logo { width: 150px; height: 80px; float: left; display: inline; }
-h1#logo a { background: url(../images/home/logo-small.gif) no-repeat 0 0; height: 40px; display: block; margin-top: 10px; }
+h1#logo {
+    width: 150px;
+    height: 39px;
+    float: left;
+    display: inline;
+}
+
+h1#logo a {
+    background: url(../images/home/logo-small.gif) no-repeat 0 0;
+    height: 40px; display: block;
+    margin-top: 1px; }
 
 .login { float: right; display: inline; width: 252px; margin-top: 6px; position: relative; z-index: 4; }
 .login a.login-link { background: url(../images/home/login-down.png) no-repeat right 0; height: 24px; line-height: 24px; padding: 0 31px 0 0; margin-right: 16px; display: block; }
@@ -123,9 +137,25 @@ h1#logo a { background: url(../images/home/logo-small.gif) no-repeat 0 0; height
 #head .row input.field { background: url(../images/home/head-input.jpg) no-repeat 0 0; width: 202px; height: 31px; display: block; margin-bottom: 2px; padding: 0 10px; }
 #head .row input.button { background: url(../images/home/head-button.jpg) no-repeat 0 0; width: 157px; height: 40px; cursor: pointer; float:right; display: block; margin-top: 5px; }
 
-#main { background: url(../images/home/main-bg.jpg) repeat 0 0; border-top: 1px solid #eee; padding: 20px 0 110px 0; }
+#main { 
+/*    background: url(../images/home/main-bg.jpg) repeat 0 0; */
+/*    border-top: 1px solid #eee;*/
+/*    padding: 20px 0 110px 0;*/
+}
 
-.whitebg { background: #fff; -moz-border-radius: 10px; -webkit-border-radius: 10px; border-radius: 10px; -moz-box-shadow: 0 0 5px #AAAAAA; -webkit-box-shadow: 0 0 5px #AAAAAA; box-shadow: 0 0 5px #AAAAAA; margin: -50px 0 15px 0; padding: 20px 30px 30px 30px; behavior: url(ie-css3.htc);  }
+.whitebg { 
+/*    background: green;*/
+/*    -moz-border-radius: 10px;*/
+/*    -webkit-border-radius: 10px;*/
+/*    border-radius: 10px;*/
+/*    -moz-box-shadow: 0 0 5px #AAAAAA;*/
+/*    -webkit-box-shadow: 0 0 5px #AAAAAA;*/
+/*    box-shadow: 0 0 5px #AAAAAA;*/
+/*    margin: -50px 0 15px 0;*/
+/*    padding: 20px 30px 30px 30px;*/
+/*    behavior: url(ie-css3.htc);*/
+}
+
 #content h3 { font-size: 28px; padding: 10px 0; }
 
 .whitebg p { padding-bottom: 20px; }
