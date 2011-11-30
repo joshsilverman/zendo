@@ -14,6 +14,10 @@ class UsersController < ApplicationController
       render :layout => "jquery"
     end
   end
+  
+  def billing
+    @redirect = params[:redirect]
+  end
 
   def get_email
   end
@@ -49,6 +53,15 @@ class UsersController < ApplicationController
       puts "ERROR ADDING RESOURCE!"
       flash[:error] = "There was an error processing your request.  Smart people have been notified."
       redirect_to params[:path]
+    end
+  end
+  
+  def update_billing_info
+    flash[:notice] = "Your billing information has been updated successfully"
+    unless params[:redirect].empty?
+      redirect_to "/store/egg_details/#{params[:redirect]}"
+    else
+      redirect_to "/users/edit"
     end
   end
 

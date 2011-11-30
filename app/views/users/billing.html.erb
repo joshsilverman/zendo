@@ -1,0 +1,47 @@
+<div style="width:710px; margin:0 auto 15px auto;">
+
+<div class="form_container">
+  <h2 style="margin-bottom:10px;">Edit Billing Information</h2>
+
+  <%= form_tag({:controller => 'users', :action => 'update_billing_info' }, :method => 'get') %>
+    <div style="width:350px;">
+      <div class="left">Card holder's Name</div>
+      <div class="right"><%= text_field_tag :name %></div>
+      <div class="cl"></div>
+      
+      <div class="left">Street Address</div>
+      <div class="right"><%= text_field_tag :street_address %></div>
+      <div class="cl"></div>
+      
+      <div class="left">City</div>
+      <div class="right"><%= text_field_tag :city %></div>
+      <div class="cl"></div>
+      
+      <div class="left">State</div>
+      <div class="right"><%= text_field_tag :state %></div>
+      <div class="cl"></div>
+      
+      <div class="left">Zip Code</div>
+      <div class="right"><%= text_field_tag :zip %></div>
+      <div class="cl"></div>
+      
+      <div class="left">Credit Card Number</div>
+      <div class="right"><%= text_field_tag :card_number %></div>
+      <div class="cl"></div>
+      
+      <div class="left">Security Code</div>
+      <div class="right"><%= text_field_tag :code %></div>
+      <div class="cl"></div>
+    </div>
+    <%= @redirect %>
+    <%= hidden_field_tag :redirect, @redirect %>
+    <%= submit_tag "Submit", :value => "Submit", :class => "submit_button" %>
+
+</div>
+
+  <div id="graphic">
+    <img src="../images/shared/brilliant2.png"/>
+  </div>
+
+<div class="clr"></div>
+</div>
