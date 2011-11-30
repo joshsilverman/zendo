@@ -18,8 +18,18 @@
   padding:8px;
   background:#F8F8F8;
   border-bottom: 1px solid #EEE;
-  height:38px;
+  height:35px;
   overflow:hidden;
+}
+
+.egg_container > .title h2 {
+  font-weight:bold;
+  color:#004B91;
+}
+
+.egg_container > .title h2:hover {
+  text-decoration:underline;
+  color:#C60;
 }
 
 .egg_container h2{font-size: 14px; font-weight: normal;}
