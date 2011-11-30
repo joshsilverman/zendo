@@ -36,7 +36,13 @@ body {
 .usernav li.first { border: none; }
 .usernav a { color: #fff; font-size: 16px; font-weight: 500; text-align: right; text-decoration: none; padding: 7px 10px; }
 .usernav a:hover{text-decoration: none; padding: 7px 10px; }
-.usernav a.active { background: #85ccfa; border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
+.usernav a.active {
+  background: #85ccfa;
+  border-radius: 3px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 3px;
+/*  border:1px solid #ccc;*/
+}
 
 img {
     border: none;
