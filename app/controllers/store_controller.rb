@@ -1,8 +1,8 @@
 class StoreController < ApplicationController
   def index
-    @recent_public_eggs = Tag.joins(:documents).where("documents.public").group('tags.id').order('documents.updated_at desc').limit(9)
+    @recent_public_eggs = Tag.joins(:documents).group('tags.id').order('documents.updated_at desc').limit(12)
     @pop_docs = Document.joins(:userships).select('documents.*, count(userships.document_id) as doc_count').where("public").group('documents.id').order('doc_count desc').limit(50)
-    eggs = []
+    eggs = [22,25,30]
     @pop_docs.each do |p|
       if not eggs.include? p.tag_id && eggs.size <=5
         eggs << p.tag_id
@@ -10,6 +10,7 @@ class StoreController < ApplicationController
     end
 
     @popular_public_eggs = Tag.find_all_by_id(eggs)
+    puts @popular_public_eggs.to_yaml
     @userships = Usership.select(['document_id']).where("user_id = ?", current_user.id )
   end
 

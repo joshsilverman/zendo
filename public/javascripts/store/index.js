@@ -107,8 +107,10 @@ var cDoc = Class.create({
             results.each(function(doc){
                 html+= "<a href='/store/egg_details/"+doc['id']+"'>\
                 <div class='egg_container'>\
-                <h4>Aligned StudyEgg for:</h4>\
-                <h2>"+doc['name']+"</h2>\
+                  <div class='title'>\
+                    <h4>Aligned StudyEgg for:</h4>\
+                    <h2>"+doc['name']+"</h2>\
+                  </div>\
                 <img class='egg_image' src='../../images/home/egg.png' />\
                 <div class='egg_info'>\
                   <strong>Egg Price: </strong><span class='egg_price'>$29</span><br />\

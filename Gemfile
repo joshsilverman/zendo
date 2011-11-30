@@ -8,6 +8,7 @@ gem 'bundler'
 gem 'nokogiri'
 gem 'scrapi', '1.2.0'
 
+
 gem 'devise'
 gem 'omniauth', '0.2.2'
 gem 'faraday', '0.6.1'
@@ -18,6 +19,8 @@ gem 'braintree'
 gem 'whenever'
 gem 'json'
 gem 'fastercsv'
+
+gem 'haml-rails'
 
 gem 'apn_on_rails', :git => 'https://github.com/natescherer/apn_on_rails.git', :branch => 'rails3'
 
