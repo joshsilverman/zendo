@@ -105,6 +105,10 @@ var cDoc = Class.create({
             html+='';
             i = 1;
             results.each(function(doc){
+                price = "$"+doc['price']/100;
+                if(doc['price']==null){
+                    price="free";
+                }
                 html+= "<a href='/store/egg_details/"+doc['id']+"'>\
                 <div class='egg_container'>\
                   <div class='title'>\
@@ -113,8 +117,8 @@ var cDoc = Class.create({
                   </div>\
                 <img class='egg_image' src='../../images/home/egg.png' />\
                 <div class='egg_info'>\
-                  <strong>Egg Price: </strong><span class='egg_price'>$29</span><br />\
-                  <strong>Lesson Price: </strong><span class='egg_price'>$1</span><br />\
+                  <strong>Egg Price: </strong><span class='egg_price'>"+price+"</span><br />\
+                  <strong>Lesson Price: </strong><span class='egg_price'></span><br />\
                   <div class='review'><img src='../../images/shared/rating-stars.png' /></div>\
                 </div>\
               </div>\

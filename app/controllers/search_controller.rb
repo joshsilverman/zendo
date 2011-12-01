@@ -30,7 +30,7 @@ class SearchController < ApplicationController
     if mobile_device?
       query = Document.joins(:tag).select(['documents.name', 'documents.id', 'documents.icon_id', 'tags.name AS tag_name']).where("(tags.name LIKE ? OR documents.name LIKE ?) AND public", '%'+q+'%', '%'+q+'%').limit(50)
     else
-      query = Tag.joins(:documents).select(['tags.name', 'tags.id']).where("(tags.name LIKE ? OR documents.name LIKE ?)", '%'+q+'%', '%'+q+'%').group('tags.id').limit(50)
+      query = Tag.joins(:documents).select(['tags.name', 'tags.id', 'tags.price']).where("(tags.name LIKE ? OR documents.name LIKE ?)", '%'+q+'%', '%'+q+'%').group('tags.id').limit(50)
     end
     query = query.to_json()
     render :text => query
