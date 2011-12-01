@@ -1,3 +1,7 @@
+#header {display:none;}
+
+.clr {height:3px;}
+
 #content {
   height:500px;
   margin:50px 0 20px;
@@ -8,12 +12,62 @@
 #media {
   position:relative;
   top:51px;
+  text-align: center;
+
   height:400px;
   width:625px;
   float:left;
 
   background:#efefef;
+
   border-radius: 3px 0 0 3px;
+
+  background:#ddd;
+
+/*  top:0px;
+  left:-10px;
+  border-radius: 3px;
+  height:500px;*/
+}
+
+#media .watermark {
+  height:300px;
+  width:400px;
+  margin:50px;
+  fill:#e3e3e3;
+}
+
+#media .article {
+  background: #FDFDFA !important;
+  height:360px;
+  width:585px;
+  margin:10px;
+  padding:10px;
+  overflow-y:scroll;
+
+/*  height:460px;*/
+}
+
+/* @tmp */
+#media .thumbinner {text-align:center;}
+#media a {color:#777;}
+
+#media .article {
+  background: #FDFDFA !important;
+  height:360px;
+  width:585px;
+  margin:10px;
+  padding:10px;
+
+  overflow-y:scroll;
+
+  /*  height:460px;*/
+}
+
+#media img {
+  margin: 10px auto;
+  max-height:380px;
+  max-width:585px;
 }
 
 #chat {
@@ -22,16 +76,20 @@
   float:left;
 
   color:#606060;
-  box-shadow: 0 1px 4px #ccc;
+  box-shadow: 0 1px 4px #aaa;
   border-radius: 3px;
 }
 
 #chat .title {
   padding:8px;
   background:#F8F8F8;
-  border-bottom: 1px solid #EEE;
+  border-bottom: 1px solid #ddd;
   height:35px;
   overflow:hidden;
+/*  box-shadow: 0 4px 3px -2px white;*/
+  
+  position:relative;
+  z-index: 2;
 }
 
 #chat .title h2 {
@@ -44,6 +102,22 @@
   padding:5px;
   height:320px;
 /*  background:red;*/
+  overflow-y: scroll;
+  
+  position:relative;
+  z-index: 1;
+}
+
+.statement {
+  border-top:1px solid #eee;
+/*  background:green;*/
+}
+
+.statement .img-container {
+  float:left;
+  height:32px;
+  width:32px;
+  text-align: center;
 }
 
 .statement img {
@@ -53,17 +127,51 @@
 
 .utterance {
   float:right;
-  width:250px;
-  background: blue;
+  width:238px;
+/*  background: blue;*/
   position:relative;
+  font-size: 13px;
+  line-height: 15px;
 /*  top:-32px;*/
+}
+
+.question-box div {
+  background:#FFF8D6;
+  font-size: 13px;
+  line-height: 15px;
+
+/*  float:right;
+  width:236px;
+  padding:2px;*/
+
+  float:right;
+  width:236px;
+  padding:2px 2px 2px 37px;
+
+/*  float:left;
+  width:241px;
+  position:relative;
+  top:2px;
+  left:-5px;
+  padding:2px 2px 2px 42px;*/
+}
+
+.question {
+/*  margin-top:5px;*/
+  background:#FFE25F !important;
+  font-weight:bold;
+
+}
+
+.answer {
+/*  background:#FFF1B0;*/
 }
 
 .input {
   height:107px;
   padding:5px;
 /*  background:red;*/
-  border-top: 1px solid #EEE;
+  border-top: 1px solid #ddd;
 }
 
 #footer {
