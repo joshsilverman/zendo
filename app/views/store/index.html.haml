@@ -22,10 +22,10 @@
           %img.egg_image{:src => "../../images/eggs/#{(1..9).to_a.sample}.png"}
           .egg_info
             %strong Egg Price:
-            %span.egg_price $29
+            %span.egg_price= @egg_prices[e.id][0]
             %br/
             %strong Lesson Price:
-            %span.egg_price $1
+            %span.egg_price= @egg_prices[e.id][1]
             %br/
             .review
               %img{:src => "../../images/shared/rating-stars.png"}
