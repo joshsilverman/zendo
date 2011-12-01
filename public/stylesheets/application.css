@@ -20,12 +20,12 @@ body {
     padding:0;
     margin:0;
     height:100%;
-    background: url(../images/shared/thatch-bg.jpg) repeat 0 0;
+/*    background: url(../images/shared/thatch-bg.jpg) repeat 0 0;*/
     font-size: 12px;
     line-height: 20px;
     font-family: Helvetica, arial, sans-serif;
     color: #333333;
-    background: #dfdacd;
+/*    background: #dfdacd;*/
 }
 
 #wrap { min-height: 100%; }
@@ -36,7 +36,13 @@ body {
 .usernav li.first { border: none; }
 .usernav a { color: #fff; font-size: 16px; font-weight: 500; text-align: right; text-decoration: none; padding: 7px 10px; }
 .usernav a:hover{text-decoration: none; padding: 7px 10px; }
-.usernav a.active { background: #85ccfa; border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
+.usernav a.active {
+  background: #85ccfa;
+  border-radius: 3px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 3px;
+/*  border:1px solid #ccc;*/
+}
 
 img {
     border: none;
@@ -85,11 +91,25 @@ textarea { overflow: auto; }
 .shell { width:971px; margin: 0 auto; }
 
 #header { background: #218dd2; border-bottom: 1px solid #0066b2;}
-#head { padding: 10px 0; position: relative; }
+
+#head {
+    padding: 2px 0;
+    position: relative;
+}
+
 #head .row { padding: 0 0 19px 0; }
 
-h1#logo { width: 150px; height: 80px; float: left; display: inline; }
-h1#logo a { background: url(../images/home/logo-small.gif) no-repeat 0 0; height: 40px; display: block; margin-top: 10px; }
+h1#logo {
+    width: 150px;
+    height: 39px;
+    float: left;
+    display: inline;
+}
+
+h1#logo a {
+    background: url(../images/home/logo-small.gif) no-repeat 0 0;
+    height: 40px; display: block;
+    margin-top: 1px; }
 
 .login { float: right; display: inline; width: 252px; margin-top: 6px; position: relative; z-index: 4; }
 .login a.login-link { background: url(../images/home/login-down.png) no-repeat right 0; height: 24px; line-height: 24px; padding: 0 31px 0 0; margin-right: 16px; display: block; }
@@ -123,17 +143,44 @@ h1#logo a { background: url(../images/home/logo-small.gif) no-repeat 0 0; height
 #head .row input.field { background: url(../images/home/head-input.jpg) no-repeat 0 0; width: 202px; height: 31px; display: block; margin-bottom: 2px; padding: 0 10px; }
 #head .row input.button { background: url(../images/home/head-button.jpg) no-repeat 0 0; width: 157px; height: 40px; cursor: pointer; float:right; display: block; margin-top: 5px; }
 
-#main { background: url(../images/home/main-bg.jpg) repeat 0 0; border-top: 1px solid #eee; padding: 20px 0 110px 0; }
+#main { 
+/*    background: url(../images/home/main-bg.jpg) repeat 0 0; */
+/*    border-top: 1px solid #eee;*/
+/*    padding: 20px 0 110px 0;*/
+}
 
-.whitebg { background: #fff; -moz-border-radius: 10px; -webkit-border-radius: 10px; border-radius: 10px; -moz-box-shadow: 0 0 5px #AAAAAA; -webkit-box-shadow: 0 0 5px #AAAAAA; box-shadow: 0 0 5px #AAAAAA; margin: -50px 0 15px 0; padding: 20px 30px 30px 30px; behavior: url(ie-css3.htc);  }
+.whitebg { 
+/*    background: green;*/
+/*    -moz-border-radius: 10px;*/
+/*    -webkit-border-radius: 10px;*/
+/*    border-radius: 10px;*/
+/*    -moz-box-shadow: 0 0 5px #AAAAAA;*/
+/*    -webkit-box-shadow: 0 0 5px #AAAAAA;*/
+/*    box-shadow: 0 0 5px #AAAAAA;*/
+/*    margin: -50px 0 15px 0;*/
+/*    padding: 20px 30px 30px 30px;*/
+/*    behavior: url(ie-css3.htc);*/
+}
+
 #content h3 { font-size: 28px; padding: 10px 0; }
 
 .whitebg p { padding-bottom: 20px; }
 #content ul { list-style: none; margin-left: 20px; padding-bottom: 20px; }
 ul.funfacts li { background: url(../images/home/tiny-egg.png) no-repeat; padding: 3px 0 5px 22px; }
 
-#footer { background: #004578; border-top: 2px solid #218dd2; -moz-box-shadow: 0 0 5px #666; -webkit-box-shadow: 0 0 5px #666; box-shadow: 0 0 5px #666; behavior: url(ie-css3.htc); clear: both; position: relative; height: 110px; margin-top: -110px; }
-#footer .shell { padding: 15px 0 10px 0; width: 971px; }
+#footer { 
+  background: #004578;
+  border-top: 2px solid #218dd2;
+  -moz-box-shadow: 0 0 5px #666;
+  -webkit-box-shadow: 0 0 5px #666;
+  box-shadow: 0 0 5px #666;
+  behavior: url(ie-css3.htc);
+  clear: both; position:
+  relative; height: 110px;
+  margin-top: 10px;
+}
+
+#footer .shell { padding: 10px 0 0px 0; width: 971px; }
 #footer h4 { color: #fff; }
 #footer ul { list-style: none; margin-top: 3px; }
 #footer ul li { display: block; color: #dfdacd; line-height: 18px;  }

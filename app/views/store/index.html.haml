@@ -1,0 +1,35 @@
+- @page_specific_scripts_js = ["/javascripts/store/effects.js", "/javascripts/store/pluit-carousel.js"]
+- @page_specific_scripts_css = ["/stylesheets/store/pluit-carousel.css", "/stylesheets/store/pluit-carousel-skins.css", "/stylesheets/store/index.css"]
+
+#search_json{:style => "display:none;"}= Document::ICON_TYPES.to_json
+%div
+  #search
+    .inner-search
+      #loader
+        %img#mag{:src => "../../images/nounproject/magnifying-glass.png"}
+        %img#load_search{:src => "../../images/search/ajax-loader.gif", :style => "display:none;"}
+      %input#search-box{:placeholder => "Search", :type => "text", :xmlns => "http://www.w3.org/1999/xhtml"}
+  #search_results
+    - i=1
+    = puts @recent_public_eggs.to_yaml
+    - @recent_public_eggs.each do |e|
+      = puts e.to_yaml
+      %a{:href => "/store/egg_details/#{e.id}"}
+        .egg_container
+          .title
+            %h4 Aligned StudyEgg for:
+            %h2= e.name
+          %img.egg_image{:src => "../../images/eggs/#{(1..9).to_a.sample}.png"}
+          .egg_info
+            %strong Egg Price:
+            %span.egg_price $29
+            %br/
+            %strong Lesson Price:
+            %span.egg_price $1
+            %br/
+            .review
+              %img{:src => "../../images/shared/rating-stars.png"}
+      - if i%3==0
+        .cl
+      - i+=1
+  %div{:style => "clear:both"}
