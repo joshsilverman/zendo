@@ -21,6 +21,7 @@ gem 'json'
 gem 'fastercsv'
 
 gem 'haml-rails'
+gem 'coffee-script'
 
 gem 'apn_on_rails', :git => 'https://github.com/natescherer/apn_on_rails.git', :branch => 'rails3'
 
