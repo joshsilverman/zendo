@@ -1,0 +1,42 @@
+<% @page_specific_scripts_js = ["/javascripts/store/effects.js", "/javascripts/store/pluit-carousel.js"] #, "/javascripts/vendors/lightview/js/lightview.js"%>
+<% @page_specific_scripts_css = ["/stylesheets/store/pluit-carousel.css", "/stylesheets/store/pluit-carousel-skins.css"] #, "/javascripts/vendors/lightview/css/lightview.css"%>
+
+<div id="search_json" style="display:none;">
+  <%= Document::ICON_TYPES.to_json %>
+</div>
+<div  style="margin:10px auto; padding:10px; width: 800px;">
+  <div id="search">
+      <div id="loader" style="width:32px; height:32px; display: block; float:left; margin:4px;">
+        <img id="mag" src="../../images/nounproject/magnifying-glass.png" />
+        <img id="load_search" src="../../images/search/ajax-loader.gif"  style="display:none;" />
+      </div>
+      <!--<input type="text" id="search_bar" name="search_bar" size="30" value="Search Public Study Guides"/>-->
+      <input xmlns="http://www.w3.org/1999/xhtml" type="text" id="search-box" placeholder="Search" />
+    </div>
+    <div id="search_results">
+    <% i=1 %>
+    <% @recent_public_eggs.each do |e| %>
+      <a href="/store/egg_details/<%= e.id%>">
+      <div class="egg_container">
+        <h4>Aligned StudyEgg for:</h4>
+        <h2><%= e.name%></h2>
+        <img class="egg_image" src="../../images/home/egg.png" />
+        <div class="egg_info">
+          <strong>Egg Price: </strong><span class="egg_price"><%=  @egg_prices[e.id][0] %></span><br />
+          <strong>Lesson Price: </strong><span class="egg_price"><%=  @egg_prices[e.id][1] %></span><br />
+          <div class="review">
+            <img src="../../images/shared/rating-stars.png" />
+          </div>
+        </div>
+      </div>
+      </a>
+      <% if i%3==0 %>
+        <div class='cl'></div>
+      <% end %>
+      <% i+=1 %>
+    <% end %>
+    </div><!--End Results-->
+  <div style="clear:both"></div>
+
+
+</div>

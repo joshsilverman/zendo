@@ -12,7 +12,7 @@
     <% if @tag.price.nil? or @tag.price <= 0%>
       <% e_price = "free" %>
     <% else %>
-      <% e_price = "$"+@tag.price.to_s %>
+      <% e_price = "$"+sprintf("%.2f",@tag.price/100.00).to_s %>
     <% end %>
     
     <% if @documents.empty? %>
@@ -20,7 +20,7 @@
     <% elsif @documents[0].price.nil? or @documents[0].price <= 0 %>
       <% l_price = "free" %>
     <% else %>
-      <% l_price = "$"+@documents[0].price.to_s %>
+      <% l_price = "$"+sprintf("%.2f",@documents[0].price/100.00).to_s %>
     <% end %>
     Egg Price: <span class="egg_price"><%= e_price %></span> 
     Lesson Price: <span class="egg_price"><%= l_price %></span><br />
@@ -71,7 +71,7 @@
   </div>
 </div>
 <div class="cl"></div>
-<div id="confirm_purchase" class="modal" style="display: block; width:410px; z-index: 1000; margin: 0 auto; position: absolute; top:300px; left:200px;">
+<div id="confirm_purchase" class="modal" style="display: none; width:410px; z-index: 1000; margin: 0 auto; position: absolute; top:300px; left:200px;">
   <div class="title">
     Confirm Purchase
   </div>

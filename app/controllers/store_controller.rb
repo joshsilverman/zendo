@@ -6,7 +6,7 @@ class StoreController < ApplicationController
       if e.price.nil? or e.price <= 0
         e_price = "free"
       else
-        e_price = "$"+(e.price/100.00).to_s
+        e_price = "$"+sprintf("%.2f",e.price/100.00).to_s
       end
       
       first_doc = Document.find_by_tag_id(e.id)
@@ -15,7 +15,7 @@ class StoreController < ApplicationController
       elsif first_doc.price.nil? or first_doc.price <= 0
         l_price = "free"
       else
-        l_price = "$"+(first_doc.price/100.0).to_s
+        l_price = "$"+sprintf("%.2f",e.price/100.00).to_s
       end
       
       @egg_prices[e.id] = [e_price, l_price]

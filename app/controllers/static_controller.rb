@@ -12,4 +12,8 @@ class StaticController < ApplicationController
 
   def contact
   end
+  
+  def returns
+    
+  end
 end

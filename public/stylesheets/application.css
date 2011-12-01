@@ -88,7 +88,7 @@ textarea { overflow: auto; }
 .left, .alignleft { float: left; display: inline; }
 .right, .alignright { float: right; display: inline; }
 
-.shell { width:971px; margin: 0 auto; }
+.shell { width:971px; margin: 0 auto; padding-top: 15px;}
 
 #header { background: #218dd2; border-bottom: 1px solid #0066b2;}
 
@@ -203,25 +203,25 @@ ul.funfacts li { background: url(../images/home/tiny-egg.png) no-repeat; padding
 
 .notice {
     background-color:#4DD64D;
-    border-radius: 10px 10px 0 0;
+    border-radius: 10px;
     border-bottom: 1px solid #28A928;
-    margin: -20px -30px 20px -30px;
+    margin: 5px -30px 10px -30px;
     padding:3px;
 }
 
 .error {
     background-color:#FF734D;
-    border-radius: 10px 10px 0 0;
+    border-radius: 10px;
     border-bottom: 1px solid #d22b21;
-    margin: -20px -30px 20px -30px;
+    margin: 5px -30px 10px -30px;
     padding:3px;
 }
 
 .alert {
     background-color: #fffba8;
-    border-radius: 10px 10px 0 0;
+    border-radius: 10px;
     border-bottom: 1px solid #d22b21;
-    margin: -20px -30px 20px -30px;
+    margin: 5px -30px 10px -30px;
     padding:3px;
 }
 
