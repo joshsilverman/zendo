@@ -5,19 +5,7 @@ class TagsController < ApplicationController
   helper TagsHelper
 
   def index
-    # create Misc tag if not exists
-    misc = current_user.tags.find_by_misc(true)
-    if misc.nil?
-      Tag.create( :misc => true,
-                  :name => 'Misc.',
-                  :user_id => current_user.id)
-    end
-    @tags_json = Tag.tags_json(current_user)
-    @recent_json = Tag.recent_json(current_user)
-    @username = current_user.username.nil?
-    if mobile_device?
-      render :nothing => true
-    end
+    @tags = current_user.tags
   end
 
   def get_tags_json
