@@ -1,4 +1,4 @@
-#header {display:none;}
+/*#header {display:none;}*/
 
 .clr {height:3px;}
 
@@ -34,7 +34,7 @@
   height:300px;
   width:400px;
   margin:50px;
-  fill:#e3e3e3;
+  fill:#eee;
 }
 
 #media .article {
@@ -44,6 +44,7 @@
   margin:10px;
   padding:10px;
   overflow-y:scroll;
+  text-align:left;
 
 /*  height:460px;*/
 }
@@ -132,6 +133,7 @@
   position:relative;
   font-size: 13px;
   line-height: 15px;
+  margin-bottom:2px;
 /*  top:-32px;*/
 }
 

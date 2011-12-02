@@ -387,11 +387,12 @@
                 %a{:href => "#rdb-footnote-55"} 55
             whereas the more recent long-term memories seem to do so (Smith & Kosslyn, 2007). The medial temporal structures, which were removed in the surgery, are hypothesized to be involved in the consolidation of memories in the way that “interactions between the medial temporal lobe and various lateral cortical regions are thought to store memories outside the medial temporal lobes by slowly forming direct links between the cortical representations of the experience” (Smith & Kosslyn, 2007, p. 214).
 
-  =image_tag 'http://upload.wikimedia.org/wikipedia/en/c/cd/Henry_Gustav_1.jpg', :style => "display:none;"
-  %svg#Layer_1.watermark{"enable-background" => "new 100 100 100 83.648", :height => "83.648px", :version => "1.0", :viewBox => "0 0 100 83.648", :width => "100px", :x => "0px", "xml:space" => "preserve", :xmlns => "http://www.w3.org/2000/svg", "xmlns:xlink" => "http://www.w3.org/1999/xlink", "xmlns:xml" => "http://www.w3.org/XML/1998/namespace", :y => "0px"}
-    %path{:d => "M15.727,43.753"}
-    %path{:d => "M90.925,28.696L82.728,7.529C81.195,3.477,77.845,0.029,71.505,0h-11.56H40.188H28.427  c-6.311,0.029-9.661,3.477-11.222,7.529L9.006,28.696C5.751,29.116-0.01,32.941,0,40.187v26.951h7.999v8.603  c-0.02,10.606,14.989,10.48,14.985,0v-8.603H50h26.948v8.603c0.033,10.48,15.042,10.606,15.052,0v-8.603h8V40.187  C99.975,32.941,94.21,29.116,90.925,28.696z M15.727,50.874c-3.834,0.011-6.938-3.187-6.922-7.12  c-0.016-3.96,3.088-7.161,6.922-7.128c3.822-0.033,6.926,3.168,6.921,7.128C22.653,47.687,19.548,50.884,15.727,50.874z M50,28.497  h-0.067H17.541l6.182-16.668c0.746-2.366,1.904-4.059,4.639-4.1h21.571H50H71.64c2.693,0.041,3.854,1.733,4.636,4.1l6.183,16.668H50  z M84.274,50.874c-3.861,0.011-6.967-3.187-6.988-7.12c0.021-3.96,3.127-7.161,6.988-7.128c3.795-0.033,6.898,3.168,6.922,7.128  C91.172,47.687,88.069,50.884,84.274,50.874z"}
-    %path{:d => "M84.274,43.753"}
+  =image_tag 'http://upload.wikimedia.org/wikipedia/en/c/cd/Henry_Gustav_1.jpg', :style => "display:none;", :class => "hm"
+  .watermark-container
+    %svg#Layer_1.watermark{"enable-background" => "new 100 100 100 83.648", :height => "83.648px", :version => "1.0", :viewBox => "0 0 100 83.648", :width => "100px", :x => "0px", "xml:space" => "preserve", :xmlns => "http://www.w3.org/2000/svg", "xmlns:xlink" => "http://www.w3.org/1999/xlink", "xmlns:xml" => "http://www.w3.org/XML/1998/namespace", :y => "0px"}
+      %path{:d => "M15.727,43.753"}
+      %path{:d => "M90.925,28.696L82.728,7.529C81.195,3.477,77.845,0.029,71.505,0h-11.56H40.188H28.427  c-6.311,0.029-9.661,3.477-11.222,7.529L9.006,28.696C5.751,29.116-0.01,32.941,0,40.187v26.951h7.999v8.603  c-0.02,10.606,14.989,10.48,14.985,0v-8.603H50h26.948v8.603c0.033,10.48,15.042,10.606,15.052,0v-8.603h8V40.187  C99.975,32.941,94.21,29.116,90.925,28.696z M15.727,50.874c-3.834,0.011-6.938-3.187-6.922-7.12  c-0.016-3.96,3.088-7.161,6.922-7.128c3.822-0.033,6.926,3.168,6.921,7.128C22.653,47.687,19.548,50.884,15.727,50.874z M50,28.497  h-0.067H17.541l6.182-16.668c0.746-2.366,1.904-4.059,4.639-4.1h21.571H50H71.64c2.693,0.041,3.854,1.733,4.636,4.1l6.183,16.668H50  z M84.274,50.874c-3.861,0.011-6.967-3.187-6.988-7.12c0.021-3.96,3.127-7.161,6.988-7.128c3.795-0.033,6.898,3.168,6.922,7.128  C91.172,47.687,88.069,50.884,84.274,50.874z"}
+      %path{:d => "M84.274,43.753"}
 
 #chat
   .title
@@ -399,46 +400,47 @@
       Aligned StudyEgg for:
     %h2 Metaphysics of the impossible
   .output
-    .statement
+    .statement{:class => '1', :style => "display:none;"}
       .clr
       .img-container= image_tag "eggs/1.png"
       .utterance Hi, Josh. Great to see you again!
-      .utterance Let's start with some Bio questions.
-      .utterance Ready
+      .utterance{:class => '2', :style => "display:none;"} Let's start with some Bio questions.
+      .utterance{:class => '2', :style => "display:none;"} Ready?
     .clr
-    .statement
+    .statement{:class => '3', :style => "display:none;"}
       .clr
       .img-container= image_tag "eggs/thehead.jpg"
       .utterance Yep
     .clr
-    .statement
+    .statement{:class => '4', :style => "display:none;"}
       .clr
       .img-container= image_tag "eggs/1.png"
       .utterance OK, let's start with an easy one:
-      .question-box
+      .question-box{:class => '5', :style => "display:none;"}
         .question When drugs did not decrease his seizures, patient H.M. underwent a:
-        .answer 
+        .answer{:class => '6', :style => "display:none;"}
           %strong a)
           Temporal lobectomy, which removed his medial temporal lobe bilaterally.
-        .answer 
+        .answer{:class => '6', :style => "display:none;"}
           %strong b)
           Lobotomy, which removed his medial temporal lobe bilaterally.
-        .answer 
+        .answer{:class => '6', :style => "display:none;"}
           %strong c)
           Temporal lobectomy, which removed parts of his temporal and frontal lobes bilaterally.
-        .answer 
+        .answer{:class => '6', :style => "display:none;"}
           %strong d)
           Lobotomy, which cut the connetions to and from his prefrontal cortex.
     .clr
-    .statement
+    .statement{:class => '7', :style => "display:none;"}
       .clr
       .img-container= image_tag "eggs/thehead.jpg"
       .utterance b
     .clr
-    .statement
+    .statement{:class => '8', :style => "display:none;"}
       .clr
       .img-container= image_tag "eggs/1.png"
       .utterance Not quite, Josh.
-      .utterance Check out this article from Wikipedia:
+      .utterance Check out this article from Wikipedia.
+      .utterance{:class => '9', :style => "display:none;"} Type "next" when you're ready.
     .clr
   .input{:contenteditable => ''}
