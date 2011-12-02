@@ -1,0 +1,12 @@
+- @page_specific_scripts_css = ["store/index"]
+
+%div
+  #eggs
+    - @tags.each do |e|
+      .egg_container
+        .title
+          %h4 Aligned StudyEgg for:
+          %a{'href' => "/store/egg_details/#{e.id}"}
+            %h2= e.name
+        %img.egg_image{:src => "../../images/eggs/#{(1..9).to_a.sample}.png"}
+  %div{:style => "clear:both"}
