@@ -4,13 +4,12 @@
     color: blue;
   }
 
-
 .egg_container{
     width:297px;
     float: left;
     margin: 15px 10px;
     color:#606060;
-    box-shadow: 0 1px 4px #ccc;
+    box-shadow: 0 1px 4px #aaa;
     border-radius: 3px;
 }
 
