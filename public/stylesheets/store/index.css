@@ -11,13 +11,12 @@
 .egg_container .egg_price{color: #b00000; font-weight: bold;}
 .egg_container .review{margin-top:10px; margin-left: -10px;}
 
-
 .egg_container{
     width:297px;
     float: left;
     margin: 15px 10px;
     color:#606060;
-    box-shadow: 0 1px 4px #ccc;
+    box-shadow: 0 1px 4px #aaa;
     border-radius: 3px;
 }
 

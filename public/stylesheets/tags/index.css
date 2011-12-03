@@ -1,8 +1,32 @@
+.eggs {
+  margin-top:8px;
+}
+
 .egg_container {
   width:932px !important;
+  margin: 10px 10px !important;
 }
 
 .egg_image {
-  max-height: 32px;
-  max-width: 32px;
+  max-height: 54px;
+  max-width: 54px;
+}
+
+.clr {
+  height:0px;
+}
+
+.statement {
+  border-top: 1px solid #eee;
+  margin:5px 5px 10px;
+  padding:2px;
+}
+
+.utterance {
+  float: right;
+  width: 872px;
+  position: relative;
+  font-size: 13px;
+  line-height: 15px;
+  margin-bottom: 2px;
 }
