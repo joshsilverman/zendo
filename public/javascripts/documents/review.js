@@ -399,6 +399,11 @@ var cCard = Class.create({
     initialize: function(data) {
         this.memId = data['mem'];
         this.front = data['name'];
+        if(data['name']==null){
+            console.log("NULL FOUND!!!");
+            console.log(data);
+            this.front = "";
+        }
         this.back = data['definition'];
         this.phase = data['phase'];
         if(data['questions'].length > 0){

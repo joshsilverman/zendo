@@ -1,6 +1,8 @@
 class StoreController < ApplicationController
   def index
-    @recent_public_eggs = Tag.joins(:documents).where("documents.public").group('tags.id').order('documents.updated_at desc').limit(9)
+    egg_ids = [1927, 1928, 1814, 1815, 1828, 1830]
+    @recent_public_eggs = Tag.where(:id => egg_ids)
+    #@recent_public_eggs = Tag.joins(:documents).where("documents.public").group('tags.id').order('documents.updated_at desc').limit(9)
     @egg_prices = Hash.new
     @recent_public_eggs.each do |e|
       if e.price.nil? or e.price <= 0
