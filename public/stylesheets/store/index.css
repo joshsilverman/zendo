@@ -4,13 +4,12 @@
     color: blue;
   }
 
-
 .egg_container{
     width:297px;
     float: left;
     margin: 15px 10px;
     color:#606060;
-    box-shadow: 0 1px 4px #ccc;
+    box-shadow: 0 1px 4px #aaa;
     border-radius: 3px;
 }
 
@@ -106,10 +105,10 @@
     color:#222;
 }
 
-input[type="search"]::-webkit-search-decoration,
-input[type="search"]::-webkit-search-cancel-button,
-input[type="search"]::-webkit-search-results-button,
-input[type="search"]::-webkit-search-results-decoration {
+input[type="search"]:-webkit-search-decoration,
+input[type="search"]:-webkit-search-cancel-button,
+input[type="search"]:-webkit-search-results-button,
+input[type="search"]:-webkit-search-results-decoration {
   display: none;
 }
 
