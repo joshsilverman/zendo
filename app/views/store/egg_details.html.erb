@@ -48,7 +48,7 @@
                     free
                   <% else %>
                     <%= puts "PRICE LOOP #{d.name}: #{d.price}"  %>
-                    <%= "$"+(d.price/100.0).to_s %>
+                    <%= "$"+sprintf("%.2f",d.price/100.00).to_s  %>
                   <% end %></td>
               <td>
           <% purchased = false %>

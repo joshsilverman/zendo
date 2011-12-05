@@ -57,6 +57,7 @@ class UsersController < ApplicationController
   end
   
   def update_billing_info
+    
     flash[:notice] = "Your billing information has been updated successfully"
     unless params[:redirect].empty?
       redirect_to "/store/egg_details/#{params[:redirect]}"
