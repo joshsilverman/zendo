@@ -1,6 +1,7 @@
 class StoreController < ApplicationController
   def index
     egg_ids = [1927, 1928, 1814, 1815, 1828, 1830]
+    egg_ids = [1,2,3,4,5]
     @recent_public_eggs = Tag.where(:id => egg_ids)
     #@recent_public_eggs = Tag.joins(:documents).where("documents.public").group('tags.id').order('documents.updated_at desc').limit(9)
     @egg_prices = Hash.new
