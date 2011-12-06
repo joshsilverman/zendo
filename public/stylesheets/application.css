@@ -186,6 +186,7 @@ ul.funfacts li { background: url(../images/home/tiny-egg.png) no-repeat; padding
 #footer ul li { display: block; color: #dfdacd; line-height: 18px;  }
 #footer ul li a { color: #dfdacd; }
 #footer .links { float: left; display: inline; padding-right: 90px; }
+#footer .links p { text-align: left; font-size: 12px; color: #dfdacd; }
 #footer .address { float: left; display: inline; padding-right: 130px; }
 #footer .social { float: right; display: inline; }
 #footer .social a { float: left; display: inline; font-size: 0; line-height: 0; text-indent: -4000px; }
