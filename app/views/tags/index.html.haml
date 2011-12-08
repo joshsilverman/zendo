@@ -4,22 +4,20 @@
   - @tags.each do |e|
     .egg_container
       .title
-        %img.egg_image{:src => "../../images/eggs/#{(1..9).to_a.sample}.png"}
+        %img.egg_image{:src => "../../images/eggs/#{e.icon_id}.png"}
         %h4 Aligned StudyEgg for:
         %a{'href' => "/store/egg_details/#{e.id}"}
           %h2= e.name
       .statement
-        %a
-          Virtuous monkey lesson
-        |
-        %a
-          Howlers are just like us
-        |
-        %a
-          Knuckle walking 101
-        |
-        %a
-          Bamboo for breakfast
-        \...
+        - i = 1
+        - e.documents.each do |d|
+          - if i == 1
+            %a{:href => "../review/#{d.id}"} #{d.name}
+          - elsif i<5
+            | 
+            %a{:href => "../review/#{d.id}"} #{d.name}
+          - elsif i==5
+            \...
+          - i+=1
         .clr
   %div{:style => "clear:both"}

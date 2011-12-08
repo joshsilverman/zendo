@@ -74,7 +74,7 @@
           <% end %>
 
           <% if purchased %>
-            <span class="purchased"><img src="../../images/home/purchased.png" /></span>
+                <a href="../../review/<%=d.id%>">Review Now!</a>
             <% purchased = false %>
           <% else %>
             <span id="<%= d.id%>" class="buy"><img src="../../images/home/get-it-now.png" /></span>
