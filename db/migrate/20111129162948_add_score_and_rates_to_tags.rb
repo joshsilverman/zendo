@@ -1,7 +1,7 @@
 class AddScoreAndRatesToTags < ActiveRecord::Migration
   def self.up
-    add_column :tags, :score, :decimal
-    add_column :tags, :rates, :integer
+    add_column :tags, :score, :integer, :default => 0
+    add_column :tags, :rates, :integer, :default => 0
   end
 
   def self.down

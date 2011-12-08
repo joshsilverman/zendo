@@ -147,9 +147,9 @@ ActiveRecord::Schema.define(:version => 20111129203246) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "icon_id",                                                 :default => 0
-    t.decimal  "score",                    :precision => 10, :scale => 0
-    t.integer  "rates"
+    t.integer  "icon_id",                  :default => 0
+    t.integer  "score",                    :default => 0
+    t.integer  "rates",                    :default => 0
     t.integer  "price"
   end
 

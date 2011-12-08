@@ -1,13 +1,28 @@
-<% @page_specific_scripts_js = ["/javascripts/store/details.js"] %>
-<% @page_specific_scripts_css = ["/stylesheets/store/egg_details.css"]%>
-
+<% @page_specific_scripts_js = ["/javascripts/store/details.js", "/javascripts/store/star_rating.js"] %>
+<% @page_specific_scripts_css = ["/stylesheets/store/egg_details.css", "/stylesheets/store/star_rating.css"]%>
+<% rating_width = ((((@tag.score*1.0)/@tag.rates)*2).floor * 12.5).floor %>
 
 <div class="egg_container">
   <img class="egg_image" src="../../images/home/egg.png" />
   <div class="egg_info">
     <h4>Aligned StudyEgg for:</h4>
     <h2><%= @tag.name%></h2>
-    <div class="review"><img src="../../images/shared/rating-stars.png" /></div>
+    <div class="review"><!--<img src="../../images/shared/rating-stars.png" />-->
+      <ul class='star-rating'>
+	<li class='current-rating' id='current-rating' style="width: <%= rating_width%>px"></li>
+	<li><a href="#" onclick="vote(1, <%=@tag.id%>); return false;" 
+           title='1 star out of 5' class='one-star'>1</a></li>
+	<li><a href="#" onclick="vote(2, <%=@tag.id%>); return false;" 
+           title='2 star out of 5' class='two-stars'>2</a></li>
+	<li><a href="#" onclick="vote(3, <%=@tag.id%>); return false;" 
+           title='3 star out of 5' class='three-stars'>3</a></li>
+	<li><a href="#" onclick="vote(4, <%=@tag.id%>); return false;" 
+           title='4 star out of 5' class='four-stars'>4</a></li>
+	<li><a href="#" onclick="vote(5, <%=@tag.id%>); return false;" 
+           title='5 star out of 5' class='five-stars'>5</a></li>
+      </ul>
+      <div id='current-rating-result'></div> <!-- used to show "success" message after vote -->
+    </div>
     <div class="dashed-line"></div>
     <% if @tag.price.nil? or @tag.price <= 0%>
       <% e_price = "free" %>
