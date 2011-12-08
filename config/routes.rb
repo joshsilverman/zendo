@@ -72,6 +72,7 @@ Zendo::Application.routes.draw do
   match "/tags/create_and_assign" => "tags#create"
   match "/tags/update_tags_name"
   match "/tags/create_with_index"
+  match "/tags/rating_vote"
 
   # documents
   match "/create_from_csv" => "documents#create_from_csv"

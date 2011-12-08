@@ -218,4 +218,35 @@ class TagsController < ApplicationController
     end
     render :nothing => true
   end
+  
+  def rating_vote
+      vote_amount = params[:rating].to_i
+      vote_amount = 1 if vote_amount < 1
+
+      studyegg = Tag.find_by_id(params[:tag_id])
+      unless studyegg.nil?
+        total_score = studyegg.score
+        number_of_votes = studyegg.rates
+        puts "current score:#{total_score} from #{number_of_votes} votes!"
+        total_score += vote_amount
+        puts "total: #{total_score}"
+        number_of_votes += 1.0
+        puts "Should be one more: #{number_of_votes}"
+        studyegg.update_attributes(:score => total_score, :rates => number_of_votes)
+      
+        avg_score = (total_score*1.0)/number_of_votes
+        half_stars = (avg_score * 2).floor
+        puts "Halfstars: #{half_stars}"
+        width = (half_stars*12.5).floor
+        puts "Width: #{width}"
+
+        # each star is 25px wide, so to highlight 3 and a half stars you would return 
+        # a width of 87
+
+        response_json = {"width" => width, "status" => "Your vote was successful!"}
+        render :json => response_json.to_json
+      else
+        render :status => 500
+      end
+  end
 end

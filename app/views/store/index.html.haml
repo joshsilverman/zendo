@@ -1,5 +1,5 @@
-- @page_specific_scripts_js = ["/javascripts/store/effects.js", "/javascripts/store/pluit-carousel.js"]
-- @page_specific_scripts_css = ["/stylesheets/store/pluit-carousel.css", "/stylesheets/store/pluit-carousel-skins.css", "/stylesheets/store/index.css"]
+
+- @page_specific_scripts_css = ["/stylesheets/store/star_rating.css", "/stylesheets/store/index.css"]
 
 #search_json{:style => "display:none;"}= Document::ICON_TYPES.to_json
 %div
@@ -11,10 +11,8 @@
       %input#search-box{:placeholder => "Search", :type => "text", :xmlns => "http://www.w3.org/1999/xhtml"}
   #search_results
     - i=1
-    = puts @recent_public_eggs.to_yaml
     - @recent_public_eggs.each do |e|
-      = puts e.to_yaml
-      %a{:href => "/store/egg_details/#{e.id}"}
+      %a{:href => "/store/egg_details/#{e.id}", :title =>"test"}
         .egg_container
           .title
             %h4 Aligned StudyEgg for:
@@ -28,7 +26,18 @@
             %span.egg_price= @egg_prices[e.id][1]
             %br/
             .review
-              %img{:src => "../../images/shared/rating-stars.png"}
+              %ul.static-star-rating
+                %li.current-rating{:id=>'current-rating', :style => "width: #{@rating_width[e.id]}px"}
+                %li
+                  %a.one-star{:href=>"#", :title=>'1 star out of 5'} 1
+                %li
+                  %a.two-stars{:href=>"#", :title=>'2 stars out of 5'} 2
+                %li
+                  %a.three-stars{:href=>"#", :title=>'3 stars out of 5'} 3
+                %li
+                  %a.four-stars{:href=>"#", :title=>'4 stars out of 5'} 4
+                %li
+                  %a.five-stars{:href=>"#", :title=>'5 stars out of 5'} 5
       - if i%3==0
         .cl
       - i+=1
