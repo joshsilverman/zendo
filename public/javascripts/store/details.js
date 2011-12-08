@@ -29,7 +29,7 @@ var cDoc = Class.create({
                if( transport.status == 200){
                    $$('.buy').each(function(e){
                        if(e.id == id){
-                           e.innerHTML = "<img src='../../images/home/purchased.png' />";
+                           e.innerHTML = "<a href='../../review/"+id+"'>Review Now!</a>";
                            e.removeClassName('buy');
                            e.addClassName('purchased');
                            e.stopObserving('click');
