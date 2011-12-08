@@ -3,7 +3,7 @@
 <% rating_width = ((((@tag.score*1.0)/@tag.rates)*2).floor * 12.5).floor %>
 
 <div class="egg_container">
-  <img class="egg_image" src="../../images/home/egg.png" />
+  <img class="egg_image" src="../../images/eggs/<%=@tag.icon_id %>.png" />
   <div class="egg_info">
     <h4>Aligned StudyEgg for:</h4>
     <h2><%= @tag.name%></h2>
