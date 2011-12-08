@@ -1,9 +1,11 @@
 .star-rating{
 		list-style:none;
-		margin-left:5px !important;
+                line-height: 15px;
+		margin-left:0px !important;
 		padding:0px;
-		width: 125px;
-		height: 3px;
+                padding-bottom: 15px !important;
+		width: 75px;
+		height: 0px;
 		position: relative;
 		background: url(../../images/shared/alt_star.gif) top left repeat-x;		
 	}
@@ -16,8 +18,8 @@
 	}
 	.star-rating li a{
 		display:block;
-		width:25px;
-		height: 25px;
+		width:15px;
+		height: 15px;
 		text-decoration: none;
 		text-indent: -9000px;
 		z-index: 20;
@@ -39,36 +41,36 @@
 		left: 0px;
 	}
 	.star-rating a.one-star:hover{
-		width:25px;
+		width:15px;
 	}
 	.star-rating a.two-stars{
-		left:25px;
+		left:15px;
 	}
 	.star-rating a.two-stars:hover{
-		width: 50px;
+		width: 30px;
 	}
 	.star-rating a.three-stars{
-		left: 50px;
+		left: 30px;
 	}
 	.star-rating a.three-stars:hover{
-		width: 75px;
+		width: 45px;
 	}
 	.star-rating a.four-stars{
-		left: 75px;
+		left: 45px;
 	}	
 	.star-rating a.four-stars:hover{
-		width: 100px;
+		width: 60px;
 	}
 	.star-rating a.five-stars{
-		left: 100px;
+		left: 60px;
 	}
 	.star-rating a.five-stars:hover{
-		width: 125px;
+		width: 75px;
 	}
 	.star-rating li.current-rating{
 		background: url(../../images/shared/alt_star.gif) left center;
 		position: absolute;
-		height: 25px;
+		height: 15px;
 		display: block;
 		text-indent: -9000px;
 		z-index: 1;
@@ -76,12 +78,14 @@
         
 .static-star-rating{
 		list-style:none;
-		margin-left:5px !important;
+                line-height: 15px;
+		margin-left:10px !important;
 		padding:0px;
-		width: 125px;
-		height: 3px;
+                padding-bottom: 15px !important;
+		width: 75px;
+		height: 0px;
 		position: relative;
-		background: url(../../images/shared/alt_star.gif) top left repeat-x;		
+		background: url(../../images/shared/alt_star.gif) top left repeat-x;
 	}
 	.static-star-rating>li{
 		padding:0px;
@@ -92,8 +96,8 @@
 	}
 	.static-star-rating>li>a{
 		display:block;
-		width:25px;
-		height: 25px;
+		width:15px;
+		height: 15px;
 		text-decoration: none;
 		text-indent: -9000px;
 		z-index: 20;
@@ -111,21 +115,21 @@
 		left: 0px;
 	}
 	.static-star-rating a.two-stars{
-		left:25px;
+		left:15px;
 	}
 	.static-star-rating a.three-stars{
-		left: 50px;
+		left: 30px;
 	}
 	.static-star-rating a.four-stars{
-		left: 75px;
+		left: 45px;
 	}	
 	.static-star-rating a.five-stars{
-		left: 100px;
+		left: 60px;
 	}
 	.static-star-rating li.current-rating{
 		background: url(../../images/shared/alt_star.gif) left center;
 		position: absolute;
-		height: 25px;
+		height: 15px;
 		display: block;
 		text-indent: -9000px;
 		z-index: 1;

@@ -105,9 +105,13 @@ var cDoc = Class.create({
             html+='';
             i = 1;
             results.each(function(doc){
-                price = "$"+doc['price']/100;
+                egg_price = "$"+doc['price']/100;
+                lesson_price = "$"+doc['doc_price']/100;
                 if(doc['price']==null){
-                    price="free";
+                    egg_price="free";
+                }
+                if(doc['doc_price']==null){
+                    lesson_price="free";
                 }
                 html+= "<a href='/store/egg_details/"+doc['id']+"'>\
                 <div class='egg_container'>\
@@ -115,11 +119,20 @@ var cDoc = Class.create({
                     <h4>Aligned StudyEgg for:</h4>\
                     <h2>"+doc['name']+"</h2>\
                   </div>\
-                <img class='egg_image' src='../../images/home/egg.png' />\
+                <img class='egg_image' src='../../images/eggs/"+doc['icon_id']+".png' />\
                 <div class='egg_info'>\
-                  <strong>Egg Price: </strong><span class='egg_price'>"+price+"</span><br />\
-                  <strong>Lesson Price: </strong><span class='egg_price'></span><br />\
-                  <div class='review'><img src='../../images/shared/rating-stars.png' /></div>\
+                  <strong>Egg Price: </strong><span class='egg_price'>"+egg_price+"</span><br />\
+                  <strong>Lesson Price: </strong><span class='egg_price'>"+lesson_price+"</span><br />\
+                  <div class='review'>\
+                  <ul class='static-star-rating'>\
+                        <li class='current-rating' id='current-rating' style='width: "+(doc['score']/doc['rates'])*15+"px'></li>\
+                        <li><a href='#' title='1 star out of 5' class='one-star'>1</a></li>\
+                        <li><a href='#' title='2 stars out of 5' class='two-stars'>2</a></li>\
+                        <li><a href='#' title='3 stars out of 5' class='three-stars'>3</a></li>\
+                        <li><a href='#' title='4 stars out of 5' class='four-stars'>4</a></li>\
+                        <li><a href='#' title='5 stars out of 5' class='five-stars'>5</a></li>\
+                      </ul>\
+                  </div>\
                 </div>\
               </div>\
              </a>";

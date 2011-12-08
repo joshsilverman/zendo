@@ -2,7 +2,6 @@ class StoreController < ApplicationController
   def index
     egg_ids = [2544,2545,2546,2547,2548,1828] #production hardcode
     #egg_ids = [1927, 1928, 1814, 1815, 1828, 1830] #test server hardcode
-    #egg_ids = [1,2,3,4,5] #hardcode for localtesting
     @recent_public_eggs = Tag.where(:id => egg_ids)
     #@recent_public_eggs = Tag.joins(:documents).where("documents.public").group('tags.id').order('documents.updated_at desc').limit(9)
     @egg_prices = Hash.new
@@ -24,7 +23,7 @@ class StoreController < ApplicationController
       end
       
       @egg_prices[e.id] = [e_price, l_price]
-      @rating_width[e.id] = ((((e.score*1.0)/e.rates)*2) * 12.5)
+      @rating_width[e.id] = ((((e.score*1.0)/e.rates)*2) * 7.5)
     end
     @userships = Usership.select(['document_id']).where("user_id = ?", current_user.id )
   end

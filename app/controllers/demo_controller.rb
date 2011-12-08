@@ -45,6 +45,10 @@ class DemoController < ApplicationController
   def egg_details
     @tag = Tag.find_by_id(params[:id])
     @documents = Document.where("tag_id = ? AND public", params[:id])
+    @question_count = Hash.new
+    @documents.each do |d|
+      @question_count[d.id] = Term.where("document_id = ?", d.id).size
+    end
   end
 
 end

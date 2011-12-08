@@ -1,25 +1,86 @@
-<% @page_specific_scripts_js = ["/javascripts/store/details.js"] %>
-<% @page_specific_scripts_css = ["/stylesheets/store/index.css"]%>
+<% @page_specific_scripts_js = ["/javascripts/store/details.js", "/javascripts/store/star_rating.js"] %>
+<% @page_specific_scripts_css = ["/stylesheets/store/egg_details.css", "/stylesheets/store/star_rating.css"]%>
+<% rating_width = ((@tag.score*1.0)/@tag.rates)*15 %>
 
+<div class="egg_container">
+  <img class="egg_image" src="../../images/eggs/<%=@tag.icon_id %>.png" />
+  <div class="egg_info">
+    <h4>Aligned StudyEgg for:</h4>
+    <h2><%= @tag.name%></h2>
+    <div class="review"><!--<img src="../../images/shared/rating-stars.png" />-->
+      <ul class='static-star-rating'>
+        <li class='current-rating' id='current-rating' style='width: <%=rating_width%>px'></li>
+        <li><a href='#' title='1 star out of 5' class='one-star'>1</a></li>
+        <li><a href='#' title='2 stars out of 5' class='two-stars'>2</a></li>
+        <li><a href='#' title='3 stars out of 5' class='three-stars'>3</a></li>
+        <li><a href='#' title='4 stars out of 5' class='four-stars'>4</a></li>
+        <li><a href='#' title='5 stars out of 5' class='five-stars'>5</a></li>
+      </ul>
+      <div id='current-rating-result'></div> <!-- used to show "success" message after vote -->
+    </div>
+    <div class="dashed-line"></div>
+    <% if @tag.price.nil? or @tag.price <= 0%>
+      <% e_price = "free" %>
+    <% else %>
+      <% e_price = "$"+sprintf("%.2f",@tag.price/100.00).to_s %>
+    <% end %>
 
-<div style="margin:10px auto; padding:10px; width: 600px;">
-  <div class="egg-box" style="float:left;"><div class="egg"><img src="../../images/nounproject/book1.png" class="icon"></div></div>
-  <div class="detail-float">
-
-<%# if !@tag.nil? %>
-<h1 class="egg-head"><%= @tag.name %></h1>
-<% i=0 %>
-<ul>
-  <% @documents.each do |d| %>
-    <%if i<3%>
-    <li><a href="/demo/review/<%= d.id %>"><%= d.name %></a></li>
-    <%i+=1%>
-    <%else%>
-    <li><%= d.name %></li>
-    <%end%>
-  <% end %>
-</ul>
-<%# end %>
-    
+    <% if @documents.empty? %>
+      <% l_price = "free" %>
+    <% elsif @documents[0].price.nil? or @documents[0].price <= 0 %>
+      <% l_price = "free" %>
+    <% else %>
+      <% l_price = "$"+sprintf("%.2f",@documents[0].price/100.00).to_s %>
+    <% end %>
+    Egg Price: <span class="egg_price"><%= e_price %></span>
+    Lesson Price: <span class="egg_price"><%= l_price %></span><br />
+    <div class="lesson_list">
+      <span class="header">Lessons</span>
+      <table>
+        <tr class="d0">
+          <td id="title">Title</td>
+          <td id="questions"># of Questions</td>
+          <td id="price">Price</td>
+          <td id="buy"></td>
+        </tr>
+        <% i=0 %>
+        <% @documents.each do |d| %>
+          <% if i%2==0 %>
+            <tr class="d1">
+          <% else %>
+            <tr class="d0">
+          <% end %>
+              <% i+=1 %>
+              <td class="title_col"><%= d.name %></a></td>
+              <td><%=  @question_count[d.id] %></td>
+              <td><% if d.price.nil? or d.price <= 0 %>
+                    <%= puts "FREE LOOP #{d.name}: #{d.price}"  %>
+                    free
+                  <% else %>
+                    <%= puts "PRICE LOOP #{d.name}: #{d.price}"  %>
+                    <%= "$"+sprintf("%.2f",d.price/100.00).to_s  %>
+                  <% end %></td>
+              <td>
+                <a href="../review/<%=d.id%>">Try it free</a>
+              </td></tr>
+        <% end %>
+      </table>
+    </div>
+  </div>
 </div>
+<div class="cl"></div>
+<div id="confirm_purchase" class="modal" style="display: none; width:410px; z-index: 1000; margin: 0 auto; position: absolute; top:300px; left:200px;">
+  <div class="title">
+    Confirm Purchase
+  </div>
+  <div class="content">
+
+    <div class="clr-thin"></div>
+    <div style="text-align:center;">
+      <span class="option">You are about to make a purchase. Click "Purchase Now" to confirm the purchase and charge your credit card.  Otherwise click "Cancel"</span><br /><br />
+        <%= submit_tag "Purchase Now", :id => "submit_confirm" %>
+        <%= submit_tag "Cancel", :id => "submit_cancel" %>
+        <%= image_tag "shared/fb-loader.gif", :alt => 'loading', :style => "margin-right:5px;visibility:hidden;", :id => "new_tag_loading" %>
+    </div>
+  </div>
 </div>

@@ -1,6 +1,6 @@
 <% @page_specific_scripts_js = ["/javascripts/store/details.js", "/javascripts/store/star_rating.js"] %>
 <% @page_specific_scripts_css = ["/stylesheets/store/egg_details.css", "/stylesheets/store/star_rating.css"]%>
-<% rating_width = ((((@tag.score*1.0)/@tag.rates)*2).floor * 12.5).floor %>
+<% rating_width = ((@tag.score*1.0)/@tag.rates)*15 %>
 
 <div class="egg_container">
   <img class="egg_image" src="../../images/eggs/<%=@tag.icon_id %>.png" />

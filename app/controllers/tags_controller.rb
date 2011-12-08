@@ -237,13 +237,13 @@ class TagsController < ApplicationController
         avg_score = (total_score*1.0)/number_of_votes
         half_stars = (avg_score * 2).floor
         puts "Halfstars: #{half_stars}"
-        width = (half_stars*12.5).floor
+        width = (half_stars*7.5).floor
         puts "Width: #{width}"
 
-        # each star is 25px wide, so to highlight 3 and a half stars you would return 
-        # a width of 87
+        # each star is 15px wide, so to highlight 3 and a half stars you would return
+        # a width of 52
 
-        response_json = {"width" => width, "status" => "Your vote was successful!"}
+        response_json = {"width" => (vote_amount*15), "status" => "Your vote was successful!"}
         render :json => response_json.to_json
       else
         render :status => 500

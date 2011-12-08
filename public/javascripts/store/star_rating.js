@@ -13,7 +13,7 @@ function vote(amnt, tag_id){
                         console.log((res.responseJSON.width));
                         console.log(res.responseJSON.status);
 			$('current-rating').setStyle({"width":res.responseJSON.width+"px"});
-			$('current-rating-result').innerHTML = res.responseJSON.status;
+                        $('current-rating').setStyle({"background":"url(../../images/shared/alt_star.gif) left bottom"});
             }
         });
 }
