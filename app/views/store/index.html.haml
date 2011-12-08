@@ -9,6 +9,7 @@
         %img#mag{:src => "../../images/nounproject/magnifying-glass.png"}
         %img#load_search{:src => "../../images/search/ajax-loader.gif", :style => "display:none;"}
       %input#search-box{:placeholder => "Search", :type => "text", :xmlns => "http://www.w3.org/1999/xhtml"}
+
   #search_results
     - i=1
     - @recent_public_eggs.each do |e|
