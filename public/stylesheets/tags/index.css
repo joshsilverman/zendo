@@ -8,8 +8,12 @@
 }
 
 .egg_image {
-  max-height: 54px;
-  max-width: 54px;
+  position:relative;
+  max-height: 50px;
+  max-width: 50px;
+  top:-6px;
+  margin-left:-2px;
+  left:-3px;
 }
 
 .clr {
@@ -17,9 +21,10 @@
 }
 
 .statement {
-  border-top: 1px solid #eee;
-  margin:5px 5px 10px;
+/*  border-top: 1px solid #eee;*/
+  margin:5px 5px 0px;
   padding:2px;
+  padding-left:41px;
 }
 
 .utterance {
