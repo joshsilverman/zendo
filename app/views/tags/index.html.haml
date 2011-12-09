@@ -1,23 +1,33 @@
 - @page_specific_scripts_css = ["store/index"]
 
 .eggs
-  - @tags.each do |e|
-    .egg_container
-      .title
-        %img.egg_image{:src => "../../images/eggs/#{e.icon_id}.png"}
-        %h4 Aligned StudyEgg for:
-        %a{'href' => "/store/egg_details/#{e.id}"}
-          %h2= e.name
-      .statement
-        - i = 1
-        - e.documents.each do |d|
-          - if i == 1
-            %a{:href => "../review/#{d.id}"} #{d.name}
-          - elsif i<5
-            | 
-            %a{:href => "../review/#{d.id}"} #{d.name}
-          - elsif i==5
-            \...
-          - i+=1
-        .clr
-  %div{:style => "clear:both"}
+  - if @tags.blank?
+    %div{:style=>"text-align: center; color:#d22b21; margin:150px 0;"}
+      %h1 Looks like you don't have any StudyEggs right now.
+      %h2{:style=>"color:#595448; margin-top:15px;"}
+        Check out the 
+        %a{:href=>"/store"} EggStore
+        and snag yourself some knowledge!
+  - else
+    - @tags.each do |e|
+      .egg_container
+        .title
+          %img.egg_image{:src => "../../images/eggs/#{e.icon_id}.png"}
+          %h4 Aligned StudyEgg for:
+          %a{'href' => "/store/egg_details/#{e.id}"}
+            %h2= e.name
+        .statement
+          - i = 1
+          - e.documents.each do |d|
+            - next if current_user.userships.select{|usership| usership.document_id == d.id}.first.nil?
+            - if i == 1
+              %a{:href => "../review/#{d.id}"} #{d.name}
+            - elsif i<5
+              | 
+              %a{:href => "../review/#{d.id}"} #{d.name}
+            - elsif i==5
+              |
+              %a{:href => "../store/egg_details/#{e.id}"} More...
+            - i+=1
+          .clr
+    %div{:style => "clear:both"}
