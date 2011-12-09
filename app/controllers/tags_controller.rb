@@ -5,7 +5,12 @@ class TagsController < ApplicationController
   helper TagsHelper
 
   def index
-    @tags = current_user.tags
+    #@tags = current_user.tags
+    tags = current_user.userships.map{|u| u.document.tag_id unless u.document.nil?}
+    @tags = Tag.where(:id => tags).group(:id)
+    puts "TAGS ARE COMING!!!!"
+    puts @tags
+    puts "TAGS CAME...AND WENT!!!!"
   end
 
   def get_tags_json
